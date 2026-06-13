@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lova Fav: True Shuffle, Ambient 3D (Fix Durasi WebM)</title>
+  <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
+  <style>
+    body {
+      margin: 0;
+      background-image: linear-gradient(45deg, #333 25%, transparent 25%), linear-gradient(-45deg, #333 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #333 75%), linear-gradient(-45deg, transparent 75%, #333 75%);
+      background-size: 20px 20px;
+      background-color: #444;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding-bottom: 50px;
+      touch-action: pan-y;
+    }
+
+    #canvas-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      aspect-ratio: 16/9;
+      margin-top: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      background: transparent;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+      cursor: gra    }
+
+    #canvas-wrapper:active {
+      cursor: grabbing;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    #controls {
+      width: 90%;
+      max-width: 600px;
+      background: #222;
+      padding: 20px;
+      border-radius: 12px;
+      margin-top: 20px;
+      border: 1px solid #444;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-group,
+    .play-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .file-label {
+      flex: 1;
+      background: #333;
+      color: #ccc;
+      padding: 12px 5px;
+      text-align: center;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: bold;
+      border: 1px solid #555;
+      transition: 0.2s;
+      white-space: nowrap;
+    }
+
+    .file-label:hover {
+      background: #444;
+      color: white;
+    }
+
+    #playBtn {
+      flex: 2;
+      padding: 15px;
+      background: #444;
+      color: #888;
+      border: 2px solid #333;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    #playBtn.ready {
+      background: linear-gradient(135deg, #00d2ff, #e040fb);
+      color: white;
+      border: none;
+    }
+
+    #nextBtn {
+      flex: 1;
+      padding: 15px;
+      background: #555;
+      color: #aaa;
+      border: 2px solid #444;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: not-allowed;
+      transition: 0.3s;
+    }
+
+    #nextBtn.ready {
+      background: #333;
+      color: white;
+      border: 2px solid #555;
+      cursor: pointer;
+    }
+
+    #nextBtn.ready:hover {
+      background: #555;
+    }
+
+    .progress-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #333;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #444;
+    }
+
+    .time-text {
+      font-size: 11px;
+      font-family: monospace;
+      color: #00d2ff;
+      min-width: 40px;
+      text-align: center;
+    }
+
+    #progressBar {
+      flex: 1;
+      height: 5px;
+      -webkit-appearance: none;
+      background: #555;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #progressBar::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 15px;
+      height: 15px;
+      background: #e040fb;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .btn-record {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #ff4444, #d32f2f);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #stopOverlay {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(220, 20, 60, 0.95);
+      color: white;
+      padding: 15px 30px;
+      border-radius: 50px;
+      z-index: 100;
+      font-weight: bold;
+      border: 3px solid white;
+      cursor: pointer;
+    }
+
+    #countdownOverlay {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 100px;
+      font-weight: bold;
+      color: white;
+      text-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+      z-index: 100;
+    }
+
+    #statusBox {
+      font-size: 12px;
+      text-align: center;
+      color: #00d2ff;
+      margin-bottom: 5px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    label {
+      font-size: 11px;
+      width: 80px;
+      color: #ccc;
+      font-weight: 600;
+    }
+
+    input[type="range"],
+    select {
+      flex: 1;
+      height: 36px;
+      background: #333;
+      color: white;
+      border: 1px solid #555;
+      border-radius: 6px;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="canvas-wrapper">
+    <canvas id="canvas" width="1280" height="720"></canvas>
+    <div id="countdownOverlay">3</div>
+    <div id="stopOverlay" onclick="stopRecording()">⏹ STOP & SIMPAN</div>
+  </div>
+
+  <div id="controls">
+    <div id="statusBox">Siap. Silakan Upload Foto Latar & Banyak Musik.</div>
+    <div class="btn-group">
+      <label for="bgInput" class="file-label" style="border-bottom: 3px solid #00bcd4">1. FOTO LATAR</label>
+      <label for="audioInput" class="file-label" style="border-bottom: 3px solid #e040fb">2. MUSIK (BANYAK)</label>
+    </div>
+
+    <div class="play-group">
+      <button id="playBtn" onclick="togglePlay()">⚠ PUTAR MUSIK</button>
+      <button id="nextBtn" onclick="playRandomSong(false)">⏭ NEXT</button>
+    </div>
+
+    <div class="progress-container">
+      <span id="currTime" class="time-text">00:00</span>
+      <input type="range" id="progressBar" value="0" min="0" step="0.1">
+      <span id="durTime" class="time-text">00:00</span>
+    </div>
+
+    <input type="file" id="bgInput" accept="image/*">
+    <input type="file" id="audioInput" accept="audio/*" multiple>
+
+    <hr style="border: 0; border-top: 1px solid #444; width: 100%; margin: 5px 0;">
+
+    <div class="row">
+      <label style="color:#00d2ff;">VISUALIZER 3D</label>
+      <select id="visType">
+        <option value="cyber_halo">⭕ Holographic Halo</option>
+        <option value="quantum_ribbon">〰️ Quantum Ribbon</option>
+        <option value="zen_monoliths">🪨 Zen Monoliths</option>
+        <option value="neural_nodes">🌌 Neural Constellation</option>
+        <option value="grav_ripples">🎛️ Gravitational Ripples</option>
+        <option value="stellar_core">🌟 Stellar Plasma Core</option>
+        <option value="cyber_grid">🌐 Cybernetic Grid</option>
+        <option value="data_vortex">🌪️ Digital Vortex</option>
+        <option value="quantum_threads">🧬 Quantum Threads</option>
+      </select>
+    </div>
+
+    <div class="row"><label>TINGGI VIS.</label><input type="range" id="visHeight" min="30" max="450" value="120"></div>
+
+    <button class="btn-record" id="recordBtn" onclick="startCountdownAndRecord()">🔴 MULAI REKAM 720p</button>
+  </div>
+
+  <audio id="audioPlayer" crossorigin="anonymous"></audio>
+
+  <script>
+    const statusBox = document.getElementById('statusBox');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d', {
+      alpha: false
+    });
+    const audioPlayer = document.getElementById('audioPlayer');
+    const playBtn = document.getElementById('playBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const stopOverlay = document.getElementById('stopOverlay');
+    const countdownOverlay = document.getElementById('countdownOverlay');
+    const recordBtn = document.getElementById('recordBtn');
+    const progressBar = document.getElementById('progressBar');
+    const currTimeEl = document.getElementById('currTime');
+    const durTimeEl = document.getElementById('durTime');
+    let isDraggingProgress = false;
+    const width = 1280;
+    const height = 720;
+    
+    // --- PLAYLIST LOGIC ---
+    let audioFiles = [];
+    let currentObjectUrl = null;
+    let currentSongName = "";
+    let playTimeout = null;
+    let isTrackLoaded = false;
+    let shuffledPlaylist = [];
+    let currentPlayIndex = 0;
+    let isCountingDown = false;
+    let countdownTimer = null;
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+    
+    document.getElementById('audioInput').addEventListener('change', function(e) {
+      if (this.files.length > 0) {
+        audioFiles = Array.from(this.files);
+        isTrackLoaded = true;
+        shuffledPlaylist = shuffle(Array.from({
+          length: audioFiles.length
+        }, (v, k) => k));
+        currentPlayIndex = 0;
+        playBtn.innerHTML = "▶ PLAY MUSIK";
+        playBtn.classList.add('ready');
+        nextBtn.classList.add('ready');
+        statusBox.innerText = `${audioFiles.length} Lagu dimuat. Siap diputar!`;
+        progressBar.value = 0;
+        currTimeEl.innerText = "00:00";
+        durTimeEl.innerText = "00:00";
+        audioPlayer.pause();
+        if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl);
+        currentObjectUrl = null;
+        currentSongName = "Musik Diunggah";
+      }
+    });
+
+    function playRandomSong(isInstant = false) {
+      if (audioFiles.length === 0) return;
+      if (playTimeout) clearTimeout(playTimeout);
+      if (currentPlayIndex >= shuffledPlaylist.length) {
+        currentPlayIndex = 0;
+        stopEverything();
+        return;
+      }
+      if (currentObjectUrl && isInstant) {
+        URL.revokeObjectURL(currentObjectUrl);
+        currentObjectUrl = null;
+      }
+      const delayAmount = isInstant ? 0 : 3500;
+      if (!isInstant) {
+        audioPlayer.pause();
+        playBtn.innerText = "⏳ TUNGGU...";
+        statusBox.innerText = "⏳ Jeda pergantian lagu...";
+        currentSongName = "Memuat...";
+        progressBar.value = 0;
+        currTimeEl.innerText = "00:00";
+        durTimeEl.innerText = "00:00";
+      }
+      playTimeout = setTimeout(() => {
+        if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl);
+        const actualFileIndex = shuffledPlaylist[currentPlayIndex];
+        const selectedFile = audioFiles[actualFileIndex];
+        currentSongName = selectedFile.name.replace(/\.[^/.]+$/, "");
+        currentObjectUrl = URL.createObjectURL(selectedFile);
+        audioPlayer.src = currentObjectUrl;
+        audioPlayer.load();
+        if (!audioCtx) initAudioContext();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        audioPlayer.play().then(() => {
+          playBtn.innerText = "⏸ PAUSE";
+          statusBox.innerText = `🎵 Lagu ${currentPlayIndex + 1}/${audioFiles.length}: ${currentSongName}`;
+          currentPlayIndex++;
+        }).catch(err => {
+          playBtn.innerText = "❌ ERROR";
+        });
+      }, delayAmount);
+    }
+    
+    audioPlayer.addEventListener('ended', () => {
+      playRandomSong(false);
+    });
+
+    function stopEverything() {
+      audioPlayer.pause();
+      if (playTimeout) clearTimeout(playTimeout);
+      if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl);
+      currentObjectUrl = null;
+      currentSongName = "Playlist Selesai";
+      if (dataArray) dataArray.fill(0);
+      shuffledPlaylist = shuffle(Array.from({
+        length: audioFiles.length
+      }, (v, k) => k));
+      statusBox.innerText = `✅ Semua lagu selesai.`;
+      playBtn.innerText = "▶ PLAY ACAK";
+      progressBar.value = 0;
+      currTimeEl.innerText = "00:00";
+      durTimeEl.innerText = "00:00";
+      if (mediaRecorder && mediaRecorder.state === 'recording') {
+        statusBox.innerText = `✅ Menyimpan rekaman WebM...`;
+        setTimeout(() => {
+          stopRecording();
+        }, 500);
+      }
+    }
+    
+    // --- KONTROL DRAGGABLE VISUALIZER ---
+    let visW = 250;
+    let visX = width / 2;
+    let visY = height / 2 + 50;
+    let isDraggingVis = false;
+    let dragOffsetX = 0;
+    let dragOffsetY = 0;
+
+    function getMousePos(e) {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      let clientX = e.clientX;
+      let clientY = e.clientY;
+      if (e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+      }
+      return {
+        x: (clientX - rect.left) * scaleX,
+        y: (clientY - rect.top) * scaleY
+      };
+    }
+
+    function startDrag(e) {
+      const pos = getMousePos(e);
+      // Hitbox visualizer 3D melayang
+      if (pos.x >= visX - 200 && pos.x <= visX + 200 && pos.y >= visY - 150 && pos.y <= visY + 150) {
+        isDraggingVis = true;
+        dragOffsetX = pos.x - visX;
+        dragOffsetY = pos.y - visY;
+        if (e.cancelable) e.preventDefault();
+      }
+    }
+
+    function drag(e) {
+      if (!isDraggingVis) return;
+      const pos = getMousePos(e);
+      if (isDraggingVis) {
+        visX = pos.x - dragOffsetX;
+        visY = pos.y - dragOffsetY;
+        if (e.cancelable) e.preventDefault();
+      }
+    }
+
+    function endDrag() {
+      isDraggingVis = false;
+    }
+    
+    canvas.addEventListener('mousedown', startDrag);
+    canvas.addEventListener('mousemove', drag);
+    window.addEventListener('mouseup', endDrag);
+    canvas.addEventListener('touchstart', startDrag, {
+      passive: false
+    });
+    canvas.addEventListener('touchmove', drag, {
+      passive: false
+    });
+    window.addEventListener('touchend', endDrag);
+    
+    // --- AUDIO VARS ---
+    let audioCtx, source, mediaStreamDestination, analyser, dataArray;
+    let isAudioInit = false;
+
+    function formatTime(seconds) {
+      if (isNaN(seconds) || !isFinite(seconds)) return "00:00";
+      const m = Math.floor(seconds / 60);
+      const s = Math.floor(seconds % 60);
+      return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+    }
+
+    function initAudioContext() {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      audioCtx = new AudioContext();
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 256;
+      analyser.smoothingTimeConstant = 0.92; // Dibuat sangat smooth dan pelan untuk ambient drone
+      source = audioCtx.createMediaElementSource(audioPlayer);
+      mediaStreamDestination = audioCtx.createMediaStreamDestination();
+      source.connect(analyser);
+      analyser.connect(audioCtx.destination);
+      analyser.connect(mediaStreamDestination);
+      dataArray = new Uint8Array(analyser.frequencyBinCount);
+      isAudioInit = true;
+    }
+    
+    // --- HANDLER INPUT BACKGROUND FOTO SAJA ---
+    let isBgReady = false;
+    let bgImageElement = new Image();
+    document.getElementById('bgInput').addEventListener('change', function(e) {
+      if (this.files[0]) {
+        const file = this.files[0];
+        if (file.type.startsWith('image/')) {
+          const fileURL = URL.createObjectURL(file);
+          bgImageElement.src = fileURL;
+          bgImageElement.onload = () => {
+            isBgReady = true;
+            statusBox.innerText = "✅ Foto Latar Oke.";
+          };
+        } else {
+          alert("Harap unggah file berbentuk Gambar/Foto (JPG, PNG).");
+        }
+      }
+    });
+    
+    audioPlayer.addEventListener('loadedmetadata', () => {
+      if (isFinite(audioPlayer.duration)) {
+        durTimeEl.innerText = formatTime(audioPlayer.duration);
+        progressBar.max = 100;
+      }
+    });
+    
+    audioPlayer.addEventListener('timeupdate', () => {
+      if (isFinite(audioPlayer.duration) && durTimeEl.innerText === "00:00") {
+        durTimeEl.innerText = formatTime(audioPlayer.duration);
+      }
+      if (!isDraggingProgress) {
+        const percent = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+        progressBar.value = isNaN(percent) ? 0 : percent;
+        currTimeEl.innerText = formatTime(audioPlayer.currentTime);
+      }
+    });
+    
+    progressBar.addEventListener('input', () => {
+      isDraggingProgress = true;
+      if (audioPlayer.duration) {
+        const seekTime = (progressBar.value / 100) * audioPlayer.duration;
+        currTimeEl.innerText = formatTime(seekTime);
+        audioPlayer.currentTime = seekTime;
+      }
+    });
+    
+    const releaseSeek = () => {
+      isDraggingProgress = false;
+    };
+    progressBar.addEventListener('change', releaseSeek);
+    progressBar.addEventListener('touchend', releaseSeek);
+    progressBar.addEventListener('mouseup', releaseSeek);
+
+    function togglePlay() {
+      if (!isTrackLoaded) {
+        alert("Pilih Musik Dulu!");
+        return;
+      }
+      if (!audioCtx) initAudioContext();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      if (audioPlayer.paused) {
+        if (!audioPlayer.src || currentPlayIndex >= shuffledPlaylist.length) {
+          playRandomSong(true);
+        } else {
+          audioPlayer.play();
+          playBtn.innerText = "⏸ PAUSE";
+          statusBox.innerText = `🎵 Lagu ${currentPlayIndex}/${audioFiles.length}: ${currentSongName}`;
+        }
+      } else {
+        audioPlayer.pause();
+        playBtn.innerText = "▶ RESUME";
+        statusBox.innerText = "⏸ Musik Dijeda.";
+      }
+    }
+    
+    const config = {
+      visType: 'cyber_halo',
+      visHeight: 120
+    };
+    document.getElementById('visType').addEventListener('change', (e) => config.visType = e.target.value);
+    document.getElementById('visHeight').addEventListener('input', (e) => config.visHeight = parseInt(e.target.value));
+    
+    let time = 0;
+    
+    // Variabel state untuk visualizer Sci-Fi Minimalist
+    let neuralNodes = Array.from({length: 40}, () => ({
+        x: (Math.random()-0.5)*300,
+        y: (Math.random()-0.5)*150,
+        z: Math.random()*300 - 150,
+        vx: (Math.random()-0.5)*0.2,
+        vy: (Math.random()-0.5)*0.2,
+        vz: (Math.random()-0.5)*0.2
+    }));
+    let ripples = [];
+
+    function getSymmetricVal(index, totalBars, bufferLen) {
+      try {
+        if (!dataArray) return 0;
+        const center = totalBars / 2;
+        const centerDist = Math.abs(index - center) / center;
+        // Ambil frekuensi rendah/tengah yang stabil untuk ambient drone
+        const dataIdx = Math.floor(centerDist * (bufferLen / 3));
+        return dataArray[dataIdx] / 255;
+      } catch (e) {
+        return 0;
+      }
+    }
+
+    function drawVisualizer(bufferLen) {
+      const style = config.visType;
+      ctx.save();
+      ctx.translate(visX, visY);
+      
+      // Menggunakan mode screen agar warna menyala elegan seperti hologram
+      ctx.globalCompositeOperation = 'screen';
+      
+      try {
+        if (style === 'cyber_halo') {
+          // 1. Holographic Halo (Cincin Sci-Fi Minimalis)
+          let val = getSymmetricVal(10, 30, bufferLen);
+          let val2 = getSymmetricVal(5, 30, bufferLen);
+          
+          let baseR = 80 + val * config.visHeight * 0.4;
+          let tilt = 0.35; // Kemiringan perspective 3D
+          
+          // Outer glowing ring
+          ctx.beginPath();
+          ctx.ellipse(0, 0, baseR, baseR * tilt, time * 0.1, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(0, 255, 255, ${0.4 + val * 0.4})`;
+          ctx.lineWidth = 1.5 + val2 * 5;
+          ctx.shadowBlur = 15;
+          ctx.shadowColor = '#00ffff';
+          ctx.stroke();
+          
+          // Inner solid core ring
+          ctx.beginPath();
+          ctx.ellipse(0, 0, baseR * 0.85, baseR * 0.85 * tilt, -time * 0.15, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(100, 200, 255, 0.8)`;
+          ctx.lineWidth = 1;
+          ctx.shadowBlur = 5;
+          ctx.stroke();
+          
+          // 3 Orbiting light dots
+          for(let i=0; i<3; i++) {
+             let angle = time * (0.5 + i*0.2) + (Math.PI*2/3)*i;
+             let x = Math.cos(angle) * baseR;
+             let y = Math.sin(angle) * baseR * tilt;
+             ctx.beginPath();
+             ctx.arc(x, y, 2 + val*3, 0, Math.PI*2);
+             ctx.fillStyle = '#fff';
+             ctx.fill();
+          }
+        } else if (style === 'quantum_ribbon') {
+          // 2. Quantum Ribbon (Pita Halus Melayang)
+          ctx.beginPath();
+          let pts = 60;
+          let widthSpan = 250; // Lebih ringkas agar tidak menutupi layar
+          
+          for(let i=0; i<=pts; i++) {
+            let val = getSymmetricVal(i, pts, bufferLen);
+            let x = (i - pts/2) * (widthSpan/pts);
+            
+            // 3D Z-waving effect
+            let z = Math.sin(time*0.5 + i*0.1) * 80; 
+            let scale = 300 / (300 + z);
+            
+            // Y bereaksi terhadap audio dan waktu
+            let y = (-val * config.visHeight * 0.8) * scale + Math.cos(time*0.8 + i*0.05) * 15;
+            
+            if(i===0) ctx.moveTo(x*scale, y*scale);
+            else ctx.lineTo(x*scale, y*scale);
+          }
+          
+          ctx.strokeStyle = 'rgba(150, 220, 255, 0.7)';
+          ctx.lineWidth = 2;
+          ctx.shadowBlur = 15;
+          ctx.shadowColor = 'rgba(0, 150, 255, 1)';
+          ctx.stroke();
+          
+          // Center bright highlight
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+          ctx.lineWidth = 0.5;
+          ctx.shadowBlur = 0;
+          ctx.stroke();
+        } else if (style === 'zen_monoliths') {
+          // 3. Zen Monoliths (Batu Kaca Melayang Minimalis)
+          let numBars = 5; // Sedikit agar bersih
+          let spacing = 35;
+          ctx.translate(-(numBars-1)*spacing/2, 0);
+          
+          for(let i=0; i<numBars; i++) {
+            let val = getSymmetricVal(i*5, 30, bufferLen); 
+            // Gerakan mengambang perlahan (zen)
+            let floatY = Math.sin(time + i) * 8;
+            
+            let h = 20 + val * config.visHeight;
+            let w = 8;
+            let d3 = 5; // Ketebalan 3D
+            
+            ctx.translate(i*spacing, floatY);
+            
+            // Gradiasi efek kaca futuristik
+            let grad = ctx.createLinearGradient(0, -h, 0, 0);
+            grad.addColorStop(0, `rgba(0, 255, 200, ${0.4 + val*0.4})`);
+            grad.addColorStop(1, 'rgba(0, 50, 100, 0.0)');
+            
+            ctx.fillStyle = grad;
+            ctx.shadowBlur = 10 * val;
+            ctx.shadowColor = '#00ffcc';
+            
+            // Wajah Depan
+            ctx.beginPath();
+            ctx.moveTo(0, 0); ctx.lineTo(w, 0); ctx.lineTo(w, -h); ctx.lineTo(0, -h);
+            ctx.fill();
+            
+            // Wajah Samping
+            ctx.fillStyle = `rgba(0, 150, 200, ${0.1 + val*0.2})`;
+            ctx.beginPath();
+            ctx.moveTo(w, 0); ctx.lineTo(w + d3, -d3); ctx.lineTo(w + d3, -h - d3); ctx.lineTo(w, -h);
+            ctx.fill();
+            
+            // Edge highlight (tampilan bersih tajam)
+            ctx.strokeStyle = `rgba(255, 255, 255, ${0.3 + val*0.3})`;
+            ctx.lineWidth = 0.8;
+            ctx.shadowBlur = 0;
+            ctx.stroke();
+            
+            ctx.translate(-i*spacing, -floatY);
+          }
+        } else if (style === 'neural_nodes') {
+          // 4. Neural Constellation (Jaringan Partikel Abstrak - Diperbaiki agar sangat reaktif)
+          let baseVal = getSymmetricVal(5, 30, bufferLen);
+          let maxDist = 70 + baseVal * 100; 
+          
+          neuralNodes.forEach(node => {
+            let expand = 1 + (baseVal * 0.8); 
+            let nx = node.x * expand;
+            let ny = node.y * expand;
+            let nz = node.z;
+
+            node.x += node.vx; node.y += node.vy; node.z += node.vz;
+            if(Math.abs(node.x) > 120) node.vx *= -1;
+            if(Math.abs(node.y) > 60) node.vy *= -1;
+            if(Math.abs(node.z) > 120) node.vz *= -1;
+            
+            let scale = 300 / (300 + nz);
+            let px = nx * scale;
+            let py = ny * scale;
+            
+            neuralNodes.forEach(other => {
+               if(node === other) return;
+               let dx = nx - (other.x * expand);
+               let dy = ny - (other.y * expand);
+               let dz = nz - other.z;
+               let dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+               
+               if(dist < maxDist) {
+                 let alpha = 1 - (dist / maxDist);
+                 ctx.beginPath();
+                 ctx.moveTo(px, py);
+                 let oScale = 300 / (300 + other.z);
+                 ctx.lineTo(other.x * expand * oScale, other.y * expand * oScale);
+                 ctx.strokeStyle = `rgba(100, 200, 255, ${alpha * (0.2 + baseVal*0.8)})`;
+                 ctx.lineWidth = 0.5 + baseVal * 2;
+                 ctx.stroke();
+               }
+            });
+            
+            ctx.beginPath();
+            ctx.arc(px, py, (1.2 + baseVal*3) * scale, 0, Math.PI*2);
+            ctx.fillStyle = `rgba(255, 255, 255, ${0.4 + baseVal})`;
+            ctx.fill();
+          });
+        } else if (style === 'grav_ripples') {
+          // 5. Gravitational Ripples (Diperbaiki agar berdenyut mengikuti ritme)
+          let val = getSymmetricVal(10, 30, bufferLen);
+          let bass = getSymmetricVal(3, 30, bufferLen);
+          let tilt = 0.35;
+          
+          let numRings = 10;
+          for(let i=1; i<=numRings; i++) {
+             let r = i * 20 + (val * config.visHeight * (i/numRings));
+             ctx.beginPath();
+             ctx.ellipse(0, 0, r, r * tilt, 0, 0, Math.PI*2);
+             ctx.strokeStyle = `rgba(0, 255, 255, ${0.1 + bass * 0.7})`;
+             ctx.lineWidth = 1 + val * 4;
+             ctx.shadowBlur = bass * 10;
+             ctx.shadowColor = '#00ffff';
+             ctx.stroke();
+          }
+          
+          ctx.beginPath();
+          let coreR = 15 + bass * config.visHeight * 0.3;
+          ctx.ellipse(0, 0, coreR, coreR * tilt, 0, 0, Math.PI*2);
+          ctx.fillStyle = `rgba(0, 200, 255, ${0.2 + bass*0.8})`;
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        } else if (style === 'stellar_core') {
+          // 6. Stellar Plasma Core (Bintang Energi Reaktif)
+          let bass = getSymmetricVal(3, 30, bufferLen);
+          let coreR = 30 + bass * config.visHeight * 0.4;
+          
+          ctx.beginPath();
+          ctx.arc(0, 0, coreR, 0, Math.PI*2);
+          let grad = ctx.createRadialGradient(0,0,0, 0,0,coreR);
+          grad.addColorStop(0, 'rgba(255, 255, 255, 1)');
+          grad.addColorStop(0.5, `rgba(0, 255, 255, ${0.8 + bass*0.2})`);
+          grad.addColorStop(1, 'rgba(0, 100, 255, 0)');
+          ctx.fillStyle = grad;
+          ctx.fill();
+
+          let rays = 72;
+          for(let i=0; i<rays; i++) {
+             let val = getSymmetricVal(i, rays, bufferLen);
+             let angle = (i / rays) * Math.PI * 2 + (time * 0.1);
+             let rayLen = coreR + val * config.visHeight * 1.5;
+             
+             ctx.beginPath();
+             ctx.moveTo(Math.cos(angle) * coreR, Math.sin(angle) * coreR);
+             ctx.lineTo(Math.cos(angle) * rayLen, Math.sin(angle) * rayLen);
+             ctx.strokeStyle = `rgba(0, 200, 255, ${0.2 + val*0.8})`;
+             ctx.lineWidth = 1 + val * 5;
+             ctx.stroke();
+          }
+        } else if (style === 'cyber_grid') {
+          // 7. Cybernetic Grid (Lantai Matrix 3D Reaktif)
+          let linesZ = 20;
+          let pointsX = 30;
+          let gridWidth = 600;
+          ctx.lineWidth = 1.5;
+          ctx.lineJoin = 'round';
+          
+          for(let z=linesZ; z>=1; z--) {
+             let scale = 300 / (300 + z * 20 - (time*15 % 20)); 
+             let yOffset = z * 10 * scale + 30;
+             let valZ = getSymmetricVal(z, linesZ, bufferLen); 
+
+             ctx.beginPath();
+             for(let x=0; x<=pointsX; x++) {
+                let valX = getSymmetricVal(x, pointsX, bufferLen);
+                let h = (valX + valZ) * config.visHeight * scale;
+                
+                let px = (x - pointsX/2) * (gridWidth/pointsX) * scale;
+                let py = yOffset - h;
+
+                if(x === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+             }
+             ctx.strokeStyle = `rgba(0, 255, 150, ${1 - (z/linesZ)})`;
+             ctx.stroke();
+          }
+        } else if (style === 'data_vortex') {
+          // 8. Digital Vortex (Pusaran Data Tornado)
+          let rings = 25;
+          let tilt = 0.25;
+          for(let i=0; i<rings; i++) {
+             let val = getSymmetricVal(i, rings, bufferLen);
+             let r = 20 + i * 8 + (val * config.visHeight * 0.8);
+             let yPos = (i - rings/2) * 12 - (val * config.visHeight * 0.3);
+             let rotation = time * (0.5 + i*0.05);
+
+             ctx.beginPath();
+             ctx.ellipse(0, yPos, r, r * tilt, rotation, 0, Math.PI*2);
+             ctx.strokeStyle = `rgba(200, 100, 255, ${0.1 + val*0.9})`;
+             ctx.lineWidth = 1 + val * 4;
+             ctx.stroke();
+
+             let dotAngle = time * 3 + i;
+             ctx.beginPath();
+             ctx.arc(Math.cos(dotAngle) * r, yPos + Math.sin(dotAngle) * r * tilt, 2 + val*4, 0, Math.PI*2);
+             ctx.fillStyle = `rgba(255, 255, 255, ${0.5 + val})`;
+             ctx.fill();
+          }
+        } else if (style === 'quantum_threads') {
+          // 9. Quantum Threads (Serat Energi Liar)
+          let threads = 15;
+          for(let i=0; i<threads; i++) {
+             let val1 = getSymmetricVal(i*2, threads*2, bufferLen);
+             let val2 = getSymmetricVal(i*2+1, threads*2, bufferLen);
+             let bass = getSymmetricVal(2, 30, bufferLen);
+             let spread = 200 + bass * 150;
+             
+             let cp1x = -spread/2;
+             let cp1y = -config.visHeight * val1 * 2 + Math.sin(time*2 + i)*30;
+             let cp2x = spread/2;
+             let cp2y = config.visHeight * val2 * 2 + Math.cos(time*2 + i)*30;
+
+             ctx.beginPath();
+             ctx.moveTo(-spread, 0);
+             ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, spread, 0);
+             
+             ctx.strokeStyle = `rgba(0, ${150 + val1*100}, 255, ${0.2 + val2*0.8})`;
+             ctx.lineWidth = 1.5 + (val1 + val2) * 5;
+             ctx.shadowBlur = 15;
+             ctx.shadowColor = '#00aaff';
+             ctx.stroke();
+          }
+        }
+      } catch (e) {}
+      ctx.restore();
+    }
+
+    function animate() {
+      ctx.fillStyle = "#000";
+      ctx.fillRect(0, 0, width, height);
+      
+      time += 0.02; // Waktu berjalan lebih lambat untuk efek ambient calm
+      
+      if (isBgReady) {
+        const scale = Math.max(width / bgImageElement.width, height / bgImageElement.height);
+        const x = (width / 2) - (bgImageElement.width / 2) * scale;
+        const y = (height / 2) - (bgImageElement.height / 2) * scale;
+        ctx.drawImage(bgImageElement, x, y, bgImageElement.width * scale, bgImageElement.height * scale);
+        
+        // Lapisan transparan gelap agar cahaya visualizer sci-fi menonjol
+        ctx.fillStyle = "rgba(0, 10, 20, 0.4)";
+        ctx.fillRect(0, 0, width, height);
+      }
+      
+      // Update data audio dengan transisi turun perlahan (smooth falloff)
+      if (isAudioInit && !audioPlayer.paused && currentObjectUrl) {
+        analyser.getByteFrequencyData(dataArray);
+      } else if (dataArray) {
+        for (let i = 0; i < dataArray.length; i++) {
+          dataArray[i] = Math.max(0, dataArray[i] - 2);
+        }
+      }
+      
+      drawVisualizer(isAudioInit ? analyser.frequencyBinCount : 128);
+      
+      requestAnimationFrame(animate);
+    }
+    animate();
+    
+    let mediaRecorder, chunks = [];
+    let recordStartTime = 0;
+
+    function startCountdownAndRecord() {
+      if (!isAudioInit || !currentObjectUrl) {
+        alert("Pilih dan siapkan musik dulu!");
+        return;
+      }
+      if (isCountingDown) {
+        clearInterval(countdownTimer);
+        isCountingDown = false;
+        countdownOverlay.style.display = 'none';
+        recordBtn.innerText = "🔴 MULAI REKAM 720p";
+        return;
+      }
+      isCountingDown = true;
+      let counter = 3;
+      countdownOverlay.innerText = counter;
+      countdownOverlay.style.display = 'block';
+      recordBtn.innerText = "❌ BATALKAN REKAM (" + counter + ")";
+      countdownTimer = setInterval(() => {
+        counter--;
+        if (counter > 0) {
+          countdownOverlay.innerText = counter;
+          recordBtn.innerText = "❌ BATALKAN REKAM (" + counter + ")";
+        } else {
+          clearInterval(countdownTimer);
+          isCountingDown = false;
+          countdownOverlay.style.display = 'none';
+          executeRecording();
+        }
+      }, 1000);
+    }
+
+    function executeRecording() {
+      if (!audioCtx) initAudioContext();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      audioPlayer.play();
+      playBtn.innerText = "⏸ PAUSE";
+      stopOverlay.style.display = 'block';
+      statusBox.innerText = "🔴 Merekam HD 720p WebM...";
+      recordBtn.innerText = "🔴 SEDANG MEREKAM";
+      const stream = canvas.captureStream(30);
+      const combined = new MediaStream([...stream.getVideoTracks(), mediaStreamDestination.stream.getAudioTracks()[0]]);
+      try {
+        mediaRecorder = new MediaRecorder(combined, {
+          mimeType: 'video/webm',
+          videoBitsPerSecond: 2480000
+        });
+      } catch (e) {
+        mediaRecorder = new MediaRecorder(combined);
+      }
+      mediaRecorder.ondataavailable = e => {
+        if (e.data.size > 0) chunks.push(e.data);
+      };
+      mediaRecorder.onstop = saveVideoWebM;
+      chunks = [];
+      recordStartTime = Date.now();
+      mediaRecorder.start(1000);
+    }
+
+    function stopRecording() {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+      }
+      audioPlayer.pause();
+      playBtn.innerText = "▶ PLAY";
+      stopOverlay.style.display = 'none';
+      recordBtn.innerText = "🔴 MULAI REKAM 720p";
+      statusBox.innerText = "Menjahit metadata durasi WebM...";
+      if (playTimeout) clearTimeout(playTimeout);
+    }
+
+    function saveVideoWebM() {
+      const blob = new Blob(chunks, {
+        type: 'video/webm'
+      });
+      const recordDuration = Date.now() - recordStartTime;
+      if (typeof ysFixWebmDuration === 'function') {
+        ysFixWebmDuration(blob, recordDuration, function(fixedBlob) {
+          triggerDownload(fixedBlob);
+        });
+      } else {
+        triggerDownload(blob);
+      }
+    }
+
+    function triggerDownload(finalBlob) {
+      const url = URL.createObjectURL(finalBlob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = `Lova_720p_HQ_${Date.now()}.webm`;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        window.URL.revokeObjectURL(url);
+        statusBox.innerText = "✅ Selesai! WebM bisa di-skip.";
+      }, 100);
+    }
+  </script>
+</body>
+
+</html>

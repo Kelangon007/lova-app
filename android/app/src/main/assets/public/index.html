@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lova Fav: True Shuffle, Ambient 3D (Fix Durasi WebM)</title>
+  <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
+  <style>
+    body {
+      margin: 0;
+      background-image: linear-gradient(45deg, #333 25%, transparent 25%), linear-gradient(-45deg, #333 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #333 75%), linear-gradient(-45deg, transparent 75%, #333 75%);
+      background-size: 20px 20px;
+      background-color: #444;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding-bottom: 50px;
+      touch-action: pan-y;
+    }
+
+    #canvas-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      aspect-ratio: 16/9;
+      margin-top: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      background: transparent;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+      cursor: grab;
+    }
+
+    #canvas-wrapper:active {
+      cursor: grabbing;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    #controls {
+      width: 90%;
+      max-width: 600px;
+      background: #222;
+      padding: 20px;
+      border-radius: 12px;
+      margin-top: 20px;
+      border: 1px solid #444;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-group,
+    .play-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .file-label {
+      flex: 1;
+      background: #333;
+      color: #ccc;
+      padding: 12px 5px;
+      text-align: center;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: bold;
+      border: 1px solid #555;
+      transition: 0.2s;
+      white-space: nowrap;
+    }
+
+    .file-label:hover {
+      background: #444;
+      color: white;
+    }
+
+    #playBtn {
+      flex: 2;
+      padding: 15px;
+      background: #444;
+      color: #888;
+      border: 2px solid #333;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    #playBtn.ready {
+      background: linear-gradient(135deg, #00d2ff, #e040fb);
+      color: white;
+      border: none;
+    }
+
+    #nextBtn {
+      flex: 1;
+      padding: 15px;
+      background: #555;
+      color: #aaa;
+      border: 2px solid #444;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: not-allowed;
+      transition: 0.3s;
+    }
+
+    #nextBtn.ready {
+      background: #333;
+      color: white;
+      border: 2px solid #555;
+      cursor: pointer;
+    }
+
+    #nextBtn.ready:hover {
+      background: #555;
+    }
+
+    .progress-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #333;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #444;
+    }
+
+    .time-text {
+      font-size: 11px;
+      font-family: monospace;
+      color: #00d2ff;
+      min-width: 40px;
+      text-align: center;
+    }
+
+    #progressBar {
+      flex: 1;
+      height: 5px;
+      -webkit-appearance: none;
+      background: #555;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #progressBar::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 15px;
+      height: 15px;
+      background: #e040fb;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .btn-record {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #ff4444, #d32f2f);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #stopOverlay {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(220, 20, 60, 0.95);
+      color: white;
+      padding: 15px 30px;
+      border-radius: 50px;
+      z-index: 100;
+      font-weight: bold;
+      border: 3px solid white;
+      cursor: pointer;
+    }
+
+    #countdownOverlay {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 100px;
+      font-weight: bold;
+      color: white;
+      text-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+      z-index: 100;
+    }
+
+    #statusBox {
+      font-size: 12px;
+      text-align: center;
+      color: #00d2ff;
+      margin-bottom: 5px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    label {
+      font-size: 11px;
+      width: 80px;
+      color: #ccc;
+      font-weight: 600;
+    }
+
+    input[type="range"],
+    select {
+      flex: 1;
+      height: 36px;
+      background: #333;
+      color: white;
+      border: 1px solid #555;
+      border-radius: 6px;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="canvas-wrapper">
+    <canvas id="canvas" width="1280" height="720"></canvas>
+    <div id="countdownOverlay">3</div>
+    <div id="stopOverlay" onclick="stopRecording()">⏹ STOP & SIMPAN</div>
+  </div>
+
+  <div id="controls">
+    <div id="statusBox">Siap. Silakan Upload Foto Latar & Banyak Musik.</div>
+    <div class="btn-group">
+      <label for="bgInput" class="file-label" style="border-bottom: 3px solid #00bcd4">1. FOTO LATAR</label>
+      <label for="audioInput" class="file-label" style="border-bottom: 3px solid #e040fb">2. MUSIK (BANYAK)</label>
+    </div>
+
+    <div class="play-group">
+      <button id="playBtn" onclick="togglePlay()">⚠ PUTAR MUSIK</button>
+      <button id="nextBtn" onclick="playRandomSong(false)">⏭ NEXT</button>
+    </div>
+
+    <div class="progress-container">
+      <span id="currTime" class="time-text">00:00</span>
+      <input type="range" id="progressBar" value="0" min="0" step="0.1">
+      <span id="durTime" class="time-text">00:00</span>
+    </div>
+
+    <input type="file" id="bgInput" accept="image/*">
+    <input type="file" id="audioInput" accept="audio/*" multiple>
+
+    <hr style="border: 0; border-top: 1px solid #444; width: 100%; margin: 5px 0;">
+
+    <div class="row">
+      <label style="color:#00d2ff;">SPECTRUM VIS.</label>
+      <select id="visType">
+        <option value="cyber_eq">📶 Cyberpunk EQ</option>
+        <option value="neon_wire">⚡ Neon Wireframe</option>
+        <option value="digital_barcode">🔣 Digital Barcode</option>
+        <option value="digital_wave">〰️ Digital Waveform</option>
+        <option value="data_spikes">⛰️ Cyber Data Spikes</option>
+        <option value="quantum_dots">✨ Quantum Dots</option>
+        <option value="holo_dna">🧬 Holographic DNA</option>
+        <option value="cyber_pulse">⚡ Cyber Pulse</option>
+        <option value="hex_grid">⬡ Hexagon Grid</option>
+        <option value="orbit_core">🪐 Orbiting Core</option>
+      </select>
+    </div>
+
+    <div class="row"><label>TINGGI VIS.</label><input type="range" id="visHeight" min="30" max="600" value="200"></div>
+
+    <hr style="border: 0; border-top: 1px dashed #444; width: 100%; margin: 5px 0;">
+
+    <div class="row">
+      <label style="color:#00ffaa;">EFEK SCI-FI</label>
+      <select id="fxType">
+        <option value="none">🚫 Tanpa Efek</option>
+        <option value="cyber_snow">❄️ Cyber Snow (Salju Neon)</option>
+        <option value="matrix_rain">💻 Matrix Rain (Hujan Data)</option>
+        <option value="hyper_warp">🚀 Hyper Warp (Bintang Melesat)</option>
+        <option value="energy_dust">✨ Energy Dust (Debu Melayang)</option>
+        <option value="laser_beams">⚡ Garis Laser</option>
+        <option value="glitch_pixels">👾 Piksel Glitch</option>
+      </select>
+    </div>
+    
+    <div class="row"><label>KECEPATAN FX</label><input type="range" id="fxSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
+    <div class="row"><label>JUMLAH FX</label><input type="range" id="fxCount" min="0" max="1000" step="10" value="150"></div>
+
+    <button class="btn-record" id="recordBtn" onclick="startCountdownAndRecord()">🔴 MULAI REKAM 720p</button>
+  </div>
+
+  <audio id="audioPlayer" crossorigin="anonymous"></audio>
+
+  <script>
+    const statusBox = document.getElementById('statusBox');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d', {
+      alpha: false
+    });
+    const audioPlayer = document.getElementById('audioPlayer');
+    const playBtn = document.getElementById('playBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const stopOverlay = document.getElementById('stopOverlay');
+    const countdownOverlay = document.getElementById('countdownOverlay');
+    const recordBtn = document.getElementById('recordBtn');
+    const progressBar = document.getElementById('progressBar');
+    const currTimeEl = document.getElementById('currTime');
+    const durTimeEl = document.getElementById('durTime');
+    let isDraggingProgress = false;
+    const width = 1280;
+    const height = 720;
+    
+    // --- PLAYLIST LOGIC ---
+    let audioFiles = [];
+    let currentObjectUrl = null;
+    let currentSongName = "";
+    let playTimeout = null;
+    let isTrackLoaded = false;
+    let shuffledPlaylist = [];
+    let currentPlayIndex = 0;
+    let isCountingDown = false;
+    let countdownTimer = null;
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+    
+    document.getElementById('audioInput').addEventListener('change', function(e) {
+      if (this.files.length > 0) {
+        audioFiles = Array.from(this.files);
+        isTrackLoaded = true;
+        shuffledPlaylist = shuffle(Array.from({
+          length: audioFiles.length
+        }, (v, k) => k));
+        currentPlayIndex = 0;
+        playBtn.innerHTML = "▶ PLAY MUSIK";
+        playBtn.classList.add('ready');
+        nextBtn.classList.add('ready');
+        statusBox.innerText = `${audioFiles.length} Lagu dimuat. Siap diputar!`;
+        progressBar.value = 0;
+        currTimeEl.innerText = "00:00";
+        durTimeEl.innerText = "00:00";
+        audioPlayer.pause();
+        if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl);
+        currentObjectUrl = null;
+        currentSongName = "Musik Diunggah";
+      }
+    });
+
+    function playRandomSong(isInstant = false) {
+      if (audioFiles.length === 0) return;
+      if (playTimeout) clearTimeout(playTimeout);
+      if (currentPlayIndex >= shuffledPlaylist.length) {
+        currentPlayIndex = 0;
+        stopEverything();
+        return;
+      }
+      if (currentObjectUrl && isInstant) {
+        URL.revokeObjectURL(currentObjectUrl);
+        currentObjectUrl = null;
+      }
+      const delayAmount = isInstant ? 0 : 3500;
+      if (!isInstant) {
+        audioPlayer.pause();
+        playBtn.innerText = "⏳ TUNGGU...";
+        statusBox.innerText = "⏳ Jeda pergantian lagu...";
+        currentSongName = "Memuat...";
+        progressBar.value = 0;
+        currTimeEl.innerText = "00:00";
+        durTimeEl.innerText = "00:00";
+      }
+      playTimeout = setTimeout(() => {
+        if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl);
+        const actualFileIndex = shuffledPlaylist[currentPlayIndex];
+        const selectedFile = audioFiles[actualFileIndex];
+        currentSongName = selectedFile.name.replace(/\.[^/.]+$/, "");
+        currentObjectUrl = URL.createObjectURL(selectedFile);
+        audioPlayer.src = currentObjectUrl;
+        audioPlayer.load();
+        if (!audioCtx) initAudioContext();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        audioPlayer.play().then(() => {
+          playBtn.innerText = "⏸ PAUSE";
+          statusBox.innerText = `🎵 Lagu ${currentPlayIndex + 1}/${audioFiles.length}: ${currentSongName}`;
+          currentPlayIndex++;
+        }).catch(err => {
+          playBtn.innerText = "❌ ERROR";
+        });
+      }, delayAmount);
+    }
+    
+    audioPlayer.addEventListener('ended', () => {
+      playRandomSong(false);
+    });
+
+    function stopEverything() {
+      audioPlayer.pause();
+      if (playTimeout) clearTimeout(playTimeout);
+      if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl);
+      currentObjectUrl = null;
+      currentSongName = "Playlist Selesai";
+      if (dataArray) dataArray.fill(0);
+      shuffledPlaylist = shuffle(Array.from({
+        length: audioFiles.length
+      }, (v, k) => k));
+      statusBox.innerText = `✅ Semua lagu selesai.`;
+      playBtn.innerText = "▶ PLAY ACAK";
+      progressBar.value = 0;
+      currTimeEl.innerText = "00:00";
+      durTimeEl.innerText = "00:00";
+      if (mediaRecorder && mediaRecorder.state === 'recording') {
+        statusBox.innerText = `✅ Menyimpan rekaman WebM...`;
+        setTimeout(() => {
+          stopRecording();
+        }, 500);
+      }
+    }
+    
+    // --- KONTROL DRAGGABLE VISUALIZER ---
+    let visW = 250;
+    let visX = width / 2;
+    let visY = height / 2 + 50;
+    let isDraggingVis = false;
+    let dragOffsetX = 0;
+    let dragOffsetY = 0;
+
+    function getMousePos(e) {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      let clientX = e.clientX;
+      let clientY = e.clientY;
+      if (e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+      }
+      return {
+        x: (clientX - rect.left) * scaleX,
+        y: (clientY - rect.top) * scaleY
+      };
+    }
+
+    function startDrag(e) {
+      const pos = getMousePos(e);
+      // Hitbox visualizer 3D melayang
+      if (pos.x >= visX - 200 && pos.x <= visX + 200 && pos.y >= visY - 150 && pos.y <= visY + 150) {
+        isDraggingVis = true;
+        dragOffsetX = pos.x - visX;
+        dragOffsetY = pos.y - visY;
+        if (e.cancelable) e.preventDefault();
+      }
+    }
+
+    function drag(e) {
+      if (!isDraggingVis) return;
+      const pos = getMousePos(e);
+      if (isDraggingVis) {
+        visX = pos.x - dragOffsetX;
+        visY = pos.y - dragOffsetY;
+        if (e.cancelable) e.preventDefault();
+      }
+    }
+
+    function endDrag() {
+      isDraggingVis = false;
+    }
+    
+    canvas.addEventListener('mousedown', startDrag);
+    canvas.addEventListener('mousemove', drag);
+    window.addEventListener('mouseup', endDrag);
+    canvas.addEventListener('touchstart', startDrag, {
+      passive: false
+    });
+    canvas.addEventListener('touchmove', drag, {
+      passive: false
+    });
+    window.addEventListener('touchend', endDrag);
+    
+    // --- AUDIO VARS ---
+    let audioCtx, source, mediaStreamDestination, analyser, dataArray;
+    let isAudioInit = false;
+
+    function formatTime(seconds) {
+      if (isNaN(seconds) || !isFinite(seconds)) return "00:00";
+      const m = Math.floor(seconds / 60);
+      const s = Math.floor(seconds % 60);
+      return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+    }
+
+    function initAudioContext() {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      audioCtx = new AudioContext();
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 256;
+      analyser.smoothingTimeConstant = 0.92; // Dibuat sangat smooth dan pelan untuk ambient drone
+      source = audioCtx.createMediaElementSource(audioPlayer);
+      mediaStreamDestination = audioCtx.createMediaStreamDestination();
+      source.connect(analyser);
+      analyser.connect(audioCtx.destination);
+      analyser.connect(mediaStreamDestination);
+      dataArray = new Uint8Array(analyser.frequencyBinCount);
+      isAudioInit = true;
+    }
+    
+    // --- HANDLER INPUT BACKGROUND FOTO SAJA ---
+    let isBgReady = false;
+    let bgImageElement = new Image();
+    document.getElementById('bgInput').addEventListener('change', function(e) {
+      if (this.files[0]) {
+        const file = this.files[0];
+        if (file.type.startsWith('image/')) {
+          const fileURL = URL.createObjectURL(file);
+          bgImageElement.src = fileURL;
+          bgImageElement.onload = () => {
+            isBgReady = true;
+            statusBox.innerText = "✅ Foto Latar Oke.";
+          };
+        } else {
+          alert("Harap unggah file berbentuk Gambar/Foto (JPG, PNG).");
+        }
+      }
+    });
+    
+    audioPlayer.addEventListener('loadedmetadata', () => {
+      if (isFinite(audioPlayer.duration)) {
+        durTimeEl.innerText = formatTime(audioPlayer.duration);
+        progressBar.max = 100;
+      }
+    });
+    
+    audioPlayer.addEventListener('timeupdate', () => {
+      if (isFinite(audioPlayer.duration) && durTimeEl.innerText === "00:00") {
+        durTimeEl.innerText = formatTime(audioPlayer.duration);
+      }
+      if (!isDraggingProgress) {
+        const percent = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+        progressBar.value = isNaN(percent) ? 0 : percent;
+        currTimeEl.innerText = formatTime(audioPlayer.currentTime);
+      }
+    });
+    
+    progressBar.addEventListener('input', () => {
+      isDraggingProgress = true;
+      if (audioPlayer.duration) {
+        const seekTime = (progressBar.value / 100) * audioPlayer.duration;
+        currTimeEl.innerText = formatTime(seekTime);
+        audioPlayer.currentTime = seekTime;
+      }
+    });
+    
+    const releaseSeek = () => {
+      isDraggingProgress = false;
+    };
+    progressBar.addEventListener('change', releaseSeek);
+    progressBar.addEventListener('touchend', releaseSeek);
+    progressBar.addEventListener('mouseup', releaseSeek);
+
+    function togglePlay() {
+      if (!isTrackLoaded) {
+        alert("Pilih Musik Dulu!");
+        return;
+      }
+      if (!audioCtx) initAudioContext();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      if (audioPlayer.paused) {
+        if (!audioPlayer.src || currentPlayIndex >= shuffledPlaylist.length) {
+          playRandomSong(true);
+        } else {
+          audioPlayer.play();
+          playBtn.innerText = "⏸ PAUSE";
+          statusBox.innerText = `🎵 Lagu ${currentPlayIndex}/${audioFiles.length}: ${currentSongName}`;
+        }
+      } else {
+        audioPlayer.pause();
+        playBtn.innerText = "▶ RESUME";
+        statusBox.innerText = "⏸ Musik Dijeda.";
+      }
+    }
+    
+    const config = {
+      visType: 'cyber_eq',
+      visHeight: 200,
+      fxType: 'none',
+      fxSpeed: 1.0,
+      fxCount: 150
+    };
+    document.getElementById('visType').addEventListener('change', (e) => config.visType = e.target.value);
+    document.getElementById('visHeight').addEventListener('input', (e) => config.visHeight = parseInt(e.target.value));
+    document.getElementById('fxType').addEventListener('change', (e) => config.fxType = e.target.value);
+    document.getElementById('fxSpeed').addEventListener('input', (e) => config.fxSpeed = parseFloat(e.target.value));
+    document.getElementById('fxCount').addEventListener('input', (e) => config.fxCount = parseInt(e.target.value));
+    
+    let time = 0;
+
+    // --- SISTEM PARTIKEL EFEK SCI-FI ---
+    class SciFiParticle {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.z = Math.random() * width; // Untuk efek kedalaman (Warp)
+        this.size = Math.random() * 3 + 1;
+        this.speed = Math.random() * 2 + 0.5;
+        this.angle = Math.random() * Math.PI * 2;
+        // Warna warni cyberpunk (Cyan & Purple)
+        this.color = Math.random() > 0.5 ? '#00d2ff' : '#e040fb'; 
+        // Karakter acak mirip tulisan Jepang/Matrix
+        this.char = String.fromCharCode(0x30A0 + Math.random() * 96); 
+      }
+      update() {
+        if (config.fxType === 'none') return;
+        let s = this.speed * config.fxSpeed;
+        
+        if (config.fxType === 'cyber_snow') {
+          this.y += s;
+          this.x += Math.sin(this.angle) * 0.5;
+          this.angle += 0.05;
+          if (this.y > height + 10) { this.reset(); this.y = -10; }
+        } 
+        else if (config.fxType === 'hyper_warp') {
+          this.z -= s * 10;
+          if (this.z <= 0) { this.reset(); this.z = width; }
+        } 
+        else if (config.fxType === 'matrix_rain') {
+          this.y += s * 3;
+          if (this.y > height + 20) { this.reset(); this.y = -20; }
+          // Ubah karakter secara acak untuk efek Matrix
+          if (Math.random() > 0.95) this.char = String.fromCharCode(0x30A0 + Math.random() * 96);
+        } 
+        else if (config.fxType === 'energy_dust') {
+          this.y -= s;
+          this.x += Math.sin(this.angle) * 1;
+          this.angle += 0.02;
+          if (this.y < -10) { this.reset(); this.y = height + 10; }
+        }
+        else if (config.fxType === 'laser_beams') {
+          this.x += s * 15; // Melesat cepat menyamping
+          if (this.x > width + 50) { 
+            this.reset(); 
+            this.x = -50; 
+            this.y = Math.random() * height; 
+          }
+        }
+        else if (config.fxType === 'glitch_pixels') {
+          this.life = (this.life || 0) - s;
+          if (this.life <= 0) {
+            this.reset();
+            this.life = Math.random() * 50 + 10;
+            this.x = Math.random() * width;
+            this.y = Math.random() * height;
+            this.size = Math.random() * 4 + 2;
+          }
+        }
+      }
+      draw() {
+        if (config.fxType === 'none') return;
+        ctx.save();
+        
+        if (config.fxType === 'cyber_snow') {
+          ctx.fillStyle = this.color;
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = this.color;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fill();
+        } 
+        else if (config.fxType === 'hyper_warp') {
+          // Proyeksi 3D sederhana
+          let fov = 250;
+          let px = (this.x - width/2) * (fov/this.z) + width/2;
+          let py = (this.y - height/2) * (fov/this.z) + height/2;
+          
+          let pZ = this.z + (this.speed * config.fxSpeed * 10);
+          let ppx = (this.x - width/2) * (fov/pZ) + width/2;
+          let ppy = (this.y - height/2) * (fov/pZ) + height/2;
+          
+          if (this.z > 0 && pZ > 0) {
+            ctx.strokeStyle = this.color;
+            // Garis makin tebal kalau makin dekat
+            ctx.lineWidth = Math.max(0.5, (1 - this.z / width) * 4);
+            ctx.shadowBlur = 5;
+            ctx.shadowColor = this.color;
+            ctx.beginPath();
+            ctx.moveTo(px, py);
+            ctx.lineTo(ppx, ppy);
+            ctx.stroke();
+          }
+        } 
+        else if (config.fxType === 'matrix_rain') {
+          ctx.fillStyle = '#00ffaa';
+          ctx.shadowBlur = 8;
+          ctx.shadowColor = '#00ffaa';
+          ctx.font = (this.size * 5) + 'px monospace';
+          ctx.fillText(this.char, this.x, this.y);
+        } 
+        else if (config.fxType === 'energy_dust') {
+          ctx.fillStyle = this.color;
+          ctx.shadowBlur = 15;
+          ctx.shadowColor = this.color;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size * 0.8, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        else if (config.fxType === 'laser_beams') {
+          ctx.strokeStyle = this.color;
+          ctx.lineWidth = Math.max(1, this.size / 2);
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = this.color;
+          ctx.beginPath();
+          ctx.moveTo(this.x, this.y);
+          ctx.lineTo(this.x + this.size * 20, this.y); // Garis melintang
+          ctx.stroke();
+        }
+        else if (config.fxType === 'glitch_pixels') {
+          ctx.fillStyle = Math.random() > 0.5 ? '#00d2ff' : '#ff0055';
+          ctx.shadowBlur = 0; // Tanpa shadow agar sangat enteng
+          ctx.globalAlpha = Math.random() > 0.8 ? 1 : 0.4;
+          ctx.fillRect(this.x, this.y, this.size * 2, this.size * 2);
+        }
+        ctx.restore();
+      }
+    }
+
+    // Buat maksimal 1000 partikel di awal agar tidak lemot saat ditambah (Pool System)
+    let particles = [];
+    for (let i = 0; i < 1000; i++) {
+      particles.push(new SciFiParticle());
+    }
+
+    function getSymmetricVal(index, totalBars, bufferLen) {
+      try {
+        if (!dataArray) return 0;
+        const center = totalBars / 2;
+        const centerDist = Math.abs(index - center) / center;
+        // Gunakan setengah buffer spektrum agar visualizer menyebar halus
+        const dataIdx = Math.floor(centerDist * (bufferLen / 2)); 
+        return dataArray[dataIdx] / 255;
+      } catch (e) {
+        return 0;
+      }
+    }
+
+    function drawVisualizer(bufferLen) {
+      const style = config.visType;
+      ctx.save();
+      ctx.translate(visX, visY);
+      
+      // Mode screen agar warna-warna spectrum menyala secara modern
+      ctx.globalCompositeOperation = 'screen';
+      
+      try {
+        if (style === 'cyber_eq') {
+          // 1. Cyberpunk EQ (Kotak-kotak ringan)
+          let numBars = 40;
+          let barW = 8;
+          let gap = 4;
+          let totalW = numBars * (barW + gap);
+          ctx.translate(-totalW / 2, 0);
+          ctx.shadowBlur = 0; // Matikan shadow agar enteng
+          
+          for (let i = 0; i < numBars; i++) {
+            let val = getSymmetricVal(i, numBars, bufferLen);
+            let numBlocks = Math.floor(val * 15) + 1; // maksimal 15 tingkat
+            let blockH = (config.visHeight / 15) - 2; // Kurangi 2px untuk celah (gap) antar blok vertikal
+            
+            for (let j = 0; j < numBlocks; j++) {
+              // Gradasi warna berdasarkan tinggi
+              ctx.fillStyle = j > 10 ? '#ff0055' : (j > 5 ? '#00d2ff' : '#00ffaa');
+              ctx.fillRect(i * (barW + gap), -(j * (blockH + 2)), barW, blockH);
+            }
+          }
+
+        } else if (style === 'neon_wire') {
+          // 2. Neon Wireframe (Garis Osiloskop Tunggal Cepat)
+          let numPoints = 64;
+          let totalW = 600;
+          ctx.translate(-totalW / 2, 0);
+          
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          for (let i = 0; i <= numPoints; i++) {
+            let val = getSymmetricVal(i, numPoints, bufferLen);
+            let h = val * config.visHeight;
+            let x = i * (totalW / numPoints);
+            ctx.lineTo(x, -h);
+          }
+          
+          ctx.strokeStyle = '#00d2ff';
+          ctx.lineWidth = 2.5;
+          ctx.shadowBlur = 12; // Cukup 1 kali shadow untuk seluruh garis
+          ctx.shadowColor = '#00d2ff';
+          ctx.stroke();
+
+        } else if (style === 'digital_barcode') {
+          // 3. Digital Barcode (Scan hologram vertikal simetris)
+          let numBars = 80;
+          let totalW = 600;
+          let barW = totalW / numBars;
+          ctx.translate(-totalW / 2, 0);
+          ctx.shadowBlur = 0; // Bebas lag
+          
+          for (let i = 0; i < numBars; i++) {
+            let val = getSymmetricVal(i, numBars, bufferLen);
+            let h = 10 + val * config.visHeight; // Tinggi minimal 10px
+            // Opacity dan kedipan diatur oleh seberapa kuat suara
+            ctx.fillStyle = `rgba(0, 255, 170, ${0.1 + val * 0.9})`;
+            ctx.fillRect(i * barW, -h / 2, barW * 0.6, h);
+          }
+
+        } else if (style === 'digital_wave') {
+          // 4. Digital Waveform (Gelombang Solid Halus)
+          let numPoints = 80;
+          let totalW = 600;
+          ctx.translate(-totalW / 2, 0);
+          
+          // Latar gradasi gelombang
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          for (let i = 0; i <= numPoints; i++) {
+            let val = getSymmetricVal(i, numPoints, bufferLen);
+            let h = val * config.visHeight;
+            let x = i * (totalW / numPoints);
+            ctx.lineTo(x, -h);
+          }
+          ctx.lineTo(totalW, 0);
+          
+          let grad = ctx.createLinearGradient(0, -config.visHeight, 0, 0);
+          grad.addColorStop(0, 'rgba(0, 255, 150, 0.5)');
+          grad.addColorStop(1, 'rgba(0, 255, 150, 0)');
+          ctx.fillStyle = grad;
+          ctx.fill();
+          
+          // Garis luar bersinar tajam
+          ctx.beginPath();
+          for (let i = 0; i <= numPoints; i++) {
+            let val = getSymmetricVal(i, numPoints, bufferLen);
+            let h = val * config.visHeight;
+            let x = i * (totalW / numPoints);
+            if (i === 0) ctx.moveTo(x, -h);
+            else ctx.lineTo(x, -h);
+          }
+          ctx.strokeStyle = 'rgba(100, 255, 200, 1)';
+          ctx.lineWidth = 3;
+          ctx.shadowBlur = 15;
+          ctx.shadowColor = '#00ffaa';
+          ctx.stroke();
+
+        } else if (style === 'data_spikes') {
+          // 5. Cyber Data Spikes (Tajam, Agresif, Futuristik)
+          let numPoints = 80;
+          let totalW = 600;
+          ctx.translate(-totalW / 2, 0);
+          ctx.shadowBlur = 0; 
+
+          // Latar Gradasi Solid
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          for (let i = 0; i <= numPoints; i++) {
+            let val = getSymmetricVal(i, numPoints, bufferLen);
+            let h = val * config.visHeight;
+            let x = i * (totalW / numPoints);
+            ctx.lineTo(x, -h);
+          }
+          ctx.lineTo(totalW, 0);
+          
+          let grad = ctx.createLinearGradient(0, -config.visHeight, 0, 0);
+          grad.addColorStop(0, 'rgba(255, 0, 85, 0.4)'); // Pink Cyberpunk
+          grad.addColorStop(1, 'rgba(255, 0, 85, 0)');
+          ctx.fillStyle = grad;
+          ctx.fill();
+
+          // Garis Tajam
+          ctx.beginPath();
+          for (let i = 0; i <= numPoints; i++) {
+            let val = getSymmetricVal(i, numPoints, bufferLen);
+            let h = val * config.visHeight;
+            let x = i * (totalW / numPoints);
+            if (i === 0) ctx.moveTo(x, -h);
+            else ctx.lineTo(x, -h);
+          }
+          ctx.strokeStyle = '#ff0055';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+
+          // Titik Glitch Cyan Di Puncak
+          ctx.fillStyle = '#00ffff';
+          for (let i = 0; i <= numPoints; i += 2) {
+             let val = getSymmetricVal(i, numPoints, bufferLen);
+             if (val > 0.25) { // Hanya render titik jika bass cukup tinggi
+                 let h = val * config.visHeight;
+                 let x = i * (totalW / numPoints);
+                 ctx.fillRect(x - 1.5, -h - 6, 3, 3);
+             }
+          }
+
+        } else if (style === 'quantum_dots') {
+          // 6. Quantum Dots (DIOPTIMASI AGAR TIDAK LAG)
+          let numDots = 60;
+          let gap = 8;
+          let totalW = numDots * gap;
+          ctx.translate(-totalW / 2, 0);
+          
+          // Matikan bayangan (shadow) yang bikin lag berat, gunakan lapisan warna saja
+          ctx.shadowBlur = 0; 
+
+          // Garis penghubung tipis
+          ctx.beginPath();
+          for (let i = 0; i < numDots; i++) {
+            let val = getSymmetricVal(i, numDots, bufferLen);
+            let h = val * config.visHeight;
+            let x = i * gap;
+            if (i === 0) ctx.moveTo(x, -h);
+            else ctx.lineTo(x, -h);
+          }
+          ctx.strokeStyle = 'rgba(0, 150, 255, 0.4)';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+          
+          // Titik terang (Draw dalam satu batch agar sangat ringan)
+          ctx.fillStyle = 'rgba(200, 230, 255, 0.9)';
+          ctx.beginPath();
+          for (let i = 0; i < numDots; i++) {
+            let val = getSymmetricVal(i, numDots, bufferLen);
+            let h = val * config.visHeight;
+            let x = i * gap;
+            ctx.moveTo(x, -h);
+            ctx.arc(x, -h, 2 + val * 3, 0, Math.PI*2);
+          }
+          ctx.fill();
+
+        } else if (style === 'holo_dna') {
+          // 7. Holographic DNA (Sci-Fi Super Ringan)
+          let numStrands = 36;
+          let gap = 12;
+          let totalW = numStrands * gap;
+          ctx.translate(-totalW / 2, 0);
+          ctx.shadowBlur = 0;
+
+          for (let i = 0; i < numStrands; i++) {
+            let val = getSymmetricVal(i, numStrands, bufferLen);
+            let h = 10 + val * config.visHeight;
+
+            // Gelombang DNA
+            let offset = Math.sin(time * 2 + i * 0.3) * 30;
+            let x = i * gap;
+            let y1 = offset - h / 2;
+            let y2 = offset + h / 2;
+
+            // Garis penghubung yang tipis dan enteng
+            ctx.beginPath();
+            ctx.moveTo(x, y1);
+            ctx.lineTo(x, y2);
+            ctx.strokeStyle = `rgba(0, 150, 255, ${0.1 + val * 0.5})`;
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            // Titik Genetik Atas (Cyan)
+            ctx.fillStyle = `rgba(0, 255, 255, ${0.5 + val * 0.5})`;
+            ctx.beginPath();
+            ctx.arc(x, y1, 2 + val * 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Titik Genetik Bawah (Magenta)
+            ctx.fillStyle = `rgba(255, 0, 255, ${0.5 + val * 0.5})`;
+            ctx.beginPath();
+            ctx.arc(x, y2, 2 + val * 3, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+        } else if (style === 'cyber_pulse') {
+          // 8. Cyber Pulse (Gelombang Tajam Glitch)
+          let numPoints = 64;
+          let totalW = 600;
+          ctx.translate(-totalW / 2, 0);
+
+          // Garis Atas
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          for (let i = 0; i < numPoints; i++) {
+            let val = getSymmetricVal(i, numPoints, bufferLen);
+            let h = val * config.visHeight;
+            let x = i * (totalW / (numPoints - 1));
+            // Sedikit glitch jitter acak
+            let jitter = (Math.random() - 0.5) * val * 20; 
+            if (i === 0 || i === numPoints - 1) jitter = 0;
+            ctx.lineTo(x, -h + jitter);
+          }
+          ctx.strokeStyle = '#ff0055';
+          ctx.lineWidth = 2.5;
+          ctx.shadowBlur = 10; // Cukup 1 shadow untuk seluruh garis agar enteng
+          ctx.shadowColor = '#ff0055';
+          ctx.stroke();
+
+          // Garis Pantulan Bawah
+          ctx.shadowBlur = 0;
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          for (let i = 0; i < numPoints; i++) {
+            let val = getSymmetricVal(i, numPoints, bufferLen);
+            let h = val * (config.visHeight * 0.4);
+            let x = i * (totalW / (numPoints - 1));
+            let jitter = (Math.random() - 0.5) * val * 10;
+            if (i === 0 || i === numPoints - 1) jitter = 0;
+            ctx.lineTo(x, h + jitter);
+          }
+          ctx.strokeStyle = 'rgba(255, 0, 85, 0.4)';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+
+        } else if (style === 'hex_grid') {
+          // 9. Hexagon Grid (Sarang Lebah Melebar)
+          let numHex = 22;
+          let radius = 12;
+          let gap = 6;
+          let totalW = numHex * (radius * 2 + gap);
+          ctx.translate(-totalW / 2, 0);
+          ctx.shadowBlur = 0;
+
+          for (let i = 0; i < numHex; i++) {
+            let val = getSymmetricVal(i, numHex, bufferLen);
+            let scale = 0.6 + val * 1.5; // Membesar sesuai bass
+            let alpha = 0.2 + val * 0.8;
+            let x = i * (radius * 2 + gap) + radius;
+
+            ctx.save();
+            ctx.translate(x, -config.visHeight/2);
+            ctx.scale(scale, scale);
+            
+            // Gambar Segi Enam
+            ctx.beginPath();
+            for (let j = 0; j < 6; j++) {
+              let angle = (j * Math.PI) / 3;
+              let hx = Math.cos(angle) * radius;
+              let hy = Math.sin(angle) * radius;
+              if (j === 0) ctx.moveTo(hx, hy);
+              else ctx.lineTo(hx, hy);
+            }
+            ctx.closePath();
+            
+            ctx.strokeStyle = `rgba(0, 255, 150, ${alpha})`;
+            ctx.lineWidth = 2;
+            if (val > 0.2) {
+               ctx.fillStyle = `rgba(0, 255, 150, ${alpha * 0.4})`;
+               ctx.fill();
+            }
+            ctx.stroke();
+            ctx.restore();
+          }
+
+        } else if (style === 'orbit_core') {
+          // 10. Orbiting Core (Inti Tata Surya Enerjik)
+          let coreVal = getSymmetricVal(10, 20, bufferLen); // Mengambil nilai frekuensi tengah
+          let coreRadius = 30 + coreVal * (config.visHeight * 0.4);
+          let centerY = -config.visHeight / 2;
+
+          ctx.shadowBlur = 0;
+
+          // Inti yang bersinar
+          ctx.beginPath();
+          ctx.arc(0, centerY, coreRadius, 0, Math.PI * 2);
+          let grad = ctx.createRadialGradient(0, centerY, 0, 0, centerY, coreRadius);
+          grad.addColorStop(0, '#ffffff');
+          grad.addColorStop(0.3, '#00bfff');
+          grad.addColorStop(1, 'rgba(0, 191, 255, 0)');
+          ctx.fillStyle = grad;
+          ctx.fill();
+
+          // Garis lintasan yang pecah dan mengorbit
+          let numArcs = 8;
+          ctx.translate(0, centerY);
+          for (let i = 0; i < numArcs; i++) {
+            let val = getSymmetricVal(i * 2, numArcs * 2, bufferLen);
+            let arcRadius = coreRadius + 20 + val * (config.visHeight * 0.5);
+            
+            // Putaran berlawanan arah
+            let startAngle = (i / numArcs) * Math.PI * 2 + time * (i % 2 === 0 ? 0.8 : -0.8);
+            let endAngle = startAngle + (Math.PI / numArcs) * (1 + val * 1.5);
+
+            ctx.beginPath();
+            ctx.arc(0, 0, arcRadius, startAngle, endAngle);
+            ctx.strokeStyle = `rgba(0, 191, 255, ${0.4 + val * 0.6})`;
+            ctx.lineWidth = 2 + val * 6; // Menebal saat frekuensi tinggi
+            ctx.stroke();
+          }
+        }
+      } catch (e) {}
+      ctx.restore();
+    }
+
+    function animate() {
+      ctx.fillStyle = "#000";
+      ctx.fillRect(0, 0, width, height);
+      
+      // HANYA tambah waktu (untuk rotasi) jika musik SEDANG DIMAINKAN
+      // Sehingga ketika musik berhenti, semua pergerakan layar akan mati total (membeku)
+      if (isAudioInit && !audioPlayer.paused) {
+        time += 0.02; 
+      }
+      
+      if (isBgReady) {
+        const scale = Math.max(width / bgImageElement.width, height / bgImageElement.height);
+        const x = (width / 2) - (bgImageElement.width / 2) * scale;
+        const y = (height / 2) - (bgImageElement.height / 2) * scale;
+        ctx.drawImage(bgImageElement, x, y, bgImageElement.width * scale, bgImageElement.height * scale);
+      }
+      
+      // Update dan Render Efek Sci-Fi di atas foto
+      // Bergerak terus menerus walaupun musik dijeda
+      for (let i = 0; i < config.fxCount; i++) {
+        particles[i].update();
+      }
+      
+      for (let i = 0; i < config.fxCount; i++) {
+        particles[i].draw();
+      }
+      
+      // Update data audio
+      if (isAudioInit && !audioPlayer.paused && currentObjectUrl) {
+        analyser.getByteFrequencyData(dataArray);
+      } else if (dataArray) {
+        // Efek turun perlahan ke 0 saat dijeda/berhenti, sampai jatuh menjadi garis datar
+        for (let i = 0; i < dataArray.length; i++) {
+          dataArray[i] = Math.max(0, dataArray[i] - 5);
+        }
+      }
+      
+      drawVisualizer(isAudioInit ? analyser.frequencyBinCount : 128);
+      
+      requestAnimationFrame(animate);
+    }
+    animate();
+    
+    let mediaRecorder, chunks = [];
+    let recordStartTime = 0;
+
+    function startCountdownAndRecord() {
+      if (!isAudioInit || !currentObjectUrl) {
+        alert("Pilih dan siapkan musik dulu!");
+        return;
+      }
+      if (isCountingDown) {
+        clearInterval(countdownTimer);
+        isCountingDown = false;
+        countdownOverlay.style.display = 'none';
+        recordBtn.innerText = "🔴 MULAI REKAM 720p";
+        return;
+      }
+      isCountingDown = true;
+      let counter = 3;
+      countdownOverlay.innerText = counter;
+      countdownOverlay.style.display = 'block';
+      recordBtn.innerText = "❌ BATALKAN REKAM (" + counter + ")";
+      countdownTimer = setInterval(() => {
+        counter--;
+        if (counter > 0) {
+          countdownOverlay.innerText = counter;
+          recordBtn.innerText = "❌ BATALKAN REKAM (" + counter + ")";
+        } else {
+          clearInterval(countdownTimer);
+          isCountingDown = false;
+          countdownOverlay.style.display = 'none';
+          executeRecording();
+        }
+      }, 1000);
+    }
+
+    function executeRecording() {
+      if (!audioCtx) initAudioContext();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      audioPlayer.play();
+      playBtn.innerText = "⏸ PAUSE";
+      stopOverlay.style.display = 'block';
+      statusBox.innerText = "🔴 Merekam HD 720p WebM...";
+      recordBtn.innerText = "🔴 SEDANG MEREKAM";
+      const stream = canvas.captureStream(30);
+      const combined = new MediaStream([...stream.getVideoTracks(), mediaStreamDestination.stream.getAudioTracks()[0]]);
+      try {
+        mediaRecorder = new MediaRecorder(combined, {
+          mimeType: 'video/webm',
+          videoBitsPerSecond: 2480000
+        });
+      } catch (e) {
+        mediaRecorder = new MediaRecorder(combined);
+      }
+      mediaRecorder.ondataavailable = e => {
+        if (e.data.size > 0) chunks.push(e.data);
+      };
+      mediaRecorder.onstop = saveVideoWebM;
+      chunks = [];
+      recordStartTime = Date.now();
+      mediaRecorder.start(1000);
+    }
+
+    function stopRecording() {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+      }
+      audioPlayer.pause();
+      playBtn.innerText = "▶ PLAY";
+      stopOverlay.style.display = 'none';
+      recordBtn.innerText = "🔴 MULAI REKAM 720p";
+      statusBox.innerText = "Menjahit metadata durasi WebM...";
+      if (playTimeout) clearTimeout(playTimeout);
+    }
+
+    function saveVideoWebM() {
+      const blob = new Blob(chunks, {
+        type: 'video/webm'
+      });
+      const recordDuration = Date.now() - recordStartTime;
+      if (typeof ysFixWebmDuration === 'function') {
+        ysFixWebmDuration(blob, recordDuration, function(fixedBlob) {
+          triggerDownload(fixedBlob);
+        });
+      } else {
+        triggerDownload(blob);
+      }
+    }
+
+    function triggerDownload(finalBlob) {
+      const url = URL.createObjectURL(finalBlob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = `Lova_720p_HQ_${Date.now()}.webm`;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        window.URL.revokeObjectURL(url);
+        statusBox.innerText = "✅ Selesai! WebM bisa di-skip.";
+      }, 100);
+    }
+  </script>
+</body>
+
+</html>
