@@ -31,8 +31,7 @@
       border: 1px solid rgba(255, 255, 255, 0.3);
       background: transparent;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-      cursor: grab;
-    }
+      cursor: gra    }
 
     #canvas-wrapper:active {
       cursor: grabbing;
@@ -273,40 +272,21 @@
     <hr style="border: 0; border-top: 1px solid #444; width: 100%; margin: 5px 0;">
 
     <div class="row">
-      <label style="color:#00d2ff;">SPECTRUM VIS.</label>
+      <label style="color:#00d2ff;">VISUALIZER 3D</label>
       <select id="visType">
-        <option value="cyber_eq">📶 Cyberpunk EQ</option>
-        <option value="neon_wire">⚡ Neon Wireframe</option>
-        <option value="digital_barcode">🔣 Digital Barcode</option>
-        <option value="digital_wave">〰️ Digital Waveform</option>
-        <option value="data_spikes">⛰️ Cyber Data Spikes</option>
-        <option value="quantum_dots">✨ Quantum Dots</option>
-        <option value="holo_dna">🧬 Holographic DNA</option>
-        <option value="cyber_pulse">⚡ Cyber Pulse</option>
-        <option value="hex_grid">⬡ Hexagon Grid</option>
-        <option value="orbit_core">🪐 Orbiting Core</option>
+        <option value="cyber_halo">⭕ Holographic Halo</option>
+        <option value="quantum_ribbon">〰️ Quantum Ribbon</option>
+        <option value="zen_monoliths">🪨 Zen Monoliths</option>
+        <option value="neural_nodes">🌌 Neural Constellation</option>
+        <option value="grav_ripples">🎛️ Gravitational Ripples</option>
+        <option value="stellar_core">🌟 Stellar Plasma Core</option>
+        <option value="cyber_grid">🌐 Cybernetic Grid</option>
+        <option value="data_vortex">🌪️ Digital Vortex</option>
+        <option value="quantum_threads">🧬 Quantum Threads</option>
       </select>
     </div>
 
-    <div class="row"><label>TINGGI VIS.</label><input type="range" id="visHeight" min="30" max="600" value="200"></div>
-
-    <hr style="border: 0; border-top: 1px dashed #444; width: 100%; margin: 5px 0;">
-
-    <div class="row">
-      <label style="color:#00ffaa;">EFEK SCI-FI</label>
-      <select id="fxType">
-        <option value="none">🚫 Tanpa Efek</option>
-        <option value="cyber_snow">❄️ Cyber Snow (Salju Neon)</option>
-        <option value="matrix_rain">💻 Matrix Rain (Hujan Data)</option>
-        <option value="hyper_warp">🚀 Hyper Warp (Bintang Melesat)</option>
-        <option value="energy_dust">✨ Energy Dust (Debu Melayang)</option>
-        <option value="laser_beams">⚡ Garis Laser</option>
-        <option value="glitch_pixels">👾 Piksel Glitch</option>
-      </select>
-    </div>
-    
-    <div class="row"><label>KECEPATAN FX</label><input type="range" id="fxSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
-    <div class="row"><label>JUMLAH FX</label><input type="range" id="fxCount" min="0" max="1000" step="10" value="150"></div>
+    <div class="row"><label>TINGGI VIS.</label><input type="range" id="visHeight" min="30" max="450" value="120"></div>
 
     <button class="btn-record" id="recordBtn" onclick="startCountdownAndRecord()">🔴 MULAI REKAM 720p</button>
   </div>
@@ -604,164 +584,32 @@
     }
     
     const config = {
-      visType: 'cyber_eq',
-      visHeight: 200,
-      fxType: 'none',
-      fxSpeed: 1.0,
-      fxCount: 150
+      visType: 'cyber_halo',
+      visHeight: 120
     };
     document.getElementById('visType').addEventListener('change', (e) => config.visType = e.target.value);
     document.getElementById('visHeight').addEventListener('input', (e) => config.visHeight = parseInt(e.target.value));
-    document.getElementById('fxType').addEventListener('change', (e) => config.fxType = e.target.value);
-    document.getElementById('fxSpeed').addEventListener('input', (e) => config.fxSpeed = parseFloat(e.target.value));
-    document.getElementById('fxCount').addEventListener('input', (e) => config.fxCount = parseInt(e.target.value));
     
     let time = 0;
-
-    // --- SISTEM PARTIKEL EFEK SCI-FI ---
-    class SciFiParticle {
-      constructor() {
-        this.reset();
-      }
-      reset() {
-        this.x = Math.random() * width;
-        this.y = Math.random() * height;
-        this.z = Math.random() * width; // Untuk efek kedalaman (Warp)
-        this.size = Math.random() * 3 + 1;
-        this.speed = Math.random() * 2 + 0.5;
-        this.angle = Math.random() * Math.PI * 2;
-        // Warna warni cyberpunk (Cyan & Purple)
-        this.color = Math.random() > 0.5 ? '#00d2ff' : '#e040fb'; 
-        // Karakter acak mirip tulisan Jepang/Matrix
-        this.char = String.fromCharCode(0x30A0 + Math.random() * 96); 
-      }
-      update() {
-        if (config.fxType === 'none') return;
-        let s = this.speed * config.fxSpeed;
-        
-        if (config.fxType === 'cyber_snow') {
-          this.y += s;
-          this.x += Math.sin(this.angle) * 0.5;
-          this.angle += 0.05;
-          if (this.y > height + 10) { this.reset(); this.y = -10; }
-        } 
-        else if (config.fxType === 'hyper_warp') {
-          this.z -= s * 10;
-          if (this.z <= 0) { this.reset(); this.z = width; }
-        } 
-        else if (config.fxType === 'matrix_rain') {
-          this.y += s * 3;
-          if (this.y > height + 20) { this.reset(); this.y = -20; }
-          // Ubah karakter secara acak untuk efek Matrix
-          if (Math.random() > 0.95) this.char = String.fromCharCode(0x30A0 + Math.random() * 96);
-        } 
-        else if (config.fxType === 'energy_dust') {
-          this.y -= s;
-          this.x += Math.sin(this.angle) * 1;
-          this.angle += 0.02;
-          if (this.y < -10) { this.reset(); this.y = height + 10; }
-        }
-        else if (config.fxType === 'laser_beams') {
-          this.x += s * 15; // Melesat cepat menyamping
-          if (this.x > width + 50) { 
-            this.reset(); 
-            this.x = -50; 
-            this.y = Math.random() * height; 
-          }
-        }
-        else if (config.fxType === 'glitch_pixels') {
-          this.life = (this.life || 0) - s;
-          if (this.life <= 0) {
-            this.reset();
-            this.life = Math.random() * 50 + 10;
-            this.x = Math.random() * width;
-            this.y = Math.random() * height;
-            this.size = Math.random() * 4 + 2;
-          }
-        }
-      }
-      draw() {
-        if (config.fxType === 'none') return;
-        ctx.save();
-        
-        if (config.fxType === 'cyber_snow') {
-          ctx.fillStyle = this.color;
-          ctx.shadowBlur = 10;
-          ctx.shadowColor = this.color;
-          ctx.beginPath();
-          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-          ctx.fill();
-        } 
-        else if (config.fxType === 'hyper_warp') {
-          // Proyeksi 3D sederhana
-          let fov = 250;
-          let px = (this.x - width/2) * (fov/this.z) + width/2;
-          let py = (this.y - height/2) * (fov/this.z) + height/2;
-          
-          let pZ = this.z + (this.speed * config.fxSpeed * 10);
-          let ppx = (this.x - width/2) * (fov/pZ) + width/2;
-          let ppy = (this.y - height/2) * (fov/pZ) + height/2;
-          
-          if (this.z > 0 && pZ > 0) {
-            ctx.strokeStyle = this.color;
-            // Garis makin tebal kalau makin dekat
-            ctx.lineWidth = Math.max(0.5, (1 - this.z / width) * 4);
-            ctx.shadowBlur = 5;
-            ctx.shadowColor = this.color;
-            ctx.beginPath();
-            ctx.moveTo(px, py);
-            ctx.lineTo(ppx, ppy);
-            ctx.stroke();
-          }
-        } 
-        else if (config.fxType === 'matrix_rain') {
-          ctx.fillStyle = '#00ffaa';
-          ctx.shadowBlur = 8;
-          ctx.shadowColor = '#00ffaa';
-          ctx.font = (this.size * 5) + 'px monospace';
-          ctx.fillText(this.char, this.x, this.y);
-        } 
-        else if (config.fxType === 'energy_dust') {
-          ctx.fillStyle = this.color;
-          ctx.shadowBlur = 15;
-          ctx.shadowColor = this.color;
-          ctx.beginPath();
-          ctx.arc(this.x, this.y, this.size * 0.8, 0, Math.PI * 2);
-          ctx.fill();
-        }
-        else if (config.fxType === 'laser_beams') {
-          ctx.strokeStyle = this.color;
-          ctx.lineWidth = Math.max(1, this.size / 2);
-          ctx.shadowBlur = 10;
-          ctx.shadowColor = this.color;
-          ctx.beginPath();
-          ctx.moveTo(this.x, this.y);
-          ctx.lineTo(this.x + this.size * 20, this.y); // Garis melintang
-          ctx.stroke();
-        }
-        else if (config.fxType === 'glitch_pixels') {
-          ctx.fillStyle = Math.random() > 0.5 ? '#00d2ff' : '#ff0055';
-          ctx.shadowBlur = 0; // Tanpa shadow agar sangat enteng
-          ctx.globalAlpha = Math.random() > 0.8 ? 1 : 0.4;
-          ctx.fillRect(this.x, this.y, this.size * 2, this.size * 2);
-        }
-        ctx.restore();
-      }
-    }
-
-    // Buat maksimal 1000 partikel di awal agar tidak lemot saat ditambah (Pool System)
-    let particles = [];
-    for (let i = 0; i < 1000; i++) {
-      particles.push(new SciFiParticle());
-    }
+    
+    // Variabel state untuk visualizer Sci-Fi Minimalist
+    let neuralNodes = Array.from({length: 40}, () => ({
+        x: (Math.random()-0.5)*300,
+        y: (Math.random()-0.5)*150,
+        z: Math.random()*300 - 150,
+        vx: (Math.random()-0.5)*0.2,
+        vy: (Math.random()-0.5)*0.2,
+        vz: (Math.random()-0.5)*0.2
+    }));
+    let ripples = [];
 
     function getSymmetricVal(index, totalBars, bufferLen) {
       try {
         if (!dataArray) return 0;
         const center = totalBars / 2;
         const centerDist = Math.abs(index - center) / center;
-        // Gunakan setengah buffer spektrum agar visualizer menyebar halus
-        const dataIdx = Math.floor(centerDist * (bufferLen / 2)); 
+        // Ambil frekuensi rendah/tengah yang stabil untuk ambient drone
+        const dataIdx = Math.floor(centerDist * (bufferLen / 3));
         return dataArray[dataIdx] / 255;
       } catch (e) {
         return 0;
@@ -773,342 +621,291 @@
       ctx.save();
       ctx.translate(visX, visY);
       
-      // Mode screen agar warna-warna spectrum menyala secara modern
+      // Menggunakan mode screen agar warna menyala elegan seperti hologram
       ctx.globalCompositeOperation = 'screen';
       
       try {
-        if (style === 'cyber_eq') {
-          // 1. Cyberpunk EQ (Kotak-kotak ringan)
-          let numBars = 40;
-          let barW = 8;
-          let gap = 4;
-          let totalW = numBars * (barW + gap);
-          ctx.translate(-totalW / 2, 0);
-          ctx.shadowBlur = 0; // Matikan shadow agar enteng
+        if (style === 'cyber_halo') {
+          // 1. Holographic Halo (Cincin Sci-Fi Minimalis)
+          let val = getSymmetricVal(10, 30, bufferLen);
+          let val2 = getSymmetricVal(5, 30, bufferLen);
           
-          for (let i = 0; i < numBars; i++) {
-            let val = getSymmetricVal(i, numBars, bufferLen);
-            let numBlocks = Math.floor(val * 15) + 1; // maksimal 15 tingkat
-            let blockH = (config.visHeight / 15) - 2; // Kurangi 2px untuk celah (gap) antar blok vertikal
-            
-            for (let j = 0; j < numBlocks; j++) {
-              // Gradasi warna berdasarkan tinggi
-              ctx.fillStyle = j > 10 ? '#ff0055' : (j > 5 ? '#00d2ff' : '#00ffaa');
-              ctx.fillRect(i * (barW + gap), -(j * (blockH + 2)), barW, blockH);
-            }
-          }
-
-        } else if (style === 'neon_wire') {
-          // 2. Neon Wireframe (Garis Osiloskop Tunggal Cepat)
-          let numPoints = 64;
-          let totalW = 600;
-          ctx.translate(-totalW / 2, 0);
+          let baseR = 80 + val * config.visHeight * 0.4;
+          let tilt = 0.35; // Kemiringan perspective 3D
           
+          // Outer glowing ring
           ctx.beginPath();
-          ctx.moveTo(0, 0);
-          for (let i = 0; i <= numPoints; i++) {
-            let val = getSymmetricVal(i, numPoints, bufferLen);
-            let h = val * config.visHeight;
-            let x = i * (totalW / numPoints);
-            ctx.lineTo(x, -h);
-          }
-          
-          ctx.strokeStyle = '#00d2ff';
-          ctx.lineWidth = 2.5;
-          ctx.shadowBlur = 12; // Cukup 1 kali shadow untuk seluruh garis
-          ctx.shadowColor = '#00d2ff';
-          ctx.stroke();
-
-        } else if (style === 'digital_barcode') {
-          // 3. Digital Barcode (Scan hologram vertikal simetris)
-          let numBars = 80;
-          let totalW = 600;
-          let barW = totalW / numBars;
-          ctx.translate(-totalW / 2, 0);
-          ctx.shadowBlur = 0; // Bebas lag
-          
-          for (let i = 0; i < numBars; i++) {
-            let val = getSymmetricVal(i, numBars, bufferLen);
-            let h = 10 + val * config.visHeight; // Tinggi minimal 10px
-            // Opacity dan kedipan diatur oleh seberapa kuat suara
-            ctx.fillStyle = `rgba(0, 255, 170, ${0.1 + val * 0.9})`;
-            ctx.fillRect(i * barW, -h / 2, barW * 0.6, h);
-          }
-
-        } else if (style === 'digital_wave') {
-          // 4. Digital Waveform (Gelombang Solid Halus)
-          let numPoints = 80;
-          let totalW = 600;
-          ctx.translate(-totalW / 2, 0);
-          
-          // Latar gradasi gelombang
-          ctx.beginPath();
-          ctx.moveTo(0, 0);
-          for (let i = 0; i <= numPoints; i++) {
-            let val = getSymmetricVal(i, numPoints, bufferLen);
-            let h = val * config.visHeight;
-            let x = i * (totalW / numPoints);
-            ctx.lineTo(x, -h);
-          }
-          ctx.lineTo(totalW, 0);
-          
-          let grad = ctx.createLinearGradient(0, -config.visHeight, 0, 0);
-          grad.addColorStop(0, 'rgba(0, 255, 150, 0.5)');
-          grad.addColorStop(1, 'rgba(0, 255, 150, 0)');
-          ctx.fillStyle = grad;
-          ctx.fill();
-          
-          // Garis luar bersinar tajam
-          ctx.beginPath();
-          for (let i = 0; i <= numPoints; i++) {
-            let val = getSymmetricVal(i, numPoints, bufferLen);
-            let h = val * config.visHeight;
-            let x = i * (totalW / numPoints);
-            if (i === 0) ctx.moveTo(x, -h);
-            else ctx.lineTo(x, -h);
-          }
-          ctx.strokeStyle = 'rgba(100, 255, 200, 1)';
-          ctx.lineWidth = 3;
+          ctx.ellipse(0, 0, baseR, baseR * tilt, time * 0.1, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(0, 255, 255, ${0.4 + val * 0.4})`;
+          ctx.lineWidth = 1.5 + val2 * 5;
           ctx.shadowBlur = 15;
-          ctx.shadowColor = '#00ffaa';
+          ctx.shadowColor = '#00ffff';
           ctx.stroke();
-
-        } else if (style === 'data_spikes') {
-          // 5. Cyber Data Spikes (Tajam, Agresif, Futuristik)
-          let numPoints = 80;
-          let totalW = 600;
-          ctx.translate(-totalW / 2, 0);
-          ctx.shadowBlur = 0; 
-
-          // Latar Gradasi Solid
-          ctx.beginPath();
-          ctx.moveTo(0, 0);
-          for (let i = 0; i <= numPoints; i++) {
-            let val = getSymmetricVal(i, numPoints, bufferLen);
-            let h = val * config.visHeight;
-            let x = i * (totalW / numPoints);
-            ctx.lineTo(x, -h);
-          }
-          ctx.lineTo(totalW, 0);
           
-          let grad = ctx.createLinearGradient(0, -config.visHeight, 0, 0);
-          grad.addColorStop(0, 'rgba(255, 0, 85, 0.4)'); // Pink Cyberpunk
-          grad.addColorStop(1, 'rgba(255, 0, 85, 0)');
-          ctx.fillStyle = grad;
-          ctx.fill();
-
-          // Garis Tajam
+          // Inner solid core ring
           ctx.beginPath();
-          for (let i = 0; i <= numPoints; i++) {
-            let val = getSymmetricVal(i, numPoints, bufferLen);
-            let h = val * config.visHeight;
-            let x = i * (totalW / numPoints);
-            if (i === 0) ctx.moveTo(x, -h);
-            else ctx.lineTo(x, -h);
+          ctx.ellipse(0, 0, baseR * 0.85, baseR * 0.85 * tilt, -time * 0.15, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(100, 200, 255, 0.8)`;
+          ctx.lineWidth = 1;
+          ctx.shadowBlur = 5;
+          ctx.stroke();
+          
+          // 3 Orbiting light dots
+          for(let i=0; i<3; i++) {
+             let angle = time * (0.5 + i*0.2) + (Math.PI*2/3)*i;
+             let x = Math.cos(angle) * baseR;
+             let y = Math.sin(angle) * baseR * tilt;
+             ctx.beginPath();
+             ctx.arc(x, y, 2 + val*3, 0, Math.PI*2);
+             ctx.fillStyle = '#fff';
+             ctx.fill();
           }
-          ctx.strokeStyle = '#ff0055';
+        } else if (style === 'quantum_ribbon') {
+          // 2. Quantum Ribbon (Pita Halus Melayang)
+          ctx.beginPath();
+          let pts = 60;
+          let widthSpan = 250; // Lebih ringkas agar tidak menutupi layar
+          
+          for(let i=0; i<=pts; i++) {
+            let val = getSymmetricVal(i, pts, bufferLen);
+            let x = (i - pts/2) * (widthSpan/pts);
+            
+            // 3D Z-waving effect
+            let z = Math.sin(time*0.5 + i*0.1) * 80; 
+            let scale = 300 / (300 + z);
+            
+            // Y bereaksi terhadap audio dan waktu
+            let y = (-val * config.visHeight * 0.8) * scale + Math.cos(time*0.8 + i*0.05) * 15;
+            
+            if(i===0) ctx.moveTo(x*scale, y*scale);
+            else ctx.lineTo(x*scale, y*scale);
+          }
+          
+          ctx.strokeStyle = 'rgba(150, 220, 255, 0.7)';
+          ctx.lineWidth = 2;
+          ctx.shadowBlur = 15;
+          ctx.shadowColor = 'rgba(0, 150, 255, 1)';
+          ctx.stroke();
+          
+          // Center bright highlight
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+          ctx.lineWidth = 0.5;
+          ctx.shadowBlur = 0;
+          ctx.stroke();
+        } else if (style === 'zen_monoliths') {
+          // 3. Zen Monoliths (Batu Kaca Melayang Minimalis)
+          let numBars = 5; // Sedikit agar bersih
+          let spacing = 35;
+          ctx.translate(-(numBars-1)*spacing/2, 0);
+          
+          for(let i=0; i<numBars; i++) {
+            let val = getSymmetricVal(i*5, 30, bufferLen); 
+            // Gerakan mengambang perlahan (zen)
+            let floatY = Math.sin(time + i) * 8;
+            
+            let h = 20 + val * config.visHeight;
+            let w = 8;
+            let d3 = 5; // Ketebalan 3D
+            
+            ctx.translate(i*spacing, floatY);
+            
+            // Gradiasi efek kaca futuristik
+            let grad = ctx.createLinearGradient(0, -h, 0, 0);
+            grad.addColorStop(0, `rgba(0, 255, 200, ${0.4 + val*0.4})`);
+            grad.addColorStop(1, 'rgba(0, 50, 100, 0.0)');
+            
+            ctx.fillStyle = grad;
+            ctx.shadowBlur = 10 * val;
+            ctx.shadowColor = '#00ffcc';
+            
+            // Wajah Depan
+            ctx.beginPath();
+            ctx.moveTo(0, 0); ctx.lineTo(w, 0); ctx.lineTo(w, -h); ctx.lineTo(0, -h);
+            ctx.fill();
+            
+            // Wajah Samping
+            ctx.fillStyle = `rgba(0, 150, 200, ${0.1 + val*0.2})`;
+            ctx.beginPath();
+            ctx.moveTo(w, 0); ctx.lineTo(w + d3, -d3); ctx.lineTo(w + d3, -h - d3); ctx.lineTo(w, -h);
+            ctx.fill();
+            
+            // Edge highlight (tampilan bersih tajam)
+            ctx.strokeStyle = `rgba(255, 255, 255, ${0.3 + val*0.3})`;
+            ctx.lineWidth = 0.8;
+            ctx.shadowBlur = 0;
+            ctx.stroke();
+            
+            ctx.translate(-i*spacing, -floatY);
+          }
+        } else if (style === 'neural_nodes') {
+          // 4. Neural Constellation (Jaringan Partikel Abstrak - Diperbaiki agar sangat reaktif)
+          let baseVal = getSymmetricVal(5, 30, bufferLen);
+          let maxDist = 70 + baseVal * 100; 
+          
+          neuralNodes.forEach(node => {
+            let expand = 1 + (baseVal * 0.8); 
+            let nx = node.x * expand;
+            let ny = node.y * expand;
+            let nz = node.z;
+
+            node.x += node.vx; node.y += node.vy; node.z += node.vz;
+            if(Math.abs(node.x) > 120) node.vx *= -1;
+            if(Math.abs(node.y) > 60) node.vy *= -1;
+            if(Math.abs(node.z) > 120) node.vz *= -1;
+            
+            let scale = 300 / (300 + nz);
+            let px = nx * scale;
+            let py = ny * scale;
+            
+            neuralNodes.forEach(other => {
+               if(node === other) return;
+               let dx = nx - (other.x * expand);
+               let dy = ny - (other.y * expand);
+               let dz = nz - other.z;
+               let dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+               
+               if(dist < maxDist) {
+                 let alpha = 1 - (dist / maxDist);
+                 ctx.beginPath();
+                 ctx.moveTo(px, py);
+                 let oScale = 300 / (300 + other.z);
+                 ctx.lineTo(other.x * expand * oScale, other.y * expand * oScale);
+                 ctx.strokeStyle = `rgba(100, 200, 255, ${alpha * (0.2 + baseVal*0.8)})`;
+                 ctx.lineWidth = 0.5 + baseVal * 2;
+                 ctx.stroke();
+               }
+            });
+            
+            ctx.beginPath();
+            ctx.arc(px, py, (1.2 + baseVal*3) * scale, 0, Math.PI*2);
+            ctx.fillStyle = `rgba(255, 255, 255, ${0.4 + baseVal})`;
+            ctx.fill();
+          });
+        } else if (style === 'grav_ripples') {
+          // 5. Gravitational Ripples (Diperbaiki agar berdenyut mengikuti ritme)
+          let val = getSymmetricVal(10, 30, bufferLen);
+          let bass = getSymmetricVal(3, 30, bufferLen);
+          let tilt = 0.35;
+          
+          let numRings = 10;
+          for(let i=1; i<=numRings; i++) {
+             let r = i * 20 + (val * config.visHeight * (i/numRings));
+             ctx.beginPath();
+             ctx.ellipse(0, 0, r, r * tilt, 0, 0, Math.PI*2);
+             ctx.strokeStyle = `rgba(0, 255, 255, ${0.1 + bass * 0.7})`;
+             ctx.lineWidth = 1 + val * 4;
+             ctx.shadowBlur = bass * 10;
+             ctx.shadowColor = '#00ffff';
+             ctx.stroke();
+          }
+          
+          ctx.beginPath();
+          let coreR = 15 + bass * config.visHeight * 0.3;
+          ctx.ellipse(0, 0, coreR, coreR * tilt, 0, 0, Math.PI*2);
+          ctx.fillStyle = `rgba(0, 200, 255, ${0.2 + bass*0.8})`;
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(255,255,255,0.8)';
           ctx.lineWidth = 2;
           ctx.stroke();
-
-          // Titik Glitch Cyan Di Puncak
-          ctx.fillStyle = '#00ffff';
-          for (let i = 0; i <= numPoints; i += 2) {
-             let val = getSymmetricVal(i, numPoints, bufferLen);
-             if (val > 0.25) { // Hanya render titik jika bass cukup tinggi
-                 let h = val * config.visHeight;
-                 let x = i * (totalW / numPoints);
-                 ctx.fillRect(x - 1.5, -h - 6, 3, 3);
-             }
-          }
-
-        } else if (style === 'quantum_dots') {
-          // 6. Quantum Dots (DIOPTIMASI AGAR TIDAK LAG)
-          let numDots = 60;
-          let gap = 8;
-          let totalW = numDots * gap;
-          ctx.translate(-totalW / 2, 0);
+        } else if (style === 'stellar_core') {
+          // 6. Stellar Plasma Core (Bintang Energi Reaktif)
+          let bass = getSymmetricVal(3, 30, bufferLen);
+          let coreR = 30 + bass * config.visHeight * 0.4;
           
-          // Matikan bayangan (shadow) yang bikin lag berat, gunakan lapisan warna saja
-          ctx.shadowBlur = 0; 
-
-          // Garis penghubung tipis
           ctx.beginPath();
-          for (let i = 0; i < numDots; i++) {
-            let val = getSymmetricVal(i, numDots, bufferLen);
-            let h = val * config.visHeight;
-            let x = i * gap;
-            if (i === 0) ctx.moveTo(x, -h);
-            else ctx.lineTo(x, -h);
-          }
-          ctx.strokeStyle = 'rgba(0, 150, 255, 0.4)';
-          ctx.lineWidth = 1;
-          ctx.stroke();
-          
-          // Titik terang (Draw dalam satu batch agar sangat ringan)
-          ctx.fillStyle = 'rgba(200, 230, 255, 0.9)';
-          ctx.beginPath();
-          for (let i = 0; i < numDots; i++) {
-            let val = getSymmetricVal(i, numDots, bufferLen);
-            let h = val * config.visHeight;
-            let x = i * gap;
-            ctx.moveTo(x, -h);
-            ctx.arc(x, -h, 2 + val * 3, 0, Math.PI*2);
-          }
-          ctx.fill();
-
-        } else if (style === 'holo_dna') {
-          // 7. Holographic DNA (Sci-Fi Super Ringan)
-          let numStrands = 36;
-          let gap = 12;
-          let totalW = numStrands * gap;
-          ctx.translate(-totalW / 2, 0);
-          ctx.shadowBlur = 0;
-
-          for (let i = 0; i < numStrands; i++) {
-            let val = getSymmetricVal(i, numStrands, bufferLen);
-            let h = 10 + val * config.visHeight;
-
-            // Gelombang DNA
-            let offset = Math.sin(time * 2 + i * 0.3) * 30;
-            let x = i * gap;
-            let y1 = offset - h / 2;
-            let y2 = offset + h / 2;
-
-            // Garis penghubung yang tipis dan enteng
-            ctx.beginPath();
-            ctx.moveTo(x, y1);
-            ctx.lineTo(x, y2);
-            ctx.strokeStyle = `rgba(0, 150, 255, ${0.1 + val * 0.5})`;
-            ctx.lineWidth = 1.5;
-            ctx.stroke();
-
-            // Titik Genetik Atas (Cyan)
-            ctx.fillStyle = `rgba(0, 255, 255, ${0.5 + val * 0.5})`;
-            ctx.beginPath();
-            ctx.arc(x, y1, 2 + val * 3, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Titik Genetik Bawah (Magenta)
-            ctx.fillStyle = `rgba(255, 0, 255, ${0.5 + val * 0.5})`;
-            ctx.beginPath();
-            ctx.arc(x, y2, 2 + val * 3, 0, Math.PI * 2);
-            ctx.fill();
-          }
-
-        } else if (style === 'cyber_pulse') {
-          // 8. Cyber Pulse (Gelombang Tajam Glitch)
-          let numPoints = 64;
-          let totalW = 600;
-          ctx.translate(-totalW / 2, 0);
-
-          // Garis Atas
-          ctx.beginPath();
-          ctx.moveTo(0, 0);
-          for (let i = 0; i < numPoints; i++) {
-            let val = getSymmetricVal(i, numPoints, bufferLen);
-            let h = val * config.visHeight;
-            let x = i * (totalW / (numPoints - 1));
-            // Sedikit glitch jitter acak
-            let jitter = (Math.random() - 0.5) * val * 20; 
-            if (i === 0 || i === numPoints - 1) jitter = 0;
-            ctx.lineTo(x, -h + jitter);
-          }
-          ctx.strokeStyle = '#ff0055';
-          ctx.lineWidth = 2.5;
-          ctx.shadowBlur = 10; // Cukup 1 shadow untuk seluruh garis agar enteng
-          ctx.shadowColor = '#ff0055';
-          ctx.stroke();
-
-          // Garis Pantulan Bawah
-          ctx.shadowBlur = 0;
-          ctx.beginPath();
-          ctx.moveTo(0, 0);
-          for (let i = 0; i < numPoints; i++) {
-            let val = getSymmetricVal(i, numPoints, bufferLen);
-            let h = val * (config.visHeight * 0.4);
-            let x = i * (totalW / (numPoints - 1));
-            let jitter = (Math.random() - 0.5) * val * 10;
-            if (i === 0 || i === numPoints - 1) jitter = 0;
-            ctx.lineTo(x, h + jitter);
-          }
-          ctx.strokeStyle = 'rgba(255, 0, 85, 0.4)';
-          ctx.lineWidth = 1;
-          ctx.stroke();
-
-        } else if (style === 'hex_grid') {
-          // 9. Hexagon Grid (Sarang Lebah Melebar)
-          let numHex = 22;
-          let radius = 12;
-          let gap = 6;
-          let totalW = numHex * (radius * 2 + gap);
-          ctx.translate(-totalW / 2, 0);
-          ctx.shadowBlur = 0;
-
-          for (let i = 0; i < numHex; i++) {
-            let val = getSymmetricVal(i, numHex, bufferLen);
-            let scale = 0.6 + val * 1.5; // Membesar sesuai bass
-            let alpha = 0.2 + val * 0.8;
-            let x = i * (radius * 2 + gap) + radius;
-
-            ctx.save();
-            ctx.translate(x, -config.visHeight/2);
-            ctx.scale(scale, scale);
-            
-            // Gambar Segi Enam
-            ctx.beginPath();
-            for (let j = 0; j < 6; j++) {
-              let angle = (j * Math.PI) / 3;
-              let hx = Math.cos(angle) * radius;
-              let hy = Math.sin(angle) * radius;
-              if (j === 0) ctx.moveTo(hx, hy);
-              else ctx.lineTo(hx, hy);
-            }
-            ctx.closePath();
-            
-            ctx.strokeStyle = `rgba(0, 255, 150, ${alpha})`;
-            ctx.lineWidth = 2;
-            if (val > 0.2) {
-               ctx.fillStyle = `rgba(0, 255, 150, ${alpha * 0.4})`;
-               ctx.fill();
-            }
-            ctx.stroke();
-            ctx.restore();
-          }
-
-        } else if (style === 'orbit_core') {
-          // 10. Orbiting Core (Inti Tata Surya Enerjik)
-          let coreVal = getSymmetricVal(10, 20, bufferLen); // Mengambil nilai frekuensi tengah
-          let coreRadius = 30 + coreVal * (config.visHeight * 0.4);
-          let centerY = -config.visHeight / 2;
-
-          ctx.shadowBlur = 0;
-
-          // Inti yang bersinar
-          ctx.beginPath();
-          ctx.arc(0, centerY, coreRadius, 0, Math.PI * 2);
-          let grad = ctx.createRadialGradient(0, centerY, 0, 0, centerY, coreRadius);
-          grad.addColorStop(0, '#ffffff');
-          grad.addColorStop(0.3, '#00bfff');
-          grad.addColorStop(1, 'rgba(0, 191, 255, 0)');
+          ctx.arc(0, 0, coreR, 0, Math.PI*2);
+          let grad = ctx.createRadialGradient(0,0,0, 0,0,coreR);
+          grad.addColorStop(0, 'rgba(255, 255, 255, 1)');
+          grad.addColorStop(0.5, `rgba(0, 255, 255, ${0.8 + bass*0.2})`);
+          grad.addColorStop(1, 'rgba(0, 100, 255, 0)');
           ctx.fillStyle = grad;
           ctx.fill();
 
-          // Garis lintasan yang pecah dan mengorbit
-          let numArcs = 8;
-          ctx.translate(0, centerY);
-          for (let i = 0; i < numArcs; i++) {
-            let val = getSymmetricVal(i * 2, numArcs * 2, bufferLen);
-            let arcRadius = coreRadius + 20 + val * (config.visHeight * 0.5);
-            
-            // Putaran berlawanan arah
-            let startAngle = (i / numArcs) * Math.PI * 2 + time * (i % 2 === 0 ? 0.8 : -0.8);
-            let endAngle = startAngle + (Math.PI / numArcs) * (1 + val * 1.5);
+          let rays = 72;
+          for(let i=0; i<rays; i++) {
+             let val = getSymmetricVal(i, rays, bufferLen);
+             let angle = (i / rays) * Math.PI * 2 + (time * 0.1);
+             let rayLen = coreR + val * config.visHeight * 1.5;
+             
+             ctx.beginPath();
+             ctx.moveTo(Math.cos(angle) * coreR, Math.sin(angle) * coreR);
+             ctx.lineTo(Math.cos(angle) * rayLen, Math.sin(angle) * rayLen);
+             ctx.strokeStyle = `rgba(0, 200, 255, ${0.2 + val*0.8})`;
+             ctx.lineWidth = 1 + val * 5;
+             ctx.stroke();
+          }
+        } else if (style === 'cyber_grid') {
+          // 7. Cybernetic Grid (Lantai Matrix 3D Reaktif)
+          let linesZ = 20;
+          let pointsX = 30;
+          let gridWidth = 600;
+          ctx.lineWidth = 1.5;
+          ctx.lineJoin = 'round';
+          
+          for(let z=linesZ; z>=1; z--) {
+             let scale = 300 / (300 + z * 20 - (time*15 % 20)); 
+             let yOffset = z * 10 * scale + 30;
+             let valZ = getSymmetricVal(z, linesZ, bufferLen); 
 
-            ctx.beginPath();
-            ctx.arc(0, 0, arcRadius, startAngle, endAngle);
-            ctx.strokeStyle = `rgba(0, 191, 255, ${0.4 + val * 0.6})`;
-            ctx.lineWidth = 2 + val * 6; // Menebal saat frekuensi tinggi
-            ctx.stroke();
+             ctx.beginPath();
+             for(let x=0; x<=pointsX; x++) {
+                let valX = getSymmetricVal(x, pointsX, bufferLen);
+                let h = (valX + valZ) * config.visHeight * scale;
+                
+                let px = (x - pointsX/2) * (gridWidth/pointsX) * scale;
+                let py = yOffset - h;
+
+                if(x === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+             }
+             ctx.strokeStyle = `rgba(0, 255, 150, ${1 - (z/linesZ)})`;
+             ctx.stroke();
+          }
+        } else if (style === 'data_vortex') {
+          // 8. Digital Vortex (Pusaran Data Tornado)
+          let rings = 25;
+          let tilt = 0.25;
+          for(let i=0; i<rings; i++) {
+             let val = getSymmetricVal(i, rings, bufferLen);
+             let r = 20 + i * 8 + (val * config.visHeight * 0.8);
+             let yPos = (i - rings/2) * 12 - (val * config.visHeight * 0.3);
+             let rotation = time * (0.5 + i*0.05);
+
+             ctx.beginPath();
+             ctx.ellipse(0, yPos, r, r * tilt, rotation, 0, Math.PI*2);
+             ctx.strokeStyle = `rgba(200, 100, 255, ${0.1 + val*0.9})`;
+             ctx.lineWidth = 1 + val * 4;
+             ctx.stroke();
+
+             let dotAngle = time * 3 + i;
+             ctx.beginPath();
+             ctx.arc(Math.cos(dotAngle) * r, yPos + Math.sin(dotAngle) * r * tilt, 2 + val*4, 0, Math.PI*2);
+             ctx.fillStyle = `rgba(255, 255, 255, ${0.5 + val})`;
+             ctx.fill();
+          }
+        } else if (style === 'quantum_threads') {
+          // 9. Quantum Threads (Serat Energi Liar)
+          let threads = 15;
+          for(let i=0; i<threads; i++) {
+             let val1 = getSymmetricVal(i*2, threads*2, bufferLen);
+             let val2 = getSymmetricVal(i*2+1, threads*2, bufferLen);
+             let bass = getSymmetricVal(2, 30, bufferLen);
+             let spread = 200 + bass * 150;
+             
+             let cp1x = -spread/2;
+             let cp1y = -config.visHeight * val1 * 2 + Math.sin(time*2 + i)*30;
+             let cp2x = spread/2;
+             let cp2y = config.visHeight * val2 * 2 + Math.cos(time*2 + i)*30;
+
+             ctx.beginPath();
+             ctx.moveTo(-spread, 0);
+             ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, spread, 0);
+             
+             ctx.strokeStyle = `rgba(0, ${150 + val1*100}, 255, ${0.2 + val2*0.8})`;
+             ctx.lineWidth = 1.5 + (val1 + val2) * 5;
+             ctx.shadowBlur = 15;
+             ctx.shadowColor = '#00aaff';
+             ctx.stroke();
           }
         }
       } catch (e) {}
@@ -1119,36 +916,25 @@
       ctx.fillStyle = "#000";
       ctx.fillRect(0, 0, width, height);
       
-      // HANYA tambah waktu (untuk rotasi) jika musik SEDANG DIMAINKAN
-      // Sehingga ketika musik berhenti, semua pergerakan layar akan mati total (membeku)
-      if (isAudioInit && !audioPlayer.paused) {
-        time += 0.02; 
-      }
+      time += 0.02; // Waktu berjalan lebih lambat untuk efek ambient calm
       
       if (isBgReady) {
         const scale = Math.max(width / bgImageElement.width, height / bgImageElement.height);
         const x = (width / 2) - (bgImageElement.width / 2) * scale;
         const y = (height / 2) - (bgImageElement.height / 2) * scale;
         ctx.drawImage(bgImageElement, x, y, bgImageElement.width * scale, bgImageElement.height * scale);
+        
+        // Lapisan transparan gelap agar cahaya visualizer sci-fi menonjol
+        ctx.fillStyle = "rgba(0, 10, 20, 0.4)";
+        ctx.fillRect(0, 0, width, height);
       }
       
-      // Update dan Render Efek Sci-Fi di atas foto
-      // Bergerak terus menerus walaupun musik dijeda
-      for (let i = 0; i < config.fxCount; i++) {
-        particles[i].update();
-      }
-      
-      for (let i = 0; i < config.fxCount; i++) {
-        particles[i].draw();
-      }
-      
-      // Update data audio
+      // Update data audio dengan transisi turun perlahan (smooth falloff)
       if (isAudioInit && !audioPlayer.paused && currentObjectUrl) {
         analyser.getByteFrequencyData(dataArray);
       } else if (dataArray) {
-        // Efek turun perlahan ke 0 saat dijeda/berhenti, sampai jatuh menjadi garis datar
         for (let i = 0; i < dataArray.length; i++) {
-          dataArray[i] = Math.max(0, dataArray[i] - 5);
+          dataArray[i] = Math.max(0, dataArray[i] - 2);
         }
       }
       
