@@ -1246,17 +1246,44 @@
     }
 
     function triggerDownload(finalBlob) {
-      const url = URL.createObjectURL(finalBlob);
-      const a = document.createElement('a');
-      a.style.display = 'none';
-      a.href = url;
-      a.download = `Lova_720p_HQ_${Date.now()}.webm`;
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(() => {
-        window.URL.revokeObjectURL(url);
-        statusBox.innerText = "✅ Selesai! WebM bisa di-skip.";
-      }, 100);
+      statusBox.innerText = "⏳ Sedang menyiapkan memori HP...";
+      
+      const reader = new FileReader();
+      reader.readAsDataURL(finalBlob);
+      reader.onloadend = async function() {
+        // PERBAIKAN: Potong tulisan "data:video/webm;base64," di depannya
+        const base64data = reader.result.split(',')[1];
+
+        try {
+          // Mode Android
+          if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem) {
+            statusBox.innerText = "⏳ Menyimpan ke Documents...";
+            await window.Capacitor.Plugins.Filesystem.writeFile({
+              path: `Lova_720p_HQ_${Date.now()}.webm`,
+              data: base64data,
+              directory: 'DOCUMENTS' 
+            });
+            statusBox.innerText = "✅ Tersimpan di folder Documents!";
+            alert('Sukses! Silakan cek folder Documents di HP agan.');
+          } else {
+            // Mode PC
+            const url = URL.createObjectURL(finalBlob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = `Lova_720p_HQ_${Date.now()}.webm`;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => {
+              window.URL.revokeObjectURL(url);
+              statusBox.innerText = "✅ Selesai didownload.";
+            }, 100);
+          }
+        } catch (error) {
+          statusBox.innerText = "❌ Gagal menyimpan.";
+          alert('Error detail: ' + JSON.stringify(error));
+        }
+      }
     }
   </script>
 </body>
