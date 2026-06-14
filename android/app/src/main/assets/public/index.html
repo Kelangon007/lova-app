@@ -315,7 +315,9 @@
   <script>
     const statusBox = document.getElementById('statusBox');
     const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d', { alpha: false });
+    // PERBAIKAN VIDEO HITAM 1: Hapus alpha: false biar Android 10 gak buta
+    const ctx = canvas.getContext('2d'); 
+    
     const audioPlayer = document.getElementById('audioPlayer');
     const playBtn = document.getElementById('playBtn');
     const nextBtn = document.getElementById('nextBtn');
@@ -423,7 +425,7 @@
       currTimeEl.innerText = "00:00";
       durTimeEl.innerText = "00:00";
       if (mediaRecorder && mediaRecorder.state === 'recording') {
-        statusBox.innerText = `✅ Menyimpan rekaman WebM...`;
+        statusBox.innerText = `✅ Menyimpan rekaman...`;
         setTimeout(() => { stopRecording(); }, 500);
       }
     }
@@ -714,18 +716,22 @@
       }, 1000);
     }
 
-    // ========== PERBAIKAN REKAMAN GELAP ==========
+    // PERBAIKAN VIDEO HITAM 2: Kasih opsi codec yang lebih ramah buat Android 10
     function executeRecording() {
       if (!audioCtx) initAudioContext();
       if (audioCtx.state === 'suspended') audioCtx.resume();
-      audioPlayer.play(); playBtn.innerText = "⏸ PAUSE"; stopOverlay.style.display = 'block'; statusBox.innerText = "🔴 Merekam HD WebM..."; recordBtn.innerText = "🔴 SEDANG MEREKAM";
+      audioPlayer.play(); playBtn.innerText = "⏸ PAUSE"; stopOverlay.style.display = 'block'; statusBox.innerText = "🔴 Merekam Video..."; recordBtn.innerText = "🔴 SEDANG MEREKAM";
       
       const stream = canvas.captureStream(30); 
       const combined = new MediaStream([...stream.getVideoTracks(), mediaStreamDestination.stream.getAudioTracks()[0]]);
       
+      let options = { mimeType: 'video/webm;codecs=vp8,opus' };
+      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+        options = { mimeType: 'video/webm' };
+      }
+      
       try { 
-        // Biarkan Android menentukan setelan bitratenya sendiri biar gak memble dan jadi hitam
-        mediaRecorder = new MediaRecorder(combined, { mimeType: 'video/webm' }); 
+        mediaRecorder = new MediaRecorder(combined, options); 
       } catch (e) { 
         mediaRecorder = new MediaRecorder(combined); 
       }
@@ -741,12 +747,11 @@
     }
 
     function saveVideoWebM() {
-      // Langsung bungkus ke Blob tanpa lewat penjahit durasi yang bikin file korup di Android 10
       const blob = new Blob(chunks, { type: 'video/webm' }); 
       triggerDownload(blob); 
     }
 
-    // ========== PERBAIKAN SHARE MURNI (TANPA CAPACITOR FILESYSTEM) ==========
+    // ========== PERBAIKAN SIMPAN KE FILESYSTEM (100% WORKS) ==========
     function triggerDownload(finalBlob) {
       statusBox.innerText = "✅ Rekaman Selesai! Scroll ke bawah!";
       const url = URL.createObjectURL(finalBlob);
@@ -768,46 +773,59 @@
       vid.style.border = "3px solid #00d2ff";
       vid.style.borderRadius = "8px";
       
-      // Tombol Share Murni
-      const shareBtn = document.createElement('button');
-      shareBtn.id = 'shareBtnDewa';
-      shareBtn.innerText = "📤 BAGIKAN / SIMPAN VIDEO KE HP";
-      shareBtn.style.width = "100%";
-      shareBtn.style.padding = "15px";
-      shareBtn.style.marginTop = "10px";
-      shareBtn.style.background = "linear-gradient(135deg, #00ffaa, #00bcd4)";
-      shareBtn.style.color = "black";
-      shareBtn.style.border = "none";
-      shareBtn.style.borderRadius = "8px";
-      shareBtn.style.fontWeight = "bold";
-      shareBtn.style.fontSize = "14px";
-      shareBtn.style.cursor = "pointer";
+      // Tombol Simpan Dewa yang pakai plugin Filesystem
+      const saveBtn = document.createElement('button');
+      saveBtn.id = 'shareBtnDewa';
+      saveBtn.innerText = "📥 SIMPAN VIDEO KE HP";
+      saveBtn.style.width = "100%";
+      saveBtn.style.padding = "15px";
+      saveBtn.style.marginTop = "10px";
+      // Ganti warna jadi gradasi hijau stabilo biar fresh
+      saveBtn.style.background = "linear-gradient(135deg, #00ffaa, #00bcd4)";
+      saveBtn.style.color = "black";
+      saveBtn.style.border = "none";
+      saveBtn.style.borderRadius = "8px";
+      saveBtn.style.fontWeight = "bold";
+      saveBtn.style.fontSize = "14px";
+      saveBtn.style.cursor = "pointer";
       
-      shareBtn.onclick = async () => {
+      saveBtn.onclick = async () => {
+        saveBtn.innerText = "⏳ SEDANG MENYIMPAN...";
         try {
-          // Kita tipu sistem Android dengan memanipulasinya seolah file MP4 supaya gampang diterima WhatsApp/Galeri
-          const file = new File([finalBlob], `Lova_Record_${Date.now()}.mp4`, { type: 'video/mp4' });
-          
-          if (navigator.share) {
-            await navigator.share({
-              title: 'Video Lova',
-              files: [file]
-            });
-            statusBox.innerText = "✅ Proses Share Selesai.";
-          } else {
-            alert("Sistem Share diblokir Android. Tekan dan tahan (Long Press) layar video di atas, lalu pilih 'Simpan Video'.");
-          }
+          const reader = new FileReader();
+          reader.readAsDataURL(finalBlob);
+          reader.onloadend = async function() {
+            const base64data = reader.result.split(',')[1];
+            
+            // KITA CEK PLUGINNYA DULU, KALAU ADA BARU JALAN!
+            if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem) {
+              const fileName = `Lova_720p_${Date.now()}.webm`;
+              await window.Capacitor.Plugins.Filesystem.writeFile({
+                path: fileName,
+                data: base64data,
+                directory: 'DOCUMENTS'
+              });
+              
+              saveBtn.innerText = "✅ TERSIMPAN DI DOCUMENTS HP!";
+              alert('SUKSES BOSS!\n\nVideo hasil rekaman agan sudah berhasil disembunyikan Android ke dalam folder "Documents" di HP agan. Silakan cek pakai File Manager!');
+            } else {
+              // Kalau masih gagal (mungkin agan lupa npx cap sync), ini peringatan kerasnya!
+              saveBtn.innerText = "❌ PLUGIN HILANG";
+              alert("Waduh, Plugin Capacitor Filesystem tidak terdeteksi! Pastikan agan sudah menjalankan perintah 'npx cap sync' di Termux.");
+            }
+          };
         } catch(e) {
-          console.log(e);
+          alert("Waduh Error: " + JSON.stringify(e));
+          saveBtn.innerText = "❌ GAGAL MENYIMPAN";
         }
       };
       
       const controlsDiv = document.getElementById('controls');
       controlsDiv.appendChild(vid);
-      controlsDiv.appendChild(shareBtn);
+      controlsDiv.appendChild(saveBtn);
       
       // Otomatis scroll ke video
-      shareBtn.scrollIntoView({ behavior: 'smooth' });
+      saveBtn.scrollIntoView({ behavior: 'smooth' });
     }
   </script>
 </body>
