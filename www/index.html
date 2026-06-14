@@ -747,7 +747,7 @@
     function stopRecording() {
       if (mediaRecorder && mediaRecorder.state !== 'inactive') { mediaRecorder.stop(); }
       
-      // MANTRA ANTI TIDUR MATI (Boleh istirahat layarnya)
+      // MANTRA ANTI TIDUR MATI
       if (window.Capacitor && window.Capacitor.Plugins.KeepAwake) {
         window.Capacitor.Plugins.KeepAwake.allowSleep();
       }
@@ -761,9 +761,9 @@
       triggerDownload(blob); 
     }
 
-    // ========== FITUR AUTO-SAVE ROBOT ==========
+    // ========== JURUS POTONG DADU ANTI MENTAL (CHUNKING) ==========
     function triggerDownload(finalBlob) {
-      statusBox.innerText = "⏳ Sedang memproses penyimpanan otomatis...";
+      statusBox.innerText = "⏳ Sedang menyiapkan potongan video...";
       const url = URL.createObjectURL(finalBlob);
       
       const oldVid = document.getElementById('previewVid');
@@ -795,33 +795,66 @@
       saveBtn.style.fontSize = "14px";
       saveBtn.style.cursor = "pointer";
       
+      let isSaving = false;
+
       saveBtn.onclick = async () => {
-        saveBtn.innerText = "⏳ SEDANG MENYIMPAN...";
+        if (isSaving) return; // Mencegah klik dobel yang bikin error
+        isSaving = true;
+        saveBtn.innerText = "⏳ MEMULAI PROSES SIMPAN...";
+        
         try {
-          const reader = new FileReader();
-          reader.readAsDataURL(finalBlob);
-          reader.onloadend = async function() {
-            const base64data = reader.result.split(',')[1];
+          if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem) {
+            const FS = window.Capacitor.Plugins.Filesystem;
+            const fileName = `Lova_720p_${Date.now()}.webm`;
             
-            if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem) {
-              const fileName = `Lova_720p_${Date.now()}.webm`;
-              await window.Capacitor.Plugins.Filesystem.writeFile({
+            // 1. Bikin file kosong dulu di HP agan
+            await FS.writeFile({
+              path: fileName,
+              data: "",
+              directory: 'DOCUMENTS'
+            });
+            
+            // 2. Potong video utuh jadi serpihan kecil (1,5 MB per potong) biar RAM gak mental
+            const chunkSize = 1572864; 
+            const totalChunks = Math.ceil(finalBlob.size / chunkSize);
+            
+            for (let i = 0; i < totalChunks; i++) {
+              const start = i * chunkSize;
+              const end = Math.min(start + chunkSize, finalBlob.size);
+              const chunk = finalBlob.slice(start, end); // Ambil serpihan
+              
+              // Ubah serpihan ke teks Base64 (sangat ringan)
+              const base64Chunk = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = reject;
+                reader.readAsDataURL(chunk);
+              });
+
+              // Tempelkan serpihan tersebut ke file kosong tadi
+              await FS.appendFile({
                 path: fileName,
-                data: base64data,
+                data: base64Chunk,
                 directory: 'DOCUMENTS'
               });
               
-              saveBtn.innerText = "✅ TERSIMPAN DI DOCUMENTS HP!";
-              // Gak pakai "alert" lagi biar layar nggak nyangkut
-              statusBox.innerText = `🎉 SUKSES! Video tersimpan di folder Documents!`;
-            } else {
-              saveBtn.innerText = "❌ PLUGIN HILANG";
-              statusBox.innerText = "Plugin Filesystem Capacitor gagal dimuat!";
+              // Lapor persentase ke layar
+              const percent = Math.round(((i + 1) / totalChunks) * 100);
+              statusBox.innerText = `⏳ Menulis ke memori HP... ${percent}%`;
+              saveBtn.innerText = `⏳ MENYIMPAN... ${percent}%`;
             }
-          };
+            
+            saveBtn.innerText = "✅ TERSIMPAN DI DOCUMENTS HP!";
+            statusBox.innerText = `🎉 SUKSES! Video otomatis tersimpan di folder Documents!`;
+          } else {
+            saveBtn.innerText = "❌ PLUGIN HILANG";
+            statusBox.innerText = "Plugin Filesystem Capacitor gagal dimuat!";
+            isSaving = false;
+          }
         } catch(e) {
           saveBtn.innerText = "❌ GAGAL MENYIMPAN";
-          statusBox.innerText = "Terjadi Error saat menyimpan video!";
+          statusBox.innerText = "Terjadi Error saat menyimpan video: " + e.message;
+          isSaving = false;
         }
       };
       
@@ -831,9 +864,9 @@
       
       saveBtn.scrollIntoView({ behavior: 'smooth' });
 
-      // MAGIC: Robot penekan tombol otomatis setelah 1,5 detik
+      // MAGIC ROBOT: Klik otomatis setelah nunggu napas 1,5 detik
       setTimeout(() => {
-        saveBtn.click();
+        if(!isSaving) saveBtn.click();
       }, 1500);
     }
   </script>
