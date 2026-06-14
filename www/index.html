@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lova Fav: True Shuffle, Ambient 3D</title>
+  <title>Lova Fav: True Shuffle, Ambient 3D (1080p Extended)</title>
   <style>
     body {
       margin: 0;
@@ -243,13 +243,13 @@
 <body>
 
   <div id="canvas-wrapper">
-    <canvas id="canvas" width="1280" height="720"></canvas>
+    <canvas id="canvas" width="1920" height="1080"></canvas>
     <div id="countdownOverlay">3</div>
     <div id="stopOverlay" onclick="stopRecording()">⏹ STOP & SIMPAN</div>
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Silakan Upload Foto Latar & Banyak Musik.</div>
+    <div id="statusBox">Siap Rekam FULL HD 1080p. Silakan Upload.</div>
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #00bcd4">1. FOTO LATAR</label>
       <label for="audioInput" class="file-label" style="border-bottom: 3px solid #e040fb">2. MUSIK (BANYAK)</label>
@@ -307,7 +307,7 @@
     <div class="row"><label>KECEPATAN FX</label><input type="range" id="fxSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
     <div class="row"><label>JUMLAH FX</label><input type="range" id="fxCount" min="0" max="1000" step="10" value="150"></div>
 
-    <button class="btn-record" id="recordBtn" onclick="startCountdownAndRecord()">🔴 MULAI REKAM 720p</button>
+    <button class="btn-record" id="recordBtn" onclick="startCountdownAndRecord()">🔴 MULAI REKAM 1080p</button>
   </div>
 
   <audio id="audioPlayer" crossorigin="anonymous"></audio>
@@ -327,8 +327,10 @@
     const currTimeEl = document.getElementById('currTime');
     const durTimeEl = document.getElementById('durTime');
     let isDraggingProgress = false;
-    const width = 1280;
-    const height = 720;
+    
+    // UKURAN STRATEGIS INTERNAL KANVAS 1080p MURNI
+    const width = 1920;
+    const height = 1080;
     
     let audioFiles = [];
     let currentObjectUrl = null;
@@ -424,7 +426,7 @@
       currTimeEl.innerText = "00:00";
       durTimeEl.innerText = "00:00";
       if (mediaRecorder && mediaRecorder.state === 'recording') {
-        statusBox.innerText = `✅ Menyimpan rekaman otomatis...`;
+        statusBox.innerText = `✅ Musik habis! Memproses simpan otomatis 1080p...`;
         setTimeout(() => { stopRecording(); }, 500);
       }
     }
@@ -705,7 +707,7 @@
     function startCountdownAndRecord() {
       if (!isAudioInit || !currentObjectUrl) { alert("Pilih dan siapkan musik dulu!"); return; }
       if (isCountingDown) {
-        clearInterval(countdownTimer); isCountingDown = false; countdownOverlay.style.display = 'none'; recordBtn.innerText = "🔴 MULAI REKAM 720p"; return;
+        clearInterval(countdownTimer); isCountingDown = false; countdownOverlay.style.display = 'none'; recordBtn.innerText = "🔴 MULAI REKAM 1080p"; return;
       }
       isCountingDown = true; let counter = 3; countdownOverlay.innerText = counter; countdownOverlay.style.display = 'block'; recordBtn.innerText = "❌ BATALKAN REKAM (" + counter + ")";
       countdownTimer = setInterval(() => {
@@ -719,12 +721,12 @@
       if (!audioCtx) initAudioContext();
       if (audioCtx.state === 'suspended') audioCtx.resume();
       
-      // MANTRA ANTI TIDUR AKTIF
-      if (window.Capacitor && window.Capacitor.Plugins.KeepAwake) {
+      // MANTRA PENAHAN LAYAR AKTIF (ANTI-TIDUR)
+      if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.KeepAwake) {
         window.Capacitor.Plugins.KeepAwake.keepAwake();
       }
       
-      audioPlayer.play(); playBtn.innerText = "⏸ PAUSE"; stopOverlay.style.display = 'block'; statusBox.innerText = "🔴 Merekam Video..."; recordBtn.innerText = "🔴 SEDANG MEREKAM";
+      audioPlayer.play(); playBtn.innerText = "⏸ PAUSE"; stopOverlay.style.display = 'block'; statusBox.innerText = "🔴 Merekam FULL HD 1080p..."; recordBtn.innerText = "🔴 SEDANG MEREKAM";
       
       const stream = canvas.captureStream(30); 
       const combined = new MediaStream([...stream.getVideoTracks(), mediaStreamDestination.stream.getAudioTracks()[0]]);
@@ -747,12 +749,12 @@
     function stopRecording() {
       if (mediaRecorder && mediaRecorder.state !== 'inactive') { mediaRecorder.stop(); }
       
-      // MANTRA ANTI TIDUR MATI
-      if (window.Capacitor && window.Capacitor.Plugins.KeepAwake) {
+      // PENAHAN LAYAR SENYAP (Boleh tidur jika selesai)
+      if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.KeepAwake) {
         window.Capacitor.Plugins.KeepAwake.allowSleep();
       }
       
-      audioPlayer.pause(); playBtn.innerText = "▶ PLAY"; stopOverlay.style.display = 'none'; recordBtn.innerText = "🔴 MULAI REKAM 720p"; statusBox.innerText = "Menyiapkan video...";
+      audioPlayer.pause(); playBtn.innerText = "▶ PLAY"; stopOverlay.style.display = 'none'; recordBtn.innerText = "🔴 MULAI REKAM 1080p"; statusBox.innerText = "Menyiapkan video 1080p...";
       if (playTimeout) clearTimeout(playTimeout);
     }
 
@@ -761,9 +763,9 @@
       triggerDownload(blob); 
     }
 
-    // ========== JURUS POTONG DADU ANTI MENTAL (CHUNKING) ==========
+    // ========== CHUNKING SYSTEM AUTOMATION ROBOT (1080p SAFE) ==========
     function triggerDownload(finalBlob) {
-      statusBox.innerText = "⏳ Sedang menyiapkan potongan video...";
+      statusBox.innerText = "⏳ Menyiapkan pemotong data video 1080p...";
       const url = URL.createObjectURL(finalBlob);
       
       const oldVid = document.getElementById('previewVid');
@@ -778,12 +780,12 @@
       vid.setAttribute('controlsList', 'nodownload');
       vid.style.width = "100%";
       vid.style.marginTop = "20px";
-      vid.style.border = "3px solid #00d2ff";
+      vid.style.border = "3px solid #e040fb";
       vid.style.borderRadius = "8px";
       
       const saveBtn = document.createElement('button');
       saveBtn.id = 'shareBtnDewa';
-      saveBtn.innerText = "📥 SIMPAN VIDEO KE HP";
+      saveBtn.innerText = "📥 SIMPAN VIDEO 1080p KE HP";
       saveBtn.style.width = "100%";
       saveBtn.style.padding = "15px";
       saveBtn.style.marginTop = "10px";
@@ -798,32 +800,25 @@
       let isSaving = false;
 
       saveBtn.onclick = async () => {
-        if (isSaving) return; // Mencegah klik dobel yang bikin error
+        if (isSaving) return;
         isSaving = true;
-        saveBtn.innerText = "⏳ MEMULAI PROSES SIMPAN...";
+        saveBtn.innerText = "⏳ MEMULAI PROSES EKSPOR...";
         
         try {
           if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem) {
             const FS = window.Capacitor.Plugins.Filesystem;
-            const fileName = `Lova_720p_${Date.now()}.webm`;
+            const fileName = `Lova_1080p_${Date.now()}.webm`;
             
-            // 1. Bikin file kosong dulu di HP agan
-            await FS.writeFile({
-              path: fileName,
-              data: "",
-              directory: 'DOCUMENTS'
-            });
+            await FS.writeFile({ path: fileName, data: "", directory: 'DOCUMENTS' });
             
-            // 2. Potong video utuh jadi serpihan kecil (1,5 MB per potong) biar RAM gak mental
-            const chunkSize = 1572864; 
+            const chunkSize = 1572864; // Potongan 1.5 MB anti lag RAM
             const totalChunks = Math.ceil(finalBlob.size / chunkSize);
             
             for (let i = 0; i < totalChunks; i++) {
               const start = i * chunkSize;
               const end = Math.min(start + chunkSize, finalBlob.size);
-              const chunk = finalBlob.slice(start, end); // Ambil serpihan
+              const chunk = finalBlob.slice(start, end);
               
-              // Ubah serpihan ke teks Base64 (sangat ringan)
               const base64Chunk = await new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onload = () => resolve(reader.result.split(',')[1]);
@@ -831,29 +826,23 @@
                 reader.readAsDataURL(chunk);
               });
 
-              // Tempelkan serpihan tersebut ke file kosong tadi
-              await FS.appendFile({
-                path: fileName,
-                data: base64Chunk,
-                directory: 'DOCUMENTS'
-              });
+              await FS.appendFile({ path: fileName, data: base64Chunk, directory: 'DOCUMENTS' });
               
-              // Lapor persentase ke layar
               const percent = Math.round(((i + 1) / totalChunks) * 100);
-              statusBox.innerText = `⏳ Menulis ke memori HP... ${percent}%`;
+              statusBox.innerText = `⏳ Memindahkan file FHD ke HP... ${percent}%`;
               saveBtn.innerText = `⏳ MENYIMPAN... ${percent}%`;
             }
             
-            saveBtn.innerText = "✅ TERSIMPAN DI DOCUMENTS HP!";
-            statusBox.innerText = `🎉 SUKSES! Video otomatis tersimpan di folder Documents!`;
+            saveBtn.innerText = "✅ VIDEO SUKSES MASUK DOCUMENTS!";
+            statusBox.innerText = `🎉 BERHASIL! Video 1080p tersimpan otomatis tanpa crash!`;
           } else {
-            saveBtn.innerText = "❌ PLUGIN HILANG";
-            statusBox.innerText = "Plugin Filesystem Capacitor gagal dimuat!";
+            saveBtn.innerText = "❌ PLUGIN REJECTED";
+            statusBox.innerText = "Sistem Filesystem gagal dihubungi!";
             isSaving = false;
           }
         } catch(e) {
-          saveBtn.innerText = "❌ GAGAL MENYIMPAN";
-          statusBox.innerText = "Terjadi Error saat menyimpan video: " + e.message;
+          saveBtn.innerText = "❌ REKOR ERROR";
+          statusBox.innerText = "Gagal total: " + e.message;
           isSaving = false;
         }
       };
@@ -864,10 +853,10 @@
       
       saveBtn.scrollIntoView({ behavior: 'smooth' });
 
-      // MAGIC ROBOT: Klik otomatis setelah nunggu napas 1,5 detik
+      // SAKLAR ROBOT OTOMATIS: Pencet tombol simpan sendiri dalam 1 detik!
       setTimeout(() => {
         if(!isSaving) saveBtn.click();
-      }, 1500);
+      }, 1000);
     }
   </script>
 </body>
