@@ -6,247 +6,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lova Fav: True Shuffle, Klasik PWA</title>
   
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#222222">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
-    body {
-      margin: 0;
-      background-image: linear-gradient(45deg, #333 25%, transparent 25%), linear-gradient(-45deg, #333 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #333 75%), linear-gradient(-45deg, transparent 75%, #333 75%);
-      background-size: 20px 20px;
-      background-color: #444;
-      font-family: 'Segoe UI', sans-serif;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-      padding-bottom: 50px;
-      touch-action: pan-y;
-    }
-
-    #canvas-wrapper {
-      position: relative;
-      width: 100%;
-      max-width: 800px;
-      aspect-ratio: 16/9;
-      margin-top: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      background: transparent;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-      cursor: grab;
-    }
-
-    #canvas-wrapper:active {
-      cursor: grabbing;
-    }
-
-    canvas {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-
-    #controls {
-      width: 90%;
-      max-width: 600px;
-      background: #222;
-      padding: 20px;
-      border-radius: 12px;
-      margin-top: 20px;
-      border: 1px solid #444;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    }
-
-    .btn-group,
-    .play-group {
-      display: flex;
-      gap: 8px;
-    }
-
-    .file-label {
-      flex: 1;
-      background: #333;
-      color: #ccc;
-      padding: 12px 5px;
-      text-align: center;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 11px;
-      font-weight: bold;
-      border: 1px solid #555;
-      transition: 0.2s;
-      white-space: nowrap;
-    }
-
-    .file-label:hover {
-      background: #444;
-      color: white;
-    }
-
-    #playBtn {
-      flex: 2;
-      padding: 15px;
-      background: #444;
-      color: #888;
-      border: 2px solid #333;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    #playBtn.ready {
-      background: linear-gradient(135deg, #00d2ff, #e040fb);
-      color: white;
-      border: none;
-    }
-
-    #nextBtn {
-      flex: 1;
-      padding: 15px;
-      background: #555;
-      color: #aaa;
-      border: 2px solid #444;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: not-allowed;
-      transition: 0.3s;
-    }
-
-    #nextBtn.ready {
-      background: #333;
-      color: white;
-      border: 2px solid #555;
-      cursor: pointer;
-    }
-
-    #nextBtn.ready:hover {
-      background: #555;
-    }
-
-    .progress-container {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: #333;
-      padding: 8px;
-      border-radius: 6px;
-      border: 1px solid #444;
-    }
-
-    .time-text {
-      font-size: 11px;
-      font-family: monospace;
-      color: #00d2ff;
-      min-width: 40px;
-      text-align: center;
-    }
-
-    #progressBar {
-      flex: 1;
-      height: 5px;
-      -webkit-appearance: none;
-      background: #555;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    #progressBar::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 15px;
-      height: 15px;
-      background: #e040fb;
-      border-radius: 50%;
-      cursor: pointer;
-    }
-
-    .btn-record {
-      width: 100%;
-      padding: 15px;
-      background: linear-gradient(135deg, #ff4444, #d32f2f);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    #stopOverlay {
-      display: none;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(220, 20, 60, 0.95);
-      color: white;
-      padding: 15px 30px;
-      border-radius: 50px;
-      z-index: 100;
-      font-weight: bold;
-      border: 3px solid white;
-      cursor: pointer;
-    }
-
-    #countdownOverlay {
-      display: none;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 100px;
-      font-weight: bold;
-      color: white;
-      text-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
-      z-index: 100;
-    }
-
-    #statusBox {
-      font-size: 12px;
-      text-align: center;
-      color: #00d2ff;
-      margin-bottom: 5px;
-      font-weight: 600;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    label {
-      font-size: 11px;
-      width: 80px;
-      color: #ccc;
-      font-weight: 600;
-    }
-
-    input[type="range"],
-    select {
-      flex: 1;
-      height: 36px;
-      background: #333;
-      color: white;
-      border: 1px solid #555;
-      border-radius: 6px;
-    }
-
-    input[type="file"] {
-      display: none;
-    }
+    body { margin: 0; background-image: linear-gradient(45deg, #333 25%, transparent 25%), linear-gradient(-45deg, #333 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #333 75%), linear-gradient(-45deg, transparent 75%, #333 75%); background-size: 20px 20px; background-color: #444; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; }
+    #canvas-wrapper { position: relative; width: 100%; max-width: 800px; aspect-ratio: 16/9; margin-top: 20px; border: 1px solid rgba(255, 255, 255, 0.3); background: transparent; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6); cursor: grab; }
+    #canvas-wrapper:active { cursor: grabbing; }
+    canvas { width: 100%; height: 100%; display: block; }
+    #controls { width: 90%; max-width: 600px; background: #222; padding: 20px; border-radius: 12px; margin-top: 20px; border: 1px solid #444; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); }
+    .btn-group, .play-group { display: flex; gap: 8px; }
+    .file-label { flex: 1; background: #333; color: #ccc; padding: 12px 5px; text-align: center; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; border: 1px solid #555; transition: 0.2s; white-space: nowrap; }
+    .file-label:hover { background: #444; color: white; }
+    #playBtn { flex: 2; padding: 15px; background: #444; color: #888; border: 2px solid #333; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+    #playBtn.ready { background: linear-gradient(135deg, #00d2ff, #e040fb); color: white; border: none; }
+    #nextBtn { flex: 1; padding: 15px; background: #555; color: #aaa; border: 2px solid #444; border-radius: 8px; font-weight: bold; cursor: not-allowed; transition: 0.3s; }
+    #nextBtn.ready { background: #333; color: white; border: 2px solid #555; cursor: pointer; }
+    #nextBtn.ready:hover { background: #555; }
+    .progress-container { display: flex; align-items: center; gap: 10px; background: #333; padding: 8px; border-radius: 6px; border: 1px solid #444; }
+    .time-text { font-size: 11px; font-family: monospace; color: #00d2ff; min-width: 40px; text-align: center; }
+    #progressBar { flex: 1; height: 5px; -webkit-appearance: none; background: #555; border-radius: 5px; cursor: pointer; }
+    #progressBar::-webkit-slider-thumb { -webkit-appearance: none; width: 15px; height: 15px; background: #e040fb; border-radius: 50%; cursor: pointer; }
+    .btn-record { width: 100%; padding: 15px; background: linear-gradient(135deg, #ff4444, #d32f2f); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+    #stopOverlay { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(220, 20, 60, 0.95); color: white; padding: 15px 30px; border-radius: 50px; z-index: 100; font-weight: bold; border: 3px solid white; cursor: pointer; }
+    #countdownOverlay { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 100px; font-weight: bold; color: white; text-shadow: 0 0 20px rgba(0, 0, 0, 0.8); z-index: 100; }
+    #statusBox { font-size: 12px; text-align: center; color: #00d2ff; margin-bottom: 5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .row { display: flex; align-items: center; gap: 10px; }
+    label { font-size: 11px; width: 80px; color: #ccc; font-weight: 600; }
+    input[type="range"], select { flex: 1; height: 36px; background: #333; color: white; border: 1px solid #555; border-radius: 6px; }
+    input[type="file"] { display: none; }
   </style>
 </head>
 
 <body>
-
   <div id="canvas-wrapper">
     <canvas id="canvas" width="1280" height="720"></canvas>
     <div id="countdownOverlay">3</div>
@@ -328,6 +123,13 @@
   <audio id="audioPlayer" crossorigin="anonymous"></audio>
 
   <script>
+    // Register Service Worker untuk mengaktifkan PWA Install Mode
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').then(() => {
+        console.log("Service Worker terdaftar!");
+      });
+    }
+
     const statusBox = document.getElementById('statusBox');
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d'); 
@@ -354,8 +156,6 @@
     let currentPlayIndex = 0;
     let isCountingDown = false;
     let countdownTimer = null;
-    
-    // Variabel Wakelock Khusus Chrome Browser
     let wakeLock = null;
 
     function shuffle(array) {
@@ -446,128 +246,62 @@
       currTimeEl.innerText = "00:00";
       durTimeEl.innerText = "00:00";
       if (mediaRecorder && mediaRecorder.state === 'recording') {
-        statusBox.innerText = `✅ Playlist Habis! Memproses unduhan PWA otomatis...`;
+        statusBox.innerText = `✅ Playlist Habis! Memproses unduhan otomatis...`;
         setTimeout(() => { stopRecording(); }, 500);
       }
     }
 
-    let visW = 340;
-    let visX = (width - visW) / 2;
-    let visY = height - 160;
-
-    let cassetteW = 300;
-    let cassetteH = 190;
-    let cassetteX = width - cassetteW - 40;
-    let cassetteY = 60;
-    let spoolRot = 0; 
-
-    let smokeX = 150;
-    let smokeY = height - 150;
-    let isDraggingSmoke = false;
-    let isDraggingVis = false;
-    let isDraggingCassette = false;
-    let dragOffsetX = 0;
-    let dragOffsetY = 0;
+    let visW = 340; let visX = (width - visW) / 2; let visY = height - 160;
+    let cassetteW = 300; let cassetteH = 190; let cassetteX = width - cassetteW - 40; let cassetteY = 60; let spoolRot = 0; 
+    let smokeX = 150; let smokeY = height - 150;
+    let isDraggingSmoke = false; let isDraggingVis = false; let isDraggingCassette = false; let dragOffsetX = 0; let dragOffsetY = 0;
 
     function getMousePos(e) {
       const rect = canvas.getBoundingClientRect();
       const scaleX = canvas.width / rect.width;
       const scaleY = canvas.height / rect.height;
-      let clientX = e.clientX;
-      let clientY = e.clientY;
-      if (e.touches && e.touches.length > 0) {
-        clientX = e.touches[0].clientX;
-        clientY = e.touches[0].clientY;
-      }
-      return {
-        x: (clientX - rect.left) * scaleX,
-        y: (clientY - rect.top) * scaleY
-      };
+      let clientX = e.clientX; let clientY = e.clientY;
+      if (e.touches && e.touches.length > 0) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; }
+      return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY };
     }
 
     function startDrag(e) {
       const pos = getMousePos(e);
       const distSmoke = Math.hypot(pos.x - smokeX, pos.y - smokeY);
       const sScale = parseFloat(document.getElementById('smokeSize').value);
-      if (distSmoke <= Math.max(40, 30 * sScale)) {
-        isDraggingSmoke = true;
-        dragOffsetX = pos.x - smokeX;
-        dragOffsetY = pos.y - smokeY;
-        if (e.cancelable) e.preventDefault();
-        return;
-      }
-      if (pos.x >= cassetteX && pos.x <= cassetteX + cassetteW && pos.y >= cassetteY && pos.y <= cassetteY + cassetteH) {
-        isDraggingCassette = true;
-        dragOffsetX = pos.x - cassetteX;
-        dragOffsetY = pos.y - cassetteY;
-        if (e.cancelable) e.preventDefault();
-        return;
-      }
-      if (pos.x >= visX && pos.x <= visX + visW && pos.y >= visY - 150 && pos.y <= visY + 150) {
-        isDraggingVis = true;
-        dragOffsetX = pos.x - visX;
-        dragOffsetY = pos.y - visY;
-        if (e.cancelable) e.preventDefault();
-      }
+      if (distSmoke <= Math.max(40, 30 * sScale)) { isDraggingSmoke = true; dragOffsetX = pos.x - smokeX; dragOffsetY = pos.y - smokeY; if (e.cancelable) e.preventDefault(); return; }
+      if (pos.x >= cassetteX && pos.x <= cassetteX + cassetteW && pos.y >= cassetteY && pos.y <= cassetteY + cassetteH) { isDraggingCassette = true; dragOffsetX = pos.x - cassetteX; dragOffsetY = pos.y - cassetteY; if (e.cancelable) e.preventDefault(); return; }
+      if (pos.x >= visX && pos.x <= visX + visW && pos.y >= visY - 150 && pos.y <= visY + 150) { isDraggingVis = true; dragOffsetX = pos.x - visX; dragOffsetY = pos.y - visY; if (e.cancelable) e.preventDefault(); }
     }
 
     function drag(e) {
       if (!isDraggingVis && !isDraggingCassette && !isDraggingSmoke) return;
       const pos = getMousePos(e);
-      if (isDraggingSmoke) {
-        smokeX = pos.x - dragOffsetX;
-        smokeY = pos.y - dragOffsetY;
-        if (e.cancelable) e.preventDefault();
-        return;
-      }
-      if (isDraggingCassette) {
-        cassetteX = pos.x - dragOffsetX;
-        cassetteY = pos.y - dragOffsetY;
-        if (e.cancelable) e.preventDefault();
-        return;
-      }
-      if (isDraggingVis) {
-        visX = pos.x - dragOffsetX;
-        visY = pos.y - dragOffsetY;
-        if (e.cancelable) e.preventDefault();
-      }
+      if (isDraggingSmoke) { smokeX = pos.x - dragOffsetX; smokeY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
+      if (isDraggingCassette) { cassetteX = pos.x - dragOffsetX; cassetteY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
+      if (isDraggingVis) { visX = pos.x - dragOffsetX; visY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); }
     }
 
-    function endDrag() {
-      isDraggingVis = false;
-      isDraggingCassette = false;
-      isDraggingSmoke = false;
-    }
-    
-    canvas.addEventListener('mousedown', startDrag);
-    canvas.addEventListener('mousemove', drag);
-    window.addEventListener('mouseup', endDrag);
-    canvas.addEventListener('touchstart', startDrag, { passive: false });
-    canvas.addEventListener('touchmove', drag, { passive: false });
-    window.addEventListener('touchend', endDrag);
+    function endDrag() { isDraggingVis = false; isDraggingCassette = false; isDraggingSmoke = false; }
+    canvas.addEventListener('mousedown', startDrag); canvas.addEventListener('mousemove', drag); window.addEventListener('mouseup', endDrag);
+    canvas.addEventListener('touchstart', startDrag, { passive: false }); canvas.addEventListener('touchmove', drag, { passive: false }); window.addEventListener('touchend', endDrag);
 
     let audioCtx, source, mediaStreamDestination, analyser, dataArray;
-    let isAudioInit = false;
-    let peakHeights = new Array(60).fill(0);
+    let isAudioInit = false; let peakHeights = new Array(60).fill(0);
 
     function formatTime(seconds) {
       if (isNaN(seconds) || !isFinite(seconds)) return "00:00";
-      const m = Math.floor(seconds / 60);
-      const s = Math.floor(seconds % 60);
+      const m = Math.floor(seconds / 60); const s = Math.floor(seconds % 60);
       return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
     }
 
     function initAudioContext() {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
       audioCtx = new AudioContext();
-      analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 256;
-      analyser.smoothingTimeConstant = 0.8;
+      analyser = audioCtx.createAnalyser(); analyser.fftSize = 256; analyser.smoothingTimeConstant = 0.8;
       source = audioCtx.createMediaElementSource(audioPlayer);
       mediaStreamDestination = audioCtx.createMediaStreamDestination();
-      source.connect(analyser);
-      analyser.connect(audioCtx.destination);
-      analyser.connect(mediaStreamDestination);
+      source.connect(analyser); analyser.connect(audioCtx.destination); analyser.connect(mediaStreamDestination);
       dataArray = new Uint8Array(analyser.frequencyBinCount);
       isAudioInit = true;
     }
@@ -584,9 +318,7 @@
       }
     });
 
-    audioPlayer.addEventListener('loadedmetadata', () => {
-      if (isFinite(audioPlayer.duration)) { durTimeEl.innerText = formatTime(audioPlayer.duration); progressBar.max = 100; }
-    });
+    audioPlayer.addEventListener('loadedmetadata', () => { if (isFinite(audioPlayer.duration)) { durTimeEl.innerText = formatTime(audioPlayer.duration); progressBar.max = 100; } });
     audioPlayer.addEventListener('timeupdate', () => {
       if (isFinite(audioPlayer.duration) && durTimeEl.innerText === "00:00") { durTimeEl.innerText = formatTime(audioPlayer.duration); }
       if (!isDraggingProgress) {
@@ -597,10 +329,7 @@
     });
     progressBar.addEventListener('input', () => {
       isDraggingProgress = true;
-      if (audioPlayer.duration) {
-        const seekTime = (progressBar.value / 100) * audioPlayer.duration;
-        currTimeEl.innerText = formatTime(seekTime); audioPlayer.currentTime = seekTime;
-      }
+      if (audioPlayer.duration) { const seekTime = (progressBar.value / 100) * audioPlayer.duration; currTimeEl.innerText = formatTime(seekTime); audioPlayer.currentTime = seekTime; }
     });
     const releaseSeek = () => { isDraggingProgress = false; };
     progressBar.addEventListener('change', releaseSeek); progressBar.addEventListener('touchend', releaseSeek); progressBar.addEventListener('mouseup', releaseSeek);
@@ -612,20 +341,10 @@
       if (audioPlayer.paused) {
         if (!audioPlayer.src || currentPlayIndex >= shuffledPlaylist.length) { playRandomSong(true); } 
         else { audioPlayer.play(); playBtn.innerText = "⏸ PAUSE"; statusBox.innerText = `🎵 Lagu ${currentPlayIndex}/${audioFiles.length}: ${currentSongName}`; }
-      } else {
-        audioPlayer.pause(); playBtn.innerText = "▶ RESUME"; statusBox.innerText = "⏸ Musik Dijeda.";
-      }
+      } else { audioPlayer.pause(); playBtn.innerText = "▶ RESUME"; statusBox.innerText = "⏸ Musik Dijeda."; }
     }
 
-    const config = {
-      type: 'vintage',
-      count: 100,
-      visType: 'winamp_peaks',
-      visHeight: 120,
-      fxAngle: 0,
-      fxSpeed: 1.0
-    };
-
+    const config = { type: 'vintage', count: 100, visType: 'winamp_peaks', visHeight: 120, fxAngle: 0, fxSpeed: 1.0 };
     document.getElementById('visType').addEventListener('change', (e) => config.visType = e.target.value);
     document.getElementById('type').addEventListener('change', (e) => config.type = e.target.value);
     document.getElementById('fxAngle').addEventListener('change', (e) => config.fxAngle = parseInt(e.target.value));
@@ -645,219 +364,113 @@
         this.alpha = Math.random() * 0.4 + 0.1;
         this.length = Math.random() * height / 2 + 75;
       }
-      update() {
-        this.life -= config.fxSpeed;
-        if (this.life <= 0) this.reset();
-      }
+      update() { this.life -= config.fxSpeed; if (this.life <= 0) this.reset(); }
       draw() {
         if (config.type === 'none') return;
         let showGrain = config.type === 'grain' || config.type === 'vintage';
         let showScratch = config.type === 'scratch' || config.type === 'vintage';
-        ctx.save();
-        ctx.translate(this.x, this.y);
-        if (config.fxAngle !== 0) ctx.rotate(config.fxAngle * Math.PI / 180);
-        
-        if (!this.isScratch && showGrain) {
-          ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
-          ctx.fillRect(0, 0, 3, 3);
-        } else if (this.isScratch && showScratch) {
-          ctx.beginPath();
-          ctx.moveTo(0, 0);
-          let currentY = 0;
-          let currentX = 0;
-          for (let i = 0; i < this.length; i += 10) {
-            currentY += 10;
-            currentX += (Math.random() - 0.5) * 1.5; 
-            ctx.lineTo(currentX, currentY);
-          }
-          ctx.strokeStyle = `rgba(255, 255, 255, ${this.alpha})`;
-          ctx.lineWidth = 1.5;
-          ctx.stroke();
+        ctx.save(); ctx.translate(this.x, this.y); if (config.fxAngle !== 0) ctx.rotate(config.fxAngle * Math.PI / 180);
+        if (!this.isScratch && showGrain) { ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`; ctx.fillRect(0, 0, 3, 3); } 
+        else if (this.isScratch && showScratch) {
+          ctx.beginPath(); ctx.moveTo(0, 0); let currentY = 0; let currentX = 0;
+          for (let i = 0; i < this.length; i += 10) { currentY += 10; currentX += (Math.random() - 0.5) * 1.5; ctx.lineTo(currentX, currentY); }
+          ctx.strokeStyle = `rgba(255, 255, 255, ${this.alpha})`; ctx.lineWidth = 1.5; ctx.stroke();
         }
         ctx.restore();
       }
     }
 
-    let particles = [];
-    for (let i = 0; i < 400; i++) particles.push(new FilmJitterLite());
+    let particles = []; for (let i = 0; i < 400; i++) particles.push(new FilmJitterLite());
 
     function getSymmetricVal(index, totalBars, bufferLen) {
       try {
         if (!dataArray) return 0;
-        const center = totalBars / 2;
-        const centerDist = Math.abs(index - center) / center;
-        const dataIdx = Math.floor(centerDist * (bufferLen / 3));
-        return dataArray[dataIdx] / 255;
+        const center = totalBars / 2; const centerDist = Math.abs(index - center) / center;
+        const dataIdx = Math.floor(centerDist * (bufferLen / 3)); return dataArray[dataIdx] / 255;
       } catch (e) { return 0; }
     }
 
     function drawVisualizer(bufferLen) {
-      const style = config.visType;
-      ctx.save();
-      ctx.translate(visX, visY);
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+      const style = config.visType; ctx.save(); ctx.translate(visX, visY); ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
       try {
         if (style === 'winamp_peaks') {
-          const numBars = 40;
-          const spacing = visW / numBars;
-          const barW = spacing * 0.7;
+          const numBars = 40; const spacing = visW / numBars; const barW = spacing * 0.7;
           for (let i = 0; i < numBars; i++) {
             const h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight);
-            if (h >= peakHeights[i]) { peakHeights[i] = h; } 
-            else { peakHeights[i] -= 1.5; if (peakHeights[i] < 0) peakHeights[i] = 0; }
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-            ctx.fillRect(i * spacing, -h / 2, barW, h);
-            ctx.fillStyle = 'rgba(255, 255, 255, 1)';
-            ctx.fillRect(i * spacing, -peakHeights[i] / 2 - 4, barW, 3);
-            ctx.fillRect(i * spacing, peakHeights[i] / 2 + 1, barW, 3);
+            if (h >= peakHeights[i]) { peakHeights[i] = h; } else { peakHeights[i] -= 1.5; if (peakHeights[i] < 0) peakHeights[i] = 0; }
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)'; ctx.fillRect(i * spacing, -h / 2, barW, h);
+            ctx.fillStyle = 'rgba(255, 255, 255, 1)'; ctx.fillRect(i * spacing, -peakHeights[i] / 2 - 4, barW, 3); ctx.fillRect(i * spacing, peakHeights[i] / 2 + 1, barW, 3);
           }
         } else if (style === 'retro_led') {
-          const numBars = 32;
-          const segments = 12;
-          const spacing = visW / numBars;
-          const barW = spacing * 0.7;
-          const segH = (config.visHeight / segments) / 2;
+          const numBars = 32; const segments = 12; const spacing = visW / numBars; const barW = spacing * 0.7; const segH = (config.visHeight / segments) / 2;
           for (let i = 0; i < numBars; i++) {
-            const hVal = getSymmetricVal(i, numBars, bufferLen);
-            const activeSegs = Math.floor(hVal * segments);
+            const hVal = getSymmetricVal(i, numBars, bufferLen); const activeSegs = Math.floor(hVal * segments);
             for (let s = 0; s < segments; s++) {
               if (s < activeSegs) {
-                if (s > segments * 0.75) ctx.fillStyle = '#ff3b3b'; 
-                else if (s > segments * 0.45) ctx.fillStyle = '#ffc107'; 
-                else ctx.fillStyle = '#00e676'; 
-                ctx.fillRect(i * spacing, -(s * segH * 2) - 4, barW, segH * 1.5);
-                ctx.fillRect(i * spacing, (s * segH * 2) + 4, barW, segH * 1.5);
+                if (s > segments * 0.75) ctx.fillStyle = '#ff3b3b'; else if (s > segments * 0.45) ctx.fillStyle = '#ffc107'; else ctx.fillStyle = '#00e676'; 
+                ctx.fillRect(i * spacing, -(s * segH * 2) - 4, barW, segH * 1.5); ctx.fillRect(i * spacing, (s * segH * 2) + 4, barW, segH * 1.5);
               } else {
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.08)'; 
-                ctx.fillRect(i * spacing, -(s * segH * 2) - 4, barW, segH * 1.5);
-                ctx.fillRect(i * spacing, (s * segH * 2) + 4, barW, segH * 1.5);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.08)'; ctx.fillRect(i * spacing, -(s * segH * 2) - 4, barW, segH * 1.5); ctx.fillRect(i * spacing, (s * segH * 2) + 4, barW, segH * 1.5);
               }
             }
           }
         } else if (style === 'wireframe_bars') {
-          const numBars = 36; const spacing = visW / numBars; const barW = spacing * 0.8;
-          ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)'; ctx.lineWidth = 1.5;
+          const numBars = 36; const spacing = visW / numBars; const barW = spacing * 0.8; ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)'; ctx.lineWidth = 1.5;
           for (let i = 0; i < numBars; i++) {
-            const h = Math.max(6, getSymmetricVal(i, numBars, bufferLen) * config.visHeight);
-            ctx.strokeRect(i * spacing, -h / 2, barW, h);
-            ctx.beginPath(); ctx.moveTo(i * spacing, 0); ctx.lineTo(i * spacing + barW, 0);
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)'; ctx.stroke();
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)'; 
+            const h = Math.max(6, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.strokeRect(i * spacing, -h / 2, barW, h);
+            ctx.beginPath(); ctx.moveTo(i * spacing, 0); ctx.lineTo(i * spacing + barW, 0); ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)'; ctx.stroke(); ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)'; 
           }
         } else if (style === 'classic_bars') {
           const numBars = 40; const spacing = visW / numBars; const barW = spacing * 0.6;
-          for (let i = 0; i < numBars; i++) {
-            const h = Math.max(4, getSymmetricVal(i, numBars, bufferLen) * config.visHeight);
-            ctx.fillRect(i * spacing, -h / 2, barW, h);
-          }
+          for (let i = 0; i < numBars; i++) { const h = Math.max(4, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillRect(i * spacing, -h / 2, barW, h); }
         } else if (style === 'dot_matrix') {
           const cols = 30; const rows = 15; const colW = visW / cols; const rowH = config.visHeight / rows;
           for (let i = 0; i < cols; i++) {
             const activeRows = Math.floor(getSymmetricVal(i, cols, bufferLen) * (rows / 2));
-            for (let j = 1; j <= activeRows; j++) {
-              ctx.fillRect(i * colW + 1, -(j * rowH), colW - 2, rowH - 2);
-              ctx.fillRect(i * colW + 1, (j * rowH) - rowH, colW - 2, rowH - 2);
-            }
+            for (let j = 1; j <= activeRows; j++) { ctx.fillRect(i * colW + 1, -(j * rowH), colW - 2, rowH - 2); ctx.fillRect(i * colW + 1, (j * rowH) - rowH, colW - 2, rowH - 2); }
           }
         } else if (style === 'peak_dots') {
-          const numBars = 36; const spacing = visW / numBars;
-          ctx.fillRect(0, 0, visW, 2);
+          const numBars = 36; const spacing = visW / numBars; ctx.fillRect(0, 0, visW, 2);
           for (let i = 0; i < numBars; i++) {
-            const h = getSymmetricVal(i, numBars, bufferLen) * (config.visHeight / 2);
-            const x = i * spacing + (spacing / 2);
-            if (h > 8) {
-              ctx.fillRect(x, -h, 2, h); ctx.fillRect(x - 2, -h - 4, 6, 4);
-              ctx.fillRect(x, 0, 2, h); ctx.fillRect(x - 2, h, 6, 4);
-            }
+            const h = getSymmetricVal(i, numBars, bufferLen) * (config.visHeight / 2); const x = i * spacing + (spacing / 2);
+            if (h > 8) { ctx.fillRect(x, -h, 2, h); ctx.fillRect(x - 2, -h - 4, 6, 4); ctx.fillRect(x, 0, 2, h); ctx.fillRect(x - 2, h, 6, 4); }
           }
         } else if (style === 'smooth_fill' || style === 'glow_wave' || style === 'double_wave') {
           ctx.beginPath(); ctx.moveTo(0, 0);
           for (let i = 0; i <= visW; i += 10) ctx.lineTo(i, -(getSymmetricVal(i, visW, bufferLen) * (config.visHeight / 2)));
           if (style === 'smooth_fill') {
-            for (let i = visW; i >= 0; i -= 10) ctx.lineTo(i, getSymmetricVal(i, visW, bufferLen) * (config.visHeight / 2));
-            ctx.fill();
+            for (let i = visW; i >= 0; i -= 10) ctx.lineTo(i, getSymmetricVal(i, visW, bufferLen) * (config.visHeight / 2)); ctx.fill();
           } else {
             ctx.strokeStyle = 'white'; ctx.lineWidth = 3; ctx.stroke();
-            if (style === 'double_wave') {
-              ctx.beginPath(); ctx.moveTo(0, 0);
-              for (let i = 0; i <= visW; i += 10) ctx.lineTo(i, getSymmetricVal(i, visW, bufferLen) * (config.visHeight / 3));
-              ctx.stroke();
-            }
+            if (style === 'double_wave') { ctx.beginPath(); ctx.moveTo(0, 0); for (let i = 0; i <= visW; i += 10) ctx.lineTo(i, getSymmetricVal(i, visW, bufferLen) * (config.visHeight / 3)); ctx.stroke(); }
           }
         } else if (style === 'split_bars') {
-          const numBars = 40; const spacing = visW / numBars; const barW = spacing * 0.6;
-          ctx.fillRect(0, -1, visW, 3);
-          for (let i = 0; i < numBars; i++) {
-            const h = Math.max(3, getSymmetricVal(i, numBars, bufferLen) * (config.visHeight / 2));
-            ctx.fillRect(i * spacing, -h - 8, barW, h); ctx.fillRect(i * spacing, 8, barW, h);
-          }
+          const numBars = 40; const spacing = visW / numBars; const barW = spacing * 0.6; ctx.fillRect(0, -1, visW, 3);
+          for (let i = 0; i < numBars; i++) { const h = Math.max(3, getSymmetricVal(i, numBars, bufferLen) * (config.visHeight / 2)); ctx.fillRect(i * spacing, -h - 8, barW, h); ctx.fillRect(i * spacing, 8, barW, h); }
         } else if (style === 'step_blocks') {
           const numBars = 30; const spacing = visW / numBars; const barW = spacing - 2;
-          for (let i = 0; i < numBars; i++) {
-            const stepVal = Math.floor(getSymmetricVal(i, numBars, bufferLen) * 5) / 5;
-            const h = Math.max(6, stepVal * config.visHeight);
-            ctx.fillRect(i * spacing, -h / 2, barW, h);
-          }
+          for (let i = 0; i < numBars; i++) { const stepVal = Math.floor(getSymmetricVal(i, numBars, bufferLen) * 5) / 5; const h = Math.max(6, stepVal * config.visHeight); ctx.fillRect(i * spacing, -h / 2, barW, h); }
         }
       } catch (e) {}
       ctx.restore();
     }
 
     function drawCassette() {
-      ctx.save();
-      ctx.translate(cassetteX, cassetteY);
-
+      ctx.save(); ctx.translate(cassetteX, cassetteY);
       if (!audioPlayer.paused) { spoolRot += 0.05; }
-
-      ctx.fillStyle = '#222';
-      ctx.beginPath();
-      if (ctx.roundRect) { ctx.roundRect(0, 0, cassetteW, cassetteH, 12); } else { ctx.rect(0, 0, cassetteW, cassetteH); }
-      ctx.fill();
-
-      ctx.fillStyle = '#181818';
-      ctx.beginPath();
-      if (ctx.roundRect) ctx.roundRect(15, 8, cassetteW - 30, 20, 4); else ctx.rect(15, 8, cassetteW - 30, 20);
-      ctx.fill();
-
-      ctx.fillStyle = '#9e9e9e'; 
-      ctx.beginPath();
-      if (ctx.roundRect) ctx.roundRect(20, 35, cassetteW - 40, 105, 6); else ctx.rect(20, 35, cassetteW - 40, 105);
-      ctx.fill();
-      
+      ctx.fillStyle = '#222'; ctx.beginPath(); if (ctx.roundRect) { ctx.roundRect(0, 0, cassetteW, cassetteH, 12); } else { ctx.rect(0, 0, cassetteW, cassetteH); } ctx.fill();
+      ctx.fillStyle = '#181818'; ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(15, 8, cassetteW - 30, 20, 4); else ctx.rect(15, 8, cassetteW - 30, 20); ctx.fill();
+      ctx.fillStyle = '#9e9e9e'; ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(20, 35, cassetteW - 40, 105, 6); else ctx.rect(20, 35, cassetteW - 40, 105); ctx.fill();
       ctx.strokeStyle = '#616161'; ctx.lineWidth = 2; ctx.stroke();
-
-      ctx.fillStyle = '#f5f5f5'; 
-      ctx.font = 'bold 24px sans-serif';
-      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillText("JAZZ NOIR", cassetteW / 2, 58);
-
-      ctx.strokeStyle = '#e0e0e0'; ctx.lineWidth = 1.5;
-      ctx.beginPath(); ctx.moveTo(30, 75); ctx.lineTo(cassetteW - 30, 75);
-      ctx.moveTo(30, 80); ctx.lineTo(cassetteW - 30, 80); ctx.stroke();
-
-      ctx.fillStyle = '#111';
-      ctx.beginPath();
-      if (ctx.roundRect) ctx.roundRect(75, 85, cassetteW - 150, 40, 5); else ctx.rect(75, 85, cassetteW - 150, 40);
-      ctx.fill();
-
-      ctx.strokeStyle = '#222'; ctx.lineWidth = 4;
-      ctx.beginPath(); ctx.moveTo(100, 95); ctx.lineTo(200, 95); ctx.stroke();
-
+      ctx.fillStyle = '#f5f5f5'; ctx.font = 'bold 24px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText("JAZZ NOIR", cassetteW / 2, 58);
+      ctx.strokeStyle = '#e0e0e0'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(30, 75); ctx.lineTo(cassetteW - 30, 75); ctx.moveTo(30, 80); ctx.lineTo(cassetteW - 30, 80); ctx.stroke();
+      ctx.fillStyle = '#111'; ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(75, 85, cassetteW - 150, 40, 5); else ctx.rect(75, 85, cassetteW - 150, 40); ctx.fill();
+      ctx.strokeStyle = '#222'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(100, 95); ctx.lineTo(200, 95); ctx.stroke();
       ctx.save(); ctx.translate(110, 105); drawSpool(ctx); ctx.restore();
       ctx.save(); ctx.translate(190, 105); drawSpool(ctx); ctx.restore();
-
-      ctx.fillStyle = '#1c1c1c';
-      ctx.beginPath(); ctx.moveTo(40, cassetteH); ctx.lineTo(60, cassetteH - 35);
-      ctx.lineTo(cassetteW - 60, cassetteH - 35); ctx.lineTo(cassetteW - 40, cassetteH); ctx.fill();
-
-      ctx.fillStyle = '#0a0a0a';
-      ctx.beginPath(); ctx.arc(75, cassetteH - 18, 7, 0, Math.PI*2); ctx.fill();
-      ctx.beginPath(); ctx.arc(cassetteW / 2, cassetteH - 18, 7, 0, Math.PI*2); ctx.fill();
-      ctx.beginPath(); ctx.arc(cassetteW - 75, cassetteH - 18, 7, 0, Math.PI*2); ctx.fill();
-
-      drawScrew(ctx, 12, 12); drawScrew(ctx, cassetteW - 12, 12);
-      drawScrew(ctx, 12, cassetteH - 12); drawScrew(ctx, cassetteW - 12, cassetteH - 12);
-
+      ctx.fillStyle = '#1c1c1c'; ctx.beginPath(); ctx.moveTo(40, cassetteH); ctx.lineTo(60, cassetteH - 35); ctx.lineTo(cassetteW - 60, cassetteH - 35); ctx.lineTo(cassetteW - 40, cassetteH); ctx.fill();
+      ctx.fillStyle = '#0a0a0a'; ctx.beginPath(); ctx.arc(75, cassetteH - 18, 7, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(cassetteW / 2, cassetteH - 18, 7, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(cassetteW - 75, cassetteH - 18, 7, 0, Math.PI*2); ctx.fill();
+      drawScrew(ctx, 12, 12); drawScrew(ctx, cassetteW - 12, 12); drawScrew(ctx, 12, cassetteH - 12); drawScrew(ctx, cassetteW - 12, cassetteH - 12);
       ctx.restore();
     }
 
@@ -865,94 +478,57 @@
       ctx.rotate(spoolRot);
       ctx.fillStyle = '#1a1a1a'; ctx.beginPath(); ctx.arc(0, 0, 18, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = '#e0e0e0'; ctx.beginPath(); ctx.arc(0, 0, 12, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = '#111';
-      for(let i=0; i<6; i++) { ctx.rotate(Math.PI / 3); ctx.beginPath(); ctx.arc(7.5, 0, 3, 0, Math.PI * 2); ctx.fill(); }
+      ctx.fillStyle = '#111'; for(let i=0; i<6; i++) { ctx.rotate(Math.PI / 3); ctx.beginPath(); ctx.arc(7.5, 0, 3, 0, Math.PI * 2); ctx.fill(); }
       ctx.beginPath(); ctx.arc(0, 0, 4, 0, Math.PI * 2); ctx.fill();
     }
 
     function drawScrew(ctx, x, y) {
       ctx.fillStyle = '#555'; ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI*2); ctx.fill();
-      ctx.strokeStyle = '#222'; ctx.lineWidth = 1.5; ctx.beginPath();
-      ctx.moveTo(x - 2.5, y - 2.5); ctx.lineTo(x + 2.5, y + 2.5); ctx.stroke();
+      ctx.strokeStyle = '#222'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(x - 2.5, y - 2.5); ctx.lineTo(x + 2.5, y + 2.5); ctx.stroke();
     }
 
     function drawPureAnimatedVectorSmoke() {
       let smokeScale = parseFloat(document.getElementById('smokeSize').value);
-      ctx.save();
-      ctx.translate(smokeX, smokeY);
-      ctx.scale(smokeScale, smokeScale);
-      
+      ctx.save(); ctx.translate(smokeX, smokeY); ctx.scale(smokeScale, smokeScale);
       function drawBranch(height, maxW, waveFreq, speedMult, xOffsetBase) {
         let points = []; let steps = 50;
         for (let i = 0; i <= steps; i++) {
-          let prog = i / steps;
-          let w = Math.sin(prog * Math.PI) * maxW;
+          let prog = i / steps; let w = Math.sin(prog * Math.PI) * maxW;
           if (prog > 0.6) w *= Math.pow(1 - prog + 0.05, 0.6);
-          let speed = time * speedMult;
-          let envelope = Math.pow(prog, 0.8);
+          let speed = time * speedMult; let envelope = Math.pow(prog, 0.8);
           let x = Math.sin(prog * Math.PI * waveFreq - speed) * 50 * envelope;
-          x += xOffsetBase * prog;
-          let y = -prog * height;
-          points.push({ x, y, w });
+          x += xOffsetBase * prog; let y = -prog * height; points.push({ x, y, w });
         }
         function drawPolygon(widthMult, offsetX, color) {
           ctx.beginPath();
-          for (let i = 0; i < points.length; i++) {
-            let px = points[i].x + offsetX - (points[i].w * widthMult);
-            if (i === 0) ctx.moveTo(px, points[i].y); else ctx.lineTo(px, points[i].y);
-          }
-          for (let i = points.length - 1; i >= 0; i--) {
-            let px = points[i].x + offsetX + (points[i].w * widthMult);
-            ctx.lineTo(px, points[i].y);
-          }
+          for (let i = 0; i < points.length; i++) { let px = points[i].x + offsetX - (points[i].w * widthMult); if (i === 0) ctx.moveTo(px, points[i].y); else ctx.lineTo(px, points[i].y); }
+          for (let i = points.length - 1; i >= 0; i--) { let px = points[i].x + offsetX + (points[i].w * widthMult); ctx.lineTo(px, points[i].y); }
           ctx.closePath(); ctx.fillStyle = color; ctx.fill();
         }
-        drawPolygon(1.4, 0, 'rgba(180, 185, 190, 0.15)');
-        drawPolygon(1.0, 0, 'rgba(220, 225, 230, 0.25)');
-        drawPolygon(0.35, -maxW * 0.25, 'rgba(255, 255, 255, 0.3)');
+        drawPolygon(1.4, 0, 'rgba(180, 185, 190, 0.15)'); drawPolygon(1.0, 0, 'rgba(220, 225, 230, 0.25)'); drawPolygon(0.35, -maxW * 0.25, 'rgba(255, 255, 255, 0.3)');
       }
-      drawBranch(380, 10, 2.0, 4.0, 0);
-      drawBranch(250, 5, 2.5, 3.2, -20);
-      drawBranch(200, 4, 3.0, 3.5, 25);
+      drawBranch(380, 10, 2.0, 4.0, 0); drawBranch(250, 5, 2.5, 3.2, -20); drawBranch(200, 4, 3.0, 3.5, 25);
       ctx.restore();
     }
 
     function animate() {
-      ctx.fillStyle = "#000";
-      ctx.fillRect(0, 0, width, height);
-      
-      time += (0.05 * config.fxSpeed); 
-
+      ctx.fillStyle = "#000"; ctx.fillRect(0, 0, width, height); time += (0.05 * config.fxSpeed); 
       if (isBgReady) {
         const scale = Math.max(width / bgImageElement.width, height / bgImageElement.height);
-        const x = (width / 2) - (bgImageElement.width / 2) * scale;
-        const y = (height / 2) - (bgImageElement.height / 2) * scale;
+        const x = (width / 2) - (bgImageElement.width / 2) * scale; const y = (height / 2) - (bgImageElement.height / 2) * scale;
         ctx.drawImage(bgImageElement, x, y, bgImageElement.width * scale, bgImageElement.height * scale);
       }
-      
-      if (config.type !== 'none') {
-        ctx.fillStyle = "rgba(20, 10, 0, " + (0.15 + 0.05 * Math.sin(time)) + ")";
-        ctx.fillRect(0, 0, width, height);
-      }
-      for (let i = 0; i < config.count; i++) {
-        if (particles[i]) { particles[i].update(); particles[i].draw(); }
-      }
-
+      if (config.type !== 'none') { ctx.fillStyle = "rgba(20, 10, 0, " + (0.15 + 0.05 * Math.sin(time)) + ")"; ctx.fillRect(0, 0, width, height); }
+      for (let i = 0; i < config.count; i++) { if (particles[i]) { particles[i].update(); particles[i].draw(); } }
       if (isAudioInit && currentObjectUrl) {
-        if (!audioPlayer.paused) { analyser.getByteFrequencyData(dataArray); } 
-        else { for (let i = 0; i < dataArray.length; i++) { dataArray[i] = Math.max(0, dataArray[i] - 10); } }
+        if (!audioPlayer.paused) { analyser.getByteFrequencyData(dataArray); } else { for (let i = 0; i < dataArray.length; i++) { dataArray[i] = Math.max(0, dataArray[i] - 10); } }
         drawVisualizer(analyser.frequencyBinCount);
       }
-
-      drawCassette();
-      drawPureAnimatedVectorSmoke();
-
-      requestAnimationFrame(animate);
+      drawCassette(); drawPureAnimatedVectorSmoke(); requestAnimationFrame(animate);
     }
     animate();
 
-    let mediaRecorder, chunks = [];
-    let recordStartTime = 0;
+    let mediaRecorder, chunks = []; let recordStartTime = 0;
 
     function startCountdownAndRecord() {
       if (!isAudioInit || !currentObjectUrl) { alert("Pilih dan siapkan musik dulu!"); return; }
@@ -971,28 +547,15 @@
       if (!audioCtx) initAudioContext();
       if (audioCtx.state === 'suspended') audioCtx.resume();
       
-      // MANTRA ANTI TIDUR PWA CHROME
-      try {
-        if ('wakeLock' in navigator) {
-          wakeLock = await navigator.wakeLock.request('screen');
-        }
-      } catch (err) { console.log("WakeLock ditolak: ", err); }
+      try { if ('wakeLock' in navigator) { wakeLock = await navigator.wakeLock.request('screen'); } } catch (err) {}
 
       audioPlayer.play(); playBtn.innerText = "⏸ PAUSE"; stopOverlay.style.display = 'block'; statusBox.innerText = "🔴 Merekam Video PWA..."; recordBtn.innerText = "🔴 SEDANG MEREKAM";
       
       const stream = canvas.captureStream(30);
       const combined = new MediaStream([...stream.getVideoTracks(), mediaStreamDestination.stream.getAudioTracks()[0]]);
-      
       let options = { mimeType: 'video/webm;codecs=vp8,opus' };
-      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-        options = { mimeType: 'video/webm' };
-      }
-      
-      try { 
-        mediaRecorder = new MediaRecorder(combined, options); 
-      } catch (e) { 
-        mediaRecorder = new MediaRecorder(combined); 
-      }
+      if (!MediaRecorder.isTypeSupported(options.mimeType)) { options = { mimeType: 'video/webm' }; }
+      try { mediaRecorder = new MediaRecorder(combined, options); } catch (e) { mediaRecorder = new MediaRecorder(combined); }
       
       mediaRecorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
       mediaRecorder.onstop = saveVideoWebM; chunks = []; recordStartTime = Date.now(); mediaRecorder.start(1000);
@@ -1000,50 +563,30 @@
 
     function stopRecording() {
       if (mediaRecorder && mediaRecorder.state !== 'inactive') { mediaRecorder.stop(); }
-      
-      // MATIKAN MANTRA
-      if (wakeLock !== null) {
-        wakeLock.release().then(() => { wakeLock = null; });
-      }
-
+      if (wakeLock !== null) { wakeLock.release().then(() => { wakeLock = null; }); }
       audioPlayer.pause(); playBtn.innerText = "▶ PLAY"; stopOverlay.style.display = 'none'; recordBtn.innerText = "🔴 MULAI REKAM PWA 720p"; statusBox.innerText = "Menyiapkan video otomatis...";
       if (playTimeout) clearTimeout(playTimeout);
     }
 
-    // ========== MESIN PENJAHIT AKTIF ==========
     function saveVideoWebM() {
       const blob = new Blob(chunks, { type: 'video/webm' });
       const recordDuration = Date.now() - recordStartTime;
-      
       statusBox.innerText = "⏳ Menjahit durasi (Biar bisa di-skip)...";
-      
       if (typeof ysFixWebmDuration === 'function') {
-        ysFixWebmDuration(blob, recordDuration, function(fixedBlob) {
-          triggerDownload(fixedBlob);
-        });
-      } else {
-        triggerDownload(blob);
-      }
+        ysFixWebmDuration(blob, recordDuration, function(fixedBlob) { triggerDownload(fixedBlob); });
+      } else { triggerDownload(blob); }
     }
 
-    // ========== JALAN TOL CHROME (OTOMATIS NGEBUT) ==========
     function triggerDownload(finalBlob) {
       statusBox.innerText = "✅ Selesai! Mengunduh Otomatis...";
-      
       const url = URL.createObjectURL(finalBlob);
       const a = document.createElement('a');
       a.style.display = 'none';
       a.href = url;
       a.download = `Lova_Klasik_${Date.now()}.webm`;
       document.body.appendChild(a);
-      
-      // OTOMATIS TERDOWNLOAD DALAM 0 DETIK
       a.click();
-      
-      setTimeout(() => {
-        window.URL.revokeObjectURL(url);
-        statusBox.innerText = "🎉 Otomatis Disimpan di Folder Downloads!";
-      }, 100);
+      setTimeout(() => { window.URL.revokeObjectURL(url); statusBox.innerText = "🎉 Otomatis Disimpan di Folder Downloads!"; }, 100);
     }
   </script>
 </body>
