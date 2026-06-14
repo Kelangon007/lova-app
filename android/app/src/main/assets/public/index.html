@@ -737,23 +737,25 @@
       else { triggerDownload(blob); }
     }
 
-    // ========== PERBAIKAN 100% AMPUH: WEB SHARE & LAYAR TANCAP ==========
+    // ========== SOLUSI GABUNGAN: LAYAR TANCAP + FILESYSTEM ==========
     function triggerDownload(finalBlob) {
       statusBox.innerText = "✅ Rekaman Selesai! Scroll ke bawah!";
       const url = URL.createObjectURL(finalBlob);
       
-      // 1. Tampilkan layar tancap (Video Element) langsung di bawah tombol
+      // 1. Tampilkan layar tancap
       const vid = document.createElement('video');
       vid.src = url;
       vid.controls = true;
+      // KITA HILANGKAN TOMBOL DOWNLOAD BAWAAN BIAR GAK KETIPU LAGI!
+      vid.setAttribute('controlsList', 'nodownload');
       vid.style.width = "100%";
       vid.style.marginTop = "20px";
       vid.style.border = "3px solid #00d2ff";
       vid.style.borderRadius = "8px";
       
-      // 2. Buat tombol share / simpan dewa
+      // 2. Tombol simpan dewa kita aktifkan
       const shareBtn = document.createElement('button');
-      shareBtn.innerText = "📤 BAGIKAN / SIMPAN VIDEO INI";
+      shareBtn.innerText = "📥 SIMPAN VIDEO KE HP";
       shareBtn.style.width = "100%";
       shareBtn.style.padding = "15px";
       shareBtn.style.marginTop = "10px";
@@ -766,25 +768,39 @@
       shareBtn.style.cursor = "pointer";
       
       shareBtn.onclick = async () => {
+        shareBtn.innerText = "⏳ SEDANG MENYIMPAN...";
         try {
-          const fileName = `Lova_Record_${Date.now()}.webm`;
-          // Ubah data mentah jadi file resmi
-          const file = new File([finalBlob], fileName, { type: 'video/webm' });
-          
-          if (navigator.share) {
-            // Panggil menu Share bawaan Android
-            await navigator.share({
-              title: 'Video Lova',
-              text: 'Ini hasil rekaman estetik Lova Fav!',
-              files: [file]
-            });
-            statusBox.innerText = "✅ Berhasil dikirim/disimpan!";
-          } else {
-            // Kalau misal Share error
-            alert("Silakan tekan dan tahan (Long Press) pada kotak video di atas, lalu pilih 'Simpan Video'.");
-          }
+          const reader = new FileReader();
+          reader.readAsDataURL(finalBlob);
+          reader.onloadend = async function() {
+            const base64data = reader.result.split(',')[1];
+            
+            // Nah, sekarang karena plugin Filesystem agan SUDAH tersinkronisasi,
+            // kode ini bakal jalan membelah keamanan WebView!
+            if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem) {
+              const fileName = `Lova_720p_HQ_${Date.now()}.webm`;
+              await window.Capacitor.Plugins.Filesystem.writeFile({
+                path: fileName,
+                data: base64data,
+                directory: 'DOCUMENTS'
+              });
+              
+              shareBtn.innerText = "✅ TERSIMPAN DI DOCUMENTS HP!";
+              alert('SUKSES BOSS!\n\nVideo hasil rekaman agan sudah berhasil disembunyikan Android ke dalam folder "Documents" di HP agan. Silakan cek pakai File Manager!');
+            } else {
+              // Mode Browser PC (kalau error)
+              const a = document.createElement('a');
+              a.style.display = 'none';
+              a.href = url;
+              a.download = `Lova_720p_HQ_${Date.now()}.webm`;
+              document.body.appendChild(a);
+              a.click();
+              shareBtn.innerText = "✅ SELESAI DIDOWNLOAD (PC)";
+            }
+          };
         } catch(e) {
-          console.log(e);
+          alert("Waduh Error: " + JSON.stringify(e));
+          shareBtn.innerText = "❌ GAGAL MENYIMPAN";
         }
       };
       
@@ -792,7 +808,6 @@
       controlsDiv.appendChild(vid);
       controlsDiv.appendChild(shareBtn);
       
-      // Otomatis scroll layar ke arah video biar kelihatan
       shareBtn.scrollIntoView({ behavior: 'smooth' });
     }
   </script>
