@@ -737,47 +737,63 @@
       else { triggerDownload(blob); }
     }
 
-    // ========== PERBAIKAN SISTEM DOWNLOAD ==========
+    // ========== PERBAIKAN 100% AMPUH: WEB SHARE & LAYAR TANCAP ==========
     function triggerDownload(finalBlob) {
-      statusBox.innerText = "⏳ Mengecek sistem Capacitor...";
+      statusBox.innerText = "✅ Rekaman Selesai! Scroll ke bawah!";
+      const url = URL.createObjectURL(finalBlob);
       
-      const reader = new FileReader();
-      reader.readAsDataURL(finalBlob);
-      reader.onloadend = async function() {
-        const base64data = reader.result.split(',')[1];
-
+      // 1. Tampilkan layar tancap (Video Element) langsung di bawah tombol
+      const vid = document.createElement('video');
+      vid.src = url;
+      vid.controls = true;
+      vid.style.width = "100%";
+      vid.style.marginTop = "20px";
+      vid.style.border = "3px solid #00d2ff";
+      vid.style.borderRadius = "8px";
+      
+      // 2. Buat tombol share / simpan dewa
+      const shareBtn = document.createElement('button');
+      shareBtn.innerText = "📤 BAGIKAN / SIMPAN VIDEO INI";
+      shareBtn.style.width = "100%";
+      shareBtn.style.padding = "15px";
+      shareBtn.style.marginTop = "10px";
+      shareBtn.style.background = "linear-gradient(135deg, #00d2ff, #e040fb)";
+      shareBtn.style.color = "white";
+      shareBtn.style.border = "none";
+      shareBtn.style.borderRadius = "8px";
+      shareBtn.style.fontWeight = "bold";
+      shareBtn.style.fontSize = "14px";
+      shareBtn.style.cursor = "pointer";
+      
+      shareBtn.onclick = async () => {
         try {
-          // CEK KERAS: Pastikan plugin Capacitor tidak hilang!
-          if (!window.Capacitor || !window.Capacitor.Plugins || !window.Capacitor.Plugins.Filesystem) {
-            throw new Error("Plugin Filesystem hilang/tidak terdeteksi oleh Android agan!");
-          }
-
-          const FS = window.Capacitor.Plugins.Filesystem;
-
-          statusBox.innerText = "⏳ Meminta izin Android...";
-          try {
-            await FS.requestPermissions();
-          } catch(e) {} // Abaikan kalau error di HP versi lama
-
-          const fileName = `Lova_720p_HQ_${Date.now()}.webm`;
-          statusBox.innerText = "⏳ Menulis video ke storage HP...";
-
-          // Tulis file ke Documents
-          const result = await FS.writeFile({
-            path: fileName,
-            data: base64data,
-            directory: 'DOCUMENTS'
-          });
-
-          // TAMPILKAN LOKASI ASLI KE LAYAR!
-          statusBox.innerText = `✅ TERSIMPAN!`;
-          alert('SUKSES BOSS!\n\nFile berhasil ditulis 100% oleh sistem Android.\n\nSistem Android ngumpetin videonya di sini:\n\n' + result.uri + '\n\nTolong catat/screenshot tulisan di atas, lalu cari pakai File Manager!');
+          const fileName = `Lova_Record_${Date.now()}.webm`;
+          // Ubah data mentah jadi file resmi
+          const file = new File([finalBlob], fileName, { type: 'video/webm' });
           
-        } catch (error) {
-          statusBox.innerText = "❌ GAGAL SIMPAN";
-          alert('WADUH ERROR:\n' + (error.message || JSON.stringify(error)));
+          if (navigator.share) {
+            // Panggil menu Share bawaan Android
+            await navigator.share({
+              title: 'Video Lova',
+              text: 'Ini hasil rekaman estetik Lova Fav!',
+              files: [file]
+            });
+            statusBox.innerText = "✅ Berhasil dikirim/disimpan!";
+          } else {
+            // Kalau misal Share error
+            alert("Silakan tekan dan tahan (Long Press) pada kotak video di atas, lalu pilih 'Simpan Video'.");
+          }
+        } catch(e) {
+          console.log(e);
         }
-      }
+      };
+      
+      const controlsDiv = document.getElementById('controls');
+      controlsDiv.appendChild(vid);
+      controlsDiv.appendChild(shareBtn);
+      
+      // Otomatis scroll layar ke arah video biar kelihatan
+      shareBtn.scrollIntoView({ behavior: 'smooth' });
     }
   </script>
 </body>
