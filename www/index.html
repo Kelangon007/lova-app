@@ -315,7 +315,6 @@
   <script>
     const statusBox = document.getElementById('statusBox');
     const canvas = document.getElementById('canvas');
-    // PERBAIKAN VIDEO HITAM 1: Hapus alpha: false biar Android 10 gak buta
     const ctx = canvas.getContext('2d'); 
     
     const audioPlayer = document.getElementById('audioPlayer');
@@ -425,7 +424,7 @@
       currTimeEl.innerText = "00:00";
       durTimeEl.innerText = "00:00";
       if (mediaRecorder && mediaRecorder.state === 'recording') {
-        statusBox.innerText = `✅ Menyimpan rekaman...`;
+        statusBox.innerText = `✅ Menyimpan rekaman otomatis...`;
         setTimeout(() => { stopRecording(); }, 500);
       }
     }
@@ -716,10 +715,15 @@
       }, 1000);
     }
 
-    // PERBAIKAN VIDEO HITAM 2: Kasih opsi codec yang lebih ramah buat Android 10
     function executeRecording() {
       if (!audioCtx) initAudioContext();
       if (audioCtx.state === 'suspended') audioCtx.resume();
+      
+      // MANTRA ANTI TIDUR AKTIF
+      if (window.Capacitor && window.Capacitor.Plugins.KeepAwake) {
+        window.Capacitor.Plugins.KeepAwake.keepAwake();
+      }
+      
       audioPlayer.play(); playBtn.innerText = "⏸ PAUSE"; stopOverlay.style.display = 'block'; statusBox.innerText = "🔴 Merekam Video..."; recordBtn.innerText = "🔴 SEDANG MEREKAM";
       
       const stream = canvas.captureStream(30); 
@@ -742,6 +746,12 @@
 
     function stopRecording() {
       if (mediaRecorder && mediaRecorder.state !== 'inactive') { mediaRecorder.stop(); }
+      
+      // MANTRA ANTI TIDUR MATI (Boleh istirahat layarnya)
+      if (window.Capacitor && window.Capacitor.Plugins.KeepAwake) {
+        window.Capacitor.Plugins.KeepAwake.allowSleep();
+      }
+      
       audioPlayer.pause(); playBtn.innerText = "▶ PLAY"; stopOverlay.style.display = 'none'; recordBtn.innerText = "🔴 MULAI REKAM 720p"; statusBox.innerText = "Menyiapkan video...";
       if (playTimeout) clearTimeout(playTimeout);
     }
@@ -751,18 +761,16 @@
       triggerDownload(blob); 
     }
 
-    // ========== PERBAIKAN SIMPAN KE FILESYSTEM (100% WORKS) ==========
+    // ========== FITUR AUTO-SAVE ROBOT ==========
     function triggerDownload(finalBlob) {
-      statusBox.innerText = "✅ Rekaman Selesai! Scroll ke bawah!";
+      statusBox.innerText = "⏳ Sedang memproses penyimpanan otomatis...";
       const url = URL.createObjectURL(finalBlob);
       
-      // Bersihkan tombol/video lama kalau agan rekam berkali-kali
       const oldVid = document.getElementById('previewVid');
       if(oldVid) oldVid.remove();
       const oldBtn = document.getElementById('shareBtnDewa');
       if(oldBtn) oldBtn.remove();
       
-      // Tampilkan layar tancap
       const vid = document.createElement('video');
       vid.id = 'previewVid';
       vid.src = url;
@@ -773,14 +781,12 @@
       vid.style.border = "3px solid #00d2ff";
       vid.style.borderRadius = "8px";
       
-      // Tombol Simpan Dewa yang pakai plugin Filesystem
       const saveBtn = document.createElement('button');
       saveBtn.id = 'shareBtnDewa';
       saveBtn.innerText = "📥 SIMPAN VIDEO KE HP";
       saveBtn.style.width = "100%";
       saveBtn.style.padding = "15px";
       saveBtn.style.marginTop = "10px";
-      // Ganti warna jadi gradasi hijau stabilo biar fresh
       saveBtn.style.background = "linear-gradient(135deg, #00ffaa, #00bcd4)";
       saveBtn.style.color = "black";
       saveBtn.style.border = "none";
@@ -797,7 +803,6 @@
           reader.onloadend = async function() {
             const base64data = reader.result.split(',')[1];
             
-            // KITA CEK PLUGINNYA DULU, KALAU ADA BARU JALAN!
             if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem) {
               const fileName = `Lova_720p_${Date.now()}.webm`;
               await window.Capacitor.Plugins.Filesystem.writeFile({
@@ -807,16 +812,16 @@
               });
               
               saveBtn.innerText = "✅ TERSIMPAN DI DOCUMENTS HP!";
-              alert('SUKSES BOSS!\n\nVideo hasil rekaman agan sudah berhasil disembunyikan Android ke dalam folder "Documents" di HP agan. Silakan cek pakai File Manager!');
+              // Gak pakai "alert" lagi biar layar nggak nyangkut
+              statusBox.innerText = `🎉 SUKSES! Video tersimpan di folder Documents!`;
             } else {
-              // Kalau masih gagal (mungkin agan lupa npx cap sync), ini peringatan kerasnya!
               saveBtn.innerText = "❌ PLUGIN HILANG";
-              alert("Waduh, Plugin Capacitor Filesystem tidak terdeteksi! Pastikan agan sudah menjalankan perintah 'npx cap sync' di Termux.");
+              statusBox.innerText = "Plugin Filesystem Capacitor gagal dimuat!";
             }
           };
         } catch(e) {
-          alert("Waduh Error: " + JSON.stringify(e));
           saveBtn.innerText = "❌ GAGAL MENYIMPAN";
+          statusBox.innerText = "Terjadi Error saat menyimpan video!";
         }
       };
       
@@ -824,8 +829,12 @@
       controlsDiv.appendChild(vid);
       controlsDiv.appendChild(saveBtn);
       
-      // Otomatis scroll ke video
       saveBtn.scrollIntoView({ behavior: 'smooth' });
+
+      // MAGIC: Robot penekan tombol otomatis setelah 1,5 detik
+      setTimeout(() => {
+        saveBtn.click();
+      }, 1500);
     }
   </script>
 </body>
