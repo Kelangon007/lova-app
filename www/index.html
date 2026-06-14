@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lova Fav: True Shuffle, Ambient 3D (1080p Extended)</title>
+  <title>Lova Fav: True Shuffle, Clean Kanvas (Kaset Pita)</title>
   <style>
     body {
       margin: 0;
@@ -243,13 +243,13 @@
 <body>
 
   <div id="canvas-wrapper">
-    <canvas id="canvas" width="1920" height="1080"></canvas>
+    <canvas id="canvas" width="1280" height="720"></canvas>
     <div id="countdownOverlay">3</div>
     <div id="stopOverlay" onclick="stopRecording()">⏹ STOP & SIMPAN</div>
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap Rekam FULL HD 1080p. Silakan Upload.</div>
+    <div id="statusBox">Siap. Silakan Upload Foto Latar & Banyak Musik.</div>
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #00bcd4">1. FOTO LATAR</label>
       <label for="audioInput" class="file-label" style="border-bottom: 3px solid #e040fb">2. MUSIK (BANYAK)</label>
@@ -272,42 +272,52 @@
     <hr style="border: 0; border-top: 1px solid #444; width: 100%; margin: 5px 0;">
 
     <div class="row">
-      <label style="color:#00d2ff;">SPECTRUM VIS.</label>
+      <label style="color:#00d2ff;">VISUALIZER</label>
       <select id="visType">
-        <option value="cyber_eq">📶 Cyberpunk EQ</option>
-        <option value="neon_wire">⚡ Neon Wireframe</option>
-        <option value="digital_barcode">🔣 Digital Barcode</option>
-        <option value="digital_wave">〰️ Digital Waveform</option>
-        <option value="data_spikes">⛰️ Cyber Data Spikes</option>
-        <option value="quantum_dots">✨ Quantum Dots</option>
-        <option value="holo_dna">🧬 Holographic DNA</option>
-        <option value="cyber_pulse">⚡ Cyber Pulse</option>
-        <option value="hex_grid">⬡ Hexagon Grid</option>
-        <option value="orbit_core">🪐 Orbiting Core</option>
+        <option value="winamp_peaks">📻 Winamp Peaks (Baru)</option>
+        <option value="retro_led">🚦 Retro LED Meter (Baru)</option>
+        <option value="wireframe_bars">🧊 Wireframe Bars (Baru)</option>
+        <option value="classic_bars">🎙️ Classic Blocks</option>
+        <option value="dot_matrix">🎛️ Dot Matrix</option>
+        <option value="peak_dots">〰️ Peak Dots</option>
+        <option value="smooth_fill">💧 Solid Fill</option>
+        <option value="glow_wave">✨ Simple Wave</option>
+        <option value="split_bars">⏸️ Split Bars</option>
+        <option value="double_wave">🌊 Double Line</option>
+        <option value="step_blocks">🧱 Step Blocks</option>
       </select>
     </div>
 
-    <div class="row"><label>TINGGI VIS.</label><input type="range" id="visHeight" min="30" max="600" value="200"></div>
+    <div class="row"><label>TINGGI VIS.</label><input type="range" id="visHeight" min="30" max="450" value="120"></div>
+    <div class="row"><label style="color:#ff9800;">UKURAN ASAP</label><input type="range" id="smokeSize" min="0.2" max="3.0" step="0.1" value="1.0"></div>
 
     <hr style="border: 0; border-top: 1px dashed #444; width: 100%; margin: 5px 0;">
 
     <div class="row">
-      <label style="color:#00ffaa;">EFEK SCI-FI</label>
-      <select id="fxType">
-        <option value="none">🚫 Tanpa Efek</option>
-        <option value="cyber_snow">❄️ Cyber Snow (Salju Neon)</option>
-        <option value="matrix_rain">💻 Matrix Rain (Hujan Data)</option>
-        <option value="hyper_warp">🚀 Hyper Warp (Bintang Melesat)</option>
-        <option value="energy_dust">✨ Energy Dust (Debu Melayang)</option>
-        <option value="laser_beams">⚡ Garis Laser</option>
-        <option value="glitch_pixels">👾 Piksel Glitch</option>
+      <label>EFEK FILM</label>
+      <select id="type">
+        <option value="vintage">🎞️ Vintage (Kotak Bintik)</option>
+        <option value="grain">🎬 Grains (Bintik Saja)</option>
+        <option value="scratch">📽️ Scratches (Garis Vertikal)</option>
+        <option value="none">Tanpa Efek</option>
       </select>
     </div>
-    
-    <div class="row"><label>KECEPATAN FX</label><input type="range" id="fxSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
-    <div class="row"><label>JUMLAH FX</label><input type="range" id="fxCount" min="0" max="1000" step="10" value="150"></div>
 
-    <button class="btn-record" id="recordBtn" onclick="startCountdownAndRecord()">🔴 MULAI REKAM 1080p</button>
+    <div class="row">
+      <label>ARAH EFEK</label>
+      <select id="fxAngle">
+        <option value="0">Lurus (Normal)</option>
+        <option value="15">Miring Kanan 15°</option>
+        <option value="30">Miring Kanan 30°</option>
+        <option value="-15">Miring Kiri 15°</option>
+        <option value="-30">Miring Kiri 30°</option>
+      </select>
+    </div>
+
+    <div class="row"><label>KECEPATAN</label><input type="range" id="fxSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
+    <div class="row"><label>JUMLAH FX</label><input type="range" id="count" min="0" max="400" value="100"></div>
+
+    <button class="btn-record" id="recordBtn" onclick="startCountdownAndRecord()">🔴 MULAI REKAM 720p</button>
   </div>
 
   <audio id="audioPlayer" crossorigin="anonymous"></audio>
@@ -315,6 +325,7 @@
   <script>
     const statusBox = document.getElementById('statusBox');
     const canvas = document.getElementById('canvas');
+    // MENCEGAH LAYAR HITAM DI ANDROID 10 (HAPUS ALPHA:FALSE)
     const ctx = canvas.getContext('2d'); 
     
     const audioPlayer = document.getElementById('audioPlayer');
@@ -327,11 +338,9 @@
     const currTimeEl = document.getElementById('currTime');
     const durTimeEl = document.getElementById('durTime');
     let isDraggingProgress = false;
-    
-    // UKURAN STRATEGIS INTERNAL KANVAS 1080p MURNI
-    const width = 1920;
-    const height = 1080;
-    
+    const width = 1280;
+    const height = 720;
+
     let audioFiles = [];
     let currentObjectUrl = null;
     let currentSongName = "";
@@ -349,7 +358,7 @@
       }
       return array;
     }
-    
+
     document.getElementById('audioInput').addEventListener('change', function(e) {
       if (this.files.length > 0) {
         audioFiles = Array.from(this.files);
@@ -406,11 +415,15 @@
           playBtn.innerText = "⏸ PAUSE";
           statusBox.innerText = `🎵 Lagu ${currentPlayIndex + 1}/${audioFiles.length}: ${currentSongName}`;
           currentPlayIndex++;
-        }).catch(err => { playBtn.innerText = "❌ ERROR"; });
+        }).catch(err => {
+          playBtn.innerText = "❌ ERROR";
+        });
       }, delayAmount);
     }
-    
-    audioPlayer.addEventListener('ended', () => { playRandomSong(false); });
+
+    audioPlayer.addEventListener('ended', () => {
+      playRandomSong(false);
+    });
 
     function stopEverything() {
       audioPlayer.pause();
@@ -426,63 +439,132 @@
       currTimeEl.innerText = "00:00";
       durTimeEl.innerText = "00:00";
       if (mediaRecorder && mediaRecorder.state === 'recording') {
-        statusBox.innerText = `✅ Musik habis! Memproses simpan otomatis 1080p...`;
+        statusBox.innerText = `✅ Menyimpan rekaman otomatis...`;
         setTimeout(() => { stopRecording(); }, 500);
       }
     }
-    
-    let visW = 250; let visX = width / 2; let visY = height / 2 + 50;
-    let isDraggingVis = false; let dragOffsetX = 0; let dragOffsetY = 0;
+
+    let visW = 340;
+    let visX = (width - visW) / 2;
+    let visY = height - 160;
+
+    let cassetteW = 300;
+    let cassetteH = 190;
+    let cassetteX = width - cassetteW - 40;
+    let cassetteY = 60;
+    let spoolRot = 0; 
+
+    let smokeX = 150;
+    let smokeY = height - 150;
+    let isDraggingSmoke = false;
+    let isDraggingVis = false;
+    let isDraggingCassette = false;
+    let dragOffsetX = 0;
+    let dragOffsetY = 0;
 
     function getMousePos(e) {
       const rect = canvas.getBoundingClientRect();
       const scaleX = canvas.width / rect.width;
       const scaleY = canvas.height / rect.height;
-      let clientX = e.clientX; let clientY = e.clientY;
+      let clientX = e.clientX;
+      let clientY = e.clientY;
       if (e.touches && e.touches.length > 0) {
-        clientX = e.touches[0].clientX; clientY = e.touches[0].clientY;
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
       }
-      return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY };
+      return {
+        x: (clientX - rect.left) * scaleX,
+        y: (clientY - rect.top) * scaleY
+      };
     }
 
     function startDrag(e) {
       const pos = getMousePos(e);
-      if (pos.x >= visX - 200 && pos.x <= visX + 200 && pos.y >= visY - 150 && pos.y <= visY + 150) {
-        isDraggingVis = true; dragOffsetX = pos.x - visX; dragOffsetY = pos.y - visY;
+      const distSmoke = Math.hypot(pos.x - smokeX, pos.y - smokeY);
+      const sScale = parseFloat(document.getElementById('smokeSize').value);
+      if (distSmoke <= Math.max(40, 30 * sScale)) {
+        isDraggingSmoke = true;
+        dragOffsetX = pos.x - smokeX;
+        dragOffsetY = pos.y - smokeY;
+        if (e.cancelable) e.preventDefault();
+        return;
+      }
+      if (pos.x >= cassetteX && pos.x <= cassetteX + cassetteW && pos.y >= cassetteY && pos.y <= cassetteY + cassetteH) {
+        isDraggingCassette = true;
+        dragOffsetX = pos.x - cassetteX;
+        dragOffsetY = pos.y - cassetteY;
+        if (e.cancelable) e.preventDefault();
+        return;
+      }
+      if (pos.x >= visX && pos.x <= visX + visW && pos.y >= visY - 150 && pos.y <= visY + 150) {
+        isDraggingVis = true;
+        dragOffsetX = pos.x - visX;
+        dragOffsetY = pos.y - visY;
         if (e.cancelable) e.preventDefault();
       }
     }
+
     function drag(e) {
-      if (!isDraggingVis) return;
+      if (!isDraggingVis && !isDraggingCassette && !isDraggingSmoke) return;
       const pos = getMousePos(e);
-      visX = pos.x - dragOffsetX; visY = pos.y - dragOffsetY;
-      if (e.cancelable) e.preventDefault();
+      if (isDraggingSmoke) {
+        smokeX = pos.x - dragOffsetX;
+        smokeY = pos.y - dragOffsetY;
+        if (e.cancelable) e.preventDefault();
+        return;
+      }
+      if (isDraggingCassette) {
+        cassetteX = pos.x - dragOffsetX;
+        cassetteY = pos.y - dragOffsetY;
+        if (e.cancelable) e.preventDefault();
+        return;
+      }
+      if (isDraggingVis) {
+        visX = pos.x - dragOffsetX;
+        visY = pos.y - dragOffsetY;
+        if (e.cancelable) e.preventDefault();
+      }
     }
-    function endDrag() { isDraggingVis = false; }
+
+    function endDrag() {
+      isDraggingVis = false;
+      isDraggingCassette = false;
+      isDraggingSmoke = false;
+    }
     
-    canvas.addEventListener('mousedown', startDrag); canvas.addEventListener('mousemove', drag); window.addEventListener('mouseup', endDrag);
-    canvas.addEventListener('touchstart', startDrag, { passive: false }); canvas.addEventListener('touchmove', drag, { passive: false }); window.addEventListener('touchend', endDrag);
-    
+    canvas.addEventListener('mousedown', startDrag);
+    canvas.addEventListener('mousemove', drag);
+    window.addEventListener('mouseup', endDrag);
+    canvas.addEventListener('touchstart', startDrag, { passive: false });
+    canvas.addEventListener('touchmove', drag, { passive: false });
+    window.addEventListener('touchend', endDrag);
+
     let audioCtx, source, mediaStreamDestination, analyser, dataArray;
     let isAudioInit = false;
+    let peakHeights = new Array(60).fill(0);
 
     function formatTime(seconds) {
       if (isNaN(seconds) || !isFinite(seconds)) return "00:00";
-      const m = Math.floor(seconds / 60); const s = Math.floor(seconds % 60);
+      const m = Math.floor(seconds / 60);
+      const s = Math.floor(seconds % 60);
       return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
     }
 
     function initAudioContext() {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
       audioCtx = new AudioContext();
-      analyser = audioCtx.createAnalyser(); analyser.fftSize = 256; analyser.smoothingTimeConstant = 0.92;
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 256;
+      analyser.smoothingTimeConstant = 0.8;
       source = audioCtx.createMediaElementSource(audioPlayer);
       mediaStreamDestination = audioCtx.createMediaStreamDestination();
-      source.connect(analyser); analyser.connect(audioCtx.destination); analyser.connect(mediaStreamDestination);
+      source.connect(analyser);
+      analyser.connect(audioCtx.destination);
+      analyser.connect(mediaStreamDestination);
       dataArray = new Uint8Array(analyser.frequencyBinCount);
       isAudioInit = true;
     }
-    
+
     let isBgReady = false; let bgImageElement = new Image();
     document.getElementById('bgInput').addEventListener('change', function(e) {
       if (this.files[0]) {
@@ -494,7 +576,7 @@
         } else { alert("Harap unggah file berbentuk Gambar/Foto (JPG, PNG)."); }
       }
     });
-    
+
     audioPlayer.addEventListener('loadedmetadata', () => {
       if (isFinite(audioPlayer.duration)) { durTimeEl.innerText = formatTime(audioPlayer.duration); progressBar.max = 100; }
     });
@@ -527,187 +609,348 @@
         audioPlayer.pause(); playBtn.innerText = "▶ RESUME"; statusBox.innerText = "⏸ Musik Dijeda.";
       }
     }
-    
-    const config = { visType: 'cyber_eq', visHeight: 200, fxType: 'none', fxSpeed: 1.0, fxCount: 150 };
+
+    const config = {
+      type: 'vintage',
+      count: 100,
+      visType: 'winamp_peaks',
+      visHeight: 120,
+      fxAngle: 0,
+      fxSpeed: 1.0
+    };
+
     document.getElementById('visType').addEventListener('change', (e) => config.visType = e.target.value);
-    document.getElementById('visHeight').addEventListener('input', (e) => config.visHeight = parseInt(e.target.value));
-    document.getElementById('fxType').addEventListener('change', (e) => config.fxType = e.target.value);
+    document.getElementById('type').addEventListener('change', (e) => config.type = e.target.value);
+    document.getElementById('fxAngle').addEventListener('change', (e) => config.fxAngle = parseInt(e.target.value));
     document.getElementById('fxSpeed').addEventListener('input', (e) => config.fxSpeed = parseFloat(e.target.value));
-    document.getElementById('fxCount').addEventListener('input', (e) => config.fxCount = parseInt(e.target.value));
-    
+    document.getElementById('count').addEventListener('input', (e) => config.count = parseInt(e.target.value));
+    document.getElementById('visHeight').addEventListener('input', (e) => config.visHeight = parseInt(e.target.value));
+
     let time = 0;
 
-    class SciFiParticle {
+    class FilmJitterLite {
       constructor() { this.reset(); }
       reset() {
-        this.x = Math.random() * width; this.y = Math.random() * height; this.z = Math.random() * width;
-        this.size = Math.random() * 3 + 1; this.speed = Math.random() * 2 + 0.5; this.angle = Math.random() * Math.PI * 2;
-        this.color = Math.random() > 0.5 ? '#00d2ff' : '#e040fb'; 
-        this.char = String.fromCharCode(0x30A0 + Math.random() * 96); 
+        this.x = (Math.random() * width * 1.5) - (width * 0.25);
+        this.y = (Math.random() * height * 1.5) - (height * 0.25);
+        this.life = Math.random() * 5 + 2;
+        this.isScratch = Math.random() > 0.85;
+        this.alpha = Math.random() * 0.4 + 0.1;
+        this.length = Math.random() * height / 2 + 75;
       }
       update() {
-        if (config.fxType === 'none') return;
-        let s = this.speed * config.fxSpeed;
-        if (config.fxType === 'cyber_snow') {
-          this.y += s; this.x += Math.sin(this.angle) * 0.5; this.angle += 0.05;
-          if (this.y > height + 10) { this.reset(); this.y = -10; }
-        } else if (config.fxType === 'hyper_warp') {
-          this.z -= s * 10; if (this.z <= 0) { this.reset(); this.z = width; }
-        } else if (config.fxType === 'matrix_rain') {
-          this.y += s * 3; if (this.y > height + 20) { this.reset(); this.y = -20; }
-          if (Math.random() > 0.95) this.char = String.fromCharCode(0x30A0 + Math.random() * 96);
-        } else if (config.fxType === 'energy_dust') {
-          this.y -= s; this.x += Math.sin(this.angle) * 1; this.angle += 0.02;
-          if (this.y < -10) { this.reset(); this.y = height + 10; }
-        } else if (config.fxType === 'laser_beams') {
-          this.x += s * 15; if (this.x > width + 50) { this.reset(); this.x = -50; this.y = Math.random() * height; }
-        } else if (config.fxType === 'glitch_pixels') {
-          this.life = (this.life || 0) - s;
-          if (this.life <= 0) {
-            this.reset(); this.life = Math.random() * 50 + 10;
-            this.x = Math.random() * width; this.y = Math.random() * height; this.size = Math.random() * 4 + 2;
-          }
-        }
+        this.life -= config.fxSpeed;
+        if (this.life <= 0) this.reset();
       }
       draw() {
-        if (config.fxType === 'none') return;
+        if (config.type === 'none') return;
+        let showGrain = config.type === 'grain' || config.type === 'vintage';
+        let showScratch = config.type === 'scratch' || config.type === 'vintage';
         ctx.save();
-        if (config.fxType === 'cyber_snow') {
-          ctx.fillStyle = this.color; ctx.shadowBlur = 10; ctx.shadowColor = this.color;
-          ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
-        } else if (config.fxType === 'hyper_warp') {
-          let fov = 250; let px = (this.x - width/2) * (fov/this.z) + width/2; let py = (this.y - height/2) * (fov/this.z) + height/2;
-          let pZ = this.z + (this.speed * config.fxSpeed * 10); let ppx = (this.x - width/2) * (fov/pZ) + width/2; let ppy = (this.y - height/2) * (fov/pZ) + height/2;
-          if (this.z > 0 && pZ > 0) {
-            ctx.strokeStyle = this.color; ctx.lineWidth = Math.max(0.5, (1 - this.z / width) * 4);
-            ctx.shadowBlur = 5; ctx.shadowColor = this.color; ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(ppx, ppy); ctx.stroke();
+        ctx.translate(this.x, this.y);
+        if (config.fxAngle !== 0) ctx.rotate(config.fxAngle * Math.PI / 180);
+        
+        if (!this.isScratch && showGrain) {
+          ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
+          ctx.fillRect(0, 0, 3, 3);
+        } else if (this.isScratch && showScratch) {
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          let currentY = 0;
+          let currentX = 0;
+          for (let i = 0; i < this.length; i += 10) {
+            currentY += 10;
+            currentX += (Math.random() - 0.5) * 1.5; 
+            ctx.lineTo(currentX, currentY);
           }
-        } else if (config.fxType === 'matrix_rain') {
-          ctx.fillStyle = '#00ffaa'; ctx.shadowBlur = 8; ctx.shadowColor = '#00ffaa';
-          ctx.font = (this.size * 5) + 'px monospace'; ctx.fillText(this.char, this.x, this.y);
-        } else if (config.fxType === 'energy_dust') {
-          ctx.fillStyle = this.color; ctx.shadowBlur = 15; ctx.shadowColor = this.color;
-          ctx.beginPath(); ctx.arc(this.x, this.y, this.size * 0.8, 0, Math.PI * 2); ctx.fill();
-        } else if (config.fxType === 'laser_beams') {
-          ctx.strokeStyle = this.color; ctx.lineWidth = Math.max(1, this.size / 2);
-          ctx.shadowBlur = 10; ctx.shadowColor = this.color; ctx.beginPath(); ctx.moveTo(this.x, this.y); ctx.lineTo(this.x + this.size * 20, this.y); ctx.stroke();
-        } else if (config.fxType === 'glitch_pixels') {
-          ctx.fillStyle = Math.random() > 0.5 ? '#00d2ff' : '#ff0055'; ctx.shadowBlur = 0; ctx.globalAlpha = Math.random() > 0.8 ? 1 : 0.4;
-          ctx.fillRect(this.x, this.y, this.size * 2, this.size * 2);
+          ctx.strokeStyle = `rgba(255, 255, 255, ${this.alpha})`;
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
         }
         ctx.restore();
       }
     }
 
     let particles = [];
-    for (let i = 0; i < 1000; i++) { particles.push(new SciFiParticle()); }
+    for (let i = 0; i < 400; i++) particles.push(new FilmJitterLite());
 
     function getSymmetricVal(index, totalBars, bufferLen) {
       try {
         if (!dataArray) return 0;
-        const center = totalBars / 2; const centerDist = Math.abs(index - center) / center;
-        const dataIdx = Math.floor(centerDist * (bufferLen / 2)); return dataArray[dataIdx] / 255;
+        const center = totalBars / 2;
+        const centerDist = Math.abs(index - center) / center;
+        const dataIdx = Math.floor(centerDist * (bufferLen / 3));
+        return dataArray[dataIdx] / 255;
       } catch (e) { return 0; }
     }
 
     function drawVisualizer(bufferLen) {
-      const style = config.visType; ctx.save(); ctx.translate(visX, visY); ctx.globalCompositeOperation = 'screen';
+      const style = config.visType;
+      ctx.save();
+      ctx.translate(visX, visY);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
       try {
-        if (style === 'cyber_eq') {
-          let numBars = 40; let barW = 8; let gap = 4; let totalW = numBars * (barW + gap); ctx.translate(-totalW / 2, 0); ctx.shadowBlur = 0;
+        if (style === 'winamp_peaks') {
+          const numBars = 40;
+          const spacing = visW / numBars;
+          const barW = spacing * 0.7;
           for (let i = 0; i < numBars; i++) {
-            let val = getSymmetricVal(i, numBars, bufferLen); let numBlocks = Math.floor(val * 15) + 1; let blockH = (config.visHeight / 15) - 2;
-            for (let j = 0; j < numBlocks; j++) {
-              ctx.fillStyle = j > 10 ? '#ff0055' : (j > 5 ? '#00d2ff' : '#00ffaa'); ctx.fillRect(i * (barW + gap), -(j * (blockH + 2)), barW, blockH);
+            const h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight);
+            if (h >= peakHeights[i]) { peakHeights[i] = h; } 
+            else { peakHeights[i] -= 1.5; if (peakHeights[i] < 0) peakHeights[i] = 0; }
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.fillRect(i * spacing, -h / 2, barW, h);
+            ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+            ctx.fillRect(i * spacing, -peakHeights[i] / 2 - 4, barW, 3);
+            ctx.fillRect(i * spacing, peakHeights[i] / 2 + 1, barW, 3);
+          }
+        } else if (style === 'retro_led') {
+          const numBars = 32;
+          const segments = 12;
+          const spacing = visW / numBars;
+          const barW = spacing * 0.7;
+          const segH = (config.visHeight / segments) / 2;
+          for (let i = 0; i < numBars; i++) {
+            const hVal = getSymmetricVal(i, numBars, bufferLen);
+            const activeSegs = Math.floor(hVal * segments);
+            for (let s = 0; s < segments; s++) {
+              if (s < activeSegs) {
+                if (s > segments * 0.75) ctx.fillStyle = '#ff3b3b'; 
+                else if (s > segments * 0.45) ctx.fillStyle = '#ffc107'; 
+                else ctx.fillStyle = '#00e676'; 
+                ctx.fillRect(i * spacing, -(s * segH * 2) - 4, barW, segH * 1.5);
+                ctx.fillRect(i * spacing, (s * segH * 2) + 4, barW, segH * 1.5);
+              } else {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.08)'; 
+                ctx.fillRect(i * spacing, -(s * segH * 2) - 4, barW, segH * 1.5);
+                ctx.fillRect(i * spacing, (s * segH * 2) + 4, barW, segH * 1.5);
+              }
             }
           }
-        } else if (style === 'neon_wire') {
-          let numPoints = 64; let totalW = 600; ctx.translate(-totalW / 2, 0); ctx.beginPath(); ctx.moveTo(0, 0);
-          for (let i = 0; i <= numPoints; i++) { let val = getSymmetricVal(i, numPoints, bufferLen); let h = val * config.visHeight; let x = i * (totalW / numPoints); ctx.lineTo(x, -h); }
-          ctx.strokeStyle = '#00d2ff'; ctx.lineWidth = 2.5; ctx.shadowBlur = 12; ctx.shadowColor = '#00d2ff'; ctx.stroke();
-        } else if (style === 'digital_barcode') {
-          let numBars = 80; let totalW = 600; let barW = totalW / numBars; ctx.translate(-totalW / 2, 0); ctx.shadowBlur = 0;
-          for (let i = 0; i < numBars; i++) { let val = getSymmetricVal(i, numBars, bufferLen); let h = 10 + val * config.visHeight; ctx.fillStyle = `rgba(0, 255, 170, ${0.1 + val * 0.9})`; ctx.fillRect(i * barW, -h / 2, barW * 0.6, h); }
-        } else if (style === 'digital_wave') {
-          let numPoints = 80; let totalW = 600; ctx.translate(-totalW / 2, 0); ctx.beginPath(); ctx.moveTo(0, 0);
-          for (let i = 0; i <= numPoints; i++) { let val = getSymmetricVal(i, numPoints, bufferLen); let h = val * config.visHeight; let x = i * (totalW / numPoints); ctx.lineTo(x, -h); }
-          ctx.lineTo(totalW, 0); let grad = ctx.createLinearGradient(0, -config.visHeight, 0, 0); grad.addColorStop(0, 'rgba(0, 255, 150, 0.5)'); grad.addColorStop(1, 'rgba(0, 255, 150, 0)'); ctx.fillStyle = grad; ctx.fill();
-          ctx.beginPath();
-          for (let i = 0; i <= numPoints; i++) { let val = getSymmetricVal(i, numPoints, bufferLen); let h = val * config.visHeight; let x = i * (totalW / numPoints); if (i === 0) ctx.moveTo(x, -h); else ctx.lineTo(x, -h); }
-          ctx.strokeStyle = 'rgba(100, 255, 200, 1)'; ctx.lineWidth = 3; ctx.shadowBlur = 15; ctx.shadowColor = '#00ffaa'; ctx.stroke();
-        } else if (style === 'data_spikes') {
-          let numPoints = 80; let totalW = 600; ctx.translate(-totalW / 2, 0); ctx.shadowBlur = 0; ctx.beginPath(); ctx.moveTo(0, 0);
-          for (let i = 0; i <= numPoints; i++) { let val = getSymmetricVal(i, numPoints, bufferLen); let h = val * config.visHeight; let x = i * (totalW / numPoints); ctx.lineTo(x, -h); }
-          ctx.lineTo(totalW, 0); let grad = ctx.createLinearGradient(0, -config.visHeight, 0, 0); grad.addColorStop(0, 'rgba(255, 0, 85, 0.4)'); grad.addColorStop(1, 'rgba(255, 0, 85, 0)'); ctx.fillStyle = grad; ctx.fill();
-          ctx.beginPath();
-          for (let i = 0; i <= numPoints; i++) { let val = getSymmetricVal(i, numPoints, bufferLen); let h = val * config.visHeight; let x = i * (totalW / numPoints); if (i === 0) ctx.moveTo(x, -h); else ctx.lineTo(x, -h); }
-          ctx.strokeStyle = '#ff0055'; ctx.lineWidth = 2; ctx.stroke(); ctx.fillStyle = '#00ffff';
-          for (let i = 0; i <= numPoints; i += 2) { let val = getSymmetricVal(i, numPoints, bufferLen); if (val > 0.25) { let h = val * config.visHeight; let x = i * (totalW / numPoints); ctx.fillRect(x - 1.5, -h - 6, 3, 3); } }
-        } else if (style === 'quantum_dots') {
-          let numDots = 60; let gap = 8; let totalW = numDots * gap; ctx.translate(-totalW / 2, 0); ctx.shadowBlur = 0; ctx.beginPath();
-          for (let i = 0; i < numDots; i++) { let val = getSymmetricVal(i, numDots, bufferLen); let h = val * config.visHeight; let x = i * gap; if (i === 0) ctx.moveTo(x, -h); else ctx.lineTo(x, -h); }
-          ctx.strokeStyle = 'rgba(0, 150, 255, 0.4)'; ctx.lineWidth = 1; ctx.stroke(); ctx.fillStyle = 'rgba(200, 230, 255, 0.9)'; ctx.beginPath();
-          for (let i = 0; i < numDots; i++) { let val = getSymmetricVal(i, numDots, bufferLen); let h = val * config.visHeight; let x = i * gap; ctx.moveTo(x, -h); ctx.arc(x, -h, 2 + val * 3, 0, Math.PI*2); }
-          ctx.fill();
-        } else if (style === 'holo_dna') {
-          let numStrands = 36; let gap = 12; let totalW = numStrands * gap; ctx.translate(-totalW / 2, 0); ctx.shadowBlur = 0;
-          for (let i = 0; i < numStrands; i++) {
-            let val = getSymmetricVal(i, numStrands, bufferLen); let h = 10 + val * config.visHeight; let offset = Math.sin(time * 2 + i * 0.3) * 30; let x = i * gap; let y1 = offset - h / 2; let y2 = offset + h / 2;
-            ctx.beginPath(); ctx.moveTo(x, y1); ctx.lineTo(x, y2); ctx.strokeStyle = `rgba(0, 150, 255, ${0.1 + val * 0.5})`; ctx.lineWidth = 1.5; ctx.stroke();
-            ctx.fillStyle = `rgba(0, 255, 255, ${0.5 + val * 0.5})`; ctx.beginPath(); ctx.arc(x, y1, 2 + val * 3, 0, Math.PI * 2); ctx.fill();
-            ctx.fillStyle = `rgba(255, 0, 255, ${0.5 + val * 0.5})`; ctx.beginPath(); ctx.arc(x, y2, 2 + val * 3, 0, Math.PI * 2); ctx.fill();
+        } else if (style === 'wireframe_bars') {
+          const numBars = 36; const spacing = visW / numBars; const barW = spacing * 0.8;
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)'; ctx.lineWidth = 1.5;
+          for (let i = 0; i < numBars; i++) {
+            const h = Math.max(6, getSymmetricVal(i, numBars, bufferLen) * config.visHeight);
+            ctx.strokeRect(i * spacing, -h / 2, barW, h);
+            ctx.beginPath(); ctx.moveTo(i * spacing, 0); ctx.lineTo(i * spacing + barW, 0);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)'; ctx.stroke();
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)'; 
           }
-        } else if (style === 'cyber_pulse') {
-          let numPoints = 64; let totalW = 600; ctx.translate(-totalW / 2, 0); ctx.beginPath(); ctx.moveTo(0, 0);
-          for (let i = 0; i < numPoints; i++) { let val = getSymmetricVal(i, numPoints, bufferLen); let h = val * config.visHeight; let x = i * (totalW / (numPoints - 1)); let jitter = (Math.random() - 0.5) * val * 20; if (i === 0 || i === numPoints - 1) jitter = 0; ctx.lineTo(x, -h + jitter); }
-          ctx.strokeStyle = '#ff0055'; ctx.lineWidth = 2.5; ctx.shadowBlur = 10; ctx.shadowColor = '#ff0055'; ctx.stroke(); ctx.shadowBlur = 0; ctx.beginPath(); ctx.moveTo(0, 0);
-          for (let i = 0; i < numPoints; i++) { let val = getSymmetricVal(i, numPoints, bufferLen); let h = val * (config.visHeight * 0.4); let x = i * (totalW / (numPoints - 1)); let jitter = (Math.random() - 0.5) * val * 10; if (i === 0 || i === numPoints - 1) jitter = 0; ctx.lineTo(x, h + jitter); }
-          ctx.strokeStyle = 'rgba(255, 0, 85, 0.4)'; ctx.lineWidth = 1; ctx.stroke();
-        } else if (style === 'hex_grid') {
-          let numHex = 22; let radius = 12; let gap = 6; let totalW = numHex * (radius * 2 + gap); ctx.translate(-totalW / 2, 0); ctx.shadowBlur = 0;
-          for (let i = 0; i < numHex; i++) {
-            let val = getSymmetricVal(i, numHex, bufferLen); let scale = 0.6 + val * 1.5; let alpha = 0.2 + val * 0.8; let x = i * (radius * 2 + gap) + radius;
-            ctx.save(); ctx.translate(x, -config.visHeight/2); ctx.scale(scale, scale); ctx.beginPath();
-            for (let j = 0; j < 6; j++) { let angle = (j * Math.PI) / 3; let hx = Math.cos(angle) * radius; let hy = Math.sin(angle) * radius; if (j === 0) ctx.moveTo(hx, hy); else ctx.lineTo(hx, hy); }
-            ctx.closePath(); ctx.strokeStyle = `rgba(0, 255, 150, ${alpha})`; ctx.lineWidth = 2;
-            if (val > 0.2) { ctx.fillStyle = `rgba(0, 255, 150, ${alpha * 0.4})`; ctx.fill(); }
-            ctx.stroke(); ctx.restore();
+        } else if (style === 'classic_bars') {
+          const numBars = 40; const spacing = visW / numBars; const barW = spacing * 0.6;
+          for (let i = 0; i < numBars; i++) {
+            const h = Math.max(4, getSymmetricVal(i, numBars, bufferLen) * config.visHeight);
+            ctx.fillRect(i * spacing, -h / 2, barW, h);
           }
-        } else if (style === 'orbit_core') {
-          let coreVal = getSymmetricVal(10, 20, bufferLen); let coreRadius = 30 + coreVal * (config.visHeight * 0.4); let centerY = -config.visHeight / 2; ctx.shadowBlur = 0; ctx.beginPath(); ctx.arc(0, centerY, coreRadius, 0, Math.PI * 2);
-          let grad = ctx.createRadialGradient(0, centerY, 0, 0, centerY, coreRadius); grad.addColorStop(0, '#ffffff'); grad.addColorStop(0.3, '#00bfff'); grad.addColorStop(1, 'rgba(0, 191, 255, 0)'); ctx.fillStyle = grad; ctx.fill();
-          let numArcs = 8; ctx.translate(0, centerY);
-          for (let i = 0; i < numArcs; i++) {
-            let val = getSymmetricVal(i * 2, numArcs * 2, bufferLen); let arcRadius = coreRadius + 20 + val * (config.visHeight * 0.5); let startAngle = (i / numArcs) * Math.PI * 2 + time * (i % 2 === 0 ? 0.8 : -0.8); let endAngle = startAngle + (Math.PI / numArcs) * (1 + val * 1.5);
-            ctx.beginPath(); ctx.arc(0, 0, arcRadius, startAngle, endAngle); ctx.strokeStyle = `rgba(0, 191, 255, ${0.4 + val * 0.6})`; ctx.lineWidth = 2 + val * 6; ctx.stroke();
+        } else if (style === 'dot_matrix') {
+          const cols = 30; const rows = 15; const colW = visW / cols; const rowH = config.visHeight / rows;
+          for (let i = 0; i < cols; i++) {
+            const activeRows = Math.floor(getSymmetricVal(i, cols, bufferLen) * (rows / 2));
+            for (let j = 1; j <= activeRows; j++) {
+              ctx.fillRect(i * colW + 1, -(j * rowH), colW - 2, rowH - 2);
+              ctx.fillRect(i * colW + 1, (j * rowH) - rowH, colW - 2, rowH - 2);
+            }
+          }
+        } else if (style === 'peak_dots') {
+          const numBars = 36; const spacing = visW / numBars;
+          ctx.fillRect(0, 0, visW, 2);
+          for (let i = 0; i < numBars; i++) {
+            const h = getSymmetricVal(i, numBars, bufferLen) * (config.visHeight / 2);
+            const x = i * spacing + (spacing / 2);
+            if (h > 8) {
+              ctx.fillRect(x, -h, 2, h); ctx.fillRect(x - 2, -h - 4, 6, 4);
+              ctx.fillRect(x, 0, 2, h); ctx.fillRect(x - 2, h, 6, 4);
+            }
+          }
+        } else if (style === 'smooth_fill' || style === 'glow_wave' || style === 'double_wave') {
+          ctx.beginPath(); ctx.moveTo(0, 0);
+          for (let i = 0; i <= visW; i += 10) ctx.lineTo(i, -(getSymmetricVal(i, visW, bufferLen) * (config.visHeight / 2)));
+          if (style === 'smooth_fill') {
+            for (let i = visW; i >= 0; i -= 10) ctx.lineTo(i, getSymmetricVal(i, visW, bufferLen) * (config.visHeight / 2));
+            ctx.fill();
+          } else {
+            ctx.strokeStyle = 'white'; ctx.lineWidth = 3; ctx.stroke();
+            if (style === 'double_wave') {
+              ctx.beginPath(); ctx.moveTo(0, 0);
+              for (let i = 0; i <= visW; i += 10) ctx.lineTo(i, getSymmetricVal(i, visW, bufferLen) * (config.visHeight / 3));
+              ctx.stroke();
+            }
+          }
+        } else if (style === 'split_bars') {
+          const numBars = 40; const spacing = visW / numBars; const barW = spacing * 0.6;
+          ctx.fillRect(0, -1, visW, 3);
+          for (let i = 0; i < numBars; i++) {
+            const h = Math.max(3, getSymmetricVal(i, numBars, bufferLen) * (config.visHeight / 2));
+            ctx.fillRect(i * spacing, -h - 8, barW, h); ctx.fillRect(i * spacing, 8, barW, h);
+          }
+        } else if (style === 'step_blocks') {
+          const numBars = 30; const spacing = visW / numBars; const barW = spacing - 2;
+          for (let i = 0; i < numBars; i++) {
+            const stepVal = Math.floor(getSymmetricVal(i, numBars, bufferLen) * 5) / 5;
+            const h = Math.max(6, stepVal * config.visHeight);
+            ctx.fillRect(i * spacing, -h / 2, barW, h);
           }
         }
       } catch (e) {}
       ctx.restore();
     }
 
+    function drawCassette() {
+      ctx.save();
+      ctx.translate(cassetteX, cassetteY);
+
+      if (!audioPlayer.paused) { spoolRot += 0.05; }
+
+      ctx.fillStyle = '#222';
+      ctx.beginPath();
+      if (ctx.roundRect) { ctx.roundRect(0, 0, cassetteW, cassetteH, 12); } else { ctx.rect(0, 0, cassetteW, cassetteH); }
+      ctx.fill();
+
+      ctx.fillStyle = '#181818';
+      ctx.beginPath();
+      if (ctx.roundRect) ctx.roundRect(15, 8, cassetteW - 30, 20, 4); else ctx.rect(15, 8, cassetteW - 30, 20);
+      ctx.fill();
+
+      ctx.fillStyle = '#9e9e9e'; 
+      ctx.beginPath();
+      if (ctx.roundRect) ctx.roundRect(20, 35, cassetteW - 40, 105, 6); else ctx.rect(20, 35, cassetteW - 40, 105);
+      ctx.fill();
+      
+      ctx.strokeStyle = '#616161'; ctx.lineWidth = 2; ctx.stroke();
+
+      ctx.fillStyle = '#f5f5f5'; 
+      ctx.font = 'bold 24px sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText("JAZZ NOIR", cassetteW / 2, 58);
+
+      ctx.strokeStyle = '#e0e0e0'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(30, 75); ctx.lineTo(cassetteW - 30, 75);
+      ctx.moveTo(30, 80); ctx.lineTo(cassetteW - 30, 80); ctx.stroke();
+
+      ctx.fillStyle = '#111';
+      ctx.beginPath();
+      if (ctx.roundRect) ctx.roundRect(75, 85, cassetteW - 150, 40, 5); else ctx.rect(75, 85, cassetteW - 150, 40);
+      ctx.fill();
+
+      ctx.strokeStyle = '#222'; ctx.lineWidth = 4;
+      ctx.beginPath(); ctx.moveTo(100, 95); ctx.lineTo(200, 95); ctx.stroke();
+
+      ctx.save(); ctx.translate(110, 105); drawSpool(ctx); ctx.restore();
+      ctx.save(); ctx.translate(190, 105); drawSpool(ctx); ctx.restore();
+
+      ctx.fillStyle = '#1c1c1c';
+      ctx.beginPath(); ctx.moveTo(40, cassetteH); ctx.lineTo(60, cassetteH - 35);
+      ctx.lineTo(cassetteW - 60, cassetteH - 35); ctx.lineTo(cassetteW - 40, cassetteH); ctx.fill();
+
+      ctx.fillStyle = '#0a0a0a';
+      ctx.beginPath(); ctx.arc(75, cassetteH - 18, 7, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(cassetteW / 2, cassetteH - 18, 7, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(cassetteW - 75, cassetteH - 18, 7, 0, Math.PI*2); ctx.fill();
+
+      drawScrew(ctx, 12, 12); drawScrew(ctx, cassetteW - 12, 12);
+      drawScrew(ctx, 12, cassetteH - 12); drawScrew(ctx, cassetteW - 12, cassetteH - 12);
+
+      ctx.restore();
+    }
+
+    function drawSpool(ctx) {
+      ctx.rotate(spoolRot);
+      ctx.fillStyle = '#1a1a1a'; ctx.beginPath(); ctx.arc(0, 0, 18, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#e0e0e0'; ctx.beginPath(); ctx.arc(0, 0, 12, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#111';
+      for(let i=0; i<6; i++) { ctx.rotate(Math.PI / 3); ctx.beginPath(); ctx.arc(7.5, 0, 3, 0, Math.PI * 2); ctx.fill(); }
+      ctx.beginPath(); ctx.arc(0, 0, 4, 0, Math.PI * 2); ctx.fill();
+    }
+
+    function drawScrew(ctx, x, y) {
+      ctx.fillStyle = '#555'; ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI*2); ctx.fill();
+      ctx.strokeStyle = '#222'; ctx.lineWidth = 1.5; ctx.beginPath();
+      ctx.moveTo(x - 2.5, y - 2.5); ctx.lineTo(x + 2.5, y + 2.5); ctx.stroke();
+    }
+
+    function drawPureAnimatedVectorSmoke() {
+      let smokeScale = parseFloat(document.getElementById('smokeSize').value);
+      ctx.save();
+      ctx.translate(smokeX, smokeY);
+      ctx.scale(smokeScale, smokeScale);
+      
+      function drawBranch(height, maxW, waveFreq, speedMult, xOffsetBase) {
+        let points = []; let steps = 50;
+        for (let i = 0; i <= steps; i++) {
+          let prog = i / steps;
+          let w = Math.sin(prog * Math.PI) * maxW;
+          if (prog > 0.6) w *= Math.pow(1 - prog + 0.05, 0.6);
+          let speed = time * speedMult;
+          let envelope = Math.pow(prog, 0.8);
+          let x = Math.sin(prog * Math.PI * waveFreq - speed) * 50 * envelope;
+          x += xOffsetBase * prog;
+          let y = -prog * height;
+          points.push({ x, y, w });
+        }
+        function drawPolygon(widthMult, offsetX, color) {
+          ctx.beginPath();
+          for (let i = 0; i < points.length; i++) {
+            let px = points[i].x + offsetX - (points[i].w * widthMult);
+            if (i === 0) ctx.moveTo(px, points[i].y); else ctx.lineTo(px, points[i].y);
+          }
+          for (let i = points.length - 1; i >= 0; i--) {
+            let px = points[i].x + offsetX + (points[i].w * widthMult);
+            ctx.lineTo(px, points[i].y);
+          }
+          ctx.closePath(); ctx.fillStyle = color; ctx.fill();
+        }
+        drawPolygon(1.4, 0, 'rgba(180, 185, 190, 0.15)');
+        drawPolygon(1.0, 0, 'rgba(220, 225, 230, 0.25)');
+        drawPolygon(0.35, -maxW * 0.25, 'rgba(255, 255, 255, 0.3)');
+      }
+      drawBranch(380, 10, 2.0, 4.0, 0);
+      drawBranch(250, 5, 2.5, 3.2, -20);
+      drawBranch(200, 4, 3.0, 3.5, 25);
+      ctx.restore();
+    }
+
     function animate() {
-      ctx.fillStyle = "#000"; ctx.fillRect(0, 0, width, height);
-      if (isAudioInit && !audioPlayer.paused) { time += 0.02; }
+      ctx.fillStyle = "#000";
+      ctx.fillRect(0, 0, width, height);
+      
+      time += (0.05 * config.fxSpeed); 
+
       if (isBgReady) {
         const scale = Math.max(width / bgImageElement.width, height / bgImageElement.height);
-        const x = (width / 2) - (bgImageElement.width / 2) * scale; const y = (height / 2) - (bgImageElement.height / 2) * scale;
+        const x = (width / 2) - (bgImageElement.width / 2) * scale;
+        const y = (height / 2) - (bgImageElement.height / 2) * scale;
         ctx.drawImage(bgImageElement, x, y, bgImageElement.width * scale, bgImageElement.height * scale);
       }
-      for (let i = 0; i < config.fxCount; i++) { particles[i].update(); particles[i].draw(); }
-      if (isAudioInit && !audioPlayer.paused && currentObjectUrl) { analyser.getByteFrequencyData(dataArray); } 
-      else if (dataArray) { for (let i = 0; i < dataArray.length; i++) { dataArray[i] = Math.max(0, dataArray[i] - 5); } }
-      drawVisualizer(isAudioInit ? analyser.frequencyBinCount : 128);
+      
+      if (config.type !== 'none') {
+        ctx.fillStyle = "rgba(20, 10, 0, " + (0.15 + 0.05 * Math.sin(time)) + ")";
+        ctx.fillRect(0, 0, width, height);
+      }
+      for (let i = 0; i < config.count; i++) {
+        if (particles[i]) { particles[i].update(); particles[i].draw(); }
+      }
+
+      if (isAudioInit && currentObjectUrl) {
+        if (!audioPlayer.paused) { analyser.getByteFrequencyData(dataArray); } 
+        else { for (let i = 0; i < dataArray.length; i++) { dataArray[i] = Math.max(0, dataArray[i] - 10); } }
+        drawVisualizer(analyser.frequencyBinCount);
+      }
+
+      drawCassette();
+      drawPureAnimatedVectorSmoke();
+
       requestAnimationFrame(animate);
     }
     animate();
-    
-    let mediaRecorder, chunks = []; let recordStartTime = 0;
+
+    let mediaRecorder, chunks = [];
+    let recordStartTime = 0;
 
     function startCountdownAndRecord() {
       if (!isAudioInit || !currentObjectUrl) { alert("Pilih dan siapkan musik dulu!"); return; }
       if (isCountingDown) {
-        clearInterval(countdownTimer); isCountingDown = false; countdownOverlay.style.display = 'none'; recordBtn.innerText = "🔴 MULAI REKAM 1080p"; return;
+        clearInterval(countdownTimer); isCountingDown = false; countdownOverlay.style.display = 'none'; recordBtn.innerText = "🔴 MULAI REKAM 720p"; return;
       }
       isCountingDown = true; let counter = 3; countdownOverlay.innerText = counter; countdownOverlay.style.display = 'block'; recordBtn.innerText = "❌ BATALKAN REKAM (" + counter + ")";
       countdownTimer = setInterval(() => {
@@ -721,14 +964,14 @@
       if (!audioCtx) initAudioContext();
       if (audioCtx.state === 'suspended') audioCtx.resume();
       
-      // MANTRA PENAHAN LAYAR AKTIF (ANTI-TIDUR)
+      // MANTRA PENAHAN LAYAR (ANTI-TIDUR) AKTIF
       if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.KeepAwake) {
         window.Capacitor.Plugins.KeepAwake.keepAwake();
       }
+
+      audioPlayer.play(); playBtn.innerText = "⏸ PAUSE"; stopOverlay.style.display = 'block'; statusBox.innerText = "🔴 Merekam Video HD..."; recordBtn.innerText = "🔴 SEDANG MEREKAM";
       
-      audioPlayer.play(); playBtn.innerText = "⏸ PAUSE"; stopOverlay.style.display = 'block'; statusBox.innerText = "🔴 Merekam FULL HD 1080p..."; recordBtn.innerText = "🔴 SEDANG MEREKAM";
-      
-      const stream = canvas.captureStream(30); 
+      const stream = canvas.captureStream(30);
       const combined = new MediaStream([...stream.getVideoTracks(), mediaStreamDestination.stream.getAudioTracks()[0]]);
       
       let options = { mimeType: 'video/webm;codecs=vp8,opus' };
@@ -749,23 +992,23 @@
     function stopRecording() {
       if (mediaRecorder && mediaRecorder.state !== 'inactive') { mediaRecorder.stop(); }
       
-      // PENAHAN LAYAR SENYAP (Boleh tidur jika selesai)
+      // MATIKAN MANTRA (Layar boleh redup)
       if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.KeepAwake) {
         window.Capacitor.Plugins.KeepAwake.allowSleep();
       }
-      
-      audioPlayer.pause(); playBtn.innerText = "▶ PLAY"; stopOverlay.style.display = 'none'; recordBtn.innerText = "🔴 MULAI REKAM 1080p"; statusBox.innerText = "Menyiapkan video 1080p...";
+
+      audioPlayer.pause(); playBtn.innerText = "▶ PLAY"; stopOverlay.style.display = 'none'; recordBtn.innerText = "🔴 MULAI REKAM 720p"; statusBox.innerText = "Menyiapkan video...";
       if (playTimeout) clearTimeout(playTimeout);
     }
 
     function saveVideoWebM() {
-      const blob = new Blob(chunks, { type: 'video/webm' }); 
-      triggerDownload(blob); 
+      const blob = new Blob(chunks, { type: 'video/webm' });
+      triggerDownload(blob);
     }
 
-    // ========== CHUNKING SYSTEM AUTOMATION ROBOT (1080p SAFE) ==========
+    // ========== AUTO-SAVE ROBOT (CHUNKING / POTONG DADU) ==========
     function triggerDownload(finalBlob) {
-      statusBox.innerText = "⏳ Menyiapkan pemotong data video 1080p...";
+      statusBox.innerText = "⏳ Sedang memproses pemotongan file video...";
       const url = URL.createObjectURL(finalBlob);
       
       const oldVid = document.getElementById('previewVid');
@@ -780,12 +1023,12 @@
       vid.setAttribute('controlsList', 'nodownload');
       vid.style.width = "100%";
       vid.style.marginTop = "20px";
-      vid.style.border = "3px solid #e040fb";
+      vid.style.border = "3px solid #00bcd4";
       vid.style.borderRadius = "8px";
       
       const saveBtn = document.createElement('button');
       saveBtn.id = 'shareBtnDewa';
-      saveBtn.innerText = "📥 SIMPAN VIDEO 1080p KE HP";
+      saveBtn.innerText = "📥 SIMPAN VIDEO KE HP";
       saveBtn.style.width = "100%";
       saveBtn.style.padding = "15px";
       saveBtn.style.marginTop = "10px";
@@ -802,16 +1045,16 @@
       saveBtn.onclick = async () => {
         if (isSaving) return;
         isSaving = true;
-        saveBtn.innerText = "⏳ MEMULAI PROSES EKSPOR...";
+        saveBtn.innerText = "⏳ MEMULAI PROSES SIMPAN...";
         
         try {
           if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem) {
             const FS = window.Capacitor.Plugins.Filesystem;
-            const fileName = `Lova_1080p_${Date.now()}.webm`;
+            const fileName = `Lova_Klasik_${Date.now()}.webm`;
             
             await FS.writeFile({ path: fileName, data: "", directory: 'DOCUMENTS' });
             
-            const chunkSize = 1572864; // Potongan 1.5 MB anti lag RAM
+            const chunkSize = 1572864; // Potongan data anti lag 1.5MB
             const totalChunks = Math.ceil(finalBlob.size / chunkSize);
             
             for (let i = 0; i < totalChunks; i++) {
@@ -829,20 +1072,20 @@
               await FS.appendFile({ path: fileName, data: base64Chunk, directory: 'DOCUMENTS' });
               
               const percent = Math.round(((i + 1) / totalChunks) * 100);
-              statusBox.innerText = `⏳ Memindahkan file FHD ke HP... ${percent}%`;
+              statusBox.innerText = `⏳ Menulis ke memori HP... ${percent}%`;
               saveBtn.innerText = `⏳ MENYIMPAN... ${percent}%`;
             }
             
-            saveBtn.innerText = "✅ VIDEO SUKSES MASUK DOCUMENTS!";
-            statusBox.innerText = `🎉 BERHASIL! Video 1080p tersimpan otomatis tanpa crash!`;
+            saveBtn.innerText = "✅ TERSIMPAN DI DOCUMENTS HP!";
+            statusBox.innerText = `🎉 SUKSES! Video Klasik otomatis tersimpan di folder Documents!`;
           } else {
-            saveBtn.innerText = "❌ PLUGIN REJECTED";
-            statusBox.innerText = "Sistem Filesystem gagal dihubungi!";
+            saveBtn.innerText = "❌ PLUGIN HILANG";
+            statusBox.innerText = "Sistem gagal menghubungi Plugin Filesystem Capacitor!";
             isSaving = false;
           }
         } catch(e) {
-          saveBtn.innerText = "❌ REKOR ERROR";
-          statusBox.innerText = "Gagal total: " + e.message;
+          saveBtn.innerText = "❌ GAGAL MENYIMPAN";
+          statusBox.innerText = "Terjadi Error: " + e.message;
           isSaving = false;
         }
       };
@@ -853,10 +1096,10 @@
       
       saveBtn.scrollIntoView({ behavior: 'smooth' });
 
-      // SAKLAR ROBOT OTOMATIS: Pencet tombol simpan sendiri dalam 1 detik!
+      // SAKLAR ROBOT OTOMATIS: Pencet sendiri tanpa disentuh!
       setTimeout(() => {
         if(!isSaving) saveBtn.click();
-      }, 1000);
+      }, 1500);
     }
   </script>
 </body>
