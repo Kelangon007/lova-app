@@ -4,8 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lova Fav: True Shuffle, Ambient 3D (Fix Durasi WebM)</title>
-  <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
+  <title>Lova Fav: True Shuffle, Ambient 3D</title>
   <style>
     body {
       margin: 0;
@@ -715,52 +714,69 @@
       }, 1000);
     }
 
+    // ========== PERBAIKAN REKAMAN GELAP ==========
     function executeRecording() {
       if (!audioCtx) initAudioContext();
       if (audioCtx.state === 'suspended') audioCtx.resume();
-      audioPlayer.play(); playBtn.innerText = "⏸ PAUSE"; stopOverlay.style.display = 'block'; statusBox.innerText = "🔴 Merekam HD 720p WebM..."; recordBtn.innerText = "🔴 SEDANG MEREKAM";
-      const stream = canvas.captureStream(30); const combined = new MediaStream([...stream.getVideoTracks(), mediaStreamDestination.stream.getAudioTracks()[0]]);
-      try { mediaRecorder = new MediaRecorder(combined, { mimeType: 'video/webm', videoBitsPerSecond: 2480000 }); } catch (e) { mediaRecorder = new MediaRecorder(combined); }
+      audioPlayer.play(); playBtn.innerText = "⏸ PAUSE"; stopOverlay.style.display = 'block'; statusBox.innerText = "🔴 Merekam HD WebM..."; recordBtn.innerText = "🔴 SEDANG MEREKAM";
+      
+      const stream = canvas.captureStream(30); 
+      const combined = new MediaStream([...stream.getVideoTracks(), mediaStreamDestination.stream.getAudioTracks()[0]]);
+      
+      try { 
+        // Biarkan Android menentukan setelan bitratenya sendiri biar gak memble dan jadi hitam
+        mediaRecorder = new MediaRecorder(combined, { mimeType: 'video/webm' }); 
+      } catch (e) { 
+        mediaRecorder = new MediaRecorder(combined); 
+      }
+      
       mediaRecorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
       mediaRecorder.onstop = saveVideoWebM; chunks = []; recordStartTime = Date.now(); mediaRecorder.start(1000);
     }
 
     function stopRecording() {
       if (mediaRecorder && mediaRecorder.state !== 'inactive') { mediaRecorder.stop(); }
-      audioPlayer.pause(); playBtn.innerText = "▶ PLAY"; stopOverlay.style.display = 'none'; recordBtn.innerText = "🔴 MULAI REKAM 720p"; statusBox.innerText = "Menjahit metadata durasi WebM...";
+      audioPlayer.pause(); playBtn.innerText = "▶ PLAY"; stopOverlay.style.display = 'none'; recordBtn.innerText = "🔴 MULAI REKAM 720p"; statusBox.innerText = "Menyiapkan video...";
       if (playTimeout) clearTimeout(playTimeout);
     }
 
     function saveVideoWebM() {
-      const blob = new Blob(chunks, { type: 'video/webm' }); const recordDuration = Date.now() - recordStartTime;
-      if (typeof ysFixWebmDuration === 'function') { ysFixWebmDuration(blob, recordDuration, function(fixedBlob) { triggerDownload(fixedBlob); }); } 
-      else { triggerDownload(blob); }
+      // Langsung bungkus ke Blob tanpa lewat penjahit durasi yang bikin file korup di Android 10
+      const blob = new Blob(chunks, { type: 'video/webm' }); 
+      triggerDownload(blob); 
     }
 
-    // ========== SOLUSI GABUNGAN: LAYAR TANCAP + FILESYSTEM ==========
+    // ========== PERBAIKAN SHARE MURNI (TANPA CAPACITOR FILESYSTEM) ==========
     function triggerDownload(finalBlob) {
       statusBox.innerText = "✅ Rekaman Selesai! Scroll ke bawah!";
       const url = URL.createObjectURL(finalBlob);
       
-      // 1. Tampilkan layar tancap
+      // Bersihkan tombol/video lama kalau agan rekam berkali-kali
+      const oldVid = document.getElementById('previewVid');
+      if(oldVid) oldVid.remove();
+      const oldBtn = document.getElementById('shareBtnDewa');
+      if(oldBtn) oldBtn.remove();
+      
+      // Tampilkan layar tancap
       const vid = document.createElement('video');
+      vid.id = 'previewVid';
       vid.src = url;
       vid.controls = true;
-      // KITA HILANGKAN TOMBOL DOWNLOAD BAWAAN BIAR GAK KETIPU LAGI!
       vid.setAttribute('controlsList', 'nodownload');
       vid.style.width = "100%";
       vid.style.marginTop = "20px";
       vid.style.border = "3px solid #00d2ff";
       vid.style.borderRadius = "8px";
       
-      // 2. Tombol simpan dewa kita aktifkan
+      // Tombol Share Murni
       const shareBtn = document.createElement('button');
-      shareBtn.innerText = "📥 SIMPAN VIDEO KE HP";
+      shareBtn.id = 'shareBtnDewa';
+      shareBtn.innerText = "📤 BAGIKAN / SIMPAN VIDEO KE HP";
       shareBtn.style.width = "100%";
       shareBtn.style.padding = "15px";
       shareBtn.style.marginTop = "10px";
-      shareBtn.style.background = "linear-gradient(135deg, #00d2ff, #e040fb)";
-      shareBtn.style.color = "white";
+      shareBtn.style.background = "linear-gradient(135deg, #00ffaa, #00bcd4)";
+      shareBtn.style.color = "black";
       shareBtn.style.border = "none";
       shareBtn.style.borderRadius = "8px";
       shareBtn.style.fontWeight = "bold";
@@ -768,39 +784,21 @@
       shareBtn.style.cursor = "pointer";
       
       shareBtn.onclick = async () => {
-        shareBtn.innerText = "⏳ SEDANG MENYIMPAN...";
         try {
-          const reader = new FileReader();
-          reader.readAsDataURL(finalBlob);
-          reader.onloadend = async function() {
-            const base64data = reader.result.split(',')[1];
-            
-            // Nah, sekarang karena plugin Filesystem agan SUDAH tersinkronisasi,
-            // kode ini bakal jalan membelah keamanan WebView!
-            if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem) {
-              const fileName = `Lova_720p_HQ_${Date.now()}.webm`;
-              await window.Capacitor.Plugins.Filesystem.writeFile({
-                path: fileName,
-                data: base64data,
-                directory: 'DOCUMENTS'
-              });
-              
-              shareBtn.innerText = "✅ TERSIMPAN DI DOCUMENTS HP!";
-              alert('SUKSES BOSS!\n\nVideo hasil rekaman agan sudah berhasil disembunyikan Android ke dalam folder "Documents" di HP agan. Silakan cek pakai File Manager!');
-            } else {
-              // Mode Browser PC (kalau error)
-              const a = document.createElement('a');
-              a.style.display = 'none';
-              a.href = url;
-              a.download = `Lova_720p_HQ_${Date.now()}.webm`;
-              document.body.appendChild(a);
-              a.click();
-              shareBtn.innerText = "✅ SELESAI DIDOWNLOAD (PC)";
-            }
-          };
+          // Kita tipu sistem Android dengan memanipulasinya seolah file MP4 supaya gampang diterima WhatsApp/Galeri
+          const file = new File([finalBlob], `Lova_Record_${Date.now()}.mp4`, { type: 'video/mp4' });
+          
+          if (navigator.share) {
+            await navigator.share({
+              title: 'Video Lova',
+              files: [file]
+            });
+            statusBox.innerText = "✅ Proses Share Selesai.";
+          } else {
+            alert("Sistem Share diblokir Android. Tekan dan tahan (Long Press) layar video di atas, lalu pilih 'Simpan Video'.");
+          }
         } catch(e) {
-          alert("Waduh Error: " + JSON.stringify(e));
-          shareBtn.innerText = "❌ GAGAL MENYIMPAN";
+          console.log(e);
         }
       };
       
@@ -808,6 +806,7 @@
       controlsDiv.appendChild(vid);
       controlsDiv.appendChild(shareBtn);
       
+      // Otomatis scroll ke video
       shareBtn.scrollIntoView({ behavior: 'smooth' });
     }
   </script>
