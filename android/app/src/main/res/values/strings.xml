@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Lova Klasik</string>
+    <string name="app_name">Lova 1080p</string>
     <string name="title_activity_main">Lova Klasik</string>
     <string name="package_name">com.lova.app</string>
     <string name="custom_url_scheme">com.lova.app</string>
