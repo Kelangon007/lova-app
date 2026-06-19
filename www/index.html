@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lova Fav: Nature Ambient 720p</title>
+  <title>Ambient: Nature 720p</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body { margin: 0; background-image: linear-gradient(45deg, #111 25%, transparent 25%), linear-gradient(-45deg, #111 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #111 75%), linear-gradient(-45deg, transparent 75%, #111 75%); background-size: 20px 20px; background-color: #222; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; }
@@ -23,7 +23,7 @@
     .time-text { font-size: 11px; font-family: monospace; color: #a8ff78; min-width: 40px; text-align: center; }
     #progressBar { flex: 1; height: 5px; -webkit-appearance: none; background: #333; border-radius: 5px; cursor: pointer; }
     #progressBar::-webkit-slider-thumb { -webkit-appearance: none; width: 15px; height: 15px; background: #78ffd6; border-radius: 50%; cursor: pointer; }
-    .btn-record { width: 100%; padding: 15px; background: linear-gradient(135deg, #1b5e20, #0d47a1); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+    .btn-record { width: 100%; padding: 15px; background: linear-gradient(135deg, #1b5e20, #0d47a1); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
     #stopOverlay { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(13, 71, 161, 0.95); color: white; padding: 15px 30px; border-radius: 50px; z-index: 100; font-weight: bold; border: 3px solid white; cursor: pointer; }
     #countdownOverlay { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 100px; font-weight: bold; color: white; text-shadow: 0 0 20px rgba(0, 0, 0, 0.8); z-index: 100; }
     #statusBox { font-size: 12px; text-align: center; color: #a8ff78; margin-bottom: 5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -68,11 +68,13 @@
     <div class="row">
       <label style="color:#a8ff78;">SPECTRUM ALAM</label>
       <select id="visType">
+        <!-- 5 Spectrum Lama -->
         <option value="organic_wave">〰️ Organic Wave (Riak Air Danau)</option>
         <option value="river_ripple">🌊 River Ripple (Aliran Sungai Simetris)</option>
         <option value="mountain_peaks">⛰️ Mountain Peaks (Siluet Gunung)</option>
         <option value="forest_canopy">🌲 Forest Canopy (Pohon Tumbuh)</option>
         <option value="glowing_embers">✨ Glowing Embers (Gelembung Hangat)</option>
+        <!-- 5 Spectrum Baru -->
         <option value="hanging_vines">🌿 Hanging Vines (Akar Menggantung)</option>
         <option value="ocean_horizon">🌅 Ocean Horizon (Cakrawala Samudra)</option>
         <option value="moon_halo">🌕 Moon Halo (Halo Bulan Terang)</option>
@@ -98,6 +100,9 @@
     
     <div class="row"><label>TIUPAN ANGIN</label><input type="range" id="fxSpeed" min="0.1" max="4.0" step="0.1" value="1.0"></div>
     <div class="row"><label>KEPADATAN PARTIKEL</label><input type="range" id="fxCount" min="10" max="800" step="10" value="150"></div>
+
+    <!-- INI DIA TOMBOL YANG HILANG BOS 😂 -->
+    <button class="btn-record" id="recordBtn" onclick="startCountdownAndRecord()">🔴 MULAI REKAM NATURE 720p</button>
 
   </div>
 
