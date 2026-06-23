@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lova Fav: True Shuffle, Clean Kanvas (Dual Smoke 720p)</title>
+  <title>Noir v.1 (Dual Smoke)</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body {
@@ -292,6 +292,10 @@
     <div class="row"><label>TINGGI VIS.</label><input type="range" id="visHeight" min="30" max="450" value="120"></div>
     <div class="row"><label style="color:#00d2ff;">LEBAR VIS.</label><input type="range" id="visWidth" min="100" max="1100" value="340"></div>
     <div class="row"><label style="color:#ff9800;">UKURAN ASAP</label><input type="range" id="smokeSize" min="0.2" max="3.0" step="0.1" value="1.0"></div>
+    
+    <!-- FITUR PUTARAN ARAH ASAP -->
+    <div class="row"><label style="color:#ff9800;">ARAH ASAP 1</label><input type="range" id="smokeAngle1" min="-60" max="60" value="0"></div>
+    <div class="row"><label style="color:#ff9800;">ARAH ASAP 2</label><input type="range" id="smokeAngle2" min="-60" max="60" value="0"></div>
 
     <hr style="border: 0; border-top: 1px dashed #444; width: 100%; margin: 5px 0;">
 
@@ -444,16 +448,13 @@
       }
     }
 
-    // --- POSISI KONTROL DRAGGABLE KEDUA MODEL ASAP ---
     let visW = 340;
     let visX = (width - visW) / 2;
     let visY = height - 160;
 
-    // Asap Model 1 (Lama) posisi kiri
+    // Posisi awal dua model asap
     let smokeX = 150;
     let smokeY = height - 150;
-    
-    // Asap Model 2 (Baru) posisi kanan pengganti Piringan Hitam
     let smokeX2 = width - 250;
     let smokeY2 = height - 150;
 
@@ -480,7 +481,6 @@
       const pos = getMousePos(e);
       const sScale = parseFloat(document.getElementById('smokeSize').value);
       
-      // Deteksi Asap Lama (Kiri)
       const distSmoke = Math.hypot(pos.x - smokeX, pos.y - smokeY);
       if (distSmoke <= Math.max(40, 30 * sScale)) {
         isDraggingSmoke = true;
@@ -490,7 +490,6 @@
         return;
       }
       
-      // Deteksi Asap Baru (Kanan)
       const distSmoke2 = Math.hypot(pos.x - smokeX2, pos.y - smokeY2);
       if (distSmoke2 <= Math.max(40, 30 * sScale)) {
         isDraggingSmoke2 = true;
@@ -542,7 +541,6 @@
     canvas.addEventListener('touchmove', drag, { passive: false });
     window.addEventListener('touchend', endDrag);
 
-    // --- AUDIO VARS ---
     let audioCtx, source, mediaStreamDestination, analyser, dataArray;
     let isAudioInit = false;
     let peakHeights = new Array(60).fill(0);
@@ -554,7 +552,6 @@
       return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
     }
 
-    // DINAMISASI SINYAL LEBAR KANVAS
     function initAudioContext() {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
       audioCtx = new AudioContext();
@@ -657,7 +654,6 @@
     document.getElementById('count').addEventListener('input', (e) => config.count = parseInt(e.target.value));
     document.getElementById('visHeight').addEventListener('input', (e) => config.visHeight = parseInt(e.target.value));
     
-    // DINAMISASI LEBAR BENTANGAN VISUALIZER SAKLAR SLIDER
     document.getElementById('visWidth').addEventListener('input', (e) => {
       visW = parseInt(e.target.value);
       visX = (width - visW) / 2;
@@ -910,8 +906,10 @@
     // MODEL ASAP 1: MODEL LAMA (KONSTAN S-CURVE HALUS)
     function drawPureAnimatedVectorSmoke() {
       let smokeScale = parseFloat(document.getElementById('smokeSize').value);
+      let smokeAng1 = parseFloat(document.getElementById('smokeAngle1').value) * Math.PI / 180;
       ctx.save();
       ctx.translate(smokeX, smokeY);
+      ctx.rotate(smokeAng1);
       ctx.scale(smokeScale, smokeScale);
       
       function drawBranch(height, maxW, waveFreq, speedMult, xOffsetBase) {
@@ -956,21 +954,22 @@
     // MODEL ASAP 2: MODEL BARU (TURBULENT SWIRL BERGULUNG TEBAL)
     function drawNewAnimatedVectorSmoke() {
       let smokeScale = parseFloat(document.getElementById('smokeSize').value);
+      let smokeAng2 = parseFloat(document.getElementById('smokeAngle2').value) * Math.PI / 180;
       ctx.save();
       ctx.translate(smokeX2, smokeY2);
+      ctx.rotate(smokeAng2);
       ctx.scale(smokeScale, smokeScale);
       
-      function drawBranch2(height, maxW, waveFreq, speedMult, xOffsetBase) {
+      function drawBillow(height, maxW, waveFreq, speedMult, xOffsetBase) {
         let points = [];
-        let steps = 60;
+        let steps = 40;
         for (let i = 0; i <= steps; i++) {
           let prog = i / steps;
-          let w = Math.sin(prog * Math.PI) * maxW * (1 + prog * 0.5);
-          if (prog > 0.5) w *= Math.pow(1.1 - prog, 0.8);
+          let w = Math.sin(prog * Math.PI) * maxW * (1 + prog * 1.5);
+          if (prog > 0.4) w *= Math.pow(1.2 - prog, 1.2);
           let speed = time * speedMult;
-          let envelope = Math.pow(prog, 1.2);
-          // Rumus interaksi sin/cos acak menghasilkan efek kepulan tebal bergulung
-          let x = (Math.sin(prog * Math.PI * waveFreq - speed) + Math.cos(prog * Math.PI * 1.5 + speed * 0.5)) * 35 * envelope;
+          let turb = Math.sin(prog * 15 - speed * 2) * 10 * prog;
+          let x = Math.sin(prog * Math.PI * waveFreq - speed) * 40 * prog + turb;
           x += xOffsetBase * prog;
           let y = -prog * height;
           points.push({ x, y, w });
@@ -990,13 +989,12 @@
           ctx.fillStyle = color;
           ctx.fill();
         }
-        drawPolygon(1.5, 0, 'rgba(160, 175, 195, 0.12)');
-        drawPolygon(1.0, 0, 'rgba(200, 215, 235, 0.22)');
-        drawPolygon(0.4, -maxW * 0.2, 'rgba(255, 255, 255, 0.28)');
+        drawPolygon(1.8, 0, 'rgba(100, 105, 110, 0.15)');
+        drawPolygon(1.2, 0, 'rgba(150, 155, 160, 0.2)');
+        drawPolygon(0.5, -maxW * 0.1, 'rgba(220, 220, 225, 0.25)');
       }
-      drawBranch2(400, 14, 3.5, 5.0, 10);
-      drawBranch2(300, 8, 4.0, 4.2, -30);
-      drawBranch2(240, 6, 2.8, 4.5, 40);
+      drawBillow(350, 18, 1.5, 2.5, 15);
+      drawBillow(280, 12, 2.0, 3.0, -25);
       ctx.restore();
     }
 
@@ -1156,7 +1154,7 @@
           triggerDownload(fixedBlob);
         });
       } else {
-        triggerDownload(fixedBlob);
+        triggerDownload(blob);
       }
     }
 
@@ -1172,7 +1170,7 @@
       
       const saveBtn = document.createElement('button'); saveBtn.id = 'shareBtnDewa'; saveBtn.innerText = "📥 SIMPAN VIDEO KE HP / PC";
       saveBtn.style.width = "100%"; saveBtn.style.padding = "15px"; saveBtn.style.marginTop = "10px";
-      saveBtn.style.background = "linear-gradient(135deg, #00d2ff, #e040fb)"; saveBtn.style.color = "white"; saveBtn.style.border = "none"; saveBtn.style.borderRadius = "8px"; saveBtn.style.fontWeight = "bold"; saveBtn.style.fontSize = "14px"; saveBtn.style.cursor = "pointer";
+      saveBtn.style.background = "linear-gradient(135deg, #00ffaa, #00bcd4)"; saveBtn.style.color = "black"; saveBtn.style.border = "none"; saveBtn.style.borderRadius = "8px"; saveBtn.style.fontWeight = "bold"; saveBtn.style.fontSize = "14px"; saveBtn.style.cursor = "pointer";
       
       let isSaving = false;
       saveBtn.onclick = async () => {
@@ -1181,7 +1179,7 @@
         try {
           if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem) {
             const FS = window.Capacitor.Plugins.Filesystem;
-            const fileName = `Lova_Vintage_Smoke_${Date.now()}.webm`;
+            const fileName = `Noir_v1_Smoke_${Date.now()}.webm`;
             await FS.writeFile({ path: fileName, data: "", directory: 'DOCUMENTS' });
             
             const chunkSize = 1572864; 
@@ -1201,7 +1199,7 @@
             const a = document.createElement('a');
             a.style.display = 'none';
             a.href = url;
-            a.download = `Lova_Vintage_Smoke_${Date.now()}.webm`;
+            a.download = `Noir_v1_Smoke_${Date.now()}.webm`;
             document.body.appendChild(a);
             a.click();
             setTimeout(() => { document.body.removeChild(a); }, 100);

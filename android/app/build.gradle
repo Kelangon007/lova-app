@@ -4,7 +4,7 @@ android {
     namespace = "com.lova.app"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.lova.appvintagesmoke"
+        applicationId "com.lova.appnoir1"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
