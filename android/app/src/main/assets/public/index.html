@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lova Fav: True Shuffle, Clean Kanvas (Vinyl 720p)</title>
+  <title>Lova Fav: True Shuffle, Clean Kanvas (Dual Smoke 720p)</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body {
@@ -290,6 +290,7 @@
     </div>
 
     <div class="row"><label>TINGGI VIS.</label><input type="range" id="visHeight" min="30" max="450" value="120"></div>
+    <div class="row"><label style="color:#00d2ff;">LEBAR VIS.</label><input type="range" id="visWidth" min="100" max="1100" value="340"></div>
     <div class="row"><label style="color:#ff9800;">UKURAN ASAP</label><input type="range" id="smokeSize" min="0.2" max="3.0" step="0.1" value="1.0"></div>
 
     <hr style="border: 0; border-top: 1px dashed #444; width: 100%; margin: 5px 0;">
@@ -443,22 +444,22 @@
       }
     }
 
-    // --- POSISI OBJEK DRAGGABLE ---
+    // --- POSISI KONTROL DRAGGABLE KEDUA MODEL ASAP ---
     let visW = 340;
     let visX = (width - visW) / 2;
     let visY = height - 160;
 
-    // VARIABEL PIRINGAN HITAM VINYL
-    let vinylRadius = 135;
-    let vinylX = width - vinylRadius - 40;
-    let vinylY = vinylRadius + 40;
-    let vinylRot = 0;
-
+    // Asap Model 1 (Lama) posisi kiri
     let smokeX = 150;
     let smokeY = height - 150;
+    
+    // Asap Model 2 (Baru) posisi kanan pengganti Piringan Hitam
+    let smokeX2 = width - 250;
+    let smokeY2 = height - 150;
+
     let isDraggingSmoke = false;
+    let isDraggingSmoke2 = false;
     let isDraggingVis = false;
-    let isDraggingVinyl = false;
     let dragOffsetX = 0;
     let dragOffsetY = 0;
 
@@ -472,16 +473,15 @@
         clientX = e.touches[0].clientX;
         clientY = e.touches[0].clientY;
       }
-      return {
-        x: (clientX - rect.left) * scaleX,
-        y: (clientY - rect.top) * scaleY
-      };
+      return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY };
     }
 
     function startDrag(e) {
       const pos = getMousePos(e);
-      const distSmoke = Math.hypot(pos.x - smokeX, pos.y - smokeY);
       const sScale = parseFloat(document.getElementById('smokeSize').value);
+      
+      // Deteksi Asap Lama (Kiri)
+      const distSmoke = Math.hypot(pos.x - smokeX, pos.y - smokeY);
       if (distSmoke <= Math.max(40, 30 * sScale)) {
         isDraggingSmoke = true;
         dragOffsetX = pos.x - smokeX;
@@ -490,12 +490,12 @@
         return;
       }
       
-      // Deteksi Piringan Hitam Berdasarkan Radius
-      const distVinyl = Math.hypot(pos.x - vinylX, pos.y - vinylY);
-      if (distVinyl <= vinylRadius) {
-        isDraggingVinyl = true;
-        dragOffsetX = pos.x - vinylX;
-        dragOffsetY = pos.y - vinylY;
+      // Deteksi Asap Baru (Kanan)
+      const distSmoke2 = Math.hypot(pos.x - smokeX2, pos.y - smokeY2);
+      if (distSmoke2 <= Math.max(40, 30 * sScale)) {
+        isDraggingSmoke2 = true;
+        dragOffsetX = pos.x - smokeX2;
+        dragOffsetY = pos.y - smokeY2;
         if (e.cancelable) e.preventDefault();
         return;
       }
@@ -509,7 +509,7 @@
     }
 
     function drag(e) {
-      if (!isDraggingVis && !isDraggingVinyl && !isDraggingSmoke) return;
+      if (!isDraggingVis && !isDraggingSmoke && !isDraggingSmoke2) return;
       const pos = getMousePos(e);
       if (isDraggingSmoke) {
         smokeX = pos.x - dragOffsetX;
@@ -517,9 +517,9 @@
         if (e.cancelable) e.preventDefault();
         return;
       }
-      if (isDraggingVinyl) {
-        vinylX = pos.x - dragOffsetX;
-        vinylY = pos.y - dragOffsetY;
+      if (isDraggingSmoke2) {
+        smokeX2 = pos.x - dragOffsetX;
+        smokeY2 = pos.y - dragOffsetY;
         if (e.cancelable) e.preventDefault();
         return;
       }
@@ -532,8 +532,8 @@
 
     function endDrag() {
       isDraggingVis = false;
-      isDraggingVinyl = false;
       isDraggingSmoke = false;
+      isDraggingSmoke2 = false;
     }
     canvas.addEventListener('mousedown', startDrag);
     canvas.addEventListener('mousemove', drag);
@@ -554,6 +554,7 @@
       return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
     }
 
+    // DINAMISASI SINYAL LEBAR KANVAS
     function initAudioContext() {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
       audioCtx = new AudioContext();
@@ -655,6 +656,12 @@
     document.getElementById('fxSpeed').addEventListener('input', (e) => config.fxSpeed = parseFloat(e.target.value));
     document.getElementById('count').addEventListener('input', (e) => config.count = parseInt(e.target.value));
     document.getElementById('visHeight').addEventListener('input', (e) => config.visHeight = parseInt(e.target.value));
+    
+    // DINAMISASI LEBAR BENTANGAN VISUALIZER SAKLAR SLIDER
+    document.getElementById('visWidth').addEventListener('input', (e) => {
+      visW = parseInt(e.target.value);
+      visX = (width - visW) / 2;
+    });
 
     let time = 0;
 
@@ -900,80 +907,7 @@
       ctx.restore();
     }
 
-    // --- MENGGAMBAR PIRINGAN HITAM MENGKILAP ---
-    function drawVinyl() {
-      ctx.save();
-      ctx.translate(vinylX, vinylY);
-
-      if (!audioPlayer.paused) { vinylRot += 0.02; }
-
-      // 1. Bayangan Piringan
-      ctx.beginPath(); 
-      ctx.arc(5, 5, vinylRadius, 0, Math.PI * 2); 
-      ctx.fillStyle = "rgba(0, 0, 0, 0.6)"; 
-      ctx.fill();
-
-      // 2. Base Piringan Hitam Murni
-      ctx.beginPath(); 
-      ctx.arc(0, 0, vinylRadius, 0, Math.PI * 2); 
-      ctx.fillStyle = "#0a0a0a"; 
-      ctx.fill();
-
-      // 3. Efek Pantulan Cahaya Mengkilap (Statis)
-      let shine1 = ctx.createLinearGradient(-vinylRadius, -vinylRadius, vinylRadius, vinylRadius);
-      shine1.addColorStop(0, 'rgba(255,255,255,0.25)');
-      shine1.addColorStop(0.2, 'rgba(255,255,255,0)');
-      shine1.addColorStop(0.8, 'rgba(255,255,255,0)');
-      shine1.addColorStop(1, 'rgba(255,255,255,0.15)');
-      ctx.beginPath(); ctx.arc(0, 0, vinylRadius, 0, Math.PI * 2);
-      ctx.fillStyle = shine1; ctx.fill();
-
-      let shine2 = ctx.createLinearGradient(vinylRadius, -vinylRadius, -vinylRadius, vinylRadius);
-      shine2.addColorStop(0, 'rgba(255,255,255,0.15)');
-      shine2.addColorStop(0.3, 'rgba(255,255,255,0)');
-      shine2.addColorStop(0.7, 'rgba(255,255,255,0)');
-      shine2.addColorStop(1, 'rgba(255,255,255,0.25)');
-      ctx.beginPath(); ctx.arc(0, 0, vinylRadius, 0, Math.PI * 2);
-      ctx.fillStyle = shine2; ctx.fill();
-
-      // 4. Rotasi Khusus Elemen Alur & Label
-      ctx.rotate(vinylRot);
-
-      // Alur Lagu (Grooves)
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.06)";
-      ctx.lineWidth = 1;
-      for (let r = 45; r < vinylRadius - 5; r += 4) {
-        ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.stroke();
-      }
-
-      // Label Piringan Tengah
-      ctx.beginPath(); ctx.arc(0, 0, 42, 0, Math.PI * 2);
-      ctx.fillStyle = '#8b0000'; 
-      ctx.fill();
-
-      ctx.beginPath(); ctx.arc(0, 0, 39, 0, Math.PI * 2);
-      ctx.strokeStyle = '#ffd700'; 
-      ctx.lineWidth = 1.5; ctx.stroke();
-
-      // Teks Label Vintage
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 11px sans-serif';
-      ctx.textAlign = 'center'; 
-      ctx.textBaseline = 'middle';
-      ctx.fillText("VINTAGE", 0, -12);
-      
-      ctx.font = '9px monospace';
-      ctx.fillStyle = '#ffd700';
-      ctx.fillText("STEREO", 0, 14);
-
-      // Lubang Pemutar Tengah
-      ctx.beginPath(); ctx.arc(0, 0, 5, 0, Math.PI * 2);
-      ctx.fillStyle = '#111'; ctx.fill();
-
-      ctx.restore();
-    }
-
-    // --- ASAP ---
+    // MODEL ASAP 1: MODEL LAMA (KONSTAN S-CURVE HALUS)
     function drawPureAnimatedVectorSmoke() {
       let smokeScale = parseFloat(document.getElementById('smokeSize').value);
       ctx.save();
@@ -1019,7 +953,53 @@
       ctx.restore();
     }
 
-    // --- ANIMASI UTAMA ---
+    // MODEL ASAP 2: MODEL BARU (TURBULENT SWIRL BERGULUNG TEBAL)
+    function drawNewAnimatedVectorSmoke() {
+      let smokeScale = parseFloat(document.getElementById('smokeSize').value);
+      ctx.save();
+      ctx.translate(smokeX2, smokeY2);
+      ctx.scale(smokeScale, smokeScale);
+      
+      function drawBranch2(height, maxW, waveFreq, speedMult, xOffsetBase) {
+        let points = [];
+        let steps = 60;
+        for (let i = 0; i <= steps; i++) {
+          let prog = i / steps;
+          let w = Math.sin(prog * Math.PI) * maxW * (1 + prog * 0.5);
+          if (prog > 0.5) w *= Math.pow(1.1 - prog, 0.8);
+          let speed = time * speedMult;
+          let envelope = Math.pow(prog, 1.2);
+          // Rumus interaksi sin/cos acak menghasilkan efek kepulan tebal bergulung
+          let x = (Math.sin(prog * Math.PI * waveFreq - speed) + Math.cos(prog * Math.PI * 1.5 + speed * 0.5)) * 35 * envelope;
+          x += xOffsetBase * prog;
+          let y = -prog * height;
+          points.push({ x, y, w });
+        }
+        function drawPolygon(widthMult, offsetX, color) {
+          ctx.beginPath();
+          for (let i = 0; i < points.length; i++) {
+            let px = points[i].x + offsetX - (points[i].w * widthMult);
+            if (i === 0) ctx.moveTo(px, points[i].y);
+            else ctx.lineTo(px, points[i].y);
+          }
+          for (let i = points.length - 1; i >= 0; i--) {
+            let px = points[i].x + offsetX + (points[i].w * widthMult);
+            ctx.lineTo(px, points[i].y);
+          }
+          ctx.closePath();
+          ctx.fillStyle = color;
+          ctx.fill();
+        }
+        drawPolygon(1.5, 0, 'rgba(160, 175, 195, 0.12)');
+        drawPolygon(1.0, 0, 'rgba(200, 215, 235, 0.22)');
+        drawPolygon(0.4, -maxW * 0.2, 'rgba(255, 255, 255, 0.28)');
+      }
+      drawBranch2(400, 14, 3.5, 5.0, 10);
+      drawBranch2(300, 8, 4.0, 4.2, -30);
+      drawBranch2(240, 6, 2.8, 4.5, 40);
+      ctx.restore();
+    }
+
     function animate() {
       ctx.fillStyle = "#000";
       ctx.fillRect(0, 0, width, height);
@@ -1027,14 +1007,12 @@
 
       ctx.save();
       
-      // Gate Weave
       if (config.type !== 'none') {
         const jitterX = (Math.random() - 0.5) * 1.5;
         const jitterY = (Math.random() - 0.5) * 1.5;
         ctx.translate(jitterX, jitterY);
       }
 
-      // Background
       if (isBgReady) {
         const scale = Math.max(width / bgImageElement.width, height / bgImageElement.height);
         const x = (width / 2) - (bgImageElement.width / 2) * scale;
@@ -1047,7 +1025,6 @@
         ctx.fillRect(-10, -10, width+20, height+20);
       }
 
-      // Visualizer
       if (isAudioInit && currentObjectUrl) {
         if (!audioPlayer.paused) {
           analyser.getByteFrequencyData(dataArray);
@@ -1059,11 +1036,10 @@
         drawVisualizer(analyser.frequencyBinCount);
       }
 
-      // Objek
-      drawVinyl();
+      // MERENDER KEDUA MODEL ASAP BERSAMAAN
       drawPureAnimatedVectorSmoke();
-
-      // Film FX
+      drawNewAnimatedVectorSmoke();
+      
       for (let i = 0; i < config.count; i++) {
         if (particles[i]) {
           particles[i].update();
@@ -1071,7 +1047,6 @@
         }
       }
 
-      // Vignette
       if (config.type !== 'none') {
         const grad = ctx.createRadialGradient(width/2, height/2, height*0.35, width/2, height/2, width*0.7);
         grad.addColorStop(0, 'rgba(0,0,0,0)');
@@ -1085,7 +1060,6 @@
     }
     animate();
 
-    // --- LOGIKA MEREKAM (DENGAN TOMBOL DOWNLOAD KEREN) ---
     let mediaRecorder, chunks = [];
     let recordStartTime = 0;
 
@@ -1161,11 +1135,9 @@
       if (mediaRecorder && mediaRecorder.state !== 'inactive') {
         mediaRecorder.stop();
       }
-      
       if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.KeepAwake) {
         window.Capacitor.Plugins.KeepAwake.allowSleep();
       }
-      
       audioPlayer.pause();
       playBtn.innerText = "▶ PLAY";
       stopOverlay.style.display = 'none';
@@ -1184,7 +1156,7 @@
           triggerDownload(fixedBlob);
         });
       } else {
-        triggerDownload(blob);
+        triggerDownload(fixedBlob);
       }
     }
 
@@ -1200,7 +1172,7 @@
       
       const saveBtn = document.createElement('button'); saveBtn.id = 'shareBtnDewa'; saveBtn.innerText = "📥 SIMPAN VIDEO KE HP / PC";
       saveBtn.style.width = "100%"; saveBtn.style.padding = "15px"; saveBtn.style.marginTop = "10px";
-      saveBtn.style.background = "linear-gradient(135deg, #00ffaa, #00bcd4)"; saveBtn.style.color = "black"; saveBtn.style.border = "none"; saveBtn.style.borderRadius = "8px"; saveBtn.style.fontWeight = "bold"; saveBtn.style.fontSize = "14px"; saveBtn.style.cursor = "pointer";
+      saveBtn.style.background = "linear-gradient(135deg, #00d2ff, #e040fb)"; saveBtn.style.color = "white"; saveBtn.style.border = "none"; saveBtn.style.borderRadius = "8px"; saveBtn.style.fontWeight = "bold"; saveBtn.style.fontSize = "14px"; saveBtn.style.cursor = "pointer";
       
       let isSaving = false;
       saveBtn.onclick = async () => {
@@ -1209,7 +1181,7 @@
         try {
           if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem) {
             const FS = window.Capacitor.Plugins.Filesystem;
-            const fileName = `Lova_Vinyl_720p_${Date.now()}.webm`;
+            const fileName = `Lova_Vintage_Smoke_${Date.now()}.webm`;
             await FS.writeFile({ path: fileName, data: "", directory: 'DOCUMENTS' });
             
             const chunkSize = 1572864; 
@@ -1229,11 +1201,10 @@
             const a = document.createElement('a');
             a.style.display = 'none';
             a.href = url;
-            a.download = `Lova_Vinyl_720p_${Date.now()}.webm`;
+            a.download = `Lova_Vintage_Smoke_${Date.now()}.webm`;
             document.body.appendChild(a);
             a.click();
             setTimeout(() => { document.body.removeChild(a); }, 100);
-
             saveBtn.innerText = "✅ VIDEO SUKSES DIUNDUH!";
             statusBox.innerText = `🎉 SUKSES! Video berhasil diunduh ke perangkat Anda.`;
           }
@@ -1244,8 +1215,6 @@
       
       const controlsDiv = document.getElementById('controls'); controlsDiv.appendChild(vid); controlsDiv.appendChild(saveBtn);
       saveBtn.scrollIntoView({ behavior: 'smooth' });
-
-      // Auto klik
       setTimeout(() => { if(!isSaving) saveBtn.click(); }, 1500);
     }
   </script>
