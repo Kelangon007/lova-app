@@ -1,75 +1,66 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ambient v.1 (Weather FX Engine)</title>
+  <title>Ambient v.1</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
-    body { margin: 0; background-color: #050505; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; }
-    #canvas-wrapper { position: relative; width: 100%; max-width: 800px; aspect-ratio: 16/9; margin-top: 20px; border: 1px solid #333; background: #000; box-shadow: 0 10px 30px rgba(0,0,0,0.8); cursor: grab; overflow: hidden; }
+    body { margin: 0; background-color: #050505; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; }
+    #canvas-wrapper { position: relative; width: 100%; max-width: 800px; aspect-ratio: 16/9; margin-top: 20px; border: 1px solid #333; background: #000; cursor: grab; }
     canvas { width: 100%; height: 100%; display: block; }
-    #controls { width: 90%; max-width: 600px; background: #151515; padding: 20px; border-radius: 12px; margin-top: 20px; border: 1px solid #333; display: flex; flex-direction: column; gap: 12px; }
-    .row { display: flex; align-items: center; gap: 10px; }
-    label { font-size: 11px; width: 100px; color: #888; font-weight: 600; }
-    select, input[type="range"] { flex: 1; height: 34px; background: #222; color: white; border: 1px solid #444; border-radius: 6px; }
-    .btn-record { width: 100%; padding: 15px; background: linear-gradient(135deg, #2e7d32, #1b5e20); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
-    #statusBox { font-size: 12px; text-align: center; color: #4caf50; margin-bottom: 5px; }
-    input[type="file"] { display: none; }
-    .file-label { flex: 1; background: #222; color: #ccc; padding: 10px; text-align: center; border-radius: 6px; cursor: pointer; border: 1px solid #444; font-size: 11px; }
+    #controls { width: 90%; max-width: 600px; background: #151515; padding: 20px; border-radius: 12px; margin-top: 20px; border: 1px solid #333; display: flex; flex-direction: column; gap: 10px; }
+    .btn-group { display: flex; gap: 8px; }
+    .file-label { flex: 1; background: #222; color: #ccc; padding: 12px; text-align: center; border-radius: 6px; cursor: pointer; border: 1px solid #444; font-size: 11px; font-weight: bold; }
+    #playBtn { flex: 2; padding: 15px; background: #333; color: #aaa; border: 1px solid #444; border-radius: 8px; cursor: pointer; }
+    #playBtn.ready { background: #4caf50; color: white; border: none; }
+    #nextBtn { flex: 1; padding: 15px; background: #333; color: #aaa; border: 1px solid #444; border-radius: 8px; cursor: not-allowed; }
+    #nextBtn.ready { background: #222; color: white; cursor: pointer; }
+    .btn-record { width: 100%; padding: 15px; background: #c62828; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+    #statusBox { font-size: 12px; text-align: center; color: #4caf50; }
   </style>
 </head>
-
 <body>
   <div id="canvas-wrapper"><canvas id="canvas" width="1280" height="720"></canvas></div>
   <div id="controls">
-    <div id="statusBox">Ambient v.1 Ready. Pilih Media.</div>
-    <div class="row">
-      <!-- Pemicu yang sudah diperbaiki -->
-      <label onclick="document.getElementById('bgInput').click()" class="file-label">PILIH FOTO</label>
-      <label onclick="document.getElementById('audioInput').click()" class="file-label">PILIH MUSIK</label>
+    <div id="statusBox">Ambient v.1 Ready.</div>
+    <div class="btn-group">
+      <label onclick="document.getElementById('bgInput').click()" class="file-label">1. FOTO</label>
+      <label onclick="document.getElementById('audioInput').click()" class="file-label">2. MUSIK</label>
     </div>
-    <input type="file" id="bgInput" accept="image/*">
-    <input type="file" id="audioInput" accept="audio/*" multiple>
-    
-    <div class="row">
-      <label>EFEK CUACA</label>
-      <select id="fxType">
-        <option value="realistic_rain">🌧️ Rain</option>
-        <option value="soft_snow">❄️ Snow</option>
-        <option value="falling_leaves">🍁 Leaves</option>
-        <option value="forest_fireflies">✨ Fireflies</option>
-      </select>
+    <div class="btn-group">
+        <button id="playBtn" onclick="togglePlay()">▶ PLAY</button>
+        <button id="nextBtn" onclick="playNext()">⏭ NEXT</button>
     </div>
-    <div class="row"><label>ANGIN</label><input type="range" id="fxSpeed" min="-50" max="50" step="1" value="0"></div>
-    <div class="row"><label>INTENSITAS</label><input type="range" id="count" min="10" max="600" value="150"></div>
-    <button class="btn-record" id="recordBtn" onclick="alert('Rekam aktif!')">🔴 REKAM AMBIENT</button>
+    <input type="file" id="bgInput" style="display:none" accept="image/*">
+    <input type="file" id="audioInput" style="display:none" multiple>
+    <button class="btn-record" onclick="alert('Rekam aktif')">🔴 REKAM AMBIENT</button>
   </div>
-  
+  <audio id="audioPlayer"></audio>
   <script>
     const canvas = document.getElementById('canvas'), ctx = canvas.getContext('2d');
-    const bgInput = document.getElementById('bgInput');
-    const audioInput = document.getElementById('audioInput');
-    let bgImg = new Image();
+    const playBtn = document.getElementById('playBtn'), nextBtn = document.getElementById('nextBtn');
+    const audioPlayer = document.getElementById('audioPlayer');
+    let bgImg = new Image(), audioFiles = [], currentIdx = 0;
 
-    // Handler Input Foto
-    bgInput.onchange = (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        bgImg.src = URL.createObjectURL(file);
-        bgImg.onload = () => { document.getElementById('statusBox').innerText = "✅ Foto Latar Terpasang."; };
-      }
+    document.getElementById('bgInput').onchange = (e) => { bgImg.src = URL.createObjectURL(e.target.files[0]); };
+    document.getElementById('audioInput').onchange = (e) => { 
+        audioFiles = Array.from(e.target.files); 
+        playBtn.classList.add('ready'); nextBtn.classList.add('ready');
     };
 
-    // Handler Input Musik
-    audioInput.onchange = (e) => {
-      if (e.target.files.length > 0) {
-        document.getElementById('statusBox').innerText = `✅ ${e.target.files.length} Musik Siap!`;
-      }
-    };
+    function playNext() {
+        if(audioFiles.length === 0) return;
+        audioPlayer.src = URL.createObjectURL(audioFiles[currentIdx % audioFiles.length]);
+        audioPlayer.play();
+        currentIdx++;
+        playBtn.innerText = "⏸ PAUSE";
+    }
 
-    // Render Loop Tetap
+    function togglePlay() {
+        if(audioPlayer.paused) { if(!audioPlayer.src) playNext(); else audioPlayer.play(); playBtn.innerText = "⏸ PAUSE"; }
+        else { audioPlayer.pause(); playBtn.innerText = "▶ PLAY"; }
+    }
+
     function animate() {
       ctx.fillStyle = "#000"; ctx.fillRect(0,0,1280,720);
       if(bgImg.src) {
