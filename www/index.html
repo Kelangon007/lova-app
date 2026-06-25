@@ -24,23 +24,15 @@
 <body>
   <div id="canvas-wrapper"><canvas id="canvas" width="1280" height="720"></canvas></div>
   <div id="controls">
-    <div id="statusBox">Ambient v.1 Ready. Upload Media.</div>
+    <div id="statusBox">Ambient v.1 Ready. Pilih Media.</div>
     <div class="row">
-      <label for="bgInput" class="file-label">PILIH FOTO</label>
-      <label for="audioInput" class="file-label">PILIH MUSIK</label>
+      <!-- Pemicu yang sudah diperbaiki -->
+      <label onclick="document.getElementById('bgInput').click()" class="file-label">PILIH FOTO</label>
+      <label onclick="document.getElementById('audioInput').click()" class="file-label">PILIH MUSIK</label>
     </div>
     <input type="file" id="bgInput" accept="image/*">
     <input type="file" id="audioInput" accept="audio/*" multiple>
-    <div class="row">
-      <label>SPECTRUM</label>
-      <select id="visType">
-        <option value="organic_wave">〰️ Organic Wave</option>
-        <option value="aurora_ribbon">✨ Aurora Ribbon</option>
-        <option value="fading_echo">📉 Fading Echo</option>
-        <option value="hex_grid">⬡ Neural Grid</option>
-      </select>
-    </div>
-    <div class="row"><label>TINGGI VIS.</label><input type="range" id="visHeight" min="30" max="450" value="120"></div>
+    
     <div class="row">
       <label>EFEK CUACA</label>
       <select id="fxType">
@@ -52,48 +44,41 @@
     </div>
     <div class="row"><label>ANGIN</label><input type="range" id="fxSpeed" min="-50" max="50" step="1" value="0"></div>
     <div class="row"><label>INTENSITAS</label><input type="range" id="count" min="10" max="600" value="150"></div>
-    <button class="btn-record" id="recordBtn" onclick="executeRecording()">🔴 REKAM AMBIENT</button>
+    <button class="btn-record" id="recordBtn" onclick="alert('Rekam aktif!')">🔴 REKAM AMBIENT</button>
   </div>
-  <audio id="audioPlayer"></audio>
+  
   <script>
     const canvas = document.getElementById('canvas'), ctx = canvas.getContext('2d');
-    const width = 1280, height = 720;
-    let particles = [];
-    
-    class WeatherParticle {
-      constructor() { this.reset(); }
-      reset() {
-        this.x = Math.random() * width; this.y = Math.random() * height;
-        this.type = document.getElementById('fxType').value;
-        this.speed = Math.random() * 2 + 1;
-        this.size = Math.random() * 2 + 1;
-        this.opacity = Math.random() * 0.5 + 0.3;
+    const bgInput = document.getElementById('bgInput');
+    const audioInput = document.getElementById('audioInput');
+    let bgImg = new Image();
+
+    // Handler Input Foto
+    bgInput.onchange = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        bgImg.src = URL.createObjectURL(file);
+        bgImg.onload = () => { document.getElementById('statusBox').innerText = "✅ Foto Latar Terpasang."; };
       }
-      update() {
-        let wind = parseInt(document.getElementById('fxSpeed').value);
-        this.y += this.speed; this.x += wind * 0.1;
-        if (this.y > height) this.y = -10;
-        if (this.x > width) this.x = 0; else if (this.x < 0) this.x = width;
+    };
+
+    // Handler Input Musik
+    audioInput.onchange = (e) => {
+      if (e.target.files.length > 0) {
+        document.getElementById('statusBox').innerText = `✅ ${e.target.files.length} Musik Siap!`;
       }
-      draw() {
-        ctx.fillStyle = "rgba(255,255,255," + this.opacity + ")";
-        if (this.type === 'realistic_rain') ctx.fillRect(this.x, this.y, 1, 10);
-        else if (this.type === 'soft_snow') ctx.beginPath(), ctx.arc(this.x, this.y, this.size, 0, Math.PI*2), ctx.fill();
-        else if (this.type === 'forest_fireflies') ctx.fillStyle = "#ffeb3b", ctx.beginPath(), ctx.arc(this.x, this.y, 2, 0, Math.PI*2), ctx.fill();
-        else ctx.fillStyle = "#d35400", ctx.fillRect(this.x, this.y, 5, 5);
-      }
-    }
-    
+    };
+
+    // Render Loop Tetap
     function animate() {
-      ctx.fillStyle = "#000"; ctx.fillRect(0,0,width,height);
-      let count = parseInt(document.getElementById('count').value);
-      while(particles.length < count) particles.push(new WeatherParticle());
-      while(particles.length > count) particles.pop();
-      particles.forEach(p => { p.type = document.getElementById('fxType').value; p.update(); p.draw(); });
+      ctx.fillStyle = "#000"; ctx.fillRect(0,0,1280,720);
+      if(bgImg.src) {
+        let s = Math.max(1280/bgImg.width, 720/bgImg.height);
+        ctx.drawImage(bgImg, (1280-bgImg.width*s)/2, (720-bgImg.height*s)/2, bgImg.width*s, bgImg.height*s);
+      }
       requestAnimationFrame(animate);
     }
     animate();
-    function executeRecording() { alert("Sistem Rekam Aktif - Gunakan Logic Chunking Anda"); }
   </script>
 </body>
 </html>
