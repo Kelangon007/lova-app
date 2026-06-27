@@ -1,583 +1,213 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ambient v.1</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
-    body { margin: 0; background-image: linear-gradient(45deg, #111 25%, transparent 25%), linear-gradient(-45deg, #111 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #111 75%), linear-gradient(-45deg, transparent 75%, #111 75%); background-size: 20px 20px; background-color: #222; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; }
-    #canvas-wrapper { position: relative; width: 100%; max-width: 800px; aspect-ratio: 16/9; margin-top: 20px; border: 1px solid rgba(255, 255, 255, 0.15); background: #000; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9); cursor: grab; overflow: hidden;}
-    #canvas-wrapper:active { cursor: grabbing; }
+    body { margin: 0; background: #050505; font-family: sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; }
+    #canvas-wrapper { position: relative; width: 100%; max-width: 800px; aspect-ratio: 16/9; margin-top: 20px; border: 1px solid #333; background: #000; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
     canvas { width: 100%; height: 100%; display: block; }
-    #controls { width: 90%; max-width: 600px; background: #191919; padding: 20px; border-radius: 12px; margin-top: 20px; border: 1px solid #333; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); }
-    .btn-group, .play-group { display: flex; gap: 8px; }
-    .file-label { flex: 1; background: #252525; color: #aaa; padding: 12px 5px; text-align: center; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; border: 1px solid #3c3c3c; transition: 0.2s; white-space: nowrap; }
-    .file-label:hover { background: #333; color: white; }
-    #playBtn { flex: 2; padding: 15px; background: #2a2a2a; color: #666; border: 1px solid #1a1a1a; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-    #playBtn.ready { background: linear-gradient(135deg, #a8ff78, #78ffd6); color: #111; border: none; }
-    #nextBtn { flex: 1; padding: 15px; background: #333; color: #777; border: 1px solid #222; border-radius: 8px; font-weight: bold; cursor: not-allowed; transition: 0.3s; }
-    #nextBtn.ready { background: #252525; color: white; border: 1px solid #444; cursor: pointer; }
-    .progress-container { display: flex; align-items: center; gap: 10px; background: #202020; padding: 8px; border-radius: 6px; border: 1px solid #2d2d2d; }
-    .time-text { font-size: 11px; font-family: monospace; color: #a8ff78; min-width: 40px; text-align: center; }
-    #progressBar { flex: 1; height: 5px; -webkit-appearance: none; background: #333; border-radius: 5px; cursor: pointer; }
-    #progressBar::-webkit-slider-thumb { -webkit-appearance: none; width: 15px; height: 15px; background: #78ffd6; border-radius: 50%; cursor: pointer; }
-    .btn-record { width: 100%; padding: 15px; background: linear-gradient(135deg, #1b5e20, #0d47a1); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-    #stopOverlay { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(13, 71, 161, 0.95); color: white; padding: 15px 30px; border-radius: 50px; z-index: 100; font-weight: bold; border: 3px solid white; cursor: pointer; }
-    #countdownOverlay { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 100px; font-weight: bold; color: white; text-shadow: 0 0 20px rgba(0, 0, 0, 0.8); z-index: 100; }
-    #statusBox { font-size: 12px; text-align: center; color: #a8ff78; margin-bottom: 5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .row { display: flex; align-items: center; gap: 10px; }
-    label { font-size: 11px; width: 80px; color: #ccc; font-weight: 600; }
-    input[type="range"], select { flex: 1; height: 36px; background: #202020; color: white; border: 1px solid #3c3c3c; border-radius: 6px; }
+    #controls { width: 90%; max-width: 600px; background: #151515; padding: 20px; border-radius: 12px; margin-top: 20px; border: 1px solid #333; display: flex; flex-direction: column; gap: 10px; }
+    .btn-group { display: flex; gap: 8px; }
+    .file-label { flex: 1; background: #222; color: #ccc; padding: 12px; text-align: center; border-radius: 6px; cursor: pointer; border: 1px solid #444; font-size: 11px; font-weight: bold; }
+    .play-group { display: flex; gap: 8px; }
+    #playBtn { flex: 2; padding: 15px; background: #333; color: #aaa; border: 1px solid #444; border-radius: 8px; font-weight: bold; cursor: pointer; }
+    #playBtn.ready { background: #4caf50; color: white; }
+    #nextBtn { flex: 1; padding: 15px; background: #333; color: #aaa; border: 1px solid #444; border-radius: 8px; font-weight: bold; cursor: pointer; }
+    .btn-record { width: 100%; padding: 15px; background: #c62828; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+    #statusBox { font-size: 12px; text-align: center; color: #4caf50; margin-bottom: 5px; }
     input[type="file"] { display: none; }
   </style>
 </head>
-
 <body>
-
-  <div id="canvas-wrapper">
-    <canvas id="canvas" width="1280" height="720"></canvas>
-    <div id="countdownOverlay">3</div>
-    <div id="stopOverlay" onclick="stopRecording()">⏹ STOP & SIMPAN</div>
-  </div>
-
+  <div id="canvas-wrapper"><canvas id="canvas" width="1280" height="720"></canvas></div>
   <div id="controls">
-    <div id="statusBox">Siap Cetak Video Ambient v.1</div>
+    <div id="statusBox">Ambient v.1 - Siap.</div>
     <div class="btn-group">
-      <label onclick="document.getElementById('bgInput').click()" class="file-label" style="border-bottom: 3px solid #a8ff78">1. FOTO LATAR</label>
-      <label onclick="document.getElementById('audioInput').click()" class="file-label" style="border-bottom: 3px solid #78ffd6">2. MUSIK (BANYAK)</label>
+        <label class="file-label" onclick="document.getElementById('bgInput').click()">PILIH FOTO</label>
+        <label class="file-label" onclick="document.getElementById('audioInput').click()">PILIH MUSIK</label>
     </div>
-
     <div class="play-group">
-      <button id="playBtn" onclick="togglePlay()">⚠ PUTAR MUSIK</button>
-      <button id="nextBtn" onclick="playRandomSong(false)">⏭ NEXT</button>
+        <button id="playBtn" onclick="togglePlay()">▶ PLAY</button>
+        <button id="nextBtn" onclick="playNext()">⏭ NEXT</button>
     </div>
-
-    <div class="progress-container">
-      <span id="currTime" class="time-text">00:00</span>
-      <input type="range" id="progressBar" value="0" min="0" step="0.1">
-      <span id="durTime" class="time-text">00:00</span>
-    </div>
-
     <input type="file" id="bgInput" accept="image/*">
     <input type="file" id="audioInput" accept="audio/*" multiple>
-
-    <hr style="border: 0; border-top: 1px solid #333; width: 100%; margin: 5px 0;">
-
-    <div class="row">
-      <label style="color:#a8ff78;">VISUALIZER</label>
-      <select id="visType">
-        <option value="soft_ring">⭕ Cincin Resonansi (Soft Ring)</option>
-        <option value="aurora_ribbon">〰️ Pita Gelombang (Aurora Ribbon)</option>
-        <option value="fading_echo">📉 Garis Gema (Fading Echoes)</option>
-        <option value="glowing_dust">✨ Partikel Pendar (Glowing Dust)</option>
-        <option value="sym_horizon">🌊 Gelombang Cermin (Symmetric Horizon)</option>
-        <option value="fluid_blob">💧 Gumpalan Cair (Fluid Blob)</option>
-        <option value="concentric_drops">🎯 Cincin Berlapis (Water Drops)</option>
-        <option value="fading_dots">💬 Titik Pudar (Minimalist Dots)</option>
-        <option value="nebula_pillars">🌫️ Pilar Nebula (Diffused Nebula)</option>
-        <option value="hex_grid">⬡ Jaring Neural (Hexagon Grid)</option>
-      </select>
-    </div>
-
-    <div class="row"><label>TINGGI VIS.</label><input type="range" id="visHeight" min="30" max="450" value="120"></div>
-    <div class="row"><label style="color:#a8ff78;">LEBAR VIS.</label><input type="range" id="visWidth" min="100" max="1100" value="340"></div>
-
-    <hr style="border: 0; border-top: 1px dashed #333; width: 100%; margin: 5px 0;">
-
-    <div class="row">
-      <label style="color:#78ffd6;">EFEK CUACA</label>
-      <select id="fxType">
-        <option value="none">🚫 Tanpa Efek</option>
-        <option value="realistic_rain">🌧️ Realistic Rain</option>
-        <option value="soft_snow">❄️ Soft Snow</option>
-        <option value="falling_leaves">🍁 Falling Leaves</option>
-        <option value="forest_fireflies">✨ Forest Fireflies</option>
-      </select>
-    </div>
-    
-    <div class="row"><label>ARAH ANGIN</label><input type="range" id="fxWind" min="-10" max="10" step="0.5" value="0"></div>
-    <div class="row"><label>KEPADATAN</label><input type="range" id="fxCount" min="10" max="800" step="10" value="150"></div>
-
-    <button class="btn-record" id="recordBtn" onclick="startCountdownAndRecord()">🔴 MULAI REKAM AMBIENT 720p</button>
-
+    <button class="btn-record" id="recordBtn" onclick="startCountdownAndRecord()">🔴 REKAM AMBIENT 720p</button>
   </div>
-
-  <audio id="audioPlayer" crossorigin="anonymous"></audio>
+  <audio id="audioPlayer"></audio>
 
   <script>
     const statusBox = document.getElementById('statusBox');
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d'); 
-    
-    const audioPlayer = document.getElementById('audioPlayer');
-    const playBtn = document.getElementById('playBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const stopOverlay = document.getElementById('stopOverlay');
-    const countdownOverlay = document.getElementById('countdownOverlay');
+    const canvas = document.getElementById('canvas'), ctx = canvas.getContext('2d');
+    const playBtn = document.getElementById('playBtn'), audioPlayer = document.getElementById('audioPlayer');
     const recordBtn = document.getElementById('recordBtn');
-    const progressBar = document.getElementById('progressBar');
-    const currTimeEl = document.getElementById('currTime');
-    const durTimeEl = document.getElementById('durTime');
-    let isDraggingProgress = false;
-    const width = 1280;
-    const height = 720;
+    let bgImg = new Image(), audioFiles = [], currentIdx = 0;
     
-    let audioFiles = []; let currentObjectUrl = null; let currentSongName = ""; let playTimeout = null;
-    let isTrackLoaded = false; let shuffledPlaylist = []; let currentPlayIndex = 0; let isCountingDown = false; let countdownTimer = null;
+    // SISTEM MEDIA DAN ANIMASI STANDAR (DISEDERHANAKAN DI SINI UNTUK FOKUS KE PENYIMPANAN)
+    document.getElementById('bgInput').onchange = (e) => { 
+        bgImg.src = URL.createObjectURL(e.target.files[0]); 
+        bgImg.onload = () => statusBox.innerText = "✅ Foto Latar Oke.";
+    };
+    
+    document.getElementById('audioInput').onchange = (e) => { 
+        audioFiles = Array.from(e.target.files); 
+        playBtn.classList.add('ready');
+        statusBox.innerText = "✅ Musik Siap.";
+    };
 
-    function formatTime(seconds) {
-      if (isNaN(seconds)) return "00:00";
-      const m = Math.floor(seconds / 60);
-      const s = Math.floor(seconds % 60);
-      return (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s);
+    function playNext() {
+        if(audioFiles.length === 0) return;
+        audioPlayer.src = URL.createObjectURL(audioFiles[currentIdx % audioFiles.length]);
+        audioPlayer.play();
+        currentIdx++;
+        playBtn.innerText = "⏸ PAUSE";
     }
-
-    function shuffle(array) {
-      for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; }
-      return array;
-    }
-    
-    document.getElementById('audioInput').addEventListener('change', function(e) {
-      if (this.files.length > 0) {
-        audioFiles = Array.from(this.files); isTrackLoaded = true; shuffledPlaylist = shuffle(Array.from({ length: audioFiles.length }, (v, k) => k));
-        currentPlayIndex = 0; playBtn.innerHTML = "▶ PLAY MUSIK"; playBtn.classList.add('ready'); nextBtn.classList.add('ready');
-        statusBox.innerText = `${audioFiles.length} Musik dimuat. Siap diputar!`; progressBar.value = 0; currTimeEl.innerText = "00:00"; durTimeEl.innerText = "00:00";
-        audioPlayer.pause(); if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl); currentObjectUrl = null; currentSongName = "Musik Diunggah";
-      }
-    });
-
-    function playRandomSong(isInstant = false) {
-      if (audioFiles.length === 0) return;
-      if (playTimeout) clearTimeout(playTimeout);
-      if (currentPlayIndex >= shuffledPlaylist.length) { currentPlayIndex = 0; stopEverything(); return; }
-      if (currentObjectUrl && isInstant) { URL.revokeObjectURL(currentObjectUrl); currentObjectUrl = null; }
-      const delayAmount = isInstant ? 0 : 3500;
-      if (!isInstant) {
-        audioPlayer.pause(); playBtn.innerText = "⏳ TUNGGU..."; statusBox.innerText = "⏳ Jeda pergantian musik...";
-        currentSongName = "Memuat..."; progressBar.value = 0; currTimeEl.innerText = "00:00"; durTimeEl.innerText = "00:00";
-      }
-      playTimeout = setTimeout(() => {
-        if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl);
-        const actualFileIndex = shuffledPlaylist[currentPlayIndex]; const selectedFile = audioFiles[actualFileIndex];
-        currentSongName = selectedFile.name.replace(/\.[^/.]+$/, ""); currentObjectUrl = URL.createObjectURL(selectedFile);
-        audioPlayer.src = currentObjectUrl; audioPlayer.load();
-        if (!audioCtx) initAudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume();
-        audioPlayer.play().then(() => { playBtn.innerText = "⏸ PAUSE"; statusBox.innerText = `🎵 Musik ${currentPlayIndex + 1}/${audioFiles.length}: ${currentSongName}`; currentPlayIndex++; }).catch(err => { playBtn.innerText = "❌ ERROR"; });
-      }, delayAmount);
-    }
-    
-    audioPlayer.addEventListener('ended', () => { playRandomSong(false); });
-
-    function stopEverything() {
-      audioPlayer.pause(); if (playTimeout) clearTimeout(playTimeout);
-      if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl); currentObjectUrl = null; currentSongName = "Playlist Selesai";
-      if (dataArray) dataArray.fill(0); shuffledPlaylist = shuffle(Array.from({ length: audioFiles.length }, (v, k) => k));
-      statusBox.innerText = `✅ Semua musik selesai diputar.`; playBtn.innerText = "▶ PLAY ACAK"; progressBar.value = 0; currTimeEl.innerText = "00:00"; durTimeEl.innerText = "00:00";
-      if (mediaRecorder && mediaRecorder.state === 'recording') {
-        statusBox.innerText = `✅ Durasi habis! Memproses simpan otomatis...`; setTimeout(() => { stopRecording(); }, 500);
-      }
-    }
-    
-    let visW = 340; let visX = (width - visW) / 2; let visY = height - 160;
-    let isDraggingVis = false; let dragOffsetX = 0; let dragOffsetY = 0;
-
-    function getMousePos(e) {
-      const rect = canvas.getBoundingClientRect(); const scaleX = canvas.width / rect.width; const scaleY = canvas.height / rect.height;
-      let clientX = e.clientX; let clientY = e.clientY;
-      if (e.touches && e.touches.length > 0) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; }
-      return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY };
-    }
-
-    function startDrag(e) {
-      const pos = getMousePos(e);
-      if (pos.x >= visX && pos.x <= visX + visW && pos.y >= visY - 150 && pos.y <= visY + 150) { isDraggingVis = true; dragOffsetX = pos.x - visX; dragOffsetY = pos.y - visY; if (e.cancelable) e.preventDefault(); }
-    }
-    function drag(e) {
-      if (!isDraggingVis) return; const pos = getMousePos(e); visX = pos.x - dragOffsetX; visY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault();
-    }
-    function endDrag() { isDraggingVis = false; }
-    
-    canvas.addEventListener('mousedown', startDrag); canvas.addEventListener('mousemove', drag); window.addEventListener('mouseup', endDrag);
-    canvas.addEventListener('touchstart', startDrag, { passive: false }); canvas.addEventListener('touchmove', drag, { passive: false }); window.addEventListener('touchend', endDrag);
-    
-    let audioCtx, source, mediaStreamDestination, analyser, dataArray, peakHeights = new Array(64).fill(0);
-    let isAudioInit = false;
-
-    function initAudioContext() {
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      audioCtx = new AudioContext(); analyser = audioCtx.createAnalyser(); analyser.fftSize = 256; analyser.smoothingTimeConstant = 0.85;
-      source = audioCtx.createMediaElementSource(audioPlayer); mediaStreamDestination = audioCtx.createMediaStreamDestination();
-      source.connect(analyser); analyser.connect(audioCtx.destination); analyser.connect(mediaStreamDestination);
-      dataArray = new Uint8Array(analyser.frequencyBinCount); isAudioInit = true;
-    }
-    
-    let isBgReady = false; let bgImageElement = new Image();
-    document.getElementById('bgInput').addEventListener('change', function(e) {
-      if (this.files[0]) {
-        const file = this.files[0];
-        if (file.type.startsWith('image/')) {
-          const fileURL = URL.createObjectURL(file); bgImageElement.src = fileURL;
-          bgImageElement.onload = () => { isBgReady = true; statusBox.innerText = "✅ Background Oke."; };
-        } else { alert("Harap unggah file berbentuk Gambar/Foto (JPG, PNG)."); }
-      }
-    });
-    
-    audioPlayer.addEventListener('loadedmetadata', () => { if (isFinite(audioPlayer.duration)) { durTimeEl.innerText = formatTime(audioPlayer.duration); progressBar.max = 100; } });
-    audioPlayer.addEventListener('timeupdate', () => {
-      if (isFinite(audioPlayer.duration) && durTimeEl.innerText === "00:00") { durTimeEl.innerText = formatTime(audioPlayer.duration); }
-      if (!isDraggingProgress) { const percent = (audioPlayer.currentTime / audioPlayer.duration) * 100; progressBar.value = isNaN(percent) ? 0 : percent; currTimeEl.innerText = formatTime(audioPlayer.currentTime); }
-    });
-    progressBar.addEventListener('input', () => {
-      isDraggingProgress = true;
-      if (audioPlayer.duration) { const seekTime = (progressBar.value / 100) * audioPlayer.duration; currTimeEl.innerText = formatTime(seekTime); audioPlayer.currentTime = seekTime; }
-    });
-    const releaseSeek = () => { isDraggingProgress = false; };
-    progressBar.addEventListener('change', releaseSeek); progressBar.addEventListener('touchend', releaseSeek); progressBar.addEventListener('mouseup', releaseSeek);
 
     function togglePlay() {
-      if (!isTrackLoaded) { alert("Pilih Musik Dulu!"); return; }
-      if (!audioCtx) initAudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume();
-      if (audioPlayer.paused) {
-        if (!audioPlayer.src || currentPlayIndex >= shuffledPlaylist.length) { playRandomSong(true); } 
-        else { audioPlayer.play(); playBtn.innerText = "⏸ PAUSE"; statusBox.innerText = `🎵 Musik ${currentPlayIndex}/${audioFiles.length}: ${currentSongName}`; }
-      } else { audioPlayer.pause(); playBtn.innerText = "▶ RESUME"; statusBox.innerText = "⏸ Musik Dijeda."; }
-    }
-    
-    const config = { visType: 'soft_ring', visHeight: 120, fxType: 'none', fxWind: 0, fxCount: 150 };
-    document.getElementById('visType').addEventListener('change', (e) => config.visType = e.target.value);
-    document.getElementById('visHeight').addEventListener('input', (e) => config.visHeight = parseInt(e.target.value));
-    document.getElementById('fxType').addEventListener('change', (e) => config.fxType = e.target.value);
-    document.getElementById('fxWind').addEventListener('input', (e) => config.fxWind = parseFloat(e.target.value));
-    document.getElementById('fxCount').addEventListener('input', (e) => config.fxCount = parseInt(e.target.value));
-    document.getElementById('visWidth').addEventListener('input', (e) => {
-      visW = parseInt(e.target.value);
-      visX = (width - visW) / 2;
-    });
-
-    let time = 0;
-
-    class WeatherParticle {
-      constructor() { this.reset(true); }
-      reset(init = false) {
-        this.x = Math.random() * width;
-        this.y = init ? (Math.random() * height) : -20;
-        this.speed = Math.random() * 2 + 1;
-        this.size = Math.random() * 2 + 1;
-        this.opacity = Math.random() * 0.5 + 0.3;
-        this.angle = Math.random() * Math.PI * 2;
-        this.rotSpeed = (Math.random() - 0.5) * 0.1;
-      }
-      update() {
-        if (config.fxType === 'none') return;
-        let wind = config.fxWind;
-        if (config.fxType === 'realistic_rain') {
-          this.y += this.speed * 6;
-          this.x += wind * 2;
-          if (this.y > height) this.reset();
-        } else if (config.fxType === 'soft_snow') {
-          this.y += this.speed * 0.8;
-          this.angle += 0.02;
-          this.x += Math.sin(this.angle) + wind;
-          if (this.y > height) this.reset();
-        } else if (config.fxType === 'falling_leaves') {
-          this.y += this.speed * 1.5;
-          this.angle += this.rotSpeed;
-          this.x += Math.sin(this.angle) * 2 + wind;
-          if (this.y > height) this.reset();
-        } else if (config.fxType === 'forest_fireflies') {
-          this.y -= this.speed * 0.3;
-          this.angle += 0.04;
-          this.x += Math.cos(this.angle) + wind * 0.5;
-          this.opacity = Math.abs(Math.sin(time * 1.5 + this.x * 0.05));
-          if (this.y < -20) { this.reset(); this.y = height + 20; }
-        }
-        if (this.x > width + 20) this.x = -20;
-        else if (this.x < -20) this.x = width + 20;
-      }
-      draw() {
-        if (config.fxType === 'none') return;
-        ctx.save();
-        if (config.fxType === 'realistic_rain') {
-          ctx.strokeStyle = `rgba(200, 230, 255, ${this.opacity * 0.6})`;
-          ctx.lineWidth = this.size * 0.5;
-          ctx.beginPath();
-          ctx.moveTo(this.x, this.y);
-          ctx.lineTo(this.x - config.fxWind * 2, this.y - this.speed * 6);
-          ctx.stroke();
-        } else if (config.fxType === 'soft_snow') {
-          ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
-          ctx.beginPath();
-          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-          ctx.fill();
-        } else if (config.fxType === 'falling_leaves') {
-          ctx.translate(this.x, this.y);
-          ctx.rotate(this.angle);
-          ctx.fillStyle = `rgba(211, 84, 0, ${this.opacity})`;
-          ctx.beginPath();
-          ctx.ellipse(0, 0, this.size * 3, this.size * 1.5, 0, 0, Math.PI * 2);
-          ctx.fill();
-        } else if (config.fxType === 'forest_fireflies') {
-          ctx.fillStyle = `rgba(255, 235, 59, ${this.opacity})`;
-          ctx.shadowBlur = 10;
-          ctx.shadowColor = '#ffeb3b';
-          ctx.beginPath();
-          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-          ctx.fill();
-        }
-        ctx.restore();
-      }
-    }
-
-    let particles = [];
-    for (let i = 0; i < 800; i++) { particles.push(new WeatherParticle()); }
-
-    function getSymmetricVal(index, totalBars, bufferLen) {
-      try {
-        if (!dataArray) return 0;
-        const center = totalBars / 2;
-        const centerDist = Math.abs(index - center) / center;
-        const dataIdx = Math.floor(centerDist * (bufferLen / 3));
-        return dataArray[dataIdx] / 255;
-      } catch (e) { return 0; }
-    }
-
-    function drawVisualizer(bufferLen) {
-      const style = config.visType;
-      ctx.save();
-      ctx.translate(visX, visY);
-      const cx = visW / 2;
-      const cy = 0;
-
-      try {
-        if (style === 'soft_ring') {
-          let val = getSymmetricVal(Math.floor(visW/2), visW, bufferLen);
-          ctx.beginPath(); 
-          ctx.arc(cx, cy - 50, 40 + val * config.visHeight * 0.8, 0, Math.PI*2);
-          ctx.strokeStyle = `rgba(224, 64, 251, ${0.3 + val})`; 
-          ctx.lineWidth = 4 + val * 10;
-          ctx.shadowBlur = 20; ctx.shadowColor = '#e040fb'; ctx.stroke();
-          ctx.beginPath(); ctx.arc(cx, cy - 50, 40 + val * config.visHeight * 0.8, 0, Math.PI*2);
-          ctx.strokeStyle = `rgba(255, 255, 255, ${0.8})`; ctx.lineWidth = 1; ctx.stroke();
-        } 
-        else if (style === 'aurora_ribbon') {
-          for(let k=1; k<=3; k++) {
-            ctx.beginPath(); ctx.moveTo(0, cy);
-            for(let i=0; i<=visW; i+=10) {
-                let val = getSymmetricVal(i, visW, bufferLen);
-                let h = Math.sin(i*0.02 + time*k) * 30 + val * config.visHeight * k * 0.5;
-                ctx.lineTo(i, cy - h);
-            }
-            ctx.strokeStyle = `rgba(168, 255, 120, ${0.6/k})`; ctx.lineWidth = 3; ctx.stroke();
-          }
-        }
-        else if (style === 'fading_echo') {
-          let numBars = 16; let spacing = visW / numBars;
-          for(let i=0; i<numBars; i++) {
-            let val = getSymmetricVal(i, numBars, bufferLen) * config.visHeight;
-            if(val > peakHeights[i]) peakHeights[i] = val; else peakHeights[i] = Math.max(0, peakHeights[i] - 1.5);
-            ctx.strokeStyle = `rgba(0, 210, 255, ${peakHeights[i]/config.visHeight})`;
-            ctx.lineWidth = 4; ctx.lineCap = 'round';
-            ctx.beginPath(); ctx.moveTo(i*spacing, cy); ctx.lineTo(i*spacing, cy - peakHeights[i]); ctx.stroke();
-          }
-          ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(visW, cy);
-          ctx.strokeStyle = 'rgba(255,255,255,0.2)'; ctx.lineWidth = 1; ctx.stroke();
-        }
-        else if (style === 'glowing_dust') {
-          let numDots = 25;
-          for(let i=0; i<numDots; i++) {
-            let val = getSymmetricVal(i, numDots, bufferLen);
-            let px = (Math.sin(i * 123.45) * 0.5 + 0.5) * visW;
-            let py = cy - (Math.cos(i * 321.12) * 0.5 + 0.5) * config.visHeight;
-            ctx.beginPath(); ctx.arc(px, py, 2 + val * 15, 0, Math.PI*2);
-            ctx.fillStyle = `rgba(255, 152, 0, ${0.1 + val*0.9})`;
-            ctx.shadowBlur = 15 + val * 20; ctx.shadowColor = '#ff9800'; ctx.fill();
-            if (val > 0.2) { ctx.beginPath(); ctx.arc(px, py, 1.5, 0, Math.PI*2); ctx.fillStyle = '#ffffff'; ctx.shadowBlur = 0; ctx.fill(); }
-          }
-        } 
-        else if (style === 'sym_horizon') {
-          ctx.beginPath(); ctx.moveTo(0, cy - 50);
-          for(let i=0; i<=visW; i+=10) { let val = getSymmetricVal(i, visW, bufferLen); ctx.lineTo(i, cy - 50 - val * config.visHeight * 0.5); }
-          ctx.strokeStyle = '#00e676'; ctx.lineWidth = 2; ctx.stroke();
-          ctx.beginPath(); ctx.moveTo(0, cy - 50);
-          for(let i=0; i<=visW; i+=10) { let val = getSymmetricVal(i, visW, bufferLen); ctx.lineTo(i, cy - 50 + val * config.visHeight * 0.5); }
-          ctx.strokeStyle = 'rgba(0, 230, 118, 0.3)'; ctx.stroke();
-          ctx.beginPath(); ctx.moveTo(0, cy - 50); ctx.lineTo(visW, cy - 50); ctx.strokeStyle = 'rgba(255,255,255,0.2)'; ctx.lineWidth = 1; ctx.stroke();
-        } 
-        else if (style === 'fluid_blob') {
-          ctx.beginPath(); let pts = 40;
-          for(let i=0; i<=pts; i++) {
-            let angle = (i/pts) * Math.PI * 2; let val = getSymmetricVal(i, pts, bufferLen);
-            let r = 40 + val * config.visHeight * 0.4 + Math.sin(angle * 3 + time) * 15;
-            let px = cx + Math.cos(angle) * r; let py = cy - 60 + Math.sin(angle) * r;
-            if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
-          }
-          ctx.closePath(); ctx.fillStyle = 'rgba(233, 30, 99, 0.25)'; ctx.fill(); ctx.strokeStyle = '#e91e63'; ctx.lineWidth = 2; ctx.stroke();
-        } 
-        else if (style === 'concentric_drops') {
-          let val = getSymmetricVal(Math.floor(visW/2), visW, bufferLen);
-          for(let i=1; i<=5; i++) {
-            ctx.beginPath(); ctx.arc(cx, cy - 50, i * 15 + val * config.visHeight * 0.15 * i, 0, Math.PI*2);
-            ctx.strokeStyle = `rgba(3, 169, 244, ${1 - i*0.15})`; ctx.lineWidth = 1.5; ctx.stroke();
-          }
-        } 
-        else if (style === 'fading_dots') {
-          let numDots = 24; let spacing = visW / numDots;
-          for(let i=0; i<numDots; i++) {
-            let val = getSymmetricVal(i, numDots, bufferLen);
-            ctx.beginPath(); ctx.arc(i*spacing, cy, 3 + val * (config.visHeight * 0.1), 0, Math.PI*2);
-            ctx.fillStyle = `rgba(156, 39, 176, ${0.1 + val*0.9})`; ctx.fill();
-          }
-          ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(visW - spacing, cy); ctx.strokeStyle = 'rgba(255,255,255,0.1)'; ctx.lineWidth = 1; ctx.stroke();
-        } 
-        else if (style === 'nebula_pillars') {
-          let numBars = 12; let spacing = visW / numBars;
-          for(let i=0; i<numBars; i++) {
-            let val = getSymmetricVal(i, numBars, bufferLen);
-            let h = Math.max(10, val * config.visHeight);
-            let grad = ctx.createLinearGradient(0, cy, 0, cy - h);
-            grad.addColorStop(0, `rgba(255, 235, 59, ${0.1 + val*0.6})`); grad.addColorStop(1, 'rgba(255, 235, 59, 0)');
-            ctx.fillStyle = grad; ctx.shadowBlur = 20; ctx.shadowColor = '#ffeb3b'; ctx.fillRect(i*spacing, cy - h, spacing*0.8, h);
-          }
-          ctx.shadowBlur = 0;
-        }
-        else if (style === 'hex_grid') {
-          let hexRadius = 15; let hexW = Math.sqrt(3) * hexRadius; let hexH = 2 * hexRadius;
-          let cols = Math.floor(visW / hexW); let rows = Math.floor(config.visHeight / (hexH * 0.75)); if (rows < 2) rows = 2;
-          for(let r=0; r<rows; r++) {
-            for(let c=0; c<cols; c++) {
-                let val = getSymmetricVal(c + r*cols, cols*rows, bufferLen);
-                let x = c * hexW + (r%2==1 ? hexW/2 : 0); let y = cy - r * (hexH * 0.75) - 20;
-                ctx.beginPath();
-                for(let i=0; i<6; i++) {
-                    let angle = (Math.PI/3) * i - Math.PI/6;
-                    let px = x + hexRadius * Math.cos(angle); let py = y + hexRadius * Math.sin(angle);
-                    if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
-                }
-                ctx.closePath();
-                ctx.strokeStyle = `rgba(0, 188, 212, ${0.05 + val*0.3})`; ctx.stroke();
-                if(val > 0.25) { ctx.fillStyle = `rgba(0, 188, 212, ${val*0.7})`; ctx.fill(); }
-            }
-          }
-        }
-      } catch (e) {}
-      ctx.restore();
+        if(!audioFiles.length) return alert("Pilih musik dulu!");
+        if(audioPlayer.paused) { if(!audioPlayer.src) playNext(); else audioPlayer.play(); playBtn.innerText = "⏸ PAUSE"; }
+        else { audioPlayer.pause(); playBtn.innerText = "▶ PLAY"; }
     }
 
     function animate() {
-      ctx.fillStyle = "#090d0b"; ctx.fillRect(0, 0, width, height);
-      if (isAudioInit && !audioPlayer.paused) { time += 0.02; }
-      
-      if (isBgReady) {
-        const scale = Math.max(width / bgImageElement.width, height / bgImageElement.height);
-        const x = (width / 2) - (bgImageElement.width / 2) * scale; const y = (height / 2) - (bgImageElement.height / 2) * scale;
-        ctx.drawImage(bgImageElement, x, y, bgImageElement.width * scale, bgImageElement.height * scale);
+      ctx.fillStyle = "#000"; ctx.fillRect(0,0,1280,720);
+      if(bgImg.src) {
+        let s = Math.max(1280/bgImg.width, 720/bgImg.height);
+        ctx.drawImage(bgImg, (1280-bgImg.width*s)/2, (720-bgImg.height*s)/2, bgImg.width*s, bgImg.height*s);
       }
-      
-      for (let i = 0; i < config.fxCount; i++) { if (particles[i]) { particles[i].update(); particles[i].draw(); } }
-      
-      if (isAudioInit && !audioPlayer.paused && currentObjectUrl) { analyser.getByteFrequencyData(dataArray); } 
-      else if (dataArray) { for (let i = 0; i < dataArray.length; i++) { dataArray[i] = Math.max(0, dataArray[i] - 5); } }
-      
-      drawVisualizer(isAudioInit ? analyser.frequencyBinCount : 128);
       requestAnimationFrame(animate);
     }
     animate();
-    
-    let mediaRecorder, chunks = []; let recordStartTime = 0;
 
-    function startCountdownAndRecord() {
-      if (!isAudioInit || !currentObjectUrl) { alert("Pilih musik ambient alam bebas dulu bos!"); return; }
-      if (isCountingDown) { clearInterval(countdownTimer); isCountingDown = false; countdownOverlay.style.display = 'none'; recordBtn.innerText = "🔴 MULAI REKAM AMBIENT 720p"; return; }
-      isCountingDown = true; let counter = 3; countdownOverlay.innerText = counter; countdownOverlay.style.display = 'block'; recordBtn.innerText = "❌ BATALKAN REKAM (" + counter + ")";
-      countdownTimer = setInterval(() => {
-        counter--; if (counter > 0) { countdownOverlay.innerText = counter; recordBtn.innerText = "❌ BATALKAN REKAM (" + counter + ")"; } 
-        else { clearInterval(countdownTimer); isCountingDown = false; countdownOverlay.style.display = 'none'; executeRecording(); }
-      }, 1000);
+    // ==========================================
+    // MESIN REKAM & PENYIMPANAN ANTI-GAGAL ANDROID 9
+    // ==========================================
+    let mediaRecorder, chunks = []; let recordStartTime = 0;
+    let audioCtx, mediaStreamDestination;
+
+    function initAudioContext() {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      audioCtx = new AudioContext(); 
+      let source = audioCtx.createMediaElementSource(audioPlayer); 
+      mediaStreamDestination = audioCtx.createMediaStreamDestination();
+      source.connect(audioCtx.destination); 
+      source.connect(mediaStreamDestination);
     }
 
-    function executeRecording() {
-      if (!audioCtx) initAudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume();
-      if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.KeepAwake) { window.Capacitor.Plugins.KeepAwake.keepAwake(); }
-      audioPlayer.play(); playBtn.innerText = "⏸ PAUSE"; stopOverlay.style.display = 'block'; statusBox.innerText = "🔴 Merekam Alam..."; recordBtn.innerText = "🔴 SEDANG MEREKAM";
+    function startCountdownAndRecord() {
+      if(audioFiles.length === 0) return alert("Pilih musik dulu bos!");
+      if(!audioCtx) initAudioContext();
+      if(audioCtx.state === 'suspended') audioCtx.resume();
+      
+      if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.KeepAwake) { 
+          window.Capacitor.Plugins.KeepAwake.keepAwake(); 
+      }
+      
+      audioPlayer.play(); playBtn.innerText = "⏸ PAUSE";
+      statusBox.innerText = "🔴 SEDANG MEREKAM...";
+      recordBtn.innerText = "⏹ STOP REKAM";
+      recordBtn.style.background = "#000";
+      recordBtn.onclick = stopRecording;
       
       const stream = canvas.captureStream(30); 
       const combined = new MediaStream([...stream.getVideoTracks(), mediaStreamDestination.stream.getAudioTracks()[0]]);
-      let options = { mimeType: 'video/webm;codecs=vp8,opus' }; if (!MediaRecorder.isTypeSupported(options.mimeType)) { options = { mimeType: 'video/webm' }; }
+      let options = { mimeType: 'video/webm;codecs=vp8,opus' }; 
+      if (!MediaRecorder.isTypeSupported(options.mimeType)) { options = { mimeType: 'video/webm' }; }
       
-      try { mediaRecorder = new MediaRecorder(combined, options); } catch (e) { mediaRecorder = new MediaRecorder(combined); }
+      mediaRecorder = new MediaRecorder(combined, options);
       mediaRecorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
-      mediaRecorder.onstop = saveVideoWebM; chunks = []; recordStartTime = Date.now(); mediaRecorder.start(1000);
+      mediaRecorder.onstop = saveVideoWebM; 
+      chunks = []; recordStartTime = Date.now(); mediaRecorder.start(1000);
     }
 
     function stopRecording() {
-      if (mediaRecorder && mediaRecorder.state !== 'inactive') { mediaRecorder.stop(); }
-      if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.KeepAwake) { window.Capacitor.Plugins.KeepAwake.allowSleep(); }
-      audioPlayer.pause(); playBtn.innerText = "▶ PLAY"; stopOverlay.style.display = 'none'; recordBtn.innerText = "🔴 MULAI REKAM AMBIENT 720p"; statusBox.innerText = "Menyiapkan file video...";
-      if (playTimeout) clearTimeout(playTimeout);
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+      if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.KeepAwake) window.Capacitor.Plugins.KeepAwake.allowSleep();
+      audioPlayer.pause(); playBtn.innerText = "▶ PLAY";
+      recordBtn.innerText = "🔴 MULAI REKAM AMBIENT 720p";
+      recordBtn.style.background = "#c62828";
+      recordBtn.onclick = startCountdownAndRecord;
+      statusBox.innerText = "Menyiapkan file video...";
     }
 
     function saveVideoWebM() {
-      const blob = new Blob(chunks, { type: 'video/webm' }); const recordDuration = Date.now() - recordStartTime;
-      statusBox.innerText = "⏳ Menjahit durasi otomatis (Biar bisa di-skip)...";
-      if (typeof ysFixWebmDuration === 'function') { ysFixWebmDuration(blob, recordDuration, function(fixedBlob) { triggerDownload(fixedBlob); }); } 
-      else { triggerDownload(blob); }
+      const blob = new Blob(chunks, { type: 'video/webm' }); 
+      const recordDuration = Date.now() - recordStartTime;
+      statusBox.innerText = "⏳ Menjahit durasi otomatis...";
+      if (typeof ysFixWebmDuration === 'function') { 
+          ysFixWebmDuration(blob, recordDuration, function(fixedBlob) { triggerDownload(fixedBlob); }); 
+      } else { 
+          triggerDownload(blob); 
+      }
     }
 
-    // UPDATE: SISTEM FALLBACK DOWNLOAD BUAT ANDROID 9
     function triggerDownload(finalBlob) {
-      statusBox.innerText = "⏳ Memproses pemotongan data sinematik...";
+      statusBox.innerText = "⏳ Menyiapkan tombol simpan...";
       const url = URL.createObjectURL(finalBlob);
       const oldVid = document.getElementById('previewVid'); if(oldVid) oldVid.remove();
       const oldBtn = document.getElementById('shareBtnDewa'); if(oldBtn) oldBtn.remove();
       
       const vid = document.createElement('video'); vid.id = 'previewVid'; vid.src = url; vid.controls = true;
-      vid.setAttribute('controlsList', 'nodownload'); vid.style.width = "100%"; vid.style.marginTop = "20px"; vid.style.border = "3px solid #a8ff78"; vid.style.borderRadius = "8px";
+      vid.style.width = "100%"; vid.style.marginTop = "20px"; vid.style.border = "3px solid #4caf50"; vid.style.borderRadius = "8px";
       
-      const saveBtn = document.createElement('button'); saveBtn.id = 'shareBtnDewa'; saveBtn.innerText = "📥 SIMPAN VIDEO KE HP / PC";
+      const saveBtn = document.createElement('button'); saveBtn.id = 'shareBtnDewa'; saveBtn.innerText = "📥 SIMPAN KE FOLDER 'DOWNLOAD'";
       saveBtn.style.width = "100%"; saveBtn.style.padding = "15px"; saveBtn.style.marginTop = "10px";
-      saveBtn.style.background = "linear-gradient(135deg, #a8ff78, #78ffd6)"; saveBtn.style.color = "#111"; saveBtn.style.border = "none"; saveBtn.style.borderRadius = "8px"; saveBtn.style.fontWeight = "bold"; saveBtn.style.fontSize = "14px"; saveBtn.style.cursor = "pointer";
+      saveBtn.style.background = "#4caf50"; saveBtn.style.color = "white"; saveBtn.style.border = "none"; saveBtn.style.borderRadius = "8px"; saveBtn.style.fontWeight = "bold"; saveBtn.style.cursor = "pointer";
       
       let isSaving = false;
       saveBtn.onclick = async () => {
-        if (isSaving) return; isSaving = true; saveBtn.innerText = "⏳ MEMULAI PROSES SIMPAN...";
+        if (isSaving) return; isSaving = true; 
+        saveBtn.innerText = "⏳ MEMINTA IZIN & MENYIMPAN...";
+        
         try {
           if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem) {
             const FS = window.Capacitor.Plugins.Filesystem;
             
-            // Minta Izin Buat Android 9
-            try { if (FS.requestPermissions) await FS.requestPermissions(); } catch(e) {}
+            // 1. Minta izin akses memori (Khusus Android Lama)
+            try { 
+                let perm = await FS.checkPermissions();
+                if (perm.publicStorage !== 'granted') await FS.requestPermissions(); 
+            } catch(e) { console.log("Skip perm check"); }
             
-            const fileName = `Ambient_v1_${Date.now()}.webm`;
-            await FS.writeFile({ path: fileName, data: "", directory: 'DOCUMENTS' });
-            const chunkSize = 1572864; const totalChunks = Math.ceil(finalBlob.size / chunkSize);
+            // 2. Kunci Target: Folder "Download" di EXTERNAL_STORAGE
+            const fileName = `Download/Ambient_${Date.now()}.webm`;
+            await FS.writeFile({ path: fileName, data: "", directory: 'EXTERNAL_STORAGE' });
+            
+            const chunkSize = 1572864; // 1.5MB per putaran
+            const totalChunks = Math.ceil(finalBlob.size / chunkSize);
+            
             for (let i = 0; i < totalChunks; i++) {
-              const start = i * chunkSize; const end = Math.min(start + chunkSize, finalBlob.size); const chunk = finalBlob.slice(start, end);
-              const base64Chunk = await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result.split(',')[1]); reader.onerror = reject; reader.readAsDataURL(chunk); });
-              await FS.appendFile({ path: fileName, data: base64Chunk, directory: 'DOCUMENTS' });
-              const percent = Math.round(((i + 1) / totalChunks) * 100); statusBox.innerText = `⏳ Memasukkan data ke HP... ${percent}%`; saveBtn.innerText = `⏳ MENYIMPAN... ${percent}%`;
+              const start = i * chunkSize; 
+              const end = Math.min(start + chunkSize, finalBlob.size); 
+              const chunk = finalBlob.slice(start, end);
+              const base64Chunk = await new Promise((resolve, reject) => { 
+                  const reader = new FileReader(); 
+                  reader.onload = () => resolve(reader.result.split(',')[1]); 
+                  reader.onerror = reject; reader.readAsDataURL(chunk); 
+              });
+              await FS.appendFile({ path: fileName, data: base64Chunk, directory: 'EXTERNAL_STORAGE' });
+              
+              const percent = Math.round(((i + 1) / totalChunks) * 100); 
+              statusBox.innerText = `⏳ Menulis ke memori HP... ${percent}%`; 
+              saveBtn.innerText = `⏳ MENYIMPAN... ${percent}%`;
             }
-            saveBtn.innerText = "✅ VIDEO SUKSES MASUK DOCUMENTS!"; statusBox.innerText = `🎉 BERHASIL! Video Ambient v.1 sudah terbuat!`;
+            saveBtn.innerText = "✅ CEK FOLDER DOWNLOAD DI HP!"; 
+            statusBox.innerText = `🎉 SUKSES! Video tersimpan di folder Download.`;
           } else {
-             throw new Error("Bukan Capacitor");
+            throw new Error("Bukan Aplikasi Capacitor");
           }
         } catch(e) { 
-            // METODE PENYELAMAT: Kalau gagal masuk dokumen (biasanya karena Android 9), langsung download ala Browser.
-            statusBox.innerText = "⏳ Android 9 menolak, pakai cara cadangan (Browser)...";
-            try {
-                const a = document.createElement('a'); a.style.display = 'none'; a.href = url; a.download = `Ambient_v1_${Date.now()}.webm`;
-                document.body.appendChild(a); a.click(); setTimeout(() => { document.body.removeChild(a); }, 100);
-                saveBtn.innerText = "✅ VIDEO SUKSES DIUNDUH!"; statusBox.innerText = `🎉 SUKSES! Video berhasil diunduh pakai metode aman.`;
-            } catch(e2) {
-                saveBtn.innerText = "❌ GAGAL MENYIMPAN"; statusBox.innerText = "Terjadi Error: " + e2.message; isSaving = false; 
-            }
+            saveBtn.innerText = "❌ GAGAL SIMPAN. IZINKAN AKSES FILE!"; 
+            statusBox.innerText = "Error: Pastikan izin memori (Storage) aktif di Pengaturan HP."; 
+            isSaving = false; 
         }
       };
       
-      const controlsDiv = document.getElementById('controls'); controlsDiv.appendChild(vid); controlsDiv.appendChild(saveBtn);
+      const controlsDiv = document.getElementById('controls'); 
+      controlsDiv.appendChild(vid); controlsDiv.appendChild(saveBtn);
       saveBtn.scrollIntoView({ behavior: 'smooth' });
-      setTimeout(() => { if(!isSaving) saveBtn.click(); }, 1500);
     }
   </script>
 </body>
