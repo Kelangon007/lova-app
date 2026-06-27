@@ -525,6 +525,7 @@
       else { triggerDownload(blob); }
     }
 
+    // UPDATE: SISTEM FALLBACK DOWNLOAD BUAT ANDROID 9
     function triggerDownload(finalBlob) {
       statusBox.innerText = "⏳ Memproses pemotongan data sinematik...";
       const url = URL.createObjectURL(finalBlob);
@@ -543,7 +544,12 @@
         if (isSaving) return; isSaving = true; saveBtn.innerText = "⏳ MEMULAI PROSES SIMPAN...";
         try {
           if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem) {
-            const FS = window.Capacitor.Plugins.Filesystem; const fileName = `Ambient_v1_${Date.now()}.webm`;
+            const FS = window.Capacitor.Plugins.Filesystem;
+            
+            // Minta Izin Buat Android 9
+            try { if (FS.requestPermissions) await FS.requestPermissions(); } catch(e) {}
+            
+            const fileName = `Ambient_v1_${Date.now()}.webm`;
             await FS.writeFile({ path: fileName, data: "", directory: 'DOCUMENTS' });
             const chunkSize = 1572864; const totalChunks = Math.ceil(finalBlob.size / chunkSize);
             for (let i = 0; i < totalChunks; i++) {
@@ -554,12 +560,19 @@
             }
             saveBtn.innerText = "✅ VIDEO SUKSES MASUK DOCUMENTS!"; statusBox.innerText = `🎉 BERHASIL! Video Ambient v.1 sudah terbuat!`;
           } else {
-            statusBox.innerText = "⏳ Mengunduh lewat Browser...";
-            const a = document.createElement('a'); a.style.display = 'none'; a.href = url; a.download = `Ambient_v1_${Date.now()}.webm`;
-            document.body.appendChild(a); a.click(); setTimeout(() => { document.body.removeChild(a); }, 100);
-            saveBtn.innerText = "✅ VIDEO SUKSES DIUNDUH!"; statusBox.innerText = `🎉 SUKSES! Video berhasil diunduh.`;
+             throw new Error("Bukan Capacitor");
           }
-        } catch(e) { saveBtn.innerText = "❌ GAGAL MENYIMPAN"; statusBox.innerText = "Terjadi Error: " + e.message; isSaving = false; }
+        } catch(e) { 
+            // METODE PENYELAMAT: Kalau gagal masuk dokumen (biasanya karena Android 9), langsung download ala Browser.
+            statusBox.innerText = "⏳ Android 9 menolak, pakai cara cadangan (Browser)...";
+            try {
+                const a = document.createElement('a'); a.style.display = 'none'; a.href = url; a.download = `Ambient_v1_${Date.now()}.webm`;
+                document.body.appendChild(a); a.click(); setTimeout(() => { document.body.removeChild(a); }, 100);
+                saveBtn.innerText = "✅ VIDEO SUKSES DIUNDUH!"; statusBox.innerText = `🎉 SUKSES! Video berhasil diunduh pakai metode aman.`;
+            } catch(e2) {
+                saveBtn.innerText = "❌ GAGAL MENYIMPAN"; statusBox.innerText = "Terjadi Error: " + e2.message; isSaving = false; 
+            }
+        }
       };
       
       const controlsDiv = document.getElementById('controls'); controlsDiv.appendChild(vid); controlsDiv.appendChild(saveBtn);
