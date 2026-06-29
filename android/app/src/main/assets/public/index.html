@@ -8,7 +8,7 @@
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body { margin: 0; background-image: linear-gradient(45deg, #111 25%, transparent 25%), linear-gradient(-45deg, #111 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #111 75%), linear-gradient(-45deg, transparent 75%, #111 75%); background-size: 20px 20px; background-color: #222; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; }
-    #canvas-wrapper { position: relative; width: 100%; max-width: 800px; aspect-ratio: 16/9; margin-top: 20px; border: 1px solid rgba(255, 255, 255, 0.15); background: #000; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9); cursor: grab; overflow: hidden;}
+    #canvas-wrapper { position: relative; width: 100%; max-width: 800px; aspect-ratio: 16/9; margin-top: 20px; border: 1px solid rgba(255, 255, 255, 0.15); background: #000; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9); cursor: grab; overflow: hidden; }
     #canvas-wrapper:active { cursor: grabbing; }
     canvas { width: 100%; height: 100%; display: block; }
     #controls { width: 90%; max-width: 600px; background: #191919; padding: 20px; border-radius: 12px; margin-top: 20px; border: 1px solid #333; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); }
@@ -28,7 +28,7 @@
     #countdownOverlay { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 100px; font-weight: bold; color: white; text-shadow: 0 0 20px rgba(0, 0, 0, 0.8); z-index: 100; }
     #statusBox { font-size: 12px; text-align: center; color: #a8ff78; margin-bottom: 5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .row { display: flex; align-items: center; gap: 10px; }
-    label { font-size: 11px; width: 80px; color: #ccc; font-weight: 600; }
+    label { font-size: 11px; width: 90px; color: #ccc; font-weight: 600; }
     input[type="range"], select { flex: 1; height: 36px; background: #202020; color: white; border: 1px solid #3c3c3c; border-radius: 6px; }
     input[type="file"] { display: none; }
   </style>
@@ -68,21 +68,23 @@
     <div class="row">
       <label style="color:#a8ff78;">VISUALIZER</label>
       <select id="visType">
-        <option value="soft_ring">⭕ Cincin Resonansi (Soft Ring)</option>
-        <option value="aurora_ribbon">〰️ Pita Gelombang (Aurora Ribbon)</option>
-        <option value="fading_echo">📉 Garis Gema (Fading Echoes)</option>
-        <option value="glowing_dust">✨ Partikel Pendar (Glowing Dust)</option>
-        <option value="sym_horizon">🌊 Gelombang Cermin (Symmetric Horizon)</option>
-        <option value="fluid_blob">💧 Gumpalan Cair (Fluid Blob)</option>
-        <option value="concentric_drops">🎯 Cincin Berlapis (Water Drops)</option>
-        <option value="fading_dots">💬 Titik Pudar (Minimalist Dots)</option>
-        <option value="nebula_pillars">🌫️ Pilar Nebula (Diffused Nebula)</option>
-        <option value="hex_grid">⬡ Jaring Neural (Hexagon Grid)</option>
+        <option value="soft_ring">⭕ Cincin Resonansi</option>
+        <option value="aurora_ribbon">〰️ Pita Gelombang</option>
+        <option value="fading_echo">📉 Garis Gema</option>
+        <option value="glowing_dust">✨ Partikel Pendar</option>
+        <option value="sym_horizon">🌊 Gelombang Cermin</option>
+        <option value="fluid_blob">💧 Gumpalan Cair</option>
+        <option value="concentric_drops">🎯 Cincin Berlapis</option>
+        <option value="fading_dots">💬 Titik Pudar</option>
+        <option value="nebula_pillars">🌫️ Pilar Nebula</option>
+        <option value="hex_grid">⬡ Jaring Neural</option>
       </select>
     </div>
 
     <div class="row"><label>TINGGI VIS.</label><input type="range" id="visHeight" min="30" max="450" value="120"></div>
     <div class="row"><label style="color:#a8ff78;">LEBAR VIS.</label><input type="range" id="visWidth" min="100" max="1100" value="340"></div>
+    
+    <div class="row"><label style="color:#ffb300;">OPASITAS VIS.</label><input type="range" id="visOpacity" min="0.1" max="1.0" step="0.05" value="1.0"></div>
 
     <hr style="border: 0; border-top: 1px dashed #333; width: 100%; margin: 5px 0;">
 
@@ -98,6 +100,7 @@
     </div>
     
     <div class="row"><label>ARAH ANGIN</label><input type="range" id="fxWind" min="-10" max="10" step="0.5" value="0"></div>
+    <div class="row"><label style="color:#ffb300;">KECEPATAN FX</label><input type="range" id="fxSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
     <div class="row"><label>KEPADATAN</label><input type="range" id="fxCount" min="10" max="800" step="10" value="150"></div>
 
     <button class="btn-record" id="recordBtn" onclick="startCountdownAndRecord()">🔴 MULAI REKAM AMBIENT 720p</button>
@@ -245,11 +248,13 @@
       } else { audioPlayer.pause(); playBtn.innerText = "▶ RESUME"; statusBox.innerText = "⏸ Musik Dijeda."; }
     }
     
-    const config = { visType: 'soft_ring', visHeight: 120, fxType: 'none', fxWind: 0, fxCount: 150 };
+    const config = { visType: 'soft_ring', visHeight: 120, visOpacity: 1.0, fxType: 'none', fxWind: 0, fxSpeed: 1.0, fxCount: 150 };
     document.getElementById('visType').addEventListener('change', (e) => config.visType = e.target.value);
     document.getElementById('visHeight').addEventListener('input', (e) => config.visHeight = parseInt(e.target.value));
+    document.getElementById('visOpacity').addEventListener('input', (e) => config.visOpacity = parseFloat(e.target.value));
     document.getElementById('fxType').addEventListener('change', (e) => config.fxType = e.target.value);
     document.getElementById('fxWind').addEventListener('input', (e) => config.fxWind = parseFloat(e.target.value));
+    document.getElementById('fxSpeed').addEventListener('input', (e) => config.fxSpeed = parseFloat(e.target.value));
     document.getElementById('fxCount').addEventListener('input', (e) => config.fxCount = parseInt(e.target.value));
     document.getElementById('visWidth').addEventListener('input', (e) => {
       visW = parseInt(e.target.value);
@@ -258,6 +263,7 @@
 
     let time = 0;
 
+    // MESIN EFEK CUACA REALISTIS & LAYER 3D
     class WeatherParticle {
       constructor() { this.reset(true); }
       reset(init = false) {
@@ -268,62 +274,81 @@
         this.opacity = Math.random() * 0.5 + 0.3;
         this.angle = Math.random() * Math.PI * 2;
         this.rotSpeed = (Math.random() - 0.5) * 0.1;
+        this.wobble = Math.random() * 0.05;
+        
+        // 3D Layering
+        const layer = Math.random();
+        if (layer < 0.5) { this.layer = 'back'; this.layerSpeed = 0.5; this.size *= 0.5; }
+        else if (layer < 0.85) { this.layer = 'mid'; this.layerSpeed = 1.0; }
+        else { this.layer = 'front'; this.layerSpeed = 1.8; this.size *= 1.5; }
+
+        const leafColors = ['#d35400', '#e67e22', '#f39c12', '#bdc542'];
+        this.leafColor = leafColors[Math.floor(Math.random() * leafColors.length)];
       }
       update() {
         if (config.fxType === 'none') return;
-        let wind = config.fxWind;
+        let wind = config.fxWind * config.fxSpeed;
+        let speedMult = config.fxSpeed * this.layerSpeed;
+
         if (config.fxType === 'realistic_rain') {
-          this.y += this.speed * 6;
+          this.y += this.speed * 8 * speedMult;
           this.x += wind * 2;
           if (this.y > height) this.reset();
         } else if (config.fxType === 'soft_snow') {
-          this.y += this.speed * 0.8;
-          this.angle += 0.02;
-          this.x += Math.sin(this.angle) + wind;
+          this.y += this.speed * 0.8 * speedMult;
+          this.angle += this.wobble * config.fxSpeed;
+          this.x += Math.sin(this.angle) * 1.5 + wind;
           if (this.y > height) this.reset();
         } else if (config.fxType === 'falling_leaves') {
-          this.y += this.speed * 1.5;
-          this.angle += this.rotSpeed;
-          this.x += Math.sin(this.angle) * 2 + wind;
+          this.y += this.speed * 1.2 * speedMult;
+          this.angle += this.rotSpeed * config.fxSpeed;
+          this.x += Math.sin(this.angle) * 2.5 + wind;
           if (this.y > height) this.reset();
         } else if (config.fxType === 'forest_fireflies') {
-          this.y -= this.speed * 0.3;
-          this.angle += 0.04;
-          this.x += Math.cos(this.angle) + wind * 0.5;
-          this.opacity = Math.abs(Math.sin(time * 1.5 + this.x * 0.05));
+          this.y -= this.speed * 0.3 * speedMult;
+          this.angle += this.wobble * config.fxSpeed;
+          this.x += Math.cos(this.angle) * 1.5 + wind * 0.5;
+          this.opacity = Math.abs(Math.sin(time * 1.5 + this.x * 0.05)) * 0.8 + 0.2;
           if (this.y < -20) { this.reset(); this.y = height + 20; }
         }
-        if (this.x > width + 20) this.x = -20;
-        else if (this.x < -20) this.x = width + 20;
+        if (this.x > width + 50) this.x = -50;
+        else if (this.x < -50) this.x = width + 50;
       }
       draw() {
         if (config.fxType === 'none') return;
         ctx.save();
         if (config.fxType === 'realistic_rain') {
-          ctx.strokeStyle = `rgba(200, 230, 255, ${this.opacity * 0.6})`;
-          ctx.lineWidth = this.size * 0.5;
+          ctx.strokeStyle = `rgba(185, 222, 255, ${this.opacity * 0.6})`;
+          ctx.lineWidth = this.layer === 'front' ? 2 : 1;
           ctx.beginPath();
           ctx.moveTo(this.x, this.y);
-          ctx.lineTo(this.x - config.fxWind * 2, this.y - this.speed * 6);
+          ctx.lineTo(this.x - config.fxWind * 2, this.y - this.speed * 8 * config.fxSpeed);
           ctx.stroke();
         } else if (config.fxType === 'soft_snow') {
           ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+          ctx.shadowBlur = this.layer === 'front' ? 5 : 0;
+          ctx.shadowColor = '#fff';
           ctx.beginPath();
           ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
           ctx.fill();
         } else if (config.fxType === 'falling_leaves') {
           ctx.translate(this.x, this.y);
           ctx.rotate(this.angle);
-          ctx.fillStyle = `rgba(211, 84, 0, ${this.opacity})`;
+          let twistVol = Math.abs(Math.sin(this.angle * 2));
+          ctx.fillStyle = this.leafColor;
+          ctx.globalAlpha = this.opacity;
           ctx.beginPath();
-          ctx.ellipse(0, 0, this.size * 3, this.size * 1.5, 0, 0, Math.PI * 2);
+          ctx.ellipse(0, 0, this.size * 3, this.size * (1 + twistVol), 0, 0, Math.PI * 2);
           ctx.fill();
+          ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+          ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.moveTo(-this.size*3, 0); ctx.lineTo(this.size*3, 0); ctx.stroke();
         } else if (config.fxType === 'forest_fireflies') {
-          ctx.fillStyle = `rgba(255, 235, 59, ${this.opacity})`;
-          ctx.shadowBlur = 10;
-          ctx.shadowColor = '#ffeb3b';
+          ctx.fillStyle = `rgba(215, 255, 40, ${this.opacity})`;
+          ctx.shadowBlur = this.size * 4;
+          ctx.shadowColor = '#d7ff28';
           ctx.beginPath();
-          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.arc(this.x, this.y, this.size * 0.8, 0, Math.PI * 2);
           ctx.fill();
         }
         ctx.restore();
@@ -347,6 +372,10 @@
       const style = config.visType;
       ctx.save();
       ctx.translate(visX, visY);
+      
+      // APLIKASIKAN OPASITAS PADA SELURUH VISUALIZER
+      ctx.globalAlpha = config.visOpacity;
+      
       const cx = visW / 2;
       const cy = 0;
 
@@ -578,4 +607,5 @@
     }
   </script>
 </body>
+
 </html>
