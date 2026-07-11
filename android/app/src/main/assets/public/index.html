@@ -68,22 +68,22 @@
     <div class="row">
       <label style="color:#a8ff78;">VISUALIZER</label>
       <select id="visType">
-        <option value="soft_ring">⭕ Cincin Resonansi</option>
-        <option value="aurora_ribbon">〰️ Pita Gelombang</option>
-        <option value="fading_echo">📉 Garis Gema</option>
-        <option value="glowing_dust">✨ Partikel Pendar</option>
-        <option value="sym_horizon">🌊 Gelombang Cermin</option>
-        <option value="fluid_blob">💧 Gumpalan Cair</option>
-        <option value="concentric_drops">🎯 Cincin Berlapis</option>
-        <option value="fading_dots">💬 Titik Pudar</option>
-        <option value="nebula_pillars">🌫️ Pilar Nebula</option>
-        <option value="hex_grid">⬡ Jaring Neural</option>
+        <!-- 10 SPECTRUM UNIK BARU -->
+        <option value="dna_helix">🧬 Heliks DNA (Audio DNA)</option>
+        <option value="sonic_terrain">⛰️ Topografi Suara (Sonic Terrain)</option>
+        <option value="pulsing_poly">💠 Bintang Poligon (Pulsing Polygon)</option>
+        <option value="quantum_strings">🎸 Dawai Energi (Quantum Strings)</option>
+        <option value="orbiting_particles">🪐 Partikel Orbit (Orbiting Particles)</option>
+        <option value="mirror_blocks">🧊 Blok Cermin (Mirror Blocks)</option>
+        <option value="ethereal_flames">🔥 Api Ethereal (Ethereal Flames)</option>
+        <option value="lunar_eclipse">🌒 Gerhana Bulan (Lunar Eclipse)</option>
+        <option value="crystal_shards">💎 Pecahan Kristal (Crystal Shards)</option>
+        <option value="hypnotic_spiral">🌀 Spiral Hipnotis (Hypnotic Spiral)</option>
       </select>
     </div>
 
     <div class="row"><label>TINGGI VIS.</label><input type="range" id="visHeight" min="30" max="450" value="120"></div>
     <div class="row"><label style="color:#a8ff78;">LEBAR VIS.</label><input type="range" id="visWidth" min="100" max="1100" value="340"></div>
-    
     <div class="row"><label style="color:#ffb300;">OPASITAS VIS.</label><input type="range" id="visOpacity" min="0.1" max="1.0" step="0.05" value="1.0"></div>
 
     <hr style="border: 0; border-top: 1px dashed #333; width: 100%; margin: 5px 0;">
@@ -205,7 +205,7 @@
     canvas.addEventListener('mousedown', startDrag); canvas.addEventListener('mousemove', drag); window.addEventListener('mouseup', endDrag);
     canvas.addEventListener('touchstart', startDrag, { passive: false }); canvas.addEventListener('touchmove', drag, { passive: false }); window.addEventListener('touchend', endDrag);
     
-    let audioCtx, source, mediaStreamDestination, analyser, dataArray, peakHeights = new Array(64).fill(0);
+    let audioCtx, source, mediaStreamDestination, analyser, dataArray;
     let isAudioInit = false;
 
     function initAudioContext() {
@@ -248,7 +248,7 @@
       } else { audioPlayer.pause(); playBtn.innerText = "▶ RESUME"; statusBox.innerText = "⏸ Musik Dijeda."; }
     }
     
-    const config = { visType: 'soft_ring', visHeight: 120, visOpacity: 1.0, fxType: 'none', fxWind: 0, fxSpeed: 1.0, fxCount: 150 };
+    const config = { visType: 'dna_helix', visHeight: 120, visOpacity: 1.0, fxType: 'none', fxWind: 0, fxSpeed: 1.0, fxCount: 150 };
     document.getElementById('visType').addEventListener('change', (e) => config.visType = e.target.value);
     document.getElementById('visHeight').addEventListener('input', (e) => config.visHeight = parseInt(e.target.value));
     document.getElementById('visOpacity').addEventListener('input', (e) => config.visOpacity = parseFloat(e.target.value));
@@ -263,7 +263,6 @@
 
     let time = 0;
 
-    // MESIN EFEK CUACA REALISTIS & LAYER 3D
     class WeatherParticle {
       constructor() { this.reset(true); }
       reset(init = false) {
@@ -276,7 +275,6 @@
         this.rotSpeed = (Math.random() - 0.5) * 0.1;
         this.wobble = Math.random() * 0.05;
         
-        // 3D Layering
         const layer = Math.random();
         if (layer < 0.5) { this.layer = 'back'; this.layerSpeed = 0.5; this.size *= 0.5; }
         else if (layer < 0.85) { this.layer = 'mid'; this.layerSpeed = 1.0; }
@@ -368,127 +366,168 @@
       } catch (e) { return 0; }
     }
 
+    // 10 SPECTRUM VISUALIZER UNIK BARU
     function drawVisualizer(bufferLen) {
       const style = config.visType;
       ctx.save();
       ctx.translate(visX, visY);
-      
-      // APLIKASIKAN OPASITAS PADA SELURUH VISUALIZER
       ctx.globalAlpha = config.visOpacity;
-      
       const cx = visW / 2;
       const cy = 0;
 
       try {
-        if (style === 'soft_ring') {
-          let val = getSymmetricVal(Math.floor(visW/2), visW, bufferLen);
-          ctx.beginPath(); 
-          ctx.arc(cx, cy - 50, 40 + val * config.visHeight * 0.8, 0, Math.PI*2);
-          ctx.strokeStyle = `rgba(224, 64, 251, ${0.3 + val})`; 
-          ctx.lineWidth = 4 + val * 10;
-          ctx.shadowBlur = 20; ctx.shadowColor = '#e040fb'; ctx.stroke();
-          ctx.beginPath(); ctx.arc(cx, cy - 50, 40 + val * config.visHeight * 0.8, 0, Math.PI*2);
-          ctx.strokeStyle = `rgba(255, 255, 255, ${0.8})`; ctx.lineWidth = 1; ctx.stroke();
-        } 
-        else if (style === 'aurora_ribbon') {
-          for(let k=1; k<=3; k++) {
+        if (style === 'dna_helix') {
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          for(let i=0; i<=visW; i+=5) {
+            let val = getSymmetricVal(i, visW, bufferLen);
+            let y1 = cy - 40 + Math.sin(i * 0.05 + time * 2) * (20 + val * config.visHeight * 0.5);
+            if(i===0) ctx.moveTo(i, y1); else ctx.lineTo(i, y1);
+          }
+          ctx.strokeStyle = '#00d2ff'; ctx.stroke();
+
+          ctx.beginPath();
+          for(let i=0; i<=visW; i+=5) {
+            let val = getSymmetricVal(i, visW, bufferLen);
+            let y2 = cy - 40 + Math.cos(i * 0.05 + time * 2) * (20 + val * config.visHeight * 0.5);
+            if(i===0) ctx.moveTo(i, y2); else ctx.lineTo(i, y2);
+          }
+          ctx.strokeStyle = '#e040fb'; ctx.stroke();
+
+          for(let i=0; i<=visW; i+=20) {
+             let val = getSymmetricVal(i, visW, bufferLen);
+             let y1 = cy - 40 + Math.sin(i * 0.05 + time * 2) * (20 + val * config.visHeight * 0.5);
+             let y2 = cy - 40 + Math.cos(i * 0.05 + time * 2) * (20 + val * config.visHeight * 0.5);
+             ctx.beginPath(); ctx.moveTo(i, y1); ctx.lineTo(i, y2);
+             ctx.strokeStyle = `rgba(255,255,255,${0.1 + val*0.5})`; ctx.stroke();
+          }
+        }
+        else if (style === 'sonic_terrain') {
+          for(let k=3; k>=0; k--) {
             ctx.beginPath(); ctx.moveTo(0, cy);
             for(let i=0; i<=visW; i+=10) {
-                let val = getSymmetricVal(i, visW, bufferLen);
-                let h = Math.sin(i*0.02 + time*k) * 30 + val * config.visHeight * k * 0.5;
-                ctx.lineTo(i, cy - h);
+               let val = getSymmetricVal(i + k*10, visW, bufferLen);
+               let y = cy - (k*15) - val * config.visHeight * (1 - k*0.15) - Math.sin(i*0.02 + time)*10;
+               ctx.lineTo(i, y);
             }
-            ctx.strokeStyle = `rgba(168, 255, 120, ${0.6/k})`; ctx.lineWidth = 3; ctx.stroke();
+            ctx.lineTo(visW, cy); ctx.closePath();
+            ctx.fillStyle = `rgba(0, 230, 118, ${0.15 + (3-k)*0.1})`; ctx.fill();
+            ctx.strokeStyle = `rgba(0, 230, 118, ${0.5 + (3-k)*0.1})`; ctx.lineWidth = 1; ctx.stroke();
           }
         }
-        else if (style === 'fading_echo') {
-          let numBars = 16; let spacing = visW / numBars;
-          for(let i=0; i<numBars; i++) {
-            let val = getSymmetricVal(i, numBars, bufferLen) * config.visHeight;
-            if(val > peakHeights[i]) peakHeights[i] = val; else peakHeights[i] = Math.max(0, peakHeights[i] - 1.5);
-            ctx.strokeStyle = `rgba(0, 210, 255, ${peakHeights[i]/config.visHeight})`;
-            ctx.lineWidth = 4; ctx.lineCap = 'round';
-            ctx.beginPath(); ctx.moveTo(i*spacing, cy); ctx.lineTo(i*spacing, cy - peakHeights[i]); ctx.stroke();
+        else if (style === 'pulsing_poly') {
+          let sides = 12;
+          ctx.beginPath();
+          for(let i=0; i<=sides; i++) {
+            let angle = (i/sides) * Math.PI * 2 + time * 0.5;
+            let val = getSymmetricVal(i*(visW/sides), visW, bufferLen);
+            let r = 50 + val * config.visHeight;
+            let px = cx + Math.cos(angle) * r;
+            let py = cy - 60 + Math.sin(angle) * r;
+            if(i===0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
           }
-          ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(visW, cy);
-          ctx.strokeStyle = 'rgba(255,255,255,0.2)'; ctx.lineWidth = 1; ctx.stroke();
+          ctx.closePath();
+          ctx.strokeStyle = '#ff9800'; ctx.lineWidth = 3; ctx.shadowBlur = 15; ctx.shadowColor = '#ff9800'; ctx.stroke();
+          ctx.fillStyle = 'rgba(255, 152, 0, 0.2)'; ctx.fill(); ctx.shadowBlur = 0;
         }
-        else if (style === 'glowing_dust') {
-          let numDots = 25;
-          for(let i=0; i<numDots; i++) {
-            let val = getSymmetricVal(i, numDots, bufferLen);
-            let px = (Math.sin(i * 123.45) * 0.5 + 0.5) * visW;
-            let py = cy - (Math.cos(i * 321.12) * 0.5 + 0.5) * config.visHeight;
-            ctx.beginPath(); ctx.arc(px, py, 2 + val * 15, 0, Math.PI*2);
-            ctx.fillStyle = `rgba(255, 152, 0, ${0.1 + val*0.9})`;
-            ctx.shadowBlur = 15 + val * 20; ctx.shadowColor = '#ff9800'; ctx.fill();
-            if (val > 0.2) { ctx.beginPath(); ctx.arc(px, py, 1.5, 0, Math.PI*2); ctx.fillStyle = '#ffffff'; ctx.shadowBlur = 0; ctx.fill(); }
+        else if (style === 'quantum_strings') {
+          let numStrings = 20; let spacing = visW / numStrings;
+          for(let i=0; i<=numStrings; i++) {
+            let val = getSymmetricVal(i*spacing, visW, bufferLen);
+            let h = config.visHeight;
+            let offset = Math.sin(time*5 + i) * (val * 40);
+            ctx.beginPath(); ctx.moveTo(i*spacing, cy);
+            ctx.quadraticCurveTo(i*spacing + offset, cy - h/2, i*spacing, cy - h);
+            ctx.strokeStyle = `rgba(3, 169, 244, ${0.3 + val})`; ctx.lineWidth = 2 + val*3; ctx.stroke();
+            ctx.beginPath(); ctx.arc(i*spacing + offset, cy - h/2, 2 + val*4, 0, Math.PI*2);
+            ctx.fillStyle = '#fff'; ctx.fill();
           }
-        } 
-        else if (style === 'sym_horizon') {
-          ctx.beginPath(); ctx.moveTo(0, cy - 50);
-          for(let i=0; i<=visW; i+=10) { let val = getSymmetricVal(i, visW, bufferLen); ctx.lineTo(i, cy - 50 - val * config.visHeight * 0.5); }
-          ctx.strokeStyle = '#00e676'; ctx.lineWidth = 2; ctx.stroke();
-          ctx.beginPath(); ctx.moveTo(0, cy - 50);
-          for(let i=0; i<=visW; i+=10) { let val = getSymmetricVal(i, visW, bufferLen); ctx.lineTo(i, cy - 50 + val * config.visHeight * 0.5); }
-          ctx.strokeStyle = 'rgba(0, 230, 118, 0.3)'; ctx.stroke();
-          ctx.beginPath(); ctx.moveTo(0, cy - 50); ctx.lineTo(visW, cy - 50); ctx.strokeStyle = 'rgba(255,255,255,0.2)'; ctx.lineWidth = 1; ctx.stroke();
-        } 
-        else if (style === 'fluid_blob') {
-          ctx.beginPath(); let pts = 40;
-          for(let i=0; i<=pts; i++) {
-            let angle = (i/pts) * Math.PI * 2; let val = getSymmetricVal(i, pts, bufferLen);
-            let r = 40 + val * config.visHeight * 0.4 + Math.sin(angle * 3 + time) * 15;
-            let px = cx + Math.cos(angle) * r; let py = cy - 60 + Math.sin(angle) * r;
-            if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+        }
+        else if (style === 'orbiting_particles') {
+          let numOrbits = 8;
+          let bassVal = getSymmetricVal(Math.floor(visW/2), visW, bufferLen);
+          for(let i=1; i<=numOrbits; i++) {
+            let val = getSymmetricVal(i*(visW/numOrbits), visW, bufferLen);
+            let angle = time * (1 + i*0.2) + i;
+            let r = i * 20 + bassVal * 30;
+            let px = cx + Math.cos(angle) * r; let py = cy - 60 + Math.sin(angle) * r * 0.5;
+            ctx.beginPath(); ctx.arc(px, py, 3 + val * 10, 0, Math.PI*2);
+            ctx.fillStyle = `rgba(156, 39, 176, ${0.5 + val})`; ctx.shadowBlur = 10; ctx.shadowColor = '#9c27b0'; ctx.fill();
+            ctx.beginPath(); ctx.ellipse(cx, cy - 60, r, r*0.5, 0, 0, Math.PI*2);
+            ctx.strokeStyle = 'rgba(255,255,255,0.05)'; ctx.lineWidth = 1; ctx.shadowBlur = 0; ctx.stroke();
           }
-          ctx.closePath(); ctx.fillStyle = 'rgba(233, 30, 99, 0.25)'; ctx.fill(); ctx.strokeStyle = '#e91e63'; ctx.lineWidth = 2; ctx.stroke();
-        } 
-        else if (style === 'concentric_drops') {
+        }
+        else if (style === 'mirror_blocks') {
+          let numBlocks = 30; let blockW = visW / numBlocks;
+          for(let i=0; i<numBlocks; i++) {
+             let val = getSymmetricVal(i*blockW, visW, bufferLen);
+             let segments = Math.floor(val * 10) + 1;
+             for(let s=0; s<segments; s++) {
+               let bh = (config.visHeight / 10) * 0.8;
+               let by = cy - (s * (config.visHeight / 10)) - bh;
+               ctx.fillStyle = `rgba(0, 210, 255, ${0.2 + (s/10)})`;
+               ctx.fillRect(i*blockW + 2, by, blockW - 4, bh);
+             }
+          }
+        }
+        else if (style === 'ethereal_flames') {
+          for(let j=0; j<3; j++) {
+            ctx.beginPath(); ctx.moveTo(0, cy);
+            for(let i=0; i<=visW; i+=20) {
+              let val = getSymmetricVal(i, visW, bufferLen);
+              let h = val * config.visHeight * (1 - j*0.2);
+              let cpX1 = i - 10 + Math.sin(time*2 + j)*10; let cpY1 = cy - h/2;
+              let cpX2 = i + 10 + Math.cos(time*2 + j)*10; let cpY2 = cy - h;
+              ctx.bezierCurveTo(cpX1, cpY1, cpX2, cpY2, i, cy - h);
+            }
+            ctx.lineTo(visW, cy); ctx.closePath();
+            ctx.fillStyle = `rgba(255, ${80 + j*50}, 0, ${0.2 + j*0.1})`;
+            ctx.fill();
+          }
+        }
+        else if (style === 'lunar_eclipse') {
           let val = getSymmetricVal(Math.floor(visW/2), visW, bufferLen);
-          for(let i=1; i<=5; i++) {
-            ctx.beginPath(); ctx.arc(cx, cy - 50, i * 15 + val * config.visHeight * 0.15 * i, 0, Math.PI*2);
-            ctx.strokeStyle = `rgba(3, 169, 244, ${1 - i*0.15})`; ctx.lineWidth = 1.5; ctx.stroke();
-          }
-        } 
-        else if (style === 'fading_dots') {
-          let numDots = 24; let spacing = visW / numDots;
-          for(let i=0; i<numDots; i++) {
-            let val = getSymmetricVal(i, numDots, bufferLen);
-            ctx.beginPath(); ctx.arc(i*spacing, cy, 3 + val * (config.visHeight * 0.1), 0, Math.PI*2);
-            ctx.fillStyle = `rgba(156, 39, 176, ${0.1 + val*0.9})`; ctx.fill();
-          }
-          ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(visW - spacing, cy); ctx.strokeStyle = 'rgba(255,255,255,0.1)'; ctx.lineWidth = 1; ctx.stroke();
-        } 
-        else if (style === 'nebula_pillars') {
-          let numBars = 12; let spacing = visW / numBars;
-          for(let i=0; i<numBars; i++) {
-            let val = getSymmetricVal(i, numBars, bufferLen);
-            let h = Math.max(10, val * config.visHeight);
-            let grad = ctx.createLinearGradient(0, cy, 0, cy - h);
-            grad.addColorStop(0, `rgba(255, 235, 59, ${0.1 + val*0.6})`); grad.addColorStop(1, 'rgba(255, 235, 59, 0)');
-            ctx.fillStyle = grad; ctx.shadowBlur = 20; ctx.shadowColor = '#ffeb3b'; ctx.fillRect(i*spacing, cy - h, spacing*0.8, h);
-          }
-          ctx.shadowBlur = 0;
+          let r = 60 + val * config.visHeight * 0.3;
+          ctx.beginPath(); ctx.arc(cx, cy - 60, r, 0, Math.PI*2);
+          let grad = ctx.createRadialGradient(cx, cy - 60, r*0.8, cx, cy - 60, r*1.2);
+          grad.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
+          grad.addColorStop(1, 'rgba(0, 188, 212, 0)');
+          ctx.fillStyle = grad; ctx.fill();
+          let offset = val * 30;
+          ctx.beginPath(); ctx.arc(cx + offset, cy - 60 - offset*0.5, r*0.95, 0, Math.PI*2);
+          ctx.fillStyle = '#050505';
+          ctx.fill();
         }
-        else if (style === 'hex_grid') {
-          let hexRadius = 15; let hexW = Math.sqrt(3) * hexRadius; let hexH = 2 * hexRadius;
-          let cols = Math.floor(visW / hexW); let rows = Math.floor(config.visHeight / (hexH * 0.75)); if (rows < 2) rows = 2;
-          for(let r=0; r<rows; r++) {
-            for(let c=0; c<cols; c++) {
-                let val = getSymmetricVal(c + r*cols, cols*rows, bufferLen);
-                let x = c * hexW + (r%2==1 ? hexW/2 : 0); let y = cy - r * (hexH * 0.75) - 20;
-                ctx.beginPath();
-                for(let i=0; i<6; i++) {
-                    let angle = (Math.PI/3) * i - Math.PI/6;
-                    let px = x + hexRadius * Math.cos(angle); let py = y + hexRadius * Math.sin(angle);
-                    if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
-                }
-                ctx.closePath();
-                ctx.strokeStyle = `rgba(0, 188, 212, ${0.05 + val*0.3})`; ctx.stroke();
-                if(val > 0.25) { ctx.fillStyle = `rgba(0, 188, 212, ${val*0.7})`; ctx.fill(); }
-            }
+        else if (style === 'crystal_shards') {
+          let numShards = 15; let spacing = visW / numShards;
+          for(let i=0; i<numShards; i++) {
+            let val = getSymmetricVal(i*spacing, visW, bufferLen);
+            let h = 20 + val * config.visHeight;
+            let cx_s = i * spacing + spacing/2;
+            ctx.beginPath();
+            ctx.moveTo(cx_s - spacing*0.4, cy);
+            ctx.lineTo(cx_s, cy - h);
+            ctx.lineTo(cx_s + spacing*0.4, cy);
+            ctx.closePath();
+            let grad = ctx.createLinearGradient(0, cy, 0, cy - h);
+            grad.addColorStop(0, 'rgba(233, 30, 99, 0.1)');
+            grad.addColorStop(1, `rgba(233, 30, 99, ${0.5 + val*0.5})`);
+            ctx.fillStyle = grad; ctx.fill();
+            ctx.strokeStyle = 'rgba(233, 30, 99, 0.8)'; ctx.lineWidth = 1; ctx.stroke();
           }
+        }
+        else if (style === 'hypnotic_spiral') {
+          let bass = getSymmetricVal(Math.floor(visW/2), visW, bufferLen);
+          ctx.beginPath();
+          for(let i=0; i<200; i++) {
+            let angle = i * 0.1 + time;
+            let val = getSymmetricVal(i*2, 400, bufferLen);
+            let r = i * 0.5 + val * config.visHeight * 0.2 + bass * 10;
+            let px = cx + Math.cos(angle) * r; let py = cy - 60 + Math.sin(angle) * r;
+            if(i===0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+          }
+          ctx.strokeStyle = `rgba(168, 255, 120, 0.8)`; ctx.lineWidth = 2 + bass*3; 
+          ctx.shadowBlur = 10; ctx.shadowColor = '#a8ff78'; ctx.stroke(); ctx.shadowBlur = 0;
         }
       } catch (e) {}
       ctx.restore();
