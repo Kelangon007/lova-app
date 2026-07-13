@@ -68,17 +68,17 @@
     <div class="row">
       <label style="color:#a8ff78;">VISUALIZER</label>
       <select id="visType">
-        <!-- 10 SPECTRUM UNIK BARU -->
-        <option value="dna_helix">🧬 Heliks DNA (Audio DNA)</option>
-        <option value="sonic_terrain">⛰️ Topografi Suara (Sonic Terrain)</option>
-        <option value="pulsing_poly">💠 Bintang Poligon (Pulsing Polygon)</option>
-        <option value="quantum_strings">🎸 Dawai Energi (Quantum Strings)</option>
-        <option value="orbiting_particles">🪐 Partikel Orbit (Orbiting Particles)</option>
-        <option value="mirror_blocks">🧊 Blok Cermin (Mirror Blocks)</option>
-        <option value="ethereal_flames">🔥 Api Ethereal (Ethereal Flames)</option>
-        <option value="lunar_eclipse">🌒 Gerhana Bulan (Lunar Eclipse)</option>
-        <option value="crystal_shards">💎 Pecahan Kristal (Crystal Shards)</option>
-        <option value="hypnotic_spiral">🌀 Spiral Hipnotis (Hypnotic Spiral)</option>
+        <!-- 10 SPECTRUM BARU (Sesuai Gambar) -->
+        <option value="glow_wave">🌊 1. Smooth Glow Wave</option>
+        <option value="wire_ribbon">〰️ 2. Wireframe Ribbon</option>
+        <option value="mirror_bars">⏸️ 3. Mirrored Bars Glow</option>
+        <option value="dot_matrix">🎛️ 4. Dot Matrix EQ</option>
+        <option value="sharp_wave">⚡ 5. Sharp Waveform</option>
+        <option value="layer_jagged">🔪 6. Layered Jagged Wave</option>
+        <option value="string_circle">🧶 7. String Circle Glow</option>
+        <option value="blob_circle">🟣 8. Glow Blob Circle</option>
+        <option value="fluid_ring">💧 9. Fluid Inner Ring</option>
+        <option value="starburst">💥 10. Starburst Ring</option>
       </select>
     </div>
 
@@ -248,7 +248,7 @@
       } else { audioPlayer.pause(); playBtn.innerText = "▶ RESUME"; statusBox.innerText = "⏸ Musik Dijeda."; }
     }
     
-    const config = { visType: 'dna_helix', visHeight: 120, visOpacity: 1.0, fxType: 'none', fxWind: 0, fxSpeed: 1.0, fxCount: 150 };
+    const config = { visType: 'glow_wave', visHeight: 120, visOpacity: 1.0, fxType: 'none', fxWind: 0, fxSpeed: 1.0, fxCount: 150 };
     document.getElementById('visType').addEventListener('change', (e) => config.visType = e.target.value);
     document.getElementById('visHeight').addEventListener('input', (e) => config.visHeight = parseInt(e.target.value));
     document.getElementById('visOpacity').addEventListener('input', (e) => config.visOpacity = parseFloat(e.target.value));
@@ -366,7 +366,9 @@
       } catch (e) { return 0; }
     }
 
-    // 10 SPECTRUM VISUALIZER UNIK BARU
+    // ==========================================
+    // 10 SPECTRUM BARU (Sesuai Referensi Gambar)
+    // ==========================================
     function drawVisualizer(bufferLen) {
       const style = config.visType;
       ctx.save();
@@ -376,159 +378,249 @@
       const cy = 0;
 
       try {
-        if (style === 'dna_helix') {
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          for(let i=0; i<=visW; i+=5) {
-            let val = getSymmetricVal(i, visW, bufferLen);
-            let y1 = cy - 40 + Math.sin(i * 0.05 + time * 2) * (20 + val * config.visHeight * 0.5);
-            if(i===0) ctx.moveTo(i, y1); else ctx.lineTo(i, y1);
-          }
-          ctx.strokeStyle = '#00d2ff'; ctx.stroke();
-
-          ctx.beginPath();
-          for(let i=0; i<=visW; i+=5) {
-            let val = getSymmetricVal(i, visW, bufferLen);
-            let y2 = cy - 40 + Math.cos(i * 0.05 + time * 2) * (20 + val * config.visHeight * 0.5);
-            if(i===0) ctx.moveTo(i, y2); else ctx.lineTo(i, y2);
-          }
-          ctx.strokeStyle = '#e040fb'; ctx.stroke();
-
-          for(let i=0; i<=visW; i+=20) {
-             let val = getSymmetricVal(i, visW, bufferLen);
-             let y1 = cy - 40 + Math.sin(i * 0.05 + time * 2) * (20 + val * config.visHeight * 0.5);
-             let y2 = cy - 40 + Math.cos(i * 0.05 + time * 2) * (20 + val * config.visHeight * 0.5);
-             ctx.beginPath(); ctx.moveTo(i, y1); ctx.lineTo(i, y2);
-             ctx.strokeStyle = `rgba(255,255,255,${0.1 + val*0.5})`; ctx.stroke();
-          }
-        }
-        else if (style === 'sonic_terrain') {
-          for(let k=3; k>=0; k--) {
+        // 1. Smooth Glow Wave (Row 1 Left)
+        if (style === 'glow_wave') {
+          const colors = ['rgba(0, 255, 255, 0.6)', 'rgba(255, 0, 255, 0.6)', 'rgba(255, 255, 255, 0.8)'];
+          for(let k=0; k<3; k++) {
             ctx.beginPath(); ctx.moveTo(0, cy);
             for(let i=0; i<=visW; i+=10) {
-               let val = getSymmetricVal(i + k*10, visW, bufferLen);
-               let y = cy - (k*15) - val * config.visHeight * (1 - k*0.15) - Math.sin(i*0.02 + time)*10;
-               ctx.lineTo(i, y);
+              let val = getSymmetricVal(i, visW, bufferLen);
+              let h = Math.sin(i*0.01 + time*(k+1))*10 + (val * config.visHeight * (1 - k*0.2));
+              ctx.lineTo(i, cy - h);
             }
-            ctx.lineTo(visW, cy); ctx.closePath();
-            ctx.fillStyle = `rgba(0, 230, 118, ${0.15 + (3-k)*0.1})`; ctx.fill();
-            ctx.strokeStyle = `rgba(0, 230, 118, ${0.5 + (3-k)*0.1})`; ctx.lineWidth = 1; ctx.stroke();
+            for(let i=visW; i>=0; i-=10) {
+              let val = getSymmetricVal(i, visW, bufferLen);
+              let h = Math.cos(i*0.01 + time*(k+1))*10 + (val * config.visHeight * (1 - k*0.2));
+              ctx.lineTo(i, cy + h);
+            }
+            ctx.closePath();
+            ctx.fillStyle = colors[k];
+            ctx.shadowBlur = 20; ctx.shadowColor = colors[k];
+            ctx.fill();
+          }
+          // Dots layer
+          ctx.beginPath();
+          for(let i=0; i<=visW; i+=20) {
+              let val = getSymmetricVal(i, visW, bufferLen);
+              let h = Math.sin(i*0.01 + time)*10 + (val * config.visHeight * 1.2);
+              ctx.arc(i, cy - h - 10, 2, 0, Math.PI*2);
+              ctx.arc(i, cy + h + 10, 2, 0, Math.PI*2);
+          }
+          ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.shadowBlur = 5; ctx.fill();
+        }
+        
+        // 2. Wireframe Ribbon (Row 1 Middle)
+        else if (style === 'wire_ribbon') {
+          for(let k=0; k<8; k++) {
+            ctx.beginPath(); ctx.moveTo(0, cy);
+            for(let i=0; i<=visW; i+=10) {
+                let val = getSymmetricVal(i, visW, bufferLen);
+                let phase = time * 2 + (k * 0.5);
+                let y = cy + Math.sin((i/visW)*Math.PI*2 + phase) * (30 + val * config.visHeight);
+                ctx.lineTo(i, y);
+            }
+            ctx.strokeStyle = k%2===0 ? `rgba(0, 255, 255, ${0.8 - k*0.05})` : `rgba(255, 0, 255, ${0.8 - k*0.05})`;
+            ctx.lineWidth = 1.5; ctx.stroke();
           }
         }
-        else if (style === 'pulsing_poly') {
-          let sides = 12;
+        
+        // 3. Mirrored Bars Glow (Row 1 Right)
+        else if (style === 'mirror_bars') {
+          let numBars = 60; let spacing = visW / numBars;
+          for(let i=0; i<numBars; i++) {
+            let val = getSymmetricVal(i*spacing, visW, bufferLen);
+            let h = 5 + val * (config.visHeight);
+            
+            // Draw top bar
+            ctx.fillStyle = `rgba(0, 255, 255, ${0.3 + val})`;
+            ctx.fillRect(i*spacing + 1, cy - h, spacing - 2, h);
+            // Draw bottom bar (mirrored)
+            ctx.fillStyle = `rgba(255, 255, 255, ${0.3 + val})`;
+            ctx.fillRect(i*spacing + 1, cy, spacing - 2, h);
+            
+            // Glowing tips
+            ctx.fillStyle = '#fff';
+            ctx.shadowBlur = 10; ctx.shadowColor = '#00ffff';
+            ctx.fillRect(i*spacing + 1, cy - h - 2, spacing - 2, 2);
+            ctx.fillRect(i*spacing + 1, cy + h, spacing - 2, 2);
+            ctx.shadowBlur = 0;
+          }
+        }
+
+        // 4. Dot Matrix EQ (Row 2 Left)
+        else if (style === 'dot_matrix') {
+          let cols = 50; let rows = 20; 
+          let spaceX = visW / cols; let spaceY = config.visHeight / rows;
+          
+          for(let c=0; c<cols; c++) {
+            let val = getSymmetricVal(c*spaceX, visW, bufferLen);
+            let activeRows = Math.floor(val * rows);
+            for(let r=0; r<rows; r++) {
+               let x = c * spaceX + spaceX/2;
+               let yTop = cy - r * spaceY - spaceY/2;
+               let yBot = cy + r * spaceY + spaceY/2;
+               
+               ctx.beginPath();
+               if(r < activeRows) {
+                  ctx.fillStyle = (r > rows*0.7) ? '#00ffff' : '#ffffff';
+                  ctx.shadowBlur = 5; ctx.shadowColor = '#00ffff';
+               } else {
+                  ctx.fillStyle = 'rgba(255,255,255,0.1)';
+                  ctx.shadowBlur = 0;
+               }
+               ctx.arc(x, yTop, spaceX*0.3, 0, Math.PI*2);
+               ctx.arc(x, yBot, spaceX*0.3, 0, Math.PI*2);
+               ctx.fill();
+            }
+          }
+        }
+
+        // 5. Sharp Waveform (Row 2 Middle)
+        else if (style === 'sharp_wave') {
+          let lines = 150; let spacing = visW / lines;
           ctx.beginPath();
-          for(let i=0; i<=sides; i++) {
-            let angle = (i/sides) * Math.PI * 2 + time * 0.5;
-            let val = getSymmetricVal(i*(visW/sides), visW, bufferLen);
-            let r = 50 + val * config.visHeight;
-            let px = cx + Math.cos(angle) * r;
-            let py = cy - 60 + Math.sin(angle) * r;
+          for(let i=0; i<=lines; i++) {
+             let val = getSymmetricVal(i*spacing, visW, bufferLen);
+             let h = val * config.visHeight;
+             ctx.moveTo(i*spacing, cy - h);
+             ctx.lineTo(i*spacing, cy + h);
+          }
+          let grad = ctx.createLinearGradient(0, cy - config.visHeight, 0, cy + config.visHeight);
+          grad.addColorStop(0, '#e040fb'); grad.addColorStop(0.5, '#00ffff'); grad.addColorStop(1, '#e040fb');
+          ctx.strokeStyle = grad; ctx.lineWidth = 1; ctx.stroke();
+        }
+
+        // 6. Layered Jagged Wave (Row 2 Right)
+        else if (style === 'layer_jagged') {
+          // Smooth back layers
+          const colors = ['rgba(0, 150, 255, 0.4)', 'rgba(150, 0, 255, 0.4)'];
+          for(let k=0; k<2; k++) {
+            ctx.beginPath(); ctx.moveTo(0, cy);
+            for(let i=0; i<=visW; i+=10) {
+               let val = getSymmetricVal(i, visW, bufferLen);
+               let h = Math.sin(i*0.02 + time*(k+1))*20 + val*(config.visHeight*0.8);
+               ctx.lineTo(i, cy - h + (k*10));
+            }
+            for(let i=visW; i>=0; i-=10) {
+               let val = getSymmetricVal(i, visW, bufferLen);
+               let h = Math.cos(i*0.02 + time*(k+1))*20 + val*(config.visHeight*0.8);
+               ctx.lineTo(i, cy + h - (k*10));
+            }
+            ctx.fillStyle = colors[k]; ctx.fill();
+          }
+          // Sharp jagged front line
+          ctx.beginPath(); ctx.moveTo(0, cy);
+          for(let i=0; i<=visW; i+=5) {
+             let val = getSymmetricVal(i, visW, bufferLen);
+             // random noise based on time and position
+             let noise = (Math.sin(i*12.3 + time*10) * 15) * val; 
+             ctx.lineTo(i, cy - (val * config.visHeight) + noise);
+          }
+          ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2; ctx.stroke();
+        }
+
+        // 7. String Circle Glow (Row 3 C1)
+        else if (style === 'string_circle') {
+          let rBase = 60;
+          for(let k=0; k<5; k++) {
+            ctx.beginPath();
+            for(let i=0; i<=360; i+=5) {
+              let angle = i * (Math.PI/180);
+              let val = getSymmetricVal(i * (visW/360), visW, bufferLen);
+              let radius = rBase + Math.sin(angle * (5+k) + time*2) * 10 + (val * config.visHeight * 0.4);
+              let px = cx + Math.cos(angle) * radius; let py = cy - 60 + Math.sin(angle) * radius;
+              if(i===0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+            }
+            ctx.closePath();
+            ctx.strokeStyle = `rgba(0, 200, 255, ${0.8 - k*0.15})`; ctx.lineWidth = 1.5; ctx.stroke();
+          }
+          // Inner icon proxy
+          ctx.beginPath(); ctx.arc(cx, cy-60, 25, 0, Math.PI*2);
+          ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fill();
+          ctx.fillStyle = '#fff'; ctx.font = '20px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillText("♫", cx, cy-60);
+        }
+
+        // 8. Glow Blob Circle (Row 3 C2)
+        else if (style === 'blob_circle') {
+          let rBase = 50;
+          let valBass = getSymmetricVal(visW/2, visW, bufferLen);
+          ctx.beginPath();
+          for(let i=0; i<=360; i+=10) {
+            let angle = i * (Math.PI/180);
+            let val = getSymmetricVal(i * (visW/360), visW, bufferLen);
+            let radius = rBase + val * config.visHeight * 0.6;
+            let px = cx + Math.cos(angle) * radius; let py = cy - 60 + Math.sin(angle) * radius;
             if(i===0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
           }
           ctx.closePath();
-          ctx.strokeStyle = '#ff9800'; ctx.lineWidth = 3; ctx.shadowBlur = 15; ctx.shadowColor = '#ff9800'; ctx.stroke();
-          ctx.fillStyle = 'rgba(255, 152, 0, 0.2)'; ctx.fill(); ctx.shadowBlur = 0;
-        }
-        else if (style === 'quantum_strings') {
-          let numStrings = 20; let spacing = visW / numStrings;
-          for(let i=0; i<=numStrings; i++) {
-            let val = getSymmetricVal(i*spacing, visW, bufferLen);
-            let h = config.visHeight;
-            let offset = Math.sin(time*5 + i) * (val * 40);
-            ctx.beginPath(); ctx.moveTo(i*spacing, cy);
-            ctx.quadraticCurveTo(i*spacing + offset, cy - h/2, i*spacing, cy - h);
-            ctx.strokeStyle = `rgba(3, 169, 244, ${0.3 + val})`; ctx.lineWidth = 2 + val*3; ctx.stroke();
-            ctx.beginPath(); ctx.arc(i*spacing + offset, cy - h/2, 2 + val*4, 0, Math.PI*2);
-            ctx.fillStyle = '#fff'; ctx.fill();
-          }
-        }
-        else if (style === 'orbiting_particles') {
-          let numOrbits = 8;
-          let bassVal = getSymmetricVal(Math.floor(visW/2), visW, bufferLen);
-          for(let i=1; i<=numOrbits; i++) {
-            let val = getSymmetricVal(i*(visW/numOrbits), visW, bufferLen);
-            let angle = time * (1 + i*0.2) + i;
-            let r = i * 20 + bassVal * 30;
-            let px = cx + Math.cos(angle) * r; let py = cy - 60 + Math.sin(angle) * r * 0.5;
-            ctx.beginPath(); ctx.arc(px, py, 3 + val * 10, 0, Math.PI*2);
-            ctx.fillStyle = `rgba(156, 39, 176, ${0.5 + val})`; ctx.shadowBlur = 10; ctx.shadowColor = '#9c27b0'; ctx.fill();
-            ctx.beginPath(); ctx.ellipse(cx, cy - 60, r, r*0.5, 0, 0, Math.PI*2);
-            ctx.strokeStyle = 'rgba(255,255,255,0.05)'; ctx.lineWidth = 1; ctx.shadowBlur = 0; ctx.stroke();
-          }
-        }
-        else if (style === 'mirror_blocks') {
-          let numBlocks = 30; let blockW = visW / numBlocks;
-          for(let i=0; i<numBlocks; i++) {
-             let val = getSymmetricVal(i*blockW, visW, bufferLen);
-             let segments = Math.floor(val * 10) + 1;
-             for(let s=0; s<segments; s++) {
-               let bh = (config.visHeight / 10) * 0.8;
-               let by = cy - (s * (config.visHeight / 10)) - bh;
-               ctx.fillStyle = `rgba(0, 210, 255, ${0.2 + (s/10)})`;
-               ctx.fillRect(i*blockW + 2, by, blockW - 4, bh);
-             }
-          }
-        }
-        else if (style === 'ethereal_flames') {
-          for(let j=0; j<3; j++) {
-            ctx.beginPath(); ctx.moveTo(0, cy);
-            for(let i=0; i<=visW; i+=20) {
-              let val = getSymmetricVal(i, visW, bufferLen);
-              let h = val * config.visHeight * (1 - j*0.2);
-              let cpX1 = i - 10 + Math.sin(time*2 + j)*10; let cpY1 = cy - h/2;
-              let cpX2 = i + 10 + Math.cos(time*2 + j)*10; let cpY2 = cy - h;
-              ctx.bezierCurveTo(cpX1, cpY1, cpX2, cpY2, i, cy - h);
-            }
-            ctx.lineTo(visW, cy); ctx.closePath();
-            ctx.fillStyle = `rgba(255, ${80 + j*50}, 0, ${0.2 + j*0.1})`;
-            ctx.fill();
-          }
-        }
-        else if (style === 'lunar_eclipse') {
-          let val = getSymmetricVal(Math.floor(visW/2), visW, bufferLen);
-          let r = 60 + val * config.visHeight * 0.3;
-          ctx.beginPath(); ctx.arc(cx, cy - 60, r, 0, Math.PI*2);
-          let grad = ctx.createRadialGradient(cx, cy - 60, r*0.8, cx, cy - 60, r*1.2);
-          grad.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
-          grad.addColorStop(1, 'rgba(0, 188, 212, 0)');
+          let grad = ctx.createRadialGradient(cx, cy-60, rBase, cx, cy-60, rBase + config.visHeight);
+          grad.addColorStop(0, 'rgba(255, 0, 150, 0.8)'); grad.addColorStop(0.5, 'rgba(0, 255, 255, 0.5)'); grad.addColorStop(1, 'rgba(0,0,0,0)');
           ctx.fillStyle = grad; ctx.fill();
-          let offset = val * 30;
-          ctx.beginPath(); ctx.arc(cx + offset, cy - 60 - offset*0.5, r*0.95, 0, Math.PI*2);
-          ctx.fillStyle = '#050505';
-          ctx.fill();
+          
+          ctx.beginPath(); ctx.arc(cx, cy-60, rBase + valBass*20, 0, Math.PI*2);
+          ctx.fillStyle = '#111'; ctx.shadowBlur = 20; ctx.shadowColor = '#000'; ctx.fill(); ctx.shadowBlur = 0;
+          ctx.fillStyle = '#fff'; ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'center'; ctx.fillText("BASS", cx, cy-60);
         }
-        else if (style === 'crystal_shards') {
-          let numShards = 15; let spacing = visW / numShards;
-          for(let i=0; i<numShards; i++) {
-            let val = getSymmetricVal(i*spacing, visW, bufferLen);
-            let h = 20 + val * config.visHeight;
-            let cx_s = i * spacing + spacing/2;
-            ctx.beginPath();
-            ctx.moveTo(cx_s - spacing*0.4, cy);
-            ctx.lineTo(cx_s, cy - h);
-            ctx.lineTo(cx_s + spacing*0.4, cy);
-            ctx.closePath();
-            let grad = ctx.createLinearGradient(0, cy, 0, cy - h);
-            grad.addColorStop(0, 'rgba(233, 30, 99, 0.1)');
-            grad.addColorStop(1, `rgba(233, 30, 99, ${0.5 + val*0.5})`);
-            ctx.fillStyle = grad; ctx.fill();
-            ctx.strokeStyle = 'rgba(233, 30, 99, 0.8)'; ctx.lineWidth = 1; ctx.stroke();
-          }
+
+        // 9. Fluid Inner Ring (Row 3 C3)
+        else if (style === 'fluid_ring') {
+           let rBase = 70;
+           let bassVal = getSymmetricVal(visW/2, visW, bufferLen);
+           
+           // Outer dashed ring
+           ctx.beginPath();
+           for(let i=0; i<360; i+=8) {
+              let angle = i * (Math.PI/180);
+              let val = getSymmetricVal(i * (visW/360), visW, bufferLen);
+              let r1 = rBase + 5; let r2 = r1 + 5 + val*config.visHeight*0.3;
+              ctx.moveTo(cx + Math.cos(angle)*r1, cy - 60 + Math.sin(angle)*r1);
+              ctx.lineTo(cx + Math.cos(angle)*r2, cy - 60 + Math.sin(angle)*r2);
+           }
+           ctx.strokeStyle = '#00e5ff'; ctx.lineWidth = 3; ctx.stroke();
+
+           // Inner fluid
+           ctx.save();
+           ctx.beginPath(); ctx.arc(cx, cy-60, rBase, 0, Math.PI*2);
+           ctx.clip(); // clip to circle
+           
+           ctx.fillStyle = 'rgba(0, 229, 255, 0.2)';
+           ctx.fillRect(cx - rBase, cy - 60 - rBase, rBase*2, rBase*2);
+           
+           let fillHeight = (cy - 60 + rBase) - (bassVal * rBase * 1.5);
+           ctx.beginPath(); ctx.moveTo(cx - rBase, cy - 60 + rBase);
+           for(let i = cx - rBase; i <= cx + rBase; i+=5) {
+              let wave = Math.sin((i - cx)*0.05 + time*3) * 10;
+              ctx.lineTo(i, fillHeight + wave);
+           }
+           ctx.lineTo(cx + rBase, cy - 60 + rBase);
+           ctx.fillStyle = '#00e5ff'; ctx.fill();
+           ctx.restore();
+           
+           // Center icon
+           ctx.fillStyle = '#fff'; ctx.font = '16px sans-serif'; ctx.textAlign = 'center'; ctx.fillText("♫", cx, cy-80);
         }
-        else if (style === 'hypnotic_spiral') {
-          let bass = getSymmetricVal(Math.floor(visW/2), visW, bufferLen);
+
+        // 10. Starburst Ring (Row 3 C4)
+        else if (style === 'starburst') {
+          let rBase = 50;
           ctx.beginPath();
-          for(let i=0; i<200; i++) {
-            let angle = i * 0.1 + time;
-            let val = getSymmetricVal(i*2, 400, bufferLen);
-            let r = i * 0.5 + val * config.visHeight * 0.2 + bass * 10;
-            let px = cx + Math.cos(angle) * r; let py = cy - 60 + Math.sin(angle) * r;
+          for(let i=0; i<=360; i+=4) {
+            let angle = i * (Math.PI/180);
+            let val = getSymmetricVal(i * (visW/360), visW, bufferLen);
+            // jagged burst logic
+            let burst = (i%12 === 0) ? (val * config.visHeight * 0.8) : (val * config.visHeight * 0.2);
+            let radius = rBase + burst;
+            let px = cx + Math.cos(angle) * radius; let py = cy - 60 + Math.sin(angle) * radius;
             if(i===0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
           }
-          ctx.strokeStyle = `rgba(168, 255, 120, 0.8)`; ctx.lineWidth = 2 + bass*3; 
-          ctx.shadowBlur = 10; ctx.shadowColor = '#a8ff78'; ctx.stroke(); ctx.shadowBlur = 0;
+          ctx.closePath();
+          let grad = ctx.createLinearGradient(cx - visW/4, cy - 60, cx + visW/4, cy - 60);
+          grad.addColorStop(0, '#00ffff'); grad.addColorStop(0.5, '#e040fb'); grad.addColorStop(1, '#ffeb3b');
+          ctx.fillStyle = 'rgba(0,0,0,0.8)'; ctx.fill();
+          ctx.strokeStyle = grad; ctx.lineWidth = 4; ctx.stroke();
         }
+
       } catch (e) {}
       ctx.restore();
     }
