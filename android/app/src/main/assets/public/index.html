@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Noir v.1 (Dual Smoke FHD)</title>
+  <title>Noir v.1 (FHD Klasik Murni)</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body {
@@ -248,7 +248,7 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Noir v.1 FHD Klasik L-R.</div>
+    <div id="statusBox">Siap. Noir v.1 FHD Klasik Murni.</div>
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #00bcd4">1. FOTO LATAR</label>
       <label for="audioInput" class="file-label" style="border-bottom: 3px solid #e040fb">2. MUSIK (BANYAK)</label>
@@ -273,23 +273,25 @@
     <div class="row">
       <label style="color:#00d2ff;">VISUALIZER</label>
       <select id="visType">
-        <option value="bw_oscilloscope">📺 B&W Oscilloscope</option>
-        <option value="zebra_bars">🎹 Zebra Stripes</option>
-        <option value="ghost_blocks">👻 Ghost Grid</option>
-        <option value="winamp_peaks">📻 Winamp Peaks</option>
-        <option value="retro_led">🚦 Retro LED Meter</option>
-        <option value="wireframe_bars">🧊 Wireframe Bars</option>
-        <option value="classic_bars">🎙️ Classic Blocks</option>
-        <option value="split_bars">⏸️ Split Bars</option>
-        <option value="step_blocks">🧱 Step Blocks</option>
-        <option value="peak_dots">〰️ Peak Dots</option>
+        <option value="vintage_bars">📊 Vintage Solid Bars (Off-White)</option>
+        <option value="winamp_classic">📻 Winamp Classic Peaks</option>
+        <option value="retro_oscilloscope">📺 CRT Oscilloscope (Green)</option>
+        <option value="analog_vu">🎛️ Analog VU Meter (Amber)</option>
+        <option value="step_eq">🧱 Step Block EQ (Vintage)</option>
+        <option value="thin_eq">📏 Thin Line EQ (Minimalist)</option>
+        <option value="dotted_eq">⏺️ Dotted Peak EQ</option>
+        <option value="hollow_bars">🔲 Hollow Outline Bars</option>
+        <option value="split_eq">⏸️ Split Center EQ</option>
+        <option value="led_matrix">🚥 LED Dot Matrix</option>
       </select>
     </div>
 
     <div class="row"><label>TINGGI VIS.</label><input type="range" id="visHeight" min="30" max="600" value="180"></div>
     <div class="row"><label style="color:#00d2ff;">LEBAR VIS.</label><input type="range" id="visWidth" min="100" max="1500" value="600"></div>
+    <!-- PENGATURAN OPASITAS BARU -->
+    <div class="row"><label style="color:#e040fb;">OPASITAS VIS.</label><input type="range" id="visOpacity" min="0.1" max="1.0" step="0.05" value="1.0"></div>
+
     <div class="row"><label style="color:#ff9800;">UKURAN ASAP</label><input type="range" id="smokeSize" min="0.2" max="3.0" step="0.1" value="1.0"></div>
-    
     <div class="row"><label style="color:#ff9800;">ARAH ASAP 1</label><input type="range" id="smokeAngle1" min="-60" max="60" value="0"></div>
     <div class="row"><label style="color:#ff9800;">ARAH ASAP 2</label><input type="range" id="smokeAngle2" min="-60" max="60" value="0"></div>
 
@@ -301,6 +303,10 @@
         <option value="vintage">🎞️ Vintage HD (Kotor, Debu, Rambut)</option>
         <option value="grain">🎬 Grains (Bintik & Debu Saja)</option>
         <option value="scratch">📽️ Scratches (Garis Vertikal Saja)</option>
+        <!-- 3 EFEK BARU -->
+        <option value="sepia_dust">📜 Sepia Dust (Klasik Coklat)</option>
+        <option value="old_tv">📺 Old TV (Scanline & Noise)</option>
+        <option value="flicker_8mm">🎞️ 8mm Flicker (Kedap-Kedip)</option>
         <option value="none">Tanpa Efek</option>
       </select>
     </div>
@@ -339,7 +345,6 @@
     const durTimeEl = document.getElementById('durTime');
     let isDraggingProgress = false;
     
-    // UPDATE KONSTANTA RESOLUSI FHD
     const width = 1920;
     const height = 1080;
 
@@ -638,8 +643,9 @@
     const config = {
       type: 'vintage',
       count: 100,
-      visType: 'bw_oscilloscope',
+      visType: 'vintage_bars',
       visHeight: 180,
+      visOpacity: 1.0,
       fxAngle: 0,
       fxSpeed: 1.0
     };
@@ -648,6 +654,9 @@
         config.visType = e.target.value;
         peakHeights.fill(0);
     });
+    // SLIDER OPASITAS
+    document.getElementById('visOpacity').addEventListener('input', (e) => config.visOpacity = parseFloat(e.target.value));
+    
     document.getElementById('type').addEventListener('change', (e) => config.type = e.target.value);
     document.getElementById('fxAngle').addEventListener('change', (e) => config.fxAngle = parseInt(e.target.value));
     document.getElementById('fxSpeed').addEventListener('input', (e) => config.fxSpeed = parseFloat(e.target.value));
@@ -698,14 +707,22 @@
       draw() {
         if (config.type === 'none') return;
         
-        let showDustHair = config.type === 'grain' || config.type === 'vintage';
-        let showScratch = config.type === 'scratch' || config.type === 'vintage';
+        // Atur kemunculan partikel berdasarkan efek yang dipilih
+        let showDustHair = ['vintage', 'grain', 'sepia_dust', 'flicker_8mm'].includes(config.type);
+        let showScratch = ['vintage', 'scratch', 'sepia_dust', 'flicker_8mm'].includes(config.type);
         
+        // Old TV hanya menampilkan noise sangat halus
+        if (config.type === 'old_tv' && this.pType !== 'dust') return;
+        if (config.type === 'old_tv' && this.pType === 'dust') {
+            this.radius = Math.random() * 1.5;
+            this.color = `rgba(255,255,255,${this.alpha*0.3})`;
+        }
+
         ctx.save();
         ctx.translate(this.x, this.y);
         if (config.fxAngle !== 0) ctx.rotate(config.fxAngle * Math.PI / 180);
         
-        if (this.pType === 'dust' && showDustHair) {
+        if (this.pType === 'dust' && (showDustHair || config.type === 'old_tv')) {
           ctx.fillStyle = this.color;
           ctx.beginPath();
           ctx.arc(0, 0, this.radius, 0, Math.PI*2);
@@ -742,65 +759,36 @@
     function getClassicVal(index, totalItems, bufferLen) {
       try {
         if (!dataArray) return 0;
-        // Ambil range frekuensi dari kiri ke kanan (linear, lewati frekuensi sangat tinggi)
         const dataIdx = Math.floor((index / totalItems) * (bufferLen * 0.8));
         return dataArray[dataIdx] / 255;
       } catch (e) { return 0; }
     }
 
     // ===============================================
-    // 10 SPECTRUM KLASIK (KIRI KE KANAN, NON-SYMMETRIC)
+    // 10 SPECTRUM SEDERHANA & VINTAGE BGT (KIRI-KANAN)
     // ===============================================
     function drawVisualizer(bufferLen) {
       const style = config.visType;
       ctx.save();
       ctx.translate(visX, visY);
       
+      // APLIKASIKAN OPASITAS
+      ctx.globalAlpha = config.visOpacity;
+      
       try {
-        if (style === 'bw_oscilloscope') {
-          ctx.beginPath();
-          ctx.moveTo(0, 0);
-          for (let i = 0; i <= visW; i += 5) {
-             let h = getClassicVal(i, visW, bufferLen) * config.visHeight;
-             ctx.lineTo(i, -h);
-          }
-          ctx.strokeStyle = '#ffffff';
-          ctx.lineWidth = 3.5;
-          ctx.shadowBlur = 12;
-          ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
-          ctx.stroke();
-          ctx.shadowBlur = 0; 
-        } 
-        else if (style === 'zebra_bars') {
-          const numBars = 40;
+        // 1. Solid Vintage Bars
+        if (style === 'vintage_bars') {
+          const numBars = 48;
           const spacing = visW / numBars;
           const barW = spacing * 0.7;
-          const stripeH = 8;
+          ctx.fillStyle = 'rgba(245, 245, 240, 0.9)'; // Off-white jadul
           for (let i = 0; i < numBars; i++) {
-            const h = Math.max(0, getClassicVal(i, numBars, bufferLen) * config.visHeight);
-            const stripes = Math.floor(h / stripeH);
-            for (let j = 0; j < stripes; j++) {
-              ctx.fillStyle = j % 2 === 0 ? 'rgba(255, 255, 255, 0.9)' : 'rgba(20, 20, 20, 0.9)';
-              ctx.fillRect(i * spacing, -(j * stripeH) - stripeH, barW, stripeH);
-            }
+            const h = Math.max(5, getClassicVal(i, numBars, bufferLen) * config.visHeight);
+            ctx.fillRect(i * spacing, -h, barW, h);
           }
         }
-        else if (style === 'ghost_blocks') {
-          const numBars = 40;
-          const spacing = visW / numBars;
-          const barW = spacing * 0.8;
-          const blockH = 10;
-          ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
-          ctx.lineWidth = 2.0;
-          for (let i = 0; i < numBars; i++) {
-            const h = Math.max(0, getClassicVal(i, numBars, bufferLen) * config.visHeight);
-            const blocks = Math.floor(h / blockH);
-            for (let j = 0; j < blocks; j++) {
-              ctx.strokeRect(i * spacing, -(j * blockH) - blockH + 1, barW, blockH - 2);
-            }
-          }
-        }
-        else if (style === 'winamp_peaks') {
+        // 2. Winamp Classic Peaks
+        else if (style === 'winamp_classic') {
           const numBars = 48;
           const spacing = visW / numBars;
           const barW = spacing * 0.7;
@@ -811,103 +799,143 @@
               peakHeights[i] -= 2.0;
               if (peakHeights[i] < 0) peakHeights[i] = 0;
             }
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-            ctx.fillRect(i * spacing, -h / 2, barW, h);
-            ctx.fillStyle = 'rgba(255, 255, 255, 1)';
-            ctx.fillRect(i * spacing, -peakHeights[i] / 2 - 5, barW, 4);
-            ctx.fillRect(i * spacing, peakHeights[i] / 2 + 1, barW, 4);
+            ctx.fillStyle = 'rgba(230, 235, 240, 0.7)';
+            ctx.fillRect(i * spacing, -h, barW, h);
+            ctx.fillStyle = 'rgba(255, 60, 60, 1)'; // Red peak
+            ctx.fillRect(i * spacing, -peakHeights[i] - 5, barW, 4);
           }
-        } else if (style === 'retro_led') {
-          const numBars = 40;
-          const segments = 15;
-          const spacing = visW / numBars;
-          const barW = spacing * 0.7;
-          const segH = (config.visHeight / segments) / 2;
-          for (let i = 0; i < numBars; i++) {
-            const hVal = getClassicVal(i, numBars, bufferLen);
-            const activeSegs = Math.floor(hVal * segments);
-            for (let s = 0; s < segments; s++) {
-              if (s < activeSegs) {
-                if (s > segments * 0.75) ctx.fillStyle = '#ff3b3b'; 
-                else if (s > segments * 0.45) ctx.fillStyle = '#ffc107'; 
-                else ctx.fillStyle = '#00e676'; 
-                ctx.fillRect(i * spacing, -(s * segH * 2) - 5, barW, segH * 1.5);
-                ctx.fillRect(i * spacing, (s * segH * 2) + 5, barW, segH * 1.5);
-              } else {
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.08)'; 
-                ctx.fillRect(i * spacing, -(s * segH * 2) - 5, barW, segH * 1.5);
-                ctx.fillRect(i * spacing, (s * segH * 2) + 5, barW, segH * 1.5);
+        }
+        // 3. CRT Oscilloscope (Green)
+        else if (style === 'retro_oscilloscope') {
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          for (let i = 0; i <= visW; i += 5) {
+             let h = getClassicVal(i, visW, bufferLen) * config.visHeight;
+             ctx.lineTo(i, -h);
+          }
+          ctx.strokeStyle = '#00ff41'; // Matrix green
+          ctx.lineWidth = 3;
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = '#00ff41';
+          ctx.stroke();
+          ctx.shadowBlur = 0; 
+        }
+        // 4. Analog VU Meter (Amber)
+        else if (style === 'analog_vu') {
+          let valBass = getClassicVal(visW*0.1, visW, bufferLen);
+          let valTreble = getClassicVal(visW*0.8, visW, bufferLen);
+          let cx = visW/2;
+          function drawNeedle(x, r, val, title) {
+              ctx.save(); ctx.translate(x, 0);
+              ctx.beginPath(); ctx.arc(0, 0, r, Math.PI, Math.PI*2);
+              ctx.fillStyle = 'rgba(20, 20, 20, 0.8)'; ctx.fill();
+              ctx.strokeStyle = '#ffb300'; ctx.lineWidth = 2; ctx.stroke();
+              for(let i=0; i<=10; i++) {
+                  let a = Math.PI + (i/10)*Math.PI;
+                  let r1 = r - 10; let r2 = r - (i%5===0 ? 20 : 15);
+                  ctx.beginPath(); ctx.moveTo(Math.cos(a)*r1, Math.sin(a)*r1); ctx.lineTo(Math.cos(a)*r2, Math.sin(a)*r2);
+                  ctx.strokeStyle = i>7 ? '#ff4444' : '#ffb300'; ctx.stroke();
               }
+              ctx.rotate(Math.PI + (val * 0.8 + 0.1) * Math.PI);
+              ctx.beginPath(); ctx.moveTo(0, 10); ctx.lineTo(0, -r+25);
+              ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.stroke();
+              ctx.restore();
+              ctx.fillStyle = '#ffb300'; ctx.font = 'bold 16px monospace'; ctx.textAlign = 'center'; ctx.fillText(title, x, 25);
+          }
+          drawNeedle(cx - visW/4, config.visHeight*0.8, valBass, "L - BASS");
+          drawNeedle(cx + visW/4, config.visHeight*0.8, valTreble, "R - TREBLE");
+        }
+        // 5. Step Block EQ (Vintage Console)
+        else if (style === 'step_eq') {
+          const numBars = 32;
+          const spacing = visW / numBars;
+          const barW = spacing - 4;
+          const stepH = 12;
+          for (let i = 0; i < numBars; i++) {
+            const h = Math.max(0, getClassicVal(i, numBars, bufferLen) * config.visHeight);
+            const blocks = Math.floor(h / stepH);
+            for (let j = 0; j < blocks; j++) {
+              ctx.fillStyle = j > (config.visHeight/stepH)*0.7 ? '#ff5722' : '#ffc107'; // Amber to Red
+              ctx.fillRect(i * spacing, -(j * stepH) - stepH, barW, stepH - 2);
             }
           }
-        } else if (style === 'wireframe_bars') {
-          const numBars = 44;
+        }
+        // 6. Thin Line EQ (Minimalist)
+        else if (style === 'thin_eq') {
+          const numBars = 64;
           const spacing = visW / numBars;
-          const barW = spacing * 0.8;
-          ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
-          ctx.lineWidth = 2.0;
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
           for (let i = 0; i < numBars; i++) {
-            const h = Math.max(8, getClassicVal(i, numBars, bufferLen) * config.visHeight);
-            ctx.strokeRect(i * spacing, -h / 2, barW, h);
-            ctx.beginPath();
-            ctx.moveTo(i * spacing, 0);
-            ctx.lineTo(i * spacing + barW, 0);
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
-            ctx.stroke();
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+            const h = Math.max(2, getClassicVal(i, numBars, bufferLen) * config.visHeight);
+            ctx.fillRect(i * spacing, -h, 2, h);
           }
-        } else if (style === 'classic_bars') {
+        }
+        // 7. Dotted Peak EQ
+        else if (style === 'dotted_eq') {
+          const numBars = 48;
+          const spacing = visW / numBars;
+          ctx.fillStyle = 'rgba(200, 200, 200, 0.5)';
+          ctx.fillRect(0, 0, visW, 2);
+          ctx.fillStyle = '#00bcd4'; // Cyan retro
+          for (let i = 0; i < numBars; i++) {
+            const h = getClassicVal(i, numBars, bufferLen) * config.visHeight;
+            const x = i * spacing + (spacing / 2);
+            if (h > 5) {
+              ctx.beginPath(); ctx.arc(x, -h, 4, 0, Math.PI*2); ctx.fill();
+            }
+          }
+        }
+        // 8. Hollow Outline Bars
+        else if (style === 'hollow_bars') {
+          const numBars = 40;
+          const spacing = visW / numBars;
+          const barW = spacing * 0.7;
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+          ctx.lineWidth = 1.5;
+          for (let i = 0; i < numBars; i++) {
+            const h = Math.max(5, getClassicVal(i, numBars, bufferLen) * config.visHeight);
+            ctx.strokeRect(i * spacing, -h, barW, h);
+          }
+        }
+        // 9. Split Center EQ
+        else if (style === 'split_eq') {
           const numBars = 48;
           const spacing = visW / numBars;
           const barW = spacing * 0.6;
           ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+          ctx.fillRect(0, -1, visW, 2); // Center line
           for (let i = 0; i < numBars; i++) {
-            const h = Math.max(6, getClassicVal(i, numBars, bufferLen) * config.visHeight);
-            ctx.fillRect(i * spacing, -h / 2, barW, h);
-          }
-        } else if (style === 'peak_dots') {
-          const numBars = 44;
-          const spacing = visW / numBars;
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-          ctx.fillRect(0, 0, visW, 3);
-          for (let i = 0; i < numBars; i++) {
-            const h = getClassicVal(i, numBars, bufferLen) * (config.visHeight / 2);
-            const x = i * spacing + (spacing / 2);
-            if (h > 10) {
-              ctx.fillRect(x, -h, 3, h);
-              ctx.fillRect(x - 3, -h - 5, 9, 5);
-              ctx.fillRect(x, 0, 3, h);
-              ctx.fillRect(x - 3, h, 9, 5);
-            }
-          }
-        } else if (style === 'split_bars') {
-          const half = Math.floor(visW / 2);
-          const barW = 8;
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-          ctx.fillRect(0, -2, visW, 4);
-          // Kiri (Bass)
-          for(let i = 0; i < half; i += 15) {
-              let val = getClassicVal(i, half, bufferLen) * (config.visHeight / 2);
-              ctx.fillRect(i, -val - 10, barW, val);
-              ctx.fillRect(i, 10, barW, val);
-          }
-          // Kanan (Treble)
-          for(let i = 0; i < half; i += 15) {
-              let val = getClassicVal(half + i, half, bufferLen) * (config.visHeight / 2);
-              ctx.fillRect(half + i, -val - 10, barW, val);
-              ctx.fillRect(half + i, 10, barW, val);
-          }
-        } else if (style === 'step_blocks') {
-          const numBars = 36;
-          const spacing = visW / numBars;
-          const barW = spacing - 3;
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-          for (let i = 0; i < numBars; i++) {
-            const stepVal = Math.floor(getClassicVal(i, numBars, bufferLen) * 5) / 5;
-            const h = Math.max(8, stepVal * config.visHeight);
-            ctx.fillRect(i * spacing, -h / 2, barW, h);
+            const h = Math.max(2, getClassicVal(i, numBars, bufferLen) * (config.visHeight / 2));
+            ctx.fillRect(i * spacing, -h - 4, barW, h); // Top
+            ctx.fillRect(i * spacing, 4, barW, h); // Bottom
           }
         }
+        // 10. LED Dot Matrix
+        else if (style === 'led_matrix') {
+          const cols = 40;
+          const rows = 15;
+          const spaceX = visW / cols;
+          const spaceY = config.visHeight / rows;
+          
+          for(let c=0; c<cols; c++) {
+            let val = getClassicVal(c, cols, bufferLen);
+            let activeRows = Math.floor(val * rows);
+            for(let r=0; r<rows; r++) {
+               let x = c * spaceX + spaceX/2;
+               let y = -r * spaceY - spaceY/2;
+               
+               ctx.beginPath();
+               if(r < activeRows) {
+                  ctx.fillStyle = (r > rows*0.7) ? '#f44336' : '#8bc34a'; // Red / Green LED
+               } else {
+                  ctx.fillStyle = 'rgba(255,255,255,0.05)';
+               }
+               ctx.arc(x, y, spaceX*0.35, 0, Math.PI*2);
+               ctx.fill();
+            }
+          }
+        }
+
       } catch (e) {}
       ctx.restore();
     }
@@ -1012,6 +1040,7 @@
 
       ctx.save();
       
+      // Jitter untuk efek film
       if (config.type !== 'none') {
         const jitterX = (Math.random() - 0.5) * 1.5;
         const jitterY = (Math.random() - 0.5) * 1.5;
@@ -1025,11 +1054,34 @@
         ctx.drawImage(bgImageElement, x, y, bgImageElement.width * scale, bgImageElement.height * scale);
       }
       
-      if (config.type !== 'none') {
+      // =====================================
+      // 3 EFEK FILM BARU: TINTING & OVERLAYS
+      // =====================================
+      if (config.type === 'sepia_dust') {
+        // Efek Sepia (Coklat Klasik)
+        ctx.fillStyle = 'rgba(112, 66, 20, 0.35)'; 
+        ctx.fillRect(-10, -10, width+20, height+20);
+      } else if (config.type === 'old_tv') {
+        // Efek Scanline TV Tabung
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+        for (let i = 0; i < height; i += 5) {
+            ctx.fillRect(0, i, width, 2);
+        }
+        // Sedikit kehijauan CRT
+        ctx.fillStyle = 'rgba(0, 255, 0, 0.05)';
+        ctx.fillRect(-10, -10, width+20, height+20);
+      } else if (config.type === 'flicker_8mm') {
+        // Efek kedap-kedip proyektor
+        let flicker = Math.random() * 0.25;
+        ctx.fillStyle = `rgba(0, 0, 0, ${flicker})`;
+        ctx.fillRect(-10, -10, width+20, height+20);
+      } else if (config.type !== 'none') {
+        // Efek default (Hitam tipis)
         ctx.fillStyle = "rgba(10, 5, 0, 0.1)"; 
         ctx.fillRect(-10, -10, width+20, height+20);
       }
 
+      // Audio Analyzer
       if (isAudioInit && currentObjectUrl) {
         if (!audioPlayer.paused) {
           analyser.getByteFrequencyData(dataArray);
@@ -1041,9 +1093,11 @@
         drawVisualizer(analyser.frequencyBinCount);
       }
 
+      // Dual Smoke
       drawPureAnimatedVectorSmoke();
       drawNewAnimatedVectorSmoke();
       
+      // Partikel Film (Debu/Goresan)
       for (let i = 0; i < config.count; i++) {
         if (particles[i]) {
           particles[i].update();
@@ -1051,6 +1105,7 @@
         }
       }
 
+      // Vignette Pinggiran
       if (config.type !== 'none') {
         const grad = ctx.createRadialGradient(width/2, height/2, height*0.4, width/2, height/2, width*0.8);
         grad.addColorStop(0, 'rgba(0,0,0,0)');
