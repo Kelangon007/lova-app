@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Noir v.1 (720p Ultimate)</title>
+  <title>Noir v.1 (720p Symmetric)</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body {
@@ -241,7 +241,6 @@
 <body>
 
   <div id="canvas-wrapper">
-    <!-- DIKEMBALIKAN KE 720p AGAR MULUS -->
     <canvas id="canvas" width="1280" height="720"></canvas>
     <div id="countdownOverlay">3</div>
     <div id="stopOverlay" onclick="stopRecording()">⏹ STOP & SIMPAN</div>
@@ -284,7 +283,7 @@
         <option value="hollow_bars">🔲 Hollow Outline Bars</option>
         <option value="split_eq">⏸️ Split Center EQ</option>
         <option value="led_matrix">🚥 LED Dot Matrix</option>
-        <!-- 3 MODERN BARU -->
+        <!-- 3 MODERN -->
         <option value="modern_wave">🌊 Modern Smooth Wave</option>
         <option value="liquid_bar">💧 Liquid Glowing Bars</option>
         <option value="cyber_pulse">⚡ Cyber Neon Pulse</option>
@@ -310,7 +309,7 @@
         <option value="sepia_dust">📜 Sepia Dust (Klasik Coklat)</option>
         <option value="old_tv">📺 Old TV (Scanline & Noise)</option>
         <option value="flicker_8mm">🎞️ 8mm Flicker (Kedap-Kedip)</option>
-        <!-- 3 EFEK CUACA REALISTIS BARU -->
+        <!-- 3 EFEK CUACA REALISTIS -->
         <option value="rain">🌧️ Hujan Realistis</option>
         <option value="snow">❄️ Salju Lembut</option>
         <option value="fireflies">✨ Kunang-Kunang</option>
@@ -352,7 +351,7 @@
     const durTimeEl = document.getElementById('durTime');
     let isDraggingProgress = false;
     
-    // KEMBALI KE 720p
+    // RESOLUSI 720p
     const width = 1280;
     const height = 720;
 
@@ -459,7 +458,6 @@
       }
     }
 
-    // Default posisi 720p
     let visW = 400;
     let visX = (width - visW) / 2;
     let visY = height - 160;
@@ -554,7 +552,7 @@
 
     let audioCtx, source, mediaStreamDestination, analyser, dataArray;
     let isAudioInit = false;
-    let peakHeights = new Array(80).fill(0);
+    let peakHeights = new Array(120).fill(0);
 
     function formatTime(seconds) {
       if (isNaN(seconds) || !isFinite(seconds)) return "00:00";
@@ -759,7 +757,7 @@
       }
     }
 
-    // KELAS 2: EFEK CUACA REALISTIS (HUJAN, SALJU, KUNANG2)
+    // KELAS 2: EFEK CUACA REALISTIS
     class WeatherParticle {
       constructor() { this.reset(true); }
       reset(init = false) {
@@ -837,17 +835,24 @@
         weatherParticles.push(new WeatherParticle());
     }
 
-    // MAPPING DATA AUDIO KLASIK
-    function getClassicVal(index, totalItems, bufferLen) {
+    // ========================================================
+    // PERUBAHAN UTAMA: MAPPING AUDIO SYMMETRIC (TENGAH KE SAMPING)
+    // ========================================================
+    function getSymmetricVal(index, totalItems, bufferLen) {
       try {
         if (!dataArray) return 0;
-        const dataIdx = Math.floor((index / totalItems) * (bufferLen * 0.8));
+        // Mencari titik pusat dari total visualizer
+        const center = totalItems / 2;
+        // Jarak dari tengah (0 di tengah, mendekati 1 di pinggir)
+        const centerDist = Math.abs(index - center) / center;
+        // Petakan ke array frekuensi (membatasi hanya mengambil 60% frekuensi bawah agar aktif)
+        const dataIdx = Math.floor(centerDist * (bufferLen * 0.6));
         return dataArray[dataIdx] / 255;
       } catch (e) { return 0; }
     }
 
     // ===============================================
-    // 10 VINTAGE + 3 MODERN SPECTRUM (KIRI-KANAN)
+    // 13 SPECTRUM DENGAN GAYA SYMMETRIC 
     // ===============================================
     function drawVisualizer(bufferLen) {
       const style = config.visType;
@@ -864,7 +869,8 @@
           const barW = spacing * 0.7;
           ctx.fillStyle = 'rgba(245, 245, 240, 0.9)'; 
           for (let i = 0; i < numBars; i++) {
-            const h = Math.max(5, getClassicVal(i, numBars, bufferLen) * config.visHeight);
+            // MENGGUNAKAN getSymmetricVal UNTUK SEMUA SPEKTRUM
+            const h = Math.max(5, getSymmetricVal(i, numBars, bufferLen) * config.visHeight);
             ctx.fillRect(i * spacing, -h, barW, h);
           }
         }
@@ -874,7 +880,7 @@
           const spacing = visW / numBars;
           const barW = spacing * 0.7;
           for (let i = 0; i < numBars; i++) {
-            const h = Math.max(0, getClassicVal(i, numBars, bufferLen) * config.visHeight);
+            const h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight);
             if (h >= peakHeights[i]) { peakHeights[i] = h; } 
             else {
               peakHeights[i] -= 2.0;
@@ -889,19 +895,22 @@
         // 3. CRT Oscilloscope (Green)
         else if (style === 'retro_oscilloscope') {
           ctx.beginPath(); ctx.moveTo(0, 0);
-          for (let i = 0; i <= visW; i += 5) {
-             let h = getClassicVal(i, visW, bufferLen) * config.visHeight;
-             ctx.lineTo(i, -h);
+          const points = 100;
+          for (let i = 0; i <= points; i++) {
+             let x = (i / points) * visW;
+             let h = getSymmetricVal(i, points, bufferLen) * config.visHeight;
+             ctx.lineTo(x, -h);
           }
           ctx.strokeStyle = '#00ff41'; 
           ctx.lineWidth = 3;
           ctx.shadowBlur = 10; ctx.shadowColor = '#00ff41';
           ctx.stroke(); ctx.shadowBlur = 0; 
         }
-        // 4. Analog VU Meter (Amber)
+        // 4. Analog VU Meter (Amber) - Menyesuaikan mapping symmetric
         else if (style === 'analog_vu') {
-          let valBass = getClassicVal(visW*0.1, visW, bufferLen);
-          let valTreble = getClassicVal(visW*0.8, visW, bufferLen);
+          // Ambil frekuensi murni dari array untuk VU meter (kiri bass, kanan treble)
+          let valBass = dataArray ? dataArray[Math.floor(bufferLen * 0.05)] / 255 : 0;
+          let valTreble = dataArray ? dataArray[Math.floor(bufferLen * 0.3)] / 255 : 0;
           let cx = visW/2;
           function drawNeedle(x, r, val, title) {
               ctx.save(); ctx.translate(x, 0);
@@ -928,7 +937,7 @@
           const numBars = 32; const spacing = visW / numBars;
           const barW = spacing - 4; const stepH = 12;
           for (let i = 0; i < numBars; i++) {
-            const h = Math.max(0, getClassicVal(i, numBars, bufferLen) * config.visHeight);
+            const h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight);
             const blocks = Math.floor(h / stepH);
             for (let j = 0; j < blocks; j++) {
               ctx.fillStyle = j > (config.visHeight/stepH)*0.7 ? '#ff5722' : '#ffc107'; 
@@ -941,7 +950,7 @@
           const numBars = 64; const spacing = visW / numBars;
           ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
           for (let i = 0; i < numBars; i++) {
-            const h = Math.max(2, getClassicVal(i, numBars, bufferLen) * config.visHeight);
+            const h = Math.max(2, getSymmetricVal(i, numBars, bufferLen) * config.visHeight);
             ctx.fillRect(i * spacing, -h, 2, h);
           }
         }
@@ -951,7 +960,7 @@
           ctx.fillStyle = 'rgba(200, 200, 200, 0.5)'; ctx.fillRect(0, 0, visW, 2);
           ctx.fillStyle = '#00bcd4'; 
           for (let i = 0; i < numBars; i++) {
-            const h = getClassicVal(i, numBars, bufferLen) * config.visHeight;
+            const h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight;
             const x = i * spacing + (spacing / 2);
             if (h > 5) { ctx.beginPath(); ctx.arc(x, -h, 4, 0, Math.PI*2); ctx.fill(); }
           }
@@ -961,7 +970,7 @@
           const numBars = 40; const spacing = visW / numBars; const barW = spacing * 0.7;
           ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)'; ctx.lineWidth = 1.5;
           for (let i = 0; i < numBars; i++) {
-            const h = Math.max(5, getClassicVal(i, numBars, bufferLen) * config.visHeight);
+            const h = Math.max(5, getSymmetricVal(i, numBars, bufferLen) * config.visHeight);
             ctx.strokeRect(i * spacing, -h, barW, h);
           }
         }
@@ -970,7 +979,7 @@
           const numBars = 48; const spacing = visW / numBars; const barW = spacing * 0.6;
           ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.fillRect(0, -1, visW, 2); 
           for (let i = 0; i < numBars; i++) {
-            const h = Math.max(2, getClassicVal(i, numBars, bufferLen) * (config.visHeight / 2));
+            const h = Math.max(2, getSymmetricVal(i, numBars, bufferLen) * (config.visHeight / 2));
             ctx.fillRect(i * spacing, -h - 4, barW, h); 
             ctx.fillRect(i * spacing, 4, barW, h); 
           }
@@ -980,7 +989,7 @@
           const cols = 40; const rows = 15;
           const spaceX = visW / cols; const spaceY = config.visHeight / rows;
           for(let c=0; c<cols; c++) {
-            let val = getClassicVal(c, cols, bufferLen);
+            let val = getSymmetricVal(c, cols, bufferLen);
             let activeRows = Math.floor(val * rows);
             for(let r=0; r<rows; r++) {
                let x = c * spaceX + spaceX/2; let y = -r * spaceY - spaceY/2;
@@ -993,14 +1002,14 @@
         }
 
         // ============================
-        // 3 MODERN SPECTRUM BARU 
+        // 3 MODERN SPECTRUM 
         // ============================
         // 11. Modern Smooth Wave
         else if (style === 'modern_wave') {
           ctx.beginPath(); ctx.moveTo(0, cy);
           let numPoints = 100; let spacing = visW / numPoints;
           for(let i=0; i<=numPoints; i++) {
-            let val = getClassicVal(i, numPoints, bufferLen) * config.visHeight;
+            let val = getSymmetricVal(i, numPoints, bufferLen) * config.visHeight;
             let y = cy - val - (Math.sin(i*0.1 + time*5)*val*0.2);
             ctx.lineTo(i*spacing, y);
           }
@@ -1015,12 +1024,12 @@
         else if (style === 'liquid_bar') {
           let numBars = 32; let spacing = visW / numBars; let barW = spacing * 0.6;
           for (let i = 0; i < numBars; i++) {
-            let h = Math.max(10, getClassicVal(i, numBars, bufferLen) * config.visHeight);
+            let h = Math.max(10, getSymmetricVal(i, numBars, bufferLen) * config.visHeight);
             ctx.fillStyle = '#00e5ff';
             ctx.shadowBlur = 15; ctx.shadowColor = '#00e5ff';
             ctx.beginPath();
             if(ctx.roundRect) ctx.roundRect(i * spacing, cy - h, barW, h, barW/2);
-            else ctx.rect(i * spacing, cy - h, barW, h); // Fallback old browser
+            else ctx.rect(i * spacing, cy - h, barW, h); 
             ctx.fill();
           }
           ctx.shadowBlur = 0;
@@ -1029,7 +1038,7 @@
         else if (style === 'cyber_pulse') {
           let numBars = 48; let spacing = visW / numBars; let barW = spacing * 0.7;
           for (let i = 0; i < numBars; i++) {
-            let h = getClassicVal(i, numBars, bufferLen) * config.visHeight;
+            let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight;
             let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight);
             grad.addColorStop(0, '#f50057'); grad.addColorStop(1, '#ff4081');
             ctx.fillStyle = grad;
@@ -1183,7 +1192,7 @@
       drawPureAnimatedVectorSmoke();
       drawNewAnimatedVectorSmoke();
       
-      // RENDER PARTIKEL (Film Jitter ATAU Efek Cuaca Realistis)
+      // RENDER PARTIKEL
       for (let i = 0; i < config.count; i++) {
         if (particles[i]) { particles[i].update(); particles[i].draw(); }
         if (weatherParticles[i]) { weatherParticles[i].update(); weatherParticles[i].draw(); }
