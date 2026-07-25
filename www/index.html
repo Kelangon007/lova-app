@@ -4,251 +4,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Noir v.1 (FHD Klasik Murni)</title>
+  <title>Noir v.1 (25+ Visualizer Web Edition)</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
-    body {
-      margin: 0;
-      background-image: linear-gradient(45deg, #333 25%, transparent 25%), linear-gradient(-45deg, #333 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #333 75%), linear-gradient(-45deg, transparent 75%, #333 75%);
-      background-size: 20px 20px;
-      background-color: #444;
-      font-family: 'Segoe UI', sans-serif;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-      padding-bottom: 50px;
-      touch-action: pan-y;
-    }
-
-    #canvas-wrapper {
-      position: relative;
-      width: 100%;
-      max-width: 800px;
-      aspect-ratio: 16/9;
-      margin-top: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      background: transparent;
-      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.8);
-      cursor: grab;
-      overflow: hidden;
-    }
-
-    #canvas-wrapper:active {
-      cursor: grabbing;
-    }
-
-    canvas {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-
-    #controls {
-      width: 90%;
-      max-width: 600px;
-      background: #222;
-      padding: 20px;
-      border-radius: 12px;
-      margin-top: 20px;
-      border: 1px solid #444;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    }
-
-    .btn-group,
-    .play-group {
-      display: flex;
-      gap: 8px;
-    }
-
-    .file-label {
-      flex: 1;
-      background: #333;
-      color: #ccc;
-      padding: 12px 5px;
-      text-align: center;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 11px;
-      font-weight: bold;
-      border: 1px solid #555;
-      transition: 0.2s;
-      white-space: nowrap;
-    }
-
-    .file-label:hover {
-      background: #444;
-      color: white;
-    }
-
-    #playBtn {
-      flex: 2;
-      padding: 15px;
-      background: #444;
-      color: #888;
-      border: 2px solid #333;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    #playBtn.ready {
-      background: linear-gradient(135deg, #00d2ff, #e040fb);
-      color: white;
-      border: none;
-    }
-
-    #nextBtn {
-      flex: 1;
-      padding: 15px;
-      background: #555;
-      color: #aaa;
-      border: 2px solid #444;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: not-allowed;
-      transition: 0.3s;
-    }
-
-    #nextBtn.ready {
-      background: #333;
-      color: white;
-      border: 2px solid #555;
-      cursor: pointer;
-    }
-
-    .progress-container {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: #333;
-      padding: 8px;
-      border-radius: 6px;
-      border: 1px solid #444;
-    }
-
-    .time-text {
-      font-size: 11px;
-      font-family: monospace;
-      color: #00d2ff;
-      min-width: 40px;
-      text-align: center;
-    }
-
-    #progressBar {
-      flex: 1;
-      height: 5px;
-      -webkit-appearance: none;
-      background: #555;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    #progressBar::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 15px;
-      height: 15px;
-      background: #e040fb;
-      border-radius: 50%;
-      cursor: pointer;
-    }
-
-    .btn-record {
-      width: 100%;
-      padding: 15px;
-      background: linear-gradient(135deg, #ff4444, #d32f2f);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    #stopOverlay {
-      display: none;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(220, 20, 60, 0.95);
-      color: white;
-      padding: 15px 30px;
-      border-radius: 50px;
-      z-index: 100;
-      font-weight: bold;
-      border: 3px solid white;
-      cursor: pointer;
-    }
-
-    #countdownOverlay {
-      display: none;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 100px;
-      font-weight: bold;
-      color: white;
-      text-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
-      z-index: 100;
-    }
-
-    #statusBox {
-      font-size: 12px;
-      text-align: center;
-      color: #00d2ff;
-      margin-bottom: 5px;
-      font-weight: 600;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    label {
-      font-size: 11px;
-      width: 80px;
-      color: #ccc;
-      font-weight: 600;
-    }
-
-    input[type="range"],
-    select {
-      flex: 1;
-      height: 36px;
-      background: #333;
-      color: white;
-      border: 1px solid #555;
-      border-radius: 6px;
-    }
-
-    input[type="file"] {
-      display: none;
-    }
+    body { margin: 0; background-image: linear-gradient(45deg, #333 25%, transparent 25%), linear-gradient(-45deg, #333 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #333 75%), linear-gradient(-45deg, transparent 75%, #333 75%); background-size: 20px 20px; background-color: #444; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; }
+    #canvas-wrapper { position: relative; width: 100%; max-width: 800px; aspect-ratio: 16/9; margin-top: 20px; border: 1px solid rgba(255, 255, 255, 0.3); background: transparent; box-shadow: 0 15px 50px rgba(0, 0, 0, 0.8); cursor: grab; overflow: hidden; }
+    #canvas-wrapper:active { cursor: grabbing; }
+    canvas { width: 100%; height: 100%; display: block; }
+    #controls { width: 90%; max-width: 600px; background: #222; padding: 20px; border-radius: 12px; margin-top: 20px; border: 1px solid #444; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); }
+    .btn-group, .play-group { display: flex; gap: 8px; }
+    .file-label { flex: 1; background: #333; color: #ccc; padding: 12px 5px; text-align: center; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; border: 1px solid #555; transition: 0.2s; white-space: nowrap; }
+    .file-label:hover { background: #444; color: white; }
+    #playBtn { flex: 2; padding: 15px; background: #444; color: #888; border: 2px solid #333; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+    #playBtn.ready { background: linear-gradient(135deg, #00d2ff, #e040fb); color: white; border: none; }
+    #nextBtn { flex: 1; padding: 15px; background: #555; color: #aaa; border: 2px solid #444; border-radius: 8px; font-weight: bold; cursor: not-allowed; transition: 0.3s; }
+    #nextBtn.ready { background: #333; color: white; border: 2px solid #555; cursor: pointer; }
+    .progress-container { display: flex; align-items: center; gap: 10px; background: #333; padding: 8px; border-radius: 6px; border: 1px solid #444; }
+    .time-text { font-size: 11px; font-family: monospace; color: #00d2ff; min-width: 40px; text-align: center; }
+    #progressBar { flex: 1; height: 5px; -webkit-appearance: none; background: #555; border-radius: 5px; cursor: pointer; }
+    #progressBar::-webkit-slider-thumb { -webkit-appearance: none; width: 15px; height: 15px; background: #e040fb; border-radius: 50%; cursor: pointer; }
+    .btn-record { width: 100%; padding: 15px; background: linear-gradient(135deg, #ff4444, #d32f2f); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+    #stopOverlay { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(220, 20, 60, 0.95); color: white; padding: 15px 30px; border-radius: 50px; z-index: 100; font-weight: bold; border: 3px solid white; cursor: pointer; }
+    #countdownOverlay { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 100px; font-weight: bold; color: white; text-shadow: 0 0 20px rgba(0, 0, 0, 0.8); z-index: 100; }
+    #statusBox { font-size: 12px; text-align: center; color: #00d2ff; margin-bottom: 5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .row { display: flex; align-items: center; gap: 10px; }
+    label { font-size: 11px; width: 80px; color: #ccc; font-weight: 600; }
+    input[type="range"], select { flex: 1; height: 36px; background: #333; color: white; border: 1px solid #555; border-radius: 6px; }
+    input[type="file"] { display: none; }
+    optgroup { background: #111; color: #00d2ff; font-weight: bold; }
   </style>
 </head>
 
 <body>
 
   <div id="canvas-wrapper">
-    <!-- RESOLUSI 1080p FHD MUTLAK -->
-    <canvas id="canvas" width="1920" height="1080"></canvas>
+    <canvas id="canvas" width="1280" height="720"></canvas>
     <div id="countdownOverlay">3</div>
     <div id="stopOverlay" onclick="stopRecording()">⏹ STOP & SIMPAN</div>
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Noir v.1 FHD Klasik Murni.</div>
+    <div id="statusBox">Siap. Noir v.1 720p (25 Visualizer Web Edition).</div>
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #00bcd4">1. FOTO LATAR</label>
       <label for="audioInput" class="file-label" style="border-bottom: 3px solid #e040fb">2. MUSIK (BANYAK)</label>
@@ -273,22 +69,47 @@
     <div class="row">
       <label style="color:#00d2ff;">VISUALIZER</label>
       <select id="visType">
-        <option value="vintage_bars">📊 Vintage Solid Bars (Off-White)</option>
-        <option value="winamp_classic">📻 Winamp Classic Peaks</option>
-        <option value="retro_oscilloscope">📺 CRT Oscilloscope (Green)</option>
-        <option value="analog_vu">🎛️ Analog VU Meter (Amber)</option>
-        <option value="step_eq">🧱 Step Block EQ (Vintage)</option>
-        <option value="thin_eq">📏 Thin Line EQ (Minimalist)</option>
-        <option value="dotted_eq">⏺️ Dotted Peak EQ</option>
-        <option value="hollow_bars">🔲 Hollow Outline Bars</option>
-        <option value="split_eq">⏸️ Split Center EQ</option>
-        <option value="led_matrix">🚥 LED Dot Matrix</option>
+        <optgroup label="=== KLASIK & VINTAGE ===">
+            <option value="vintage_bars">📊 Vintage Solid Bars (Off-White)</option>
+            <option value="winamp_classic">📻 Winamp Classic Peaks</option>
+            <option value="retro_oscilloscope">📺 CRT Oscilloscope (Green)</option>
+            <option value="analog_vu">🎛️ Analog VU Meter (Amber)</option>
+            <option value="step_eq">🧱 Step Block EQ (Vintage)</option>
+            <option value="thin_eq">📏 Thin Line EQ (Minimalist)</option>
+            <option value="dotted_eq">⏺️ Dotted Peak EQ</option>
+            <option value="hollow_bars">🔲 Hollow Outline Bars</option>
+            <option value="split_eq">⏸️ Split Center EQ</option>
+            <option value="led_matrix">🚥 LED Dot Matrix</option>
+        </optgroup>
+        <optgroup label="=== MODERN BARS ===">
+            <option value="liquid_bar">💧 Liquid Glowing Bars</option>
+            <option value="cyber_pulse">⚡ Cyber Neon Pulse</option>
+            <option value="mirror_bars">🪞 Mirrored Glass Bars</option>
+            <option value="gradient_blocks">🎛️ RGB Gradient Blocks</option>
+        </optgroup>
+        <optgroup label="=== GELOMBANG & GARIS ===">
+            <option value="modern_wave">🌊 Modern Smooth Wave</option>
+            <option value="heartbeat">❤️ EKG Heartbeat Pulse</option>
+            <option value="double_line">🧬 Crossing DNA Lines</option>
+            <option value="glitch_wave">👾 Digital Glitch Wave</option>
+            <option value="sonic_wave">〰️ Sonic Waveform</option>
+        </optgroup>
+        <optgroup label="=== LINGKARAN (CIRCULAR) ===">
+            <option value="circle_bars">🎡 Circular Audio Bars</option>
+            <option value="circle_wave">🔮 Smooth Circular Wave</option>
+            <option value="circle_dots">🎇 Circular Dots Orbit</option>
+            <option value="sunburst">☀️ Audio Sunburst</option>
+            <option value="portal_ring">🌀 Glowing Portal Ring</option>
+        </optgroup>
+        <optgroup label="=== BENTUK UNIK ===">
+            <option value="piano_keys">🎹 Pressing Piano Keys</option>
+            <option value="floating_blocks">🧊 Zero-Gravity Blocks</option>
+        </optgroup>
       </select>
     </div>
 
-    <div class="row"><label>TINGGI VIS.</label><input type="range" id="visHeight" min="30" max="600" value="180"></div>
-    <div class="row"><label style="color:#00d2ff;">LEBAR VIS.</label><input type="range" id="visWidth" min="100" max="1500" value="600"></div>
-    <!-- PENGATURAN OPASITAS BARU -->
+    <div class="row"><label>TINGGI VIS.</label><input type="range" id="visHeight" min="30" max="600" value="150"></div>
+    <div class="row"><label style="color:#00d2ff;">LEBAR VIS.</label><input type="range" id="visWidth" min="100" max="1100" value="400"></div>
     <div class="row"><label style="color:#e040fb;">OPASITAS VIS.</label><input type="range" id="visOpacity" min="0.1" max="1.0" step="0.05" value="1.0"></div>
 
     <div class="row"><label style="color:#ff9800;">UKURAN ASAP</label><input type="range" id="smokeSize" min="0.2" max="3.0" step="0.1" value="1.0"></div>
@@ -303,10 +124,12 @@
         <option value="vintage">🎞️ Vintage HD (Kotor, Debu, Rambut)</option>
         <option value="grain">🎬 Grains (Bintik & Debu Saja)</option>
         <option value="scratch">📽️ Scratches (Garis Vertikal Saja)</option>
-        <!-- 3 EFEK BARU -->
         <option value="sepia_dust">📜 Sepia Dust (Klasik Coklat)</option>
         <option value="old_tv">📺 Old TV (Scanline & Noise)</option>
         <option value="flicker_8mm">🎞️ 8mm Flicker (Kedap-Kedip)</option>
+        <option value="rain">🌧️ Hujan Realistis</option>
+        <option value="snow">❄️ Salju Lembut</option>
+        <option value="fireflies">✨ Kunang-Kunang</option>
         <option value="none">Tanpa Efek</option>
       </select>
     </div>
@@ -325,7 +148,7 @@
     <div class="row"><label>KECEPATAN</label><input type="range" id="fxSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
     <div class="row"><label>JUMLAH FX</label><input type="range" id="count" min="0" max="400" value="100"></div>
 
-    <button class="btn-record" id="recordBtn" onclick="startCountdownAndRecord()">🔴 MULAI REKAM 1080p</button>
+    <button class="btn-record" id="recordBtn" onclick="startCountdownAndRecord()">🔴 MULAI REKAM 720p</button>
   </div>
 
   <audio id="audioPlayer" crossorigin="anonymous"></audio>
@@ -345,8 +168,8 @@
     const durTimeEl = document.getElementById('durTime');
     let isDraggingProgress = false;
     
-    const width = 1920;
-    const height = 1080;
+    const width = 1280;
+    const height = 720;
 
     let audioFiles = [];
     let currentObjectUrl = null;
@@ -428,9 +251,7 @@
       }, delayAmount);
     }
 
-    audioPlayer.addEventListener('ended', () => {
-      playRandomSong(false);
-    });
+    audioPlayer.addEventListener('ended', () => { playRandomSong(false); });
 
     function stopEverything() {
       audioPlayer.pause();
@@ -451,488 +272,393 @@
       }
     }
 
-    let visW = 600;
-    let visX = (width - visW) / 2;
-    let visY = height - 200;
-
-    let smokeX = 350;
-    let smokeY = height - 250;
-    let smokeX2 = width - 450;
-    let smokeY2 = height - 250;
-
-    let isDraggingSmoke = false;
-    let isDraggingSmoke2 = false;
-    let isDraggingVis = false;
-    let dragOffsetX = 0;
-    let dragOffsetY = 0;
+    let visW = 400; let visX = (width - visW) / 2; let visY = height - 160;
+    let smokeX = 150; let smokeY = height - 150; let smokeX2 = width - 250; let smokeY2 = height - 150;
+    let isDraggingSmoke = false; let isDraggingSmoke2 = false; let isDraggingVis = false;
+    let dragOffsetX = 0; let dragOffsetY = 0;
 
     function getMousePos(e) {
       const rect = canvas.getBoundingClientRect();
-      const scaleX = canvas.width / rect.width;
-      const scaleY = canvas.height / rect.height;
-      let clientX = e.clientX;
-      let clientY = e.clientY;
-      if (e.touches && e.touches.length > 0) {
-        clientX = e.touches[0].clientX;
-        clientY = e.touches[0].clientY;
-      }
+      const scaleX = canvas.width / rect.width; const scaleY = canvas.height / rect.height;
+      let clientX = e.clientX; let clientY = e.clientY;
+      if (e.touches && e.touches.length > 0) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; }
       return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY };
     }
 
     function startDrag(e) {
       const pos = getMousePos(e);
       const sScale = parseFloat(document.getElementById('smokeSize').value);
-      
       const distSmoke = Math.hypot(pos.x - smokeX, pos.y - smokeY);
-      if (distSmoke <= Math.max(60, 50 * sScale)) {
-        isDraggingSmoke = true;
-        dragOffsetX = pos.x - smokeX;
-        dragOffsetY = pos.y - smokeY;
-        if (e.cancelable) e.preventDefault();
-        return;
-      }
-      
+      if (distSmoke <= Math.max(40, 30 * sScale)) { isDraggingSmoke = true; dragOffsetX = pos.x - smokeX; dragOffsetY = pos.y - smokeY; if (e.cancelable) e.preventDefault(); return; }
       const distSmoke2 = Math.hypot(pos.x - smokeX2, pos.y - smokeY2);
-      if (distSmoke2 <= Math.max(60, 50 * sScale)) {
-        isDraggingSmoke2 = true;
-        dragOffsetX = pos.x - smokeX2;
-        dragOffsetY = pos.y - smokeY2;
-        if (e.cancelable) e.preventDefault();
-        return;
-      }
-
-      if (pos.x >= visX && pos.x <= visX + visW && pos.y >= visY - 150 && pos.y <= visY + 150) {
-        isDraggingVis = true;
-        dragOffsetX = pos.x - visX;
-        dragOffsetY = pos.y - visY;
-        if (e.cancelable) e.preventDefault();
-      }
+      if (distSmoke2 <= Math.max(40, 30 * sScale)) { isDraggingSmoke2 = true; dragOffsetX = pos.x - smokeX2; dragOffsetY = pos.y - smokeY2; if (e.cancelable) e.preventDefault(); return; }
+      if (pos.x >= visX && pos.x <= visX + visW && pos.y >= visY - 150 && pos.y <= visY + 150) { isDraggingVis = true; dragOffsetX = pos.x - visX; dragOffsetY = pos.y - visY; if (e.cancelable) e.preventDefault(); }
     }
 
     function drag(e) {
       if (!isDraggingVis && !isDraggingSmoke && !isDraggingSmoke2) return;
       const pos = getMousePos(e);
-      if (isDraggingSmoke) {
-        smokeX = pos.x - dragOffsetX;
-        smokeY = pos.y - dragOffsetY;
-        if (e.cancelable) e.preventDefault();
-        return;
-      }
-      if (isDraggingSmoke2) {
-        smokeX2 = pos.x - dragOffsetX;
-        smokeY2 = pos.y - dragOffsetY;
-        if (e.cancelable) e.preventDefault();
-        return;
-      }
-      if (isDraggingVis) {
-        visX = pos.x - dragOffsetX;
-        visY = pos.y - dragOffsetY;
-        if (e.cancelable) e.preventDefault();
-      }
+      if (isDraggingSmoke) { smokeX = pos.x - dragOffsetX; smokeY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
+      if (isDraggingSmoke2) { smokeX2 = pos.x - dragOffsetX; smokeY2 = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
+      if (isDraggingVis) { visX = pos.x - dragOffsetX; visY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); }
     }
 
-    function endDrag() {
-      isDraggingVis = false;
-      isDraggingSmoke = false;
-      isDraggingSmoke2 = false;
-    }
-    canvas.addEventListener('mousedown', startDrag);
-    canvas.addEventListener('mousemove', drag);
-    window.addEventListener('mouseup', endDrag);
-    canvas.addEventListener('touchstart', startDrag, { passive: false });
-    canvas.addEventListener('touchmove', drag, { passive: false });
-    window.addEventListener('touchend', endDrag);
+    function endDrag() { isDraggingVis = false; isDraggingSmoke = false; isDraggingSmoke2 = false; }
+    canvas.addEventListener('mousedown', startDrag); canvas.addEventListener('mousemove', drag); window.addEventListener('mouseup', endDrag);
+    canvas.addEventListener('touchstart', startDrag, { passive: false }); canvas.addEventListener('touchmove', drag, { passive: false }); window.addEventListener('touchend', endDrag);
 
     let audioCtx, source, mediaStreamDestination, analyser, dataArray;
-    let isAudioInit = false;
-    let peakHeights = new Array(80).fill(0);
+    let isAudioInit = false; let peakHeights = new Array(120).fill(0);
 
     function formatTime(seconds) {
       if (isNaN(seconds) || !isFinite(seconds)) return "00:00";
-      const m = Math.floor(seconds / 60);
-      const s = Math.floor(seconds % 60);
+      const m = Math.floor(seconds / 60); const s = Math.floor(seconds % 60);
       return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
     }
 
     function initAudioContext() {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
-      audioCtx = new AudioContext();
-      analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 256;
-      analyser.smoothingTimeConstant = 0.8;
-      source = audioCtx.createMediaElementSource(audioPlayer);
-      mediaStreamDestination = audioCtx.createMediaStreamDestination();
-      source.connect(analyser);
-      analyser.connect(audioCtx.destination);
-      analyser.connect(mediaStreamDestination);
-      dataArray = new Uint8Array(analyser.frequencyBinCount);
-      isAudioInit = true;
+      audioCtx = new AudioContext(); analyser = audioCtx.createAnalyser(); analyser.fftSize = 256; analyser.smoothingTimeConstant = 0.8;
+      source = audioCtx.createMediaElementSource(audioPlayer); mediaStreamDestination = audioCtx.createMediaStreamDestination();
+      source.connect(analyser); analyser.connect(audioCtx.destination); analyser.connect(mediaStreamDestination);
+      dataArray = new Uint8Array(analyser.frequencyBinCount); isAudioInit = true;
     }
 
-    let isBgReady = false;
-    let bgImageElement = new Image();
+    let isBgReady = false; let bgImageElement = new Image();
     document.getElementById('bgInput').addEventListener('change', function(e) {
       if (this.files[0]) {
         const file = this.files[0];
         if (file.type.startsWith('image/')) {
-          const fileURL = URL.createObjectURL(file);
-          bgImageElement.src = fileURL;
-          bgImageElement.onload = () => {
-            isBgReady = true;
-            statusBox.innerText = "✅ Foto Latar Oke.";
-          };
-        } else {
-          alert("Harap unggah file berbentuk Gambar/Foto (JPG, PNG).");
-        }
+          const fileURL = URL.createObjectURL(file); bgImageElement.src = fileURL;
+          bgImageElement.onload = () => { isBgReady = true; statusBox.innerText = "✅ Foto Latar Oke."; };
+        } else { alert("Harap unggah file berbentuk Gambar/Foto (JPG, PNG)."); }
       }
     });
 
-    audioPlayer.addEventListener('loadedmetadata', () => {
-      if (isFinite(audioPlayer.duration)) {
-        durTimeEl.innerText = formatTime(audioPlayer.duration);
-        progressBar.max = 100;
-      }
-    });
-
+    audioPlayer.addEventListener('loadedmetadata', () => { if (isFinite(audioPlayer.duration)) { durTimeEl.innerText = formatTime(audioPlayer.duration); progressBar.max = 100; } });
     audioPlayer.addEventListener('timeupdate', () => {
-      if (isFinite(audioPlayer.duration) && durTimeEl.innerText === "00:00") {
-        durTimeEl.innerText = formatTime(audioPlayer.duration);
-      }
-      if (!isDraggingProgress) {
-        const percent = (audioPlayer.currentTime / audioPlayer.duration) * 100;
-        progressBar.value = isNaN(percent) ? 0 : percent;
-        currTimeEl.innerText = formatTime(audioPlayer.currentTime);
-      }
+      if (isFinite(audioPlayer.duration) && durTimeEl.innerText === "00:00") durTimeEl.innerText = formatTime(audioPlayer.duration);
+      if (!isDraggingProgress) { const percent = (audioPlayer.currentTime / audioPlayer.duration) * 100; progressBar.value = isNaN(percent) ? 0 : percent; currTimeEl.innerText = formatTime(audioPlayer.currentTime); }
     });
 
     progressBar.addEventListener('input', () => {
       isDraggingProgress = true;
-      if (audioPlayer.duration) {
-        const seekTime = (progressBar.value / 100) * audioPlayer.duration;
-        currTimeEl.innerText = formatTime(seekTime);
-        audioPlayer.currentTime = seekTime;
-      }
+      if (audioPlayer.duration) { const seekTime = (progressBar.value / 100) * audioPlayer.duration; currTimeEl.innerText = formatTime(seekTime); audioPlayer.currentTime = seekTime; }
     });
     const releaseSeek = () => { isDraggingProgress = false; };
-    progressBar.addEventListener('change', releaseSeek);
-    progressBar.addEventListener('touchend', releaseSeek);
-    progressBar.addEventListener('mouseup', releaseSeek);
+    progressBar.addEventListener('change', releaseSeek); progressBar.addEventListener('touchend', releaseSeek); progressBar.addEventListener('mouseup', releaseSeek);
 
     function togglePlay() {
-      if (!isTrackLoaded) {
-        alert("Pilih Musik Dulu!");
-        return;
-      }
-      if (!audioCtx) initAudioContext();
-      if (audioCtx.state === 'suspended') audioCtx.resume();
+      if (!isTrackLoaded) { alert("Pilih Musik Dulu!"); return; }
+      if (!audioCtx) initAudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume();
       if (audioPlayer.paused) {
-        if (!audioPlayer.src || currentPlayIndex >= shuffledPlaylist.length) {
-          playRandomSong(true);
-        } else {
-          audioPlayer.play();
-          playBtn.innerText = "⏸ PAUSE";
-          statusBox.innerText = `🎵 Lagu ${currentPlayIndex}/${audioFiles.length}: ${currentSongName}`;
-        }
-      } else {
-        audioPlayer.pause();
-        playBtn.innerText = "▶ RESUME";
-        statusBox.innerText = "⏸ Musik Dijeda.";
-      }
+        if (!audioPlayer.src || currentPlayIndex >= shuffledPlaylist.length) playRandomSong(true);
+        else { audioPlayer.play(); playBtn.innerText = "⏸ PAUSE"; statusBox.innerText = `🎵 Lagu ${currentPlayIndex}/${audioFiles.length}: ${currentSongName}`; }
+      } else { audioPlayer.pause(); playBtn.innerText = "▶ RESUME"; statusBox.innerText = "⏸ Musik Dijeda."; }
     }
 
-    const config = {
-      type: 'vintage',
-      count: 100,
-      visType: 'vintage_bars',
-      visHeight: 180,
-      visOpacity: 1.0,
-      fxAngle: 0,
-      fxSpeed: 1.0
-    };
-
-    document.getElementById('visType').addEventListener('change', (e) => {
-        config.visType = e.target.value;
-        peakHeights.fill(0);
-    });
-    // SLIDER OPASITAS
+    const config = { type: 'vintage', count: 100, visType: 'vintage_bars', visHeight: 150, visOpacity: 1.0, fxAngle: 0, fxSpeed: 1.0 };
+    document.getElementById('visType').addEventListener('change', (e) => { config.visType = e.target.value; peakHeights.fill(0); });
     document.getElementById('visOpacity').addEventListener('input', (e) => config.visOpacity = parseFloat(e.target.value));
-    
     document.getElementById('type').addEventListener('change', (e) => config.type = e.target.value);
     document.getElementById('fxAngle').addEventListener('change', (e) => config.fxAngle = parseInt(e.target.value));
     document.getElementById('fxSpeed').addEventListener('input', (e) => config.fxSpeed = parseFloat(e.target.value));
     document.getElementById('count').addEventListener('input', (e) => config.count = parseInt(e.target.value));
     document.getElementById('visHeight').addEventListener('input', (e) => config.visHeight = parseInt(e.target.value));
-    
-    document.getElementById('visWidth').addEventListener('input', (e) => {
-      visW = parseInt(e.target.value);
-      visX = (width - visW) / 2;
-    });
+    document.getElementById('visWidth').addEventListener('input', (e) => { visW = parseInt(e.target.value); visX = (width - visW) / 2; });
 
     let time = 0;
 
     class RealisticFilmJitter {
-      constructor() {
-        this.reset();
-      }
+      constructor() { this.reset(); }
       reset() {
-        this.x = (Math.random() * width * 1.5) - (width * 0.25);
-        this.y = (Math.random() * height * 1.5) - (height * 0.25);
-        this.life = Math.random() * 5 + 2;
-        this.alpha = Math.random() * 0.5 + 0.1;
-        
+        this.x = (Math.random() * width * 1.5) - (width * 0.25); this.y = (Math.random() * height * 1.5) - (height * 0.25);
+        this.life = Math.random() * 5 + 2; this.alpha = Math.random() * 0.5 + 0.1;
         const rand = Math.random();
-        if (rand < 0.05) {
-          this.pType = 'scratch';
-          this.length = Math.random() * height / 2 + 100;
-          this.color = Math.random() > 0.5 ? `rgba(255,255,255,${this.alpha*0.6})` : `rgba(0,0,0,${this.alpha*0.8})`;
-        } else if (rand < 0.15) {
-          this.pType = 'hair';
-          this.cp1x = (Math.random() - 0.5) * 80;
-          this.cp1y = (Math.random() - 0.5) * 80;
-          this.cp2x = (Math.random() - 0.5) * 80;
-          this.cp2y = (Math.random() - 0.5) * 80;
-          this.endX = (Math.random() - 0.5) * 100;
-          this.endY = (Math.random() - 0.5) * 100;
-          this.color = `rgba(0, 0, 0, ${this.alpha * 1.2})`;
-        } else {
-          this.pType = 'dust';
-          this.radius = Math.random() * 3 + 1.0;
-          this.color = Math.random() > 0.6 ? `rgba(0,0,0,${this.alpha})` : `rgba(255,255,255,${this.alpha*0.6})`;
-        }
+        if (rand < 0.05) { this.pType = 'scratch'; this.length = Math.random() * height / 2 + 100; this.color = Math.random() > 0.5 ? `rgba(255,255,255,${this.alpha*0.6})` : `rgba(0,0,0,${this.alpha*0.8})`; } 
+        else if (rand < 0.15) { this.pType = 'hair'; this.cp1x = (Math.random() - 0.5) * 80; this.cp1y = (Math.random() - 0.5) * 80; this.cp2x = (Math.random() - 0.5) * 80; this.cp2y = (Math.random() - 0.5) * 80; this.endX = (Math.random() - 0.5) * 100; this.endY = (Math.random() - 0.5) * 100; this.color = `rgba(0, 0, 0, ${this.alpha * 1.2})`; } 
+        else { this.pType = 'dust'; this.radius = Math.random() * 3 + 1.0; this.color = Math.random() > 0.6 ? `rgba(0,0,0,${this.alpha})` : `rgba(255,255,255,${this.alpha*0.6})`; }
       }
-      update() {
-        this.life -= config.fxSpeed;
-        if (this.life <= 0) this.reset();
-      }
+      update() { if (['none', 'rain', 'snow', 'fireflies'].includes(config.type)) return; this.life -= config.fxSpeed; if (this.life <= 0) this.reset(); }
       draw() {
-        if (config.type === 'none') return;
-        
-        // Atur kemunculan partikel berdasarkan efek yang dipilih
+        if (['none', 'rain', 'snow', 'fireflies'].includes(config.type)) return;
         let showDustHair = ['vintage', 'grain', 'sepia_dust', 'flicker_8mm'].includes(config.type);
         let showScratch = ['vintage', 'scratch', 'sepia_dust', 'flicker_8mm'].includes(config.type);
-        
-        // Old TV hanya menampilkan noise sangat halus
         if (config.type === 'old_tv' && this.pType !== 'dust') return;
-        if (config.type === 'old_tv' && this.pType === 'dust') {
-            this.radius = Math.random() * 1.5;
-            this.color = `rgba(255,255,255,${this.alpha*0.3})`;
-        }
-
-        ctx.save();
-        ctx.translate(this.x, this.y);
-        if (config.fxAngle !== 0) ctx.rotate(config.fxAngle * Math.PI / 180);
-        
-        if (this.pType === 'dust' && (showDustHair || config.type === 'old_tv')) {
-          ctx.fillStyle = this.color;
-          ctx.beginPath();
-          ctx.arc(0, 0, this.radius, 0, Math.PI*2);
-          ctx.fill();
-        } else if (this.pType === 'hair' && showDustHair) {
-          ctx.strokeStyle = this.color;
-          ctx.lineWidth = 1.5 + Math.random();
-          ctx.beginPath();
-          ctx.moveTo(0, 0);
-          ctx.bezierCurveTo(this.cp1x, this.cp1y, this.cp2x, this.cp2y, this.endX, this.endY);
-          ctx.stroke();
-        } else if (this.pType === 'scratch' && showScratch) {
-          ctx.strokeStyle = this.color;
-          ctx.lineWidth = Math.random() * 2.0 + 1.0;
-          ctx.beginPath();
-          ctx.moveTo(0, 0);
-          let currentY = 0;
-          let currentX = 0;
-          for (let i = 0; i < this.length; i += 20) {
-            currentY += 20;
-            currentX += (Math.random() - 0.5) * 3; 
-            ctx.lineTo(currentX, currentY);
-          }
-          ctx.stroke();
-        }
+        if (config.type === 'old_tv' && this.pType === 'dust') { this.radius = Math.random() * 1.5; this.color = `rgba(255,255,255,${this.alpha*0.3})`; }
+        ctx.save(); ctx.translate(this.x, this.y); if (config.fxAngle !== 0) ctx.rotate(config.fxAngle * Math.PI / 180);
+        if (this.pType === 'dust' && (showDustHair || config.type === 'old_tv')) { ctx.fillStyle = this.color; ctx.beginPath(); ctx.arc(0, 0, this.radius, 0, Math.PI*2); ctx.fill(); } 
+        else if (this.pType === 'hair' && showDustHair) { ctx.strokeStyle = this.color; ctx.lineWidth = 1.5 + Math.random(); ctx.beginPath(); ctx.moveTo(0, 0); ctx.bezierCurveTo(this.cp1x, this.cp1y, this.cp2x, this.cp2y, this.endX, this.endY); ctx.stroke(); } 
+        else if (this.pType === 'scratch' && showScratch) { ctx.strokeStyle = this.color; ctx.lineWidth = Math.random() * 2.0 + 1.0; ctx.beginPath(); ctx.moveTo(0, 0); let currentY = 0; let currentX = 0; for (let i = 0; i < this.length; i += 20) { currentY += 20; currentX += (Math.random() - 0.5) * 3; ctx.lineTo(currentX, currentY); } ctx.stroke(); }
         ctx.restore();
       }
     }
 
-    let particles = [];
-    for (let i = 0; i < 400; i++) particles.push(new RealisticFilmJitter());
+    class WeatherParticle {
+      constructor() { this.reset(true); }
+      reset(init = false) {
+        this.x = Math.random() * width; this.y = init ? (Math.random() * height) : -20;
+        this.speed = Math.random() * 2 + 1; this.size = Math.random() * 2 + 1; this.opacity = Math.random() * 0.5 + 0.3;
+        this.angle = Math.random() * Math.PI * 2; this.wobble = Math.random() * 0.05;
+        const layer = Math.random();
+        if (layer < 0.5) { this.layer = 'back'; this.layerSpeed = 0.5; this.size *= 0.5; } else if (layer < 0.85) { this.layer = 'mid'; this.layerSpeed = 1.0; } else { this.layer = 'front'; this.layerSpeed = 1.8; this.size *= 1.5; }
+      }
+      update() {
+        if (!['rain', 'snow', 'fireflies'].includes(config.type)) return;
+        let windAngle = config.fxAngle * Math.PI / 180; let speedMult = config.fxSpeed * this.layerSpeed;
+        if (config.type === 'rain') { this.y += this.speed * 10 * speedMult; this.x += Math.sin(windAngle) * (this.speed * 8); if (this.y > height) this.reset(); } 
+        else if (config.type === 'snow') { this.y += this.speed * 1.5 * speedMult; this.angle += this.wobble * config.fxSpeed; this.x += Math.sin(this.angle) * 1.5 + Math.sin(windAngle) * 3; if (this.y > height) this.reset(); } 
+        else if (config.type === 'fireflies') { this.y -= this.speed * 0.5 * speedMult; this.angle += this.wobble * config.fxSpeed; this.x += Math.cos(this.angle) * 2 + Math.sin(windAngle) * 1; this.opacity = Math.abs(Math.sin(time * 1.5 + this.x * 0.05)) * 0.8 + 0.2; if (this.y < -20) { this.reset(); this.y = height + 20; } }
+        if (this.x > width + 50) this.x = -50; else if (this.x < -50) this.x = width + 50;
+      }
+      draw() {
+        if (!['rain', 'snow', 'fireflies'].includes(config.type)) return;
+        ctx.save();
+        if (config.type === 'rain') { ctx.strokeStyle = `rgba(185, 222, 255, ${this.opacity * 0.6})`; ctx.lineWidth = this.layer === 'front' ? 3 : 1.5; ctx.beginPath(); ctx.moveTo(this.x, this.y); let windOffset = Math.sin(config.fxAngle * Math.PI / 180) * 15; ctx.lineTo(this.x - windOffset, this.y - this.speed * 10 * config.fxSpeed); ctx.stroke(); } 
+        else if (config.type === 'snow') { ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`; ctx.shadowBlur = this.layer === 'front' ? 8 : 0; ctx.shadowColor = '#fff'; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); } 
+        else if (config.type === 'fireflies') { ctx.fillStyle = `rgba(215, 255, 40, ${this.opacity})`; ctx.shadowBlur = this.size * 5; ctx.shadowColor = '#d7ff28'; ctx.beginPath(); ctx.arc(this.x, this.y, this.size * 1.2, 0, Math.PI * 2); ctx.fill(); }
+        ctx.restore();
+      }
+    }
 
-    // MAPPING DATA AUDIO KLASIK (LINIER DARI KIRI KE KANAN)
-    function getClassicVal(index, totalItems, bufferLen) {
+    let particles = []; let weatherParticles = [];
+    for (let i = 0; i < 400; i++) { particles.push(new RealisticFilmJitter()); weatherParticles.push(new WeatherParticle()); }
+
+    // LOGIKA SYMMETRIC (Merata Kanan & Kiri)
+    function getSymmetricVal(index, totalItems, bufferLen) {
       try {
         if (!dataArray) return 0;
-        const dataIdx = Math.floor((index / totalItems) * (bufferLen * 0.8));
+        const center = totalItems / 2;
+        const centerDist = Math.abs(index - center) / center;
+        const dataIdx = Math.floor(centerDist * (bufferLen * 0.6));
         return dataArray[dataIdx] / 255;
       } catch (e) { return 0; }
     }
 
     // ===============================================
-    // 10 SPECTRUM SEDERHANA & VINTAGE BGT (KIRI-KANAN)
+    // 25 VISUALIZER DEWA (SYMMETRIC LOGIC)
     // ===============================================
     function drawVisualizer(bufferLen) {
       const style = config.visType;
       ctx.save();
       ctx.translate(visX, visY);
-      
-      // APLIKASIKAN OPASITAS
       ctx.globalAlpha = config.visOpacity;
+      const cy = 0;
       
       try {
-        // 1. Solid Vintage Bars
+        // --- KLASIK & VINTAGE ---
         if (style === 'vintage_bars') {
-          const numBars = 48;
-          const spacing = visW / numBars;
-          const barW = spacing * 0.7;
-          ctx.fillStyle = 'rgba(245, 245, 240, 0.9)'; // Off-white jadul
-          for (let i = 0; i < numBars; i++) {
-            const h = Math.max(5, getClassicVal(i, numBars, bufferLen) * config.visHeight);
-            ctx.fillRect(i * spacing, -h, barW, h);
-          }
+          const numBars = 48; const spacing = visW / numBars; const barW = spacing * 0.7;
+          ctx.fillStyle = 'rgba(245, 245, 240, 0.9)'; 
+          for (let i = 0; i < numBars; i++) { const h = Math.max(5, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillRect(i * spacing, -h, barW, h); }
         }
-        // 2. Winamp Classic Peaks
         else if (style === 'winamp_classic') {
-          const numBars = 48;
-          const spacing = visW / numBars;
-          const barW = spacing * 0.7;
+          const numBars = 48; const spacing = visW / numBars; const barW = spacing * 0.7;
           for (let i = 0; i < numBars; i++) {
-            const h = Math.max(0, getClassicVal(i, numBars, bufferLen) * config.visHeight);
-            if (h >= peakHeights[i]) { peakHeights[i] = h; } 
-            else {
-              peakHeights[i] -= 2.0;
-              if (peakHeights[i] < 0) peakHeights[i] = 0;
-            }
-            ctx.fillStyle = 'rgba(230, 235, 240, 0.7)';
-            ctx.fillRect(i * spacing, -h, barW, h);
-            ctx.fillStyle = 'rgba(255, 60, 60, 1)'; // Red peak
-            ctx.fillRect(i * spacing, -peakHeights[i] - 5, barW, 4);
+            const h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight);
+            if (h >= peakHeights[i]) { peakHeights[i] = h; } else { peakHeights[i] -= 2.0; if (peakHeights[i] < 0) peakHeights[i] = 0; }
+            ctx.fillStyle = 'rgba(230, 235, 240, 0.7)'; ctx.fillRect(i * spacing, -h, barW, h);
+            ctx.fillStyle = 'rgba(255, 60, 60, 1)'; ctx.fillRect(i * spacing, -peakHeights[i] - 5, barW, 4);
           }
         }
-        // 3. CRT Oscilloscope (Green)
         else if (style === 'retro_oscilloscope') {
-          ctx.beginPath();
-          ctx.moveTo(0, 0);
-          for (let i = 0; i <= visW; i += 5) {
-             let h = getClassicVal(i, visW, bufferLen) * config.visHeight;
-             ctx.lineTo(i, -h);
-          }
-          ctx.strokeStyle = '#00ff41'; // Matrix green
-          ctx.lineWidth = 3;
-          ctx.shadowBlur = 10;
-          ctx.shadowColor = '#00ff41';
-          ctx.stroke();
-          ctx.shadowBlur = 0; 
+          ctx.beginPath(); ctx.moveTo(0, 0); const points = 100;
+          for (let i = 0; i <= points; i++) { let x = (i / points) * visW; let h = getSymmetricVal(i, points, bufferLen) * config.visHeight; ctx.lineTo(x, -h); }
+          ctx.strokeStyle = '#00ff41'; ctx.lineWidth = 3; ctx.shadowBlur = 10; ctx.shadowColor = '#00ff41'; ctx.stroke(); ctx.shadowBlur = 0; 
         }
-        // 4. Analog VU Meter (Amber)
         else if (style === 'analog_vu') {
-          let valBass = getClassicVal(visW*0.1, visW, bufferLen);
-          let valTreble = getClassicVal(visW*0.8, visW, bufferLen);
+          let valBass = dataArray ? dataArray[Math.floor(bufferLen * 0.05)] / 255 : 0;
+          let valTreble = dataArray ? dataArray[Math.floor(bufferLen * 0.3)] / 255 : 0;
           let cx = visW/2;
           function drawNeedle(x, r, val, title) {
-              ctx.save(); ctx.translate(x, 0);
-              ctx.beginPath(); ctx.arc(0, 0, r, Math.PI, Math.PI*2);
-              ctx.fillStyle = 'rgba(20, 20, 20, 0.8)'; ctx.fill();
-              ctx.strokeStyle = '#ffb300'; ctx.lineWidth = 2; ctx.stroke();
-              for(let i=0; i<=10; i++) {
-                  let a = Math.PI + (i/10)*Math.PI;
-                  let r1 = r - 10; let r2 = r - (i%5===0 ? 20 : 15);
-                  ctx.beginPath(); ctx.moveTo(Math.cos(a)*r1, Math.sin(a)*r1); ctx.lineTo(Math.cos(a)*r2, Math.sin(a)*r2);
-                  ctx.strokeStyle = i>7 ? '#ff4444' : '#ffb300'; ctx.stroke();
-              }
-              ctx.rotate(Math.PI + (val * 0.8 + 0.1) * Math.PI);
-              ctx.beginPath(); ctx.moveTo(0, 10); ctx.lineTo(0, -r+25);
-              ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.stroke();
-              ctx.restore();
+              ctx.save(); ctx.translate(x, 0); ctx.beginPath(); ctx.arc(0, 0, r, Math.PI, Math.PI*2); ctx.fillStyle = 'rgba(20, 20, 20, 0.8)'; ctx.fill(); ctx.strokeStyle = '#ffb300'; ctx.lineWidth = 2; ctx.stroke();
+              for(let i=0; i<=10; i++) { let a = Math.PI + (i/10)*Math.PI; let r1 = r - 10; let r2 = r - (i%5===0 ? 20 : 15); ctx.beginPath(); ctx.moveTo(Math.cos(a)*r1, Math.sin(a)*r1); ctx.lineTo(Math.cos(a)*r2, Math.sin(a)*r2); ctx.strokeStyle = i>7 ? '#ff4444' : '#ffb300'; ctx.stroke(); }
+              ctx.rotate(Math.PI + (val * 0.8 + 0.1) * Math.PI); ctx.beginPath(); ctx.moveTo(0, 10); ctx.lineTo(0, -r+25); ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.stroke(); ctx.restore();
               ctx.fillStyle = '#ffb300'; ctx.font = 'bold 16px monospace'; ctx.textAlign = 'center'; ctx.fillText(title, x, 25);
           }
-          drawNeedle(cx - visW/4, config.visHeight*0.8, valBass, "L - BASS");
-          drawNeedle(cx + visW/4, config.visHeight*0.8, valTreble, "R - TREBLE");
+          drawNeedle(cx - visW/4, config.visHeight*0.8, valBass, "L - BASS"); drawNeedle(cx + visW/4, config.visHeight*0.8, valTreble, "R - TREBLE");
         }
-        // 5. Step Block EQ (Vintage Console)
         else if (style === 'step_eq') {
-          const numBars = 32;
-          const spacing = visW / numBars;
-          const barW = spacing - 4;
-          const stepH = 12;
+          const numBars = 32; const spacing = visW / numBars; const barW = spacing - 4; const stepH = 12;
           for (let i = 0; i < numBars; i++) {
-            const h = Math.max(0, getClassicVal(i, numBars, bufferLen) * config.visHeight);
-            const blocks = Math.floor(h / stepH);
-            for (let j = 0; j < blocks; j++) {
-              ctx.fillStyle = j > (config.visHeight/stepH)*0.7 ? '#ff5722' : '#ffc107'; // Amber to Red
-              ctx.fillRect(i * spacing, -(j * stepH) - stepH, barW, stepH - 2);
-            }
+            const h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); const blocks = Math.floor(h / stepH);
+            for (let j = 0; j < blocks; j++) { ctx.fillStyle = j > (config.visHeight/stepH)*0.7 ? '#ff5722' : '#ffc107'; ctx.fillRect(i * spacing, -(j * stepH) - stepH, barW, stepH - 2); }
           }
         }
-        // 6. Thin Line EQ (Minimalist)
         else if (style === 'thin_eq') {
-          const numBars = 64;
-          const spacing = visW / numBars;
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-          for (let i = 0; i < numBars; i++) {
-            const h = Math.max(2, getClassicVal(i, numBars, bufferLen) * config.visHeight);
-            ctx.fillRect(i * spacing, -h, 2, h);
-          }
+          const numBars = 64; const spacing = visW / numBars; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+          for (let i = 0; i < numBars; i++) { const h = Math.max(2, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillRect(i * spacing, -h, 2, h); }
         }
-        // 7. Dotted Peak EQ
         else if (style === 'dotted_eq') {
-          const numBars = 48;
-          const spacing = visW / numBars;
-          ctx.fillStyle = 'rgba(200, 200, 200, 0.5)';
-          ctx.fillRect(0, 0, visW, 2);
-          ctx.fillStyle = '#00bcd4'; // Cyan retro
-          for (let i = 0; i < numBars; i++) {
-            const h = getClassicVal(i, numBars, bufferLen) * config.visHeight;
-            const x = i * spacing + (spacing / 2);
-            if (h > 5) {
-              ctx.beginPath(); ctx.arc(x, -h, 4, 0, Math.PI*2); ctx.fill();
-            }
-          }
+          const numBars = 48; const spacing = visW / numBars; ctx.fillStyle = 'rgba(200, 200, 200, 0.5)'; ctx.fillRect(0, 0, visW, 2); ctx.fillStyle = '#00bcd4'; 
+          for (let i = 0; i < numBars; i++) { const h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; const x = i * spacing + (spacing / 2); if (h > 5) { ctx.beginPath(); ctx.arc(x, -h, 4, 0, Math.PI*2); ctx.fill(); } }
         }
-        // 8. Hollow Outline Bars
         else if (style === 'hollow_bars') {
-          const numBars = 40;
-          const spacing = visW / numBars;
-          const barW = spacing * 0.7;
-          ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
-          ctx.lineWidth = 1.5;
-          for (let i = 0; i < numBars; i++) {
-            const h = Math.max(5, getClassicVal(i, numBars, bufferLen) * config.visHeight);
-            ctx.strokeRect(i * spacing, -h, barW, h);
-          }
+          const numBars = 40; const spacing = visW / numBars; const barW = spacing * 0.7; ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)'; ctx.lineWidth = 1.5;
+          for (let i = 0; i < numBars; i++) { const h = Math.max(5, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.strokeRect(i * spacing, -h, barW, h); }
         }
-        // 9. Split Center EQ
         else if (style === 'split_eq') {
-          const numBars = 48;
-          const spacing = visW / numBars;
-          const barW = spacing * 0.6;
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-          ctx.fillRect(0, -1, visW, 2); // Center line
-          for (let i = 0; i < numBars; i++) {
-            const h = Math.max(2, getClassicVal(i, numBars, bufferLen) * (config.visHeight / 2));
-            ctx.fillRect(i * spacing, -h - 4, barW, h); // Top
-            ctx.fillRect(i * spacing, 4, barW, h); // Bottom
+          const numBars = 48; const spacing = visW / numBars; const barW = spacing * 0.6; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.fillRect(0, -1, visW, 2); 
+          for (let i = 0; i < numBars; i++) { const h = Math.max(2, getSymmetricVal(i, numBars, bufferLen) * (config.visHeight / 2)); ctx.fillRect(i * spacing, -h - 4, barW, h); ctx.fillRect(i * spacing, 4, barW, h); }
+        }
+        else if (style === 'led_matrix') {
+          const cols = 40; const rows = 15; const spaceX = visW / cols; const spaceY = config.visHeight / rows;
+          for(let c=0; c<cols; c++) {
+            let val = getSymmetricVal(c, cols, bufferLen); let activeRows = Math.floor(val * rows);
+            for(let r=0; r<rows; r++) { let x = c * spaceX + spaceX/2; let y = -r * spaceY - spaceY/2; ctx.beginPath(); if(r < activeRows) ctx.fillStyle = (r > rows*0.7) ? '#f44336' : '#8bc34a'; else ctx.fillStyle = 'rgba(255,255,255,0.05)'; ctx.arc(x, y, spaceX*0.35, 0, Math.PI*2); ctx.fill(); }
           }
         }
-        // 10. LED Dot Matrix
-        else if (style === 'led_matrix') {
-          const cols = 40;
-          const rows = 15;
-          const spaceX = visW / cols;
-          const spaceY = config.visHeight / rows;
+
+        // --- MODERN BARS ---
+        else if (style === 'liquid_bar') {
+          let numBars = 32; let spacing = visW / numBars; let barW = spacing * 0.6;
+          for (let i = 0; i < numBars; i++) {
+            let h = Math.max(10, getSymmetricVal(i, numBars, bufferLen) * config.visHeight);
+            ctx.fillStyle = '#00e5ff'; ctx.shadowBlur = 15; ctx.shadowColor = '#00e5ff'; ctx.beginPath();
+            if(ctx.roundRect) ctx.roundRect(i * spacing, cy - h, barW, h, barW/2); else ctx.rect(i * spacing, cy - h, barW, h); ctx.fill();
+          } ctx.shadowBlur = 0;
+        }
+        else if (style === 'cyber_pulse') {
+          let numBars = 48; let spacing = visW / numBars; let barW = spacing * 0.7;
+          for (let i = 0; i < numBars; i++) {
+            let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight;
+            let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight); grad.addColorStop(0, '#f50057'); grad.addColorStop(1, '#ff4081');
+            ctx.fillStyle = grad; ctx.shadowBlur = 10; ctx.shadowColor = '#f50057';
+            ctx.fillRect(i * spacing, cy - h/2 - 2, barW, h/2); ctx.fillRect(i * spacing, cy + 2, barW, h/2);
+            ctx.fillStyle = '#fff'; ctx.fillRect(i * spacing, cy - h/2 - 6, barW, 2); ctx.fillRect(i * spacing, cy + h/2 + 4, barW, 2);
+          } ctx.shadowBlur = 0;
+        }
+        else if (style === 'mirror_bars') {
+          let numBars = 48; let spacing = visW / numBars;
+          for (let i = 0; i < numBars; i++) {
+              let val = Math.max(2, getSymmetricVal(i, numBars, bufferLen) * (config.visHeight/2));
+              ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.fillRect(i * spacing, cy - val, spacing * 0.6, val);
+              ctx.fillStyle = 'rgba(255, 255, 255, 0.3)'; ctx.fillRect(i * spacing, cy, spacing * 0.6, val * 0.8);
+          }
+        }
+        else if (style === 'gradient_blocks') {
+          let numBars = 40; let spacing = visW / numBars;
+          for (let i = 0; i < numBars; i++) {
+              let val = getSymmetricVal(i, numBars, bufferLen) * config.visHeight;
+              let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight); grad.addColorStop(0, '#00c6ff'); grad.addColorStop(1, '#0072ff');
+              ctx.fillStyle = grad; ctx.fillRect(i * spacing, cy - val, spacing * 0.8, val);
+          }
+        }
+
+        // --- GELOMBANG & GARIS ---
+        else if (style === 'modern_wave') {
+          ctx.beginPath(); ctx.moveTo(0, cy); let numPoints = 100; let spacing = visW / numPoints;
+          for(let i=0; i<=numPoints; i++) { let val = getSymmetricVal(i, numPoints, bufferLen) * config.visHeight; let y = cy - val - (Math.sin(i*0.1 + time*5)*val*0.2); ctx.lineTo(i*spacing, y); }
+          let grad = ctx.createLinearGradient(0, cy, visW, cy); grad.addColorStop(0, '#00d2ff'); grad.addColorStop(1, '#e040fb');
+          ctx.strokeStyle = grad; ctx.lineWidth = 4; ctx.shadowBlur = 15; ctx.shadowColor = '#00d2ff'; ctx.stroke();
+          ctx.lineTo(visW, cy); ctx.lineTo(0, cy); ctx.fillStyle = 'rgba(0, 210, 255, 0.2)'; ctx.fill(); ctx.shadowBlur = 0;
+        }
+        else if (style === 'heartbeat') {
+          ctx.beginPath(); ctx.moveTo(0, cy); let numPoints = 80; let spacing = visW / numPoints;
+          for(let i=0; i<=numPoints; i++) { let val = getSymmetricVal(i, numPoints, bufferLen) * config.visHeight; let y = cy + (i%2===0 ? -val : val); ctx.lineTo(i*spacing, y); }
+          ctx.strokeStyle = '#ff3b3b'; ctx.lineWidth = 2.5; ctx.shadowBlur = 10; ctx.shadowColor = '#ff3b3b'; ctx.stroke(); ctx.shadowBlur = 0;
+        }
+        else if (style === 'double_line') {
+          let numPoints = 60; let spacing = visW / numPoints;
+          ctx.beginPath(); ctx.moveTo(0, cy);
+          for(let i=0; i<=numPoints; i++) { let val = getSymmetricVal(i, numPoints, bufferLen) * config.visHeight; ctx.lineTo(i*spacing, cy - val); }
+          ctx.strokeStyle = '#00d2ff'; ctx.lineWidth = 3; ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(0, cy);
+          for(let i=0; i<=numPoints; i++) { let val = getSymmetricVal(i, numPoints, bufferLen) * config.visHeight; ctx.lineTo(i*spacing, cy + val); }
+          ctx.strokeStyle = '#e040fb'; ctx.lineWidth = 3; ctx.stroke();
+        }
+        else if (style === 'glitch_wave') {
+          let numBars = 50; let spacing = visW / numBars; ctx.fillStyle = '#00ff41';
+          for (let i = 0; i < numBars; i++) { let val = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let glitch = (Math.random() - 0.5) * val * 0.5; ctx.fillRect(i * spacing + glitch, cy - val/2, spacing*0.8, val); }
+        }
+        else if (style === 'sonic_wave') {
+          ctx.beginPath(); ctx.moveTo(0, cy); let numPoints = 120; let spacing = visW / numPoints;
+          for(let i=0; i<=numPoints; i++) { let val = getSymmetricVal(i, numPoints, bufferLen) * config.visHeight; let y = cy - (val/2) - (Math.sin(i*0.1 + time*3)*val*0.2); ctx.lineTo(i*spacing, y); }
+          for(let i=numPoints; i>=0; i--) { let val = getSymmetricVal(i, numPoints, bufferLen) * config.visHeight; let y = cy + (val/2) + (Math.sin(i*0.1 + time*3)*val*0.2); ctx.lineTo(i*spacing, y); }
+          ctx.closePath(); let grad = ctx.createLinearGradient(0, cy - config.visHeight/2, 0, cy + config.visHeight/2); grad.addColorStop(0, '#a8ff78'); grad.addColorStop(1, '#78ffd6'); ctx.fillStyle = grad; ctx.fill();
+        }
+
+        // --- LINGKARAN (CIRCULAR) ---
+        // Untuk melingkar, kita translate ke tengah layar agar tidak kepotong di bawah
+        else if (['circle_bars', 'circle_wave', 'circle_dots', 'sunburst', 'portal_ring'].includes(style)) {
+          let cx_c = visW / 2; let cy_c = -config.visHeight * 0.6; // Angkat ke atas sedikit
           
-          for(let c=0; c<cols; c++) {
-            let val = getClassicVal(c, cols, bufferLen);
-            let activeRows = Math.floor(val * rows);
-            for(let r=0; r<rows; r++) {
-               let x = c * spaceX + spaceX/2;
-               let y = -r * spaceY - spaceY/2;
-               
-               ctx.beginPath();
-               if(r < activeRows) {
-                  ctx.fillStyle = (r > rows*0.7) ? '#f44336' : '#8bc34a'; // Red / Green LED
-               } else {
-                  ctx.fillStyle = 'rgba(255,255,255,0.05)';
-               }
-               ctx.arc(x, y, spaceX*0.35, 0, Math.PI*2);
-               ctx.fill();
-            }
+          if (style === 'circle_bars') {
+              let radius = config.visHeight * 0.4; let bars = 72;
+              for(let i=0; i<bars; i++) {
+                  let val = getSymmetricVal(i, bars, bufferLen) * (config.visHeight * 0.6);
+                  let angle = (i * Math.PI * 2) / bars;
+                  ctx.save(); ctx.translate(cx_c, cy_c); ctx.rotate(angle);
+                  ctx.fillStyle = '#00bcd4'; ctx.fillRect(-2, radius, 4, Math.max(2, val));
+                  ctx.restore();
+              }
+          }
+          else if (style === 'circle_wave') {
+              let radius = config.visHeight * 0.4; let points = 100;
+              ctx.save(); ctx.translate(cx_c, cy_c); ctx.beginPath();
+              for(let i=0; i<=points; i++) {
+                  let val = getSymmetricVal(i, points, bufferLen) * (config.visHeight * 0.5);
+                  let angle = (i * Math.PI * 2) / points; let r = radius + val;
+                  let x = Math.cos(angle) * r; let y = Math.sin(angle) * r;
+                  if(i===0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+              }
+              ctx.closePath(); ctx.strokeStyle = '#e040fb'; ctx.lineWidth = 4; ctx.shadowBlur = 10; ctx.shadowColor = '#e040fb'; ctx.stroke(); ctx.restore();
+          }
+          else if (style === 'circle_dots') {
+              let radius = config.visHeight * 0.3; let dots = 60;
+              for(let i=0; i<dots; i++) {
+                  let val = getSymmetricVal(i, dots, bufferLen) * (config.visHeight * 0.7);
+                  let angle = (i * Math.PI * 2) / dots + (time*0.5);
+                  ctx.save(); ctx.translate(cx_c, cy_c); ctx.rotate(angle);
+                  ctx.beginPath(); ctx.arc(0, radius + val, 4 + (val*0.05), 0, Math.PI*2);
+                  ctx.fillStyle = '#a8ff78'; ctx.fill(); ctx.restore();
+              }
+          }
+          else if (style === 'sunburst') {
+              let radius = config.visHeight * 0.2; let bars = 90;
+              for(let i=0; i<bars; i++) {
+                  let val = getSymmetricVal(i, bars, bufferLen) * config.visHeight;
+                  let angle = (i * Math.PI * 2) / bars;
+                  ctx.save(); ctx.translate(cx_c, cy_c); ctx.rotate(angle);
+                  let grad = ctx.createLinearGradient(0, radius, 0, radius + val);
+                  grad.addColorStop(0, '#ffeb3b'); grad.addColorStop(1, '#ff3b3b');
+                  ctx.fillStyle = grad; ctx.beginPath(); ctx.moveTo(-1.5, radius); ctx.lineTo(1.5, radius); ctx.lineTo(4, radius + Math.max(5, val)); ctx.lineTo(-4, radius + Math.max(5, val)); ctx.fill();
+                  ctx.restore();
+              }
+          }
+          else if (style === 'portal_ring') {
+              let radius = config.visHeight * 0.5;
+              ctx.save(); ctx.translate(cx_c, cy_c); ctx.beginPath();
+              for(let i=0; i<=120; i++) {
+                  let val = getSymmetricVal(i, 120, bufferLen) * 40;
+                  let angle = (i * Math.PI * 2) / 120; let r = radius + val + (Math.sin(time*5+i)*10);
+                  let x = Math.cos(angle) * r; let y = Math.sin(angle) * r;
+                  if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+              }
+              ctx.closePath(); ctx.strokeStyle = '#00ffaa'; ctx.lineWidth = 3; ctx.shadowBlur = 20; ctx.shadowColor = '#00ffaa'; ctx.stroke(); ctx.restore();
+          }
+        }
+
+        // --- BENTUK UNIK ---
+        else if (style === 'piano_keys') {
+          let numBars = 36; let spacing = visW / numBars; let barW = spacing * 0.8;
+          for (let i = 0; i < numBars; i++) {
+              let val = getSymmetricVal(i, numBars, bufferLen);
+              let isBlack = [1,3,6,8,10].includes(i%12);
+              let h = isBlack ? config.visHeight*0.6 : config.visHeight;
+              let press = val * 20; 
+              ctx.fillStyle = isBlack ? '#222' : '#fff'; ctx.strokeStyle = '#555'; ctx.lineWidth = 1;
+              ctx.fillRect(i * spacing, cy + press - h, barW, h); ctx.strokeRect(i * spacing, cy + press - h, barW, h);
+              if(val > 0.2) { ctx.fillStyle = `rgba(0, 210, 255, ${val})`; ctx.fillRect(i * spacing, cy + press - 8, barW, 8); }
+          }
+        }
+        else if (style === 'floating_blocks') {
+          let numBars = 30; let spacing = visW / numBars; let barW = spacing * 0.7;
+          for (let i = 0; i < numBars; i++) {
+              let val = getSymmetricVal(i, numBars, bufferLen) * config.visHeight;
+              ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+              ctx.fillRect(i * spacing, cy - val, barW, 10);
+              if(val > 10) { ctx.fillStyle = 'rgba(255, 255, 255, 0.3)'; ctx.fillRect(i * spacing, cy - val + 15, barW, val - 15); }
           }
         }
 
@@ -943,346 +669,130 @@
     function drawPureAnimatedVectorSmoke() {
       let smokeScale = parseFloat(document.getElementById('smokeSize').value);
       let smokeAng1 = parseFloat(document.getElementById('smokeAngle1').value) * Math.PI / 180;
-      ctx.save();
-      ctx.translate(smokeX, smokeY);
-      ctx.rotate(smokeAng1);
-      ctx.scale(smokeScale, smokeScale);
-      
+      ctx.save(); ctx.translate(smokeX, smokeY); ctx.rotate(smokeAng1); ctx.scale(smokeScale, smokeScale);
       function drawBranch(height, maxW, waveFreq, speedMult, xOffsetBase) {
-        let points = [];
-        let steps = 50;
+        let points = []; let steps = 50;
         for (let i = 0; i <= steps; i++) {
-          let prog = i / steps;
-          let w = Math.sin(prog * Math.PI) * maxW;
-          if (prog > 0.6) w *= Math.pow(1 - prog + 0.05, 0.6);
-          let speed = time * speedMult;
-          let envelope = Math.pow(prog, 0.8);
-          let x = Math.sin(prog * Math.PI * waveFreq - speed) * 70 * envelope;
-          x += xOffsetBase * prog;
-          let y = -prog * height;
-          points.push({ x, y, w });
+          let prog = i / steps; let w = Math.sin(prog * Math.PI) * maxW; if (prog > 0.6) w *= Math.pow(1 - prog + 0.05, 0.6);
+          let speed = time * speedMult; let envelope = Math.pow(prog, 0.8); let x = Math.sin(prog * Math.PI * waveFreq - speed) * 70 * envelope;
+          x += xOffsetBase * prog; let y = -prog * height; points.push({ x, y, w });
         }
         function drawPolygon(widthMult, offsetX, color) {
           ctx.beginPath();
-          for (let i = 0; i < points.length; i++) {
-            let px = points[i].x + offsetX - (points[i].w * widthMult);
-            if (i === 0) ctx.moveTo(px, points[i].y);
-            else ctx.lineTo(px, points[i].y);
-          }
-          for (let i = points.length - 1; i >= 0; i--) {
-            let px = points[i].x + offsetX + (points[i].w * widthMult);
-            ctx.lineTo(px, points[i].y);
-          }
-          ctx.closePath();
-          ctx.fillStyle = color;
-          ctx.fill();
+          for (let i = 0; i < points.length; i++) { let px = points[i].x + offsetX - (points[i].w * widthMult); if (i === 0) ctx.moveTo(px, points[i].y); else ctx.lineTo(px, points[i].y); }
+          for (let i = points.length - 1; i >= 0; i--) { let px = points[i].x + offsetX + (points[i].w * widthMult); ctx.lineTo(px, points[i].y); }
+          ctx.closePath(); ctx.fillStyle = color; ctx.fill();
         }
-        drawPolygon(1.4, 0, 'rgba(180, 185, 190, 0.15)');
-        drawPolygon(1.0, 0, 'rgba(220, 225, 230, 0.25)');
-        drawPolygon(0.35, -maxW * 0.25, 'rgba(255, 255, 255, 0.3)');
+        drawPolygon(1.4, 0, 'rgba(180, 185, 190, 0.15)'); drawPolygon(1.0, 0, 'rgba(220, 225, 230, 0.25)'); drawPolygon(0.35, -maxW * 0.25, 'rgba(255, 255, 255, 0.3)');
       }
-      drawBranch(550, 15, 2.0, 4.0, 0);
-      drawBranch(380, 8, 2.5, 3.2, -30);
-      drawBranch(300, 6, 3.0, 3.5, 35);
+      drawBranch(550, 15, 2.0, 4.0, 0); drawBranch(380, 8, 2.5, 3.2, -30); drawBranch(300, 6, 3.0, 3.5, 35);
       ctx.restore();
     }
 
     function drawNewAnimatedVectorSmoke() {
       let smokeScale = parseFloat(document.getElementById('smokeSize').value);
       let smokeAng2 = parseFloat(document.getElementById('smokeAngle2').value) * Math.PI / 180;
-      ctx.save();
-      ctx.translate(smokeX2, smokeY2);
-      ctx.rotate(smokeAng2);
-      ctx.scale(smokeScale, smokeScale);
-      
+      ctx.save(); ctx.translate(smokeX2, smokeY2); ctx.rotate(smokeAng2); ctx.scale(smokeScale, smokeScale);
       function drawBillow(height, maxW, waveFreq, speedMult, xOffsetBase) {
-        let points = [];
-        let steps = 40;
+        let points = []; let steps = 40;
         for (let i = 0; i <= steps; i++) {
-          let prog = i / steps;
-          let w = Math.sin(prog * Math.PI) * maxW * (1 + prog * 1.5);
-          if (prog > 0.4) w *= Math.pow(1.2 - prog, 1.2);
-          let speed = time * speedMult;
-          let turb = Math.sin(prog * 15 - speed * 2) * 15 * prog;
-          let x = Math.sin(prog * Math.PI * waveFreq - speed) * 60 * prog + turb;
-          x += xOffsetBase * prog;
-          let y = -prog * height;
-          points.push({ x, y, w });
+          let prog = i / steps; let w = Math.sin(prog * Math.PI) * maxW * (1 + prog * 1.5); if (prog > 0.4) w *= Math.pow(1.2 - prog, 1.2);
+          let speed = time * speedMult; let turb = Math.sin(prog * 15 - speed * 2) * 15 * prog;
+          let x = Math.sin(prog * Math.PI * waveFreq - speed) * 60 * prog + turb; x += xOffsetBase * prog; let y = -prog * height; points.push({ x, y, w });
         }
         function drawPolygon(widthMult, offsetX, color) {
           ctx.beginPath();
-          for (let i = 0; i < points.length; i++) {
-            let px = points[i].x + offsetX - (points[i].w * widthMult);
-            if (i === 0) ctx.moveTo(px, points[i].y);
-            else ctx.lineTo(px, points[i].y);
-          }
-          for (let i = points.length - 1; i >= 0; i--) {
-            let px = points[i].x + offsetX + (points[i].w * widthMult);
-            ctx.lineTo(px, points[i].y);
-          }
-          ctx.closePath();
-          ctx.fillStyle = color;
-          ctx.fill();
+          for (let i = 0; i < points.length; i++) { let px = points[i].x + offsetX - (points[i].w * widthMult); if (i === 0) ctx.moveTo(px, points[i].y); else ctx.lineTo(px, points[i].y); }
+          for (let i = points.length - 1; i >= 0; i--) { let px = points[i].x + offsetX + (points[i].w * widthMult); ctx.lineTo(px, points[i].y); }
+          ctx.closePath(); ctx.fillStyle = color; ctx.fill();
         }
-        drawPolygon(1.8, 0, 'rgba(100, 105, 110, 0.15)');
-        drawPolygon(1.2, 0, 'rgba(150, 155, 160, 0.2)');
-        drawPolygon(0.5, -maxW * 0.1, 'rgba(220, 220, 225, 0.25)');
+        drawPolygon(1.8, 0, 'rgba(100, 105, 110, 0.15)'); drawPolygon(1.2, 0, 'rgba(150, 155, 160, 0.2)'); drawPolygon(0.5, -maxW * 0.1, 'rgba(220, 220, 225, 0.25)');
       }
-      drawBillow(500, 25, 1.5, 2.5, 20);
-      drawBillow(400, 18, 2.0, 3.0, -35);
+      drawBillow(500, 25, 1.5, 2.5, 20); drawBillow(400, 18, 2.0, 3.0, -35);
       ctx.restore();
     }
 
     function animate() {
-      ctx.fillStyle = "#000";
-      ctx.fillRect(0, 0, width, height);
-      time += (0.05 * config.fxSpeed); 
-
+      ctx.fillStyle = "#000"; ctx.fillRect(0, 0, width, height); time += (0.05 * config.fxSpeed); 
       ctx.save();
       
-      // Jitter untuk efek film
-      if (config.type !== 'none') {
-        const jitterX = (Math.random() - 0.5) * 1.5;
-        const jitterY = (Math.random() - 0.5) * 1.5;
-        ctx.translate(jitterX, jitterY);
-      }
-
-      if (isBgReady) {
-        const scale = Math.max(width / bgImageElement.width, height / bgImageElement.height);
-        const x = (width / 2) - (bgImageElement.width / 2) * scale;
-        const y = (height / 2) - (bgImageElement.height / 2) * scale;
-        ctx.drawImage(bgImageElement, x, y, bgImageElement.width * scale, bgImageElement.height * scale);
-      }
+      if (['vintage', 'grain', 'scratch', 'sepia_dust', 'old_tv', 'flicker_8mm'].includes(config.type)) { const jitterX = (Math.random() - 0.5) * 1.5; const jitterY = (Math.random() - 0.5) * 1.5; ctx.translate(jitterX, jitterY); }
+      if (isBgReady) { const scale = Math.max(width / bgImageElement.width, height / bgImageElement.height); const x = (width / 2) - (bgImageElement.width / 2) * scale; const y = (height / 2) - (bgImageElement.height / 2) * scale; ctx.drawImage(bgImageElement, x, y, bgImageElement.width * scale, bgImageElement.height * scale); }
       
-      // =====================================
-      // 3 EFEK FILM BARU: TINTING & OVERLAYS
-      // =====================================
-      if (config.type === 'sepia_dust') {
-        // Efek Sepia (Coklat Klasik)
-        ctx.fillStyle = 'rgba(112, 66, 20, 0.35)'; 
-        ctx.fillRect(-10, -10, width+20, height+20);
-      } else if (config.type === 'old_tv') {
-        // Efek Scanline TV Tabung
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
-        for (let i = 0; i < height; i += 5) {
-            ctx.fillRect(0, i, width, 2);
-        }
-        // Sedikit kehijauan CRT
-        ctx.fillStyle = 'rgba(0, 255, 0, 0.05)';
-        ctx.fillRect(-10, -10, width+20, height+20);
-      } else if (config.type === 'flicker_8mm') {
-        // Efek kedap-kedip proyektor
-        let flicker = Math.random() * 0.25;
-        ctx.fillStyle = `rgba(0, 0, 0, ${flicker})`;
-        ctx.fillRect(-10, -10, width+20, height+20);
-      } else if (config.type !== 'none') {
-        // Efek default (Hitam tipis)
-        ctx.fillStyle = "rgba(10, 5, 0, 0.1)"; 
-        ctx.fillRect(-10, -10, width+20, height+20);
-      }
+      if (config.type === 'sepia_dust') { ctx.fillStyle = 'rgba(112, 66, 20, 0.35)'; ctx.fillRect(-10, -10, width+20, height+20); } 
+      else if (config.type === 'old_tv') { ctx.fillStyle = 'rgba(0, 0, 0, 0.25)'; for (let i = 0; i < height; i += 4) { ctx.fillRect(0, i, width, 1.5); } ctx.fillStyle = 'rgba(0, 255, 0, 0.05)'; ctx.fillRect(-10, -10, width+20, height+20); } 
+      else if (config.type === 'flicker_8mm') { let flicker = Math.random() * 0.25; ctx.fillStyle = `rgba(0, 0, 0, ${flicker})`; ctx.fillRect(-10, -10, width+20, height+20); } 
+      else if (config.type !== 'none') { ctx.fillStyle = "rgba(10, 5, 0, 0.1)"; ctx.fillRect(-10, -10, width+20, height+20); }
 
-      // Audio Analyzer
       if (isAudioInit && currentObjectUrl) {
-        if (!audioPlayer.paused) {
-          analyser.getByteFrequencyData(dataArray);
-        } else {
-          for (let i = 0; i < dataArray.length; i++) {
-            dataArray[i] = Math.max(0, dataArray[i] - 10);
-          }
-        }
+        if (!audioPlayer.paused) analyser.getByteFrequencyData(dataArray); else for (let i = 0; i < dataArray.length; i++) dataArray[i] = Math.max(0, dataArray[i] - 10);
         drawVisualizer(analyser.frequencyBinCount);
       }
 
-      // Dual Smoke
-      drawPureAnimatedVectorSmoke();
-      drawNewAnimatedVectorSmoke();
+      drawPureAnimatedVectorSmoke(); drawNewAnimatedVectorSmoke();
       
-      // Partikel Film (Debu/Goresan)
-      for (let i = 0; i < config.count; i++) {
-        if (particles[i]) {
-          particles[i].update();
-          particles[i].draw();
-        }
-      }
+      for (let i = 0; i < config.count; i++) { if (particles[i]) { particles[i].update(); particles[i].draw(); } if (weatherParticles[i]) { weatherParticles[i].update(); weatherParticles[i].draw(); } }
 
-      // Vignette Pinggiran
-      if (config.type !== 'none') {
-        const grad = ctx.createRadialGradient(width/2, height/2, height*0.4, width/2, height/2, width*0.8);
-        grad.addColorStop(0, 'rgba(0,0,0,0)');
-        grad.addColorStop(1, 'rgba(0,0,0,0.7)');
-        ctx.fillStyle = grad;
-        ctx.fillRect(-10, -10, width+20, height+20);
-      }
+      if (config.type !== 'none') { const grad = ctx.createRadialGradient(width/2, height/2, height*0.4, width/2, height/2, width*0.8); grad.addColorStop(0, 'rgba(0,0,0,0)'); grad.addColorStop(1, 'rgba(0,0,0,0.7)'); ctx.fillStyle = grad; ctx.fillRect(-10, -10, width+20, height+20); }
 
-      ctx.restore();
-      requestAnimationFrame(animate);
+      ctx.restore(); requestAnimationFrame(animate);
     }
     animate();
 
-    // =====================================
-    // RECORDING SINGLE-CHUNK (AUTO DURASI)
-    // =====================================
-    let mediaRecorder, chunks = [];
-    let recordStartTime = 0;
-
+    let mediaRecorder, chunks = []; let recordStartTime = 0;
     function startCountdownAndRecord() {
-      if (!isAudioInit || !currentObjectUrl) {
-        alert("Pilih dan siapkan musik dulu!");
-        return;
-      }
-      if (isCountingDown) {
-        clearInterval(countdownTimer);
-        isCountingDown = false;
-        countdownOverlay.style.display = 'none';
-        recordBtn.innerText = "🔴 MULAI REKAM 1080p";
-        return;
-      }
-      isCountingDown = true;
-      let counter = 3;
-      countdownOverlay.innerText = counter;
-      countdownOverlay.style.display = 'block';
-      recordBtn.innerText = "❌ BATALKAN REKAM (" + counter + ")";
-      countdownTimer = setInterval(() => {
-        counter--;
-        if (counter > 0) {
-          countdownOverlay.innerText = counter;
-          recordBtn.innerText = "❌ BATALKAN REKAM (" + counter + ")";
-        } else {
-          clearInterval(countdownTimer);
-          isCountingDown = false;
-          countdownOverlay.style.display = 'none';
-          executeRecording();
-        }
-      }, 1000);
+      if (!isAudioInit || !currentObjectUrl) { alert("Pilih dan siapkan musik dulu!"); return; }
+      if (isCountingDown) { clearInterval(countdownTimer); isCountingDown = false; countdownOverlay.style.display = 'none'; recordBtn.innerText = "🔴 MULAI REKAM 720p"; return; }
+      isCountingDown = true; let counter = 3; countdownOverlay.innerText = counter; countdownOverlay.style.display = 'block'; recordBtn.innerText = "❌ BATALKAN REKAM (" + counter + ")";
+      countdownTimer = setInterval(() => { counter--; if (counter > 0) { countdownOverlay.innerText = counter; recordBtn.innerText = "❌ BATALKAN REKAM (" + counter + ")"; } else { clearInterval(countdownTimer); isCountingDown = false; countdownOverlay.style.display = 'none'; executeRecording(); } }, 1000);
     }
 
     function executeRecording() {
-      if (!audioCtx) initAudioContext();
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      
-      if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.KeepAwake) {
-        window.Capacitor.Plugins.KeepAwake.keepAwake();
-      }
-      
-      audioPlayer.play();
-      playBtn.innerText = "⏸ PAUSE";
-      stopOverlay.style.display = 'block';
-      statusBox.innerText = "🔴 Merekam Video FHD...";
-      recordBtn.innerText = "🔴 SEDANG MEREKAM";
-      
-      const stream = canvas.captureStream(30);
-      const combined = new MediaStream([...stream.getVideoTracks(), mediaStreamDestination.stream.getAudioTracks()[0]]);
-      
-      let options = { mimeType: 'video/webm;codecs=vp8,opus' };
-      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-        options = { mimeType: 'video/webm' };
-      }
-      
-      try { mediaRecorder = new MediaRecorder(combined, options); } 
-      catch (e) { mediaRecorder = new MediaRecorder(combined); }
-      
-      mediaRecorder.ondataavailable = e => {
-        if (e.data && e.data.size > 0) chunks.push(e.data);
-      };
-      
-      mediaRecorder.onstop = saveVideoWebM;
-      chunks = [];
-      recordStartTime = Date.now();
-      
-      // Merekam dalam 1 tarikan penuh tanpa timeslice (Tanpa angka 1000)
-      mediaRecorder.start();
+      if (!audioCtx) initAudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume();
+      if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.KeepAwake) { window.Capacitor.Plugins.KeepAwake.keepAwake(); }
+      audioPlayer.play(); playBtn.innerText = "⏸ PAUSE"; stopOverlay.style.display = 'block'; statusBox.innerText = "🔴 Merekam Video 720p..."; recordBtn.innerText = "🔴 SEDANG MEREKAM";
+      const stream = canvas.captureStream(30); const combined = new MediaStream([...stream.getVideoTracks(), mediaStreamDestination.stream.getAudioTracks()[0]]);
+      let options = { mimeType: 'video/webm;codecs=vp8,opus' }; if (!MediaRecorder.isTypeSupported(options.mimeType)) { options = { mimeType: 'video/webm' }; }
+      try { mediaRecorder = new MediaRecorder(combined, options); } catch (e) { mediaRecorder = new MediaRecorder(combined); }
+      mediaRecorder.ondataavailable = e => { if (e.data && e.data.size > 0) chunks.push(e.data); }; mediaRecorder.onstop = saveVideoWebM; chunks = []; recordStartTime = Date.now(); mediaRecorder.start();
     }
 
     function stopRecording() {
-      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-        mediaRecorder.stop();
-      }
-      if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.KeepAwake) {
-        window.Capacitor.Plugins.KeepAwake.allowSleep();
-      }
-      audioPlayer.pause();
-      playBtn.innerText = "▶ PLAY";
-      stopOverlay.style.display = 'none';
-      recordBtn.innerText = "🔴 MULAI REKAM 1080p";
-      statusBox.innerText = "Menyiapkan file video...";
-      if (playTimeout) clearTimeout(playTimeout);
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+      if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.KeepAwake) window.Capacitor.Plugins.KeepAwake.allowSleep();
+      audioPlayer.pause(); playBtn.innerText = "▶ PLAY"; stopOverlay.style.display = 'none'; recordBtn.innerText = "🔴 MULAI REKAM 720p"; statusBox.innerText = "Menyiapkan file video..."; if (playTimeout) clearTimeout(playTimeout);
     }
 
     function saveVideoWebM() {
-      const blob = new Blob(chunks, { type: 'video/webm' });
-      const recordDuration = Date.now() - recordStartTime;
-      statusBox.innerText = "⏳ Menjahit durasi (Biar bisa di-skip)...";
-      
-      // Proteksi koneksi
-      if (typeof ysFixWebmDuration === 'function') {
-        try {
-          ysFixWebmDuration(blob, recordDuration, function(fixedBlob) {
-            triggerDownload(fixedBlob);
-          }, {logger: false});
-        } catch (error) {
-          triggerDownload(blob);
-        }
-      } else {
-        triggerDownload(blob);
-      }
+      const blob = new Blob(chunks, { type: 'video/webm' }); const recordDuration = Date.now() - recordStartTime; statusBox.innerText = "⏳ Menjahit durasi (Biar bisa di-skip)...";
+      if (typeof ysFixWebmDuration === 'function') { try { ysFixWebmDuration(blob, recordDuration, function(fixedBlob) { triggerDownload(fixedBlob); }, {logger: false}); } catch (error) { triggerDownload(blob); } } else { triggerDownload(blob); }
     }
 
     function triggerDownload(finalBlob) {
-      statusBox.innerText = "⏳ Memproses pemotongan file video...";
-      const url = URL.createObjectURL(finalBlob);
-      
-      const oldVid = document.getElementById('previewVid'); if(oldVid) oldVid.remove();
-      const oldBtn = document.getElementById('shareBtnDewa'); if(oldBtn) oldBtn.remove();
-      
-      const vid = document.createElement('video'); vid.id = 'previewVid'; vid.src = url; vid.controls = true;
-      vid.setAttribute('controlsList', 'nodownload'); vid.style.width = "100%"; vid.style.marginTop = "20px"; vid.style.border = "3px solid #00d2ff"; vid.style.borderRadius = "8px";
-      
-      const saveBtn = document.createElement('button'); saveBtn.id = 'shareBtnDewa'; saveBtn.innerText = "📥 SIMPAN VIDEO KE HP / PC";
-      saveBtn.style.width = "100%"; saveBtn.style.padding = "15px"; saveBtn.style.marginTop = "10px";
-      saveBtn.style.background = "linear-gradient(135deg, #00ffaa, #00bcd4)"; saveBtn.style.color = "black"; saveBtn.style.border = "none"; saveBtn.style.borderRadius = "8px"; saveBtn.style.fontWeight = "bold"; saveBtn.style.fontSize = "14px"; saveBtn.style.cursor = "pointer";
-      
+      statusBox.innerText = "⏳ Memproses pemotongan file video..."; const url = URL.createObjectURL(finalBlob);
+      const oldVid = document.getElementById('previewVid'); if(oldVid) oldVid.remove(); const oldBtn = document.getElementById('shareBtnDewa'); if(oldBtn) oldBtn.remove();
+      const vid = document.createElement('video'); vid.id = 'previewVid'; vid.src = url; vid.controls = true; vid.setAttribute('controlsList', 'nodownload'); vid.style.width = "100%"; vid.style.marginTop = "20px"; vid.style.border = "3px solid #00d2ff"; vid.style.borderRadius = "8px";
+      const saveBtn = document.createElement('button'); saveBtn.id = 'shareBtnDewa'; saveBtn.innerText = "📥 SIMPAN VIDEO KE HP / PC"; saveBtn.style.width = "100%"; saveBtn.style.padding = "15px"; saveBtn.style.marginTop = "10px"; saveBtn.style.background = "linear-gradient(135deg, #00ffaa, #00bcd4)"; saveBtn.style.color = "black"; saveBtn.style.border = "none"; saveBtn.style.borderRadius = "8px"; saveBtn.style.fontWeight = "bold"; saveBtn.style.fontSize = "14px"; saveBtn.style.cursor = "pointer";
       let isSaving = false;
       saveBtn.onclick = async () => {
-        if (isSaving) return; isSaving = true;
-        saveBtn.innerText = "⏳ MEMULAI PROSES SIMPAN...";
+        if (isSaving) return; isSaving = true; saveBtn.innerText = "⏳ MEMULAI PROSES SIMPAN...";
         try {
           if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem) {
-            const FS = window.Capacitor.Plugins.Filesystem;
-            const fileName = `Noir_v1_FHD_${Date.now()}.webm`;
-            await FS.writeFile({ path: fileName, data: "", directory: 'DOCUMENTS' });
-            
-            const chunkSize = 1572864; 
-            const totalChunks = Math.ceil(finalBlob.size / chunkSize);
+            const FS = window.Capacitor.Plugins.Filesystem; const fileName = `Noir_v1_720p_${Date.now()}.webm`; await FS.writeFile({ path: fileName, data: "", directory: 'DOCUMENTS' });
+            const chunkSize = 1572864; const totalChunks = Math.ceil(finalBlob.size / chunkSize);
             for (let i = 0; i < totalChunks; i++) {
               const start = i * chunkSize; const end = Math.min(start + chunkSize, finalBlob.size); const chunk = finalBlob.slice(start, end);
-              const base64Chunk = await new Promise((resolve, reject) => {
-                const reader = new FileReader(); reader.onload = () => resolve(reader.result.split(',')[1]); reader.onerror = reject; reader.readAsDataURL(chunk);
-              });
+              const base64Chunk = await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result.split(',')[1]); reader.onerror = reject; reader.readAsDataURL(chunk); });
               await FS.appendFile({ path: fileName, data: base64Chunk, directory: 'DOCUMENTS' });
-              const percent = Math.round(((i + 1) / totalChunks) * 100);
-              statusBox.innerText = `⏳ Menulis ke memori HP... ${percent}%`; saveBtn.innerText = `⏳ MENYIMPAN... ${percent}%`;
+              const percent = Math.round(((i + 1) / totalChunks) * 100); statusBox.innerText = `⏳ Menulis ke memori HP... ${percent}%`; saveBtn.innerText = `⏳ MENYIMPAN... ${percent}%`;
             }
-            saveBtn.innerText = "✅ TERSIMPAN DI DOCUMENTS HP!"; statusBox.innerText = `🎉 SUKSES! Video FHD tersimpan di folder Documents!`;
+            saveBtn.innerText = "✅ TERSIMPAN DI DOCUMENTS HP!"; statusBox.innerText = `🎉 SUKSES! Video 720p tersimpan di folder Documents!`;
           } else {
-            statusBox.innerText = "⏳ Mengunduh lewat Browser...";
-            const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = url;
-            a.download = `Noir_v1_FHD_${Date.now()}.webm`;
-            document.body.appendChild(a);
-            a.click();
-            setTimeout(() => { document.body.removeChild(a); }, 100);
-            saveBtn.innerText = "✅ VIDEO SUKSES DIUNDUH!";
-            statusBox.innerText = `🎉 SUKSES! Video berhasil diunduh ke perangkat Anda.`;
+            statusBox.innerText = "⏳ Mengunduh lewat Browser..."; const a = document.createElement('a'); a.style.display = 'none'; a.href = url; a.download = `Noir_v1_720p_${Date.now()}.webm`; document.body.appendChild(a); a.click(); setTimeout(() => { document.body.removeChild(a); }, 100); saveBtn.innerText = "✅ VIDEO SUKSES DIUNDUH!"; statusBox.innerText = `🎉 SUKSES! Video berhasil diunduh ke perangkat Anda.`;
           }
-        } catch(e) {
-          saveBtn.innerText = "❌ GAGAL MENYIMPAN"; statusBox.innerText = "Terjadi Error: " + e.message; isSaving = false;
-        }
+        } catch(e) { saveBtn.innerText = "❌ GAGAL MENYIMPAN"; statusBox.innerText = "Terjadi Error: " + e.message; isSaving = false; }
       };
-      
-      const controlsDiv = document.getElementById('controls'); controlsDiv.appendChild(vid); controlsDiv.appendChild(saveBtn);
-      saveBtn.scrollIntoView({ behavior: 'smooth' });
-      setTimeout(() => { if(!isSaving) saveBtn.click(); }, 1500);
+      const controlsDiv = document.getElementById('controls'); controlsDiv.appendChild(vid); controlsDiv.appendChild(saveBtn); saveBtn.scrollIntoView({ behavior: 'smooth' }); setTimeout(() => { if(!isSaving) saveBtn.click(); }, 1500);
     }
   </script>
 </body>
