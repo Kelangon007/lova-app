@@ -1,4 +1,4 @@
-package com.lova.app;
+package com.kelangon.bassjazz;
 
 import com.getcapacitor.BridgeActivity;
 

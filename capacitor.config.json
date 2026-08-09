@@ -1,5 +1,6 @@
 {
-  "appId": "com.lova.appambientv1",
-  "appName": "Ambient v.1",
-  "webDir": "www"
+  "appId": "com.kelangon.bassjazz",
+  "appName": "Bass Jazz",
+  "webDir": "www",
+  "bundledWebRuntime": false
 }
