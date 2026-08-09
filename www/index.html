@@ -44,7 +44,7 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Bass Jazz (50 Vis + Realist Cone Speakers).</div>
+    <div id="statusBox">Siap. Bass Jazz (50 Normal Vis + 20 Static Real Cone).</div>
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
       <label for="audioInput" class="file-label" style="border-bottom: 3px solid #00bcd4">2. MUSIK (BANYAK)</label>
@@ -138,23 +138,34 @@
 
     <hr style="border: 0; border-top: 1px solid #333; width: 100%; margin: 5px 0;">
 
+    <!-- 20 MODEL SPEAKER REALISTIS (BINGKAI DIAM, MEMBRAN AKTIF) -->
     <div class="row">
       <label style="color:#ffb300;">EFEK SPEAKER</label>
       <select id="speakerStyle">
         <option value="none">🚫 Sembunyikan Speaker</option>
-        <option value="golden_cone">🟡 Golden Cone (Sesuai Foto)</option>
-        <option value="classic_black">⚫ Classic Black Subwoofer</option>
-        <option value="white_monitor">⚪ White Monitor Cone</option>
-        <option value="silver_alum">🔘 Silver Aluminum Driver</option>
-        <option value="red_kevlar">🔴 Red Kevlar Bass</option>
-        <option value="neon_ring">⭕ Cyan Neon Glowing Ring</option>
-        <option value="hollow_pulse">➰ Minimalist Hollow Pulse</option>
-        <option value="glass_dome">🪞 Transparent Glass Dome</option>
-        <option value="dj_strobe">🌈 DJ Strobe Rings</option>
-        <option value="shatter_bass">💥 Shattered Bass Impact</option>
+        <option value="golden_cone">🟡 1. Golden Cone Studio</option>
+        <option value="classic_black">⚫ 2. Classic Black Subwoofer</option>
+        <option value="white_monitor">⚪ 3. White Monitor Cone</option>
+        <option value="kevlar_yellow">🟨 4. Yellow Kevlar Driver</option>
+        <option value="kevlar_red">🟥 5. Red Kevlar Subwoofer</option>
+        <option value="silver_alum">🔘 6. Silver Aluminum Cone</option>
+        <option value="copper_driver">🟠 7. Copper Metallic Cone</option>
+        <option value="paper_vintage">📜 8. Vintage Paper Ribbed</option>
+        <option value="carbon_fiber">🏎️ 9. Carbon Fiber Dark</option>
+        <option value="blue_poly">🟦 10. Blue Polypropylene</option>
+        <option value="white_dimpled">🤍 11. White Dimpled Cone</option>
+        <option value="orange_studio">🟧 12. Orange Studio Monitor</option>
+        <option value="grey_graphite">🪨 13. Grey Graphite Woofer</option>
+        <option value="titanium_dome">⚙️ 14. Titanium Shiny Dome</option>
+        <option value="purple_anodized">🟪 15. Purple Anodized Cone</option>
+        <option value="green_poly">🟩 16. Green Poly Subwoofer</option>
+        <option value="wood_fiber">🪵 17. Brown Wood Fiber Cone</option>
+        <option value="clear_poly">🧊 18. Clear Frosted Poly</option>
+        <option value="ribbed_black">🎼 19. Black Ribbed Studio</option>
+        <option value="bronze_spun">🏺 20. Spun Bronze Klipsch-style</option>
       </select>
     </div>
-    <!-- PASTIKAN SETTINGAN INI PAS UNTUK MENUTUPI GAMBAR LATAR -->
+    
     <div class="row"><label style="color:#ffb300;">UKURAN SPK</label><input type="range" id="speakerSize" min="0.2" max="5.0" step="0.1" value="1.5"></div>
     <div class="row"><label style="color:#ffb300;">OPASITAS SPK</label><input type="range" id="speakerOpacity" min="0.1" max="1.0" step="0.05" value="1.0"></div>
 
@@ -448,100 +459,71 @@
       if(dataArray) { bass = (dataArray[1] + dataArray[2] + dataArray[3]) / (255 * 3); }
       if(isNaN(bass)) bass = 0;
 
-      // UKURAN BINGKAI SPEAKER (STATIC / TIDAK MEMBESAR-MENGECIL)
-      let frameR = 50 * scale; 
-      // UKURAN DENYUT MEMBRAN DALAM (BERGETAR)
-      let pulse = bass * 15 * scale; 
+      // BINGKAI LUAR SPEAKER (STATIC MUTLAK - TIDAK MEMBESAR/MENGECIL)
+      let baseR = 50 * scale; 
+      // DENYUT MEMBRAN DALAM SAJA (MAKS 12 PIKSEL)
+      let pulse = bass * 12 * scale; 
+
+      // FUNGSI HELPER UNTUK MENGGAMBAR 20 SPEAKER REALISTIS
+      function drawRealSpk(x, y, surroundCol, coneStops, capStops, ribs=0) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.globalAlpha = opac;
+
+        // 1. Static Surround (Karet pinggiran/Basket)
+        ctx.beginPath(); ctx.arc(0,0, baseR, 0, Math.PI*2);
+        ctx.fillStyle = surroundCol; ctx.fill();
+        ctx.lineWidth = 1.5 * scale; ctx.strokeStyle = '#050505'; ctx.stroke();
+
+        // 2. Cone (Membran yang diam di ujung luar, bergerak di tengah)
+        let coneR = baseR * 0.85;
+        let capR = baseR * 0.3 + pulse; 
+        
+        let grad = ctx.createRadialGradient(0,0, capR, 0,0, coneR);
+        coneStops.forEach(st => grad.addColorStop(st[0], st[1]));
+        ctx.beginPath(); ctx.arc(0,0, coneR, 0, Math.PI*2);
+        ctx.fillStyle = grad; ctx.fill();
+        
+        if(ribs > 0) {
+            ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+            for(let i=1; i<=ribs; i++) {
+                ctx.beginPath(); ctx.arc(0,0, capR + (coneR-capR)*(i/(ribs+1)), 0, Math.PI*2); ctx.stroke();
+            }
+        }
+
+        // 3. Dust Cap (Tutup debu tengah yang memompa maju mundur)
+        let capGrad = ctx.createRadialGradient(0,-capR*0.3, 0, 0,0, capR);
+        capStops.forEach(st => capGrad.addColorStop(st[0], st[1]));
+        ctx.beginPath(); ctx.arc(0,0, capR, 0, Math.PI*2);
+        ctx.fillStyle = capGrad; ctx.fill();
+        
+        ctx.beginPath(); ctx.arc(0,0, capR, 0, Math.PI*2);
+        ctx.lineWidth = 1 * scale; ctx.strokeStyle = 'rgba(0,0,0,0.6)'; ctx.stroke();
+
+        ctx.restore();
+      }
 
       function renderSpk(x, y) {
-          ctx.save();
-          ctx.translate(x, y);
-          ctx.globalAlpha = opac;
-
-          if (style === 'golden_cone') {
-              ctx.beginPath(); ctx.arc(0,0, frameR, 0, Math.PI*2); 
-              ctx.lineWidth = 8 * scale; ctx.strokeStyle = '#1a1a1a'; ctx.stroke();
-              let coneR = Math.min(frameR * 0.95, frameR * 0.8 + pulse);
-              let grad = ctx.createRadialGradient(0,0, coneR*0.1, 0,0, coneR);
-              grad.addColorStop(0, '#3e2700'); grad.addColorStop(0.3, '#ffc107'); 
-              grad.addColorStop(0.8, '#8b5a00'); grad.addColorStop(1, '#111');
-              ctx.beginPath(); ctx.arc(0,0, coneR, 0, Math.PI*2); ctx.fillStyle = grad; ctx.fill();
-              ctx.beginPath(); ctx.arc(0,0, frameR*0.25 + pulse*0.5, 0, Math.PI*2); ctx.fillStyle = '#222'; ctx.fill();
-          }
-          else if (style === 'classic_black') {
-              ctx.beginPath(); ctx.arc(0,0, frameR, 0, Math.PI*2); 
-              ctx.lineWidth = 10 * scale; ctx.strokeStyle = '#222'; ctx.stroke();
-              let coneR = Math.min(frameR * 0.95, frameR * 0.8 + pulse);
-              let grad = ctx.createRadialGradient(0,0, coneR*0.1, 0,0, coneR);
-              grad.addColorStop(0, '#444'); grad.addColorStop(0.8, '#111'); grad.addColorStop(1, '#050505');
-              ctx.beginPath(); ctx.arc(0,0, coneR, 0, Math.PI*2); ctx.fillStyle = grad; ctx.fill();
-              ctx.beginPath(); ctx.arc(0,0, frameR*0.3 + pulse*0.5, 0, Math.PI*2); ctx.fillStyle = '#0a0a0a'; ctx.fill();
-          }
-          else if (style === 'white_monitor') {
-              ctx.beginPath(); ctx.arc(0,0, frameR, 0, Math.PI*2); 
-              ctx.lineWidth = 12 * scale; ctx.strokeStyle = '#111'; ctx.stroke();
-              let coneR = Math.min(frameR * 0.95, frameR * 0.75 + pulse);
-              let grad = ctx.createRadialGradient(0,0, coneR*0.5, 0,0, coneR);
-              grad.addColorStop(0, '#fff'); grad.addColorStop(0.9, '#ddd'); grad.addColorStop(1, '#999');
-              ctx.beginPath(); ctx.arc(0,0, coneR, 0, Math.PI*2); ctx.fillStyle = grad; ctx.fill();
-              ctx.beginPath(); ctx.arc(0,0, frameR*0.2 + pulse*0.5, 0, Math.PI*2); ctx.fillStyle = '#111'; ctx.fill();
-          }
-          else if (style === 'silver_alum') {
-              ctx.beginPath(); ctx.arc(0,0, frameR, 0, Math.PI*2); 
-              ctx.lineWidth = 6 * scale; ctx.strokeStyle = '#333'; ctx.stroke();
-              let coneR = Math.min(frameR * 0.95, frameR * 0.85 + pulse);
-              let grad = ctx.createConicGradient ? ctx.createConicGradient(time, 0, 0) : ctx.createRadialGradient(0,0,0,0,0,coneR);
-              if(ctx.createConicGradient) { grad.addColorStop(0, '#ddd'); grad.addColorStop(0.25, '#fff'); grad.addColorStop(0.5, '#aaa'); grad.addColorStop(0.75, '#fff'); grad.addColorStop(1, '#ddd'); }
-              ctx.beginPath(); ctx.arc(0,0, coneR, 0, Math.PI*2); ctx.fillStyle = grad; ctx.fill();
-              ctx.beginPath(); ctx.arc(0,0, frameR*0.2 + pulse*0.6, 0, Math.PI*2); ctx.fillStyle = '#eee'; ctx.fill();
-          }
-          else if (style === 'red_kevlar') {
-              ctx.beginPath(); ctx.arc(0,0, frameR, 0, Math.PI*2); 
-              ctx.lineWidth = 8 * scale; ctx.strokeStyle = '#111'; ctx.stroke();
-              let coneR = Math.min(frameR * 0.95, frameR * 0.85 + pulse);
-              let grad = ctx.createRadialGradient(0,0, coneR*0.2, 0,0, coneR);
-              grad.addColorStop(0, '#500'); grad.addColorStop(0.6, '#b00'); grad.addColorStop(1, '#200');
-              ctx.beginPath(); ctx.arc(0,0, coneR, 0, Math.PI*2); ctx.fillStyle = grad; ctx.fill();
-              ctx.beginPath(); for(let i=0; i<10; i++) { ctx.arc(0,0, coneR*(i/10), 0, Math.PI*2); } ctx.lineWidth=1; ctx.strokeStyle='rgba(0,0,0,0.3)'; ctx.stroke();
-              ctx.beginPath(); ctx.arc(0,0, frameR*0.25 + pulse*0.5, 0, Math.PI*2); ctx.fillStyle = '#1a0000'; ctx.fill();
-          }
-          else if (style === 'neon_ring') {
-              ctx.beginPath(); ctx.arc(0,0, frameR, 0, Math.PI*2); 
-              ctx.lineWidth = 4 * scale + pulse*0.5; ctx.strokeStyle = '#00e5ff'; 
-              ctx.shadowBlur = 20 + pulse; ctx.shadowColor = '#00e5ff'; ctx.stroke(); ctx.shadowBlur = 0;
-              ctx.beginPath(); ctx.arc(0,0, frameR*0.5 + pulse, 0, Math.PI*2);
-              ctx.lineWidth = 2 * scale; ctx.strokeStyle = `rgba(0,229,255,${0.5+bass})`; ctx.stroke();
-          }
-          else if (style === 'hollow_pulse') {
-              ctx.beginPath(); ctx.arc(0,0, frameR, 0, Math.PI*2); ctx.lineWidth = 2 * scale; ctx.strokeStyle = '#fff'; ctx.stroke();
-              ctx.beginPath(); ctx.arc(0,0, frameR*0.7 + pulse*0.5, 0, Math.PI*2); ctx.lineWidth = 1 * scale; ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.stroke();
-              ctx.beginPath(); ctx.arc(0,0, frameR*0.3 + pulse, 0, Math.PI*2); ctx.fillStyle = `rgba(255,255,255,${0.2 + bass*0.5})`; ctx.fill();
-          }
-          else if (style === 'glass_dome') {
-              ctx.beginPath(); ctx.arc(0,0, frameR, 0, Math.PI*2); ctx.lineWidth = 3 * scale; ctx.strokeStyle = 'rgba(255,255,255,0.4)'; ctx.stroke();
-              let coneR = Math.min(frameR * 0.95, frameR * 0.8 + pulse);
-              ctx.beginPath(); ctx.arc(0,0, coneR, 0, Math.PI*2); ctx.fillStyle = 'rgba(255,255,255,0.1)'; ctx.fill();
-              ctx.beginPath(); ctx.ellipse(-coneR*0.3, -coneR*0.3, coneR*0.4, coneR*0.15, Math.PI/4, 0, Math.PI*2); ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.fill();
-              ctx.beginPath(); ctx.arc(0,0, frameR*0.2 + pulse*0.5, 0, Math.PI*2); ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.fill();
-          }
-          else if (style === 'dj_strobe') {
-              let colors = ['#f00', '#0f0', '#00f', '#0ff', '#f0f', '#ff0'];
-              let c = colors[Math.floor(time * 5) % colors.length];
-              ctx.beginPath(); ctx.arc(0,0, frameR, 0, Math.PI*2); ctx.lineWidth = 10 * scale; ctx.strokeStyle = c; ctx.shadowBlur = 15; ctx.shadowColor = c; ctx.stroke();
-              ctx.beginPath(); ctx.arc(0,0, frameR*0.4 + pulse, 0, Math.PI*2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.shadowBlur = 0;
-          }
-          else if (style === 'shatter_bass') {
-              ctx.beginPath(); ctx.arc(0,0, frameR, 0, Math.PI*2); ctx.lineWidth = 3 * scale; ctx.strokeStyle = '#fff'; ctx.stroke();
-              let spikes = 30;
-              for(let i=0; i<spikes; i++) {
-                  let a = (i * Math.PI * 2) / spikes;
-                  let spikeLen = frameR + (bass * 40 * scale * Math.random());
-                  ctx.beginPath(); ctx.moveTo(Math.cos(a)*frameR, Math.sin(a)*frameR); ctx.lineTo(Math.cos(a)*spikeLen, Math.sin(a)*spikeLen);
-                  ctx.lineWidth = 2 * scale; ctx.strokeStyle = `rgba(255,255,255,${0.3 + bass})`; ctx.stroke();
-              }
-          }
-
-          ctx.restore();
+          if (style === 'golden_cone') drawRealSpk(x, y, '#111', [[0,'#ffca28'], [1,'#8b5a00']], [[0,'#444'], [1,'#111']]);
+          else if (style === 'classic_black') drawRealSpk(x, y, '#1a1a1a', [[0,'#333'], [1,'#0a0a0a']], [[0,'#222'], [1,'#050505']]);
+          else if (style === 'white_monitor') drawRealSpk(x, y, '#111', [[0,'#fff'], [1,'#ccc']], [[0,'#333'], [1,'#111']]);
+          else if (style === 'kevlar_yellow') drawRealSpk(x, y, '#111', [[0,'#fbc02d'], [1,'#f57f17']], [[0,'#222'], [1,'#000']], 3);
+          else if (style === 'kevlar_red') drawRealSpk(x, y, '#111', [[0,'#e53935'], [1,'#b71c1c']], [[0,'#222'], [1,'#000']], 3);
+          else if (style === 'silver_alum') drawRealSpk(x, y, '#222', [[0,'#eee'], [1,'#888']], [[0,'#ddd'], [1,'#666']]);
+          else if (style === 'copper_driver') drawRealSpk(x, y, '#111', [[0,'#d88c51'], [1,'#8a5626']], [[0,'#a0632c'], [1,'#472c13']]);
+          else if (style === 'paper_vintage') drawRealSpk(x, y, '#222', [[0,'#8c7b6c'], [1,'#4a4139']], [[0,'#222'], [1,'#111']], 4);
+          else if (style === 'carbon_fiber') drawRealSpk(x, y, '#1a1a1a', [[0,'#555'], [1,'#222']], [[0,'#333'], [1,'#111']]);
+          else if (style === 'blue_poly') drawRealSpk(x, y, '#111', [[0,'#1e3f66'], [1,'#0c1929']], [[0,'#222'], [1,'#000']]);
+          else if (style === 'white_dimpled') drawRealSpk(x, y, '#222', [[0,'#f5f5f5'], [1,'#a0a0a0']], [[0,'#ddd'], [1,'#888']]);
+          else if (style === 'orange_studio') drawRealSpk(x, y, '#111', [[0,'#ff9800'], [1,'#e65100']], [[0,'#222'], [1,'#000']]);
+          else if (style === 'grey_graphite') drawRealSpk(x, y, '#111', [[0,'#757575'], [1,'#424242']], [[0,'#212121'], [1,'#000']]);
+          else if (style === 'titanium_dome') drawRealSpk(x, y, '#222', [[0,'#b0bec5'], [1,'#546e7a']], [[0,'#cfd8dc'], [1,'#455a64']]);
+          else if (style === 'purple_anodized') drawRealSpk(x, y, '#111', [[0,'#7b1fa2'], [1,'#4a148c']], [[0,'#222'], [1,'#111']]);
+          else if (style === 'green_poly') drawRealSpk(x, y, '#111', [[0,'#2e7d32'], [1,'#1b5e20']], [[0,'#222'], [1,'#000']]);
+          else if (style === 'wood_fiber') drawRealSpk(x, y, '#111', [[0,'#5d4037'], [1,'#3e2723']], [[0,'#222'], [1,'#111']]);
+          else if (style === 'clear_poly') drawRealSpk(x, y, '#333', [[0,'#cfd8dc'], [1,'#90a4ae']], [[0,'#37474f'], [1,'#263238']]);
+          else if (style === 'ribbed_black') drawRealSpk(x, y, '#111', [[0,'#424242'], [1,'#212121']], [[0,'#111'], [1,'#000']], 5);
+          else if (style === 'bronze_spun') drawRealSpk(x, y, '#111', [[0,'#cd7f32'], [1,'#8b4513']], [[0,'#cd7f32'], [1,'#8b4513']], 6);
       }
 
       renderSpk(spk1X, spk1Y);
