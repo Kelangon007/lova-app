@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bass Jazz (720p - 50 Vis + Dual Speaker)</title>
+  <title>Bass Jazz (Static Frame Speakers)</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body { margin: 0; background-image: linear-gradient(45deg, #222 25%, transparent 25%), linear-gradient(-45deg, #222 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #222 75%), linear-gradient(-45deg, transparent 75%, #222 75%); background-size: 20px 20px; background-color: #333; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; }
@@ -44,7 +44,7 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Bass Jazz (50 Vis Normal + 2 Speaker).</div>
+    <div id="statusBox">Siap. Bass Jazz (50 Vis + Realist Cone Speakers).</div>
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
       <label for="audioInput" class="file-label" style="border-bottom: 3px solid #00bcd4">2. MUSIK (BANYAK)</label>
@@ -138,7 +138,6 @@
 
     <hr style="border: 0; border-top: 1px solid #333; width: 100%; margin: 5px 0;">
 
-    <!-- EFEK SPEAKER BARU PENGGANTI ASAP -->
     <div class="row">
       <label style="color:#ffb300;">EFEK SPEAKER</label>
       <select id="speakerStyle">
@@ -155,6 +154,7 @@
         <option value="shatter_bass">💥 Shattered Bass Impact</option>
       </select>
     </div>
+    <!-- PASTIKAN SETTINGAN INI PAS UNTUK MENUTUPI GAMBAR LATAR -->
     <div class="row"><label style="color:#ffb300;">UKURAN SPK</label><input type="range" id="speakerSize" min="0.2" max="5.0" step="0.1" value="1.5"></div>
     <div class="row"><label style="color:#ffb300;">OPASITAS SPK</label><input type="range" id="speakerOpacity" min="0.1" max="1.0" step="0.05" value="1.0"></div>
 
@@ -262,8 +262,6 @@
 
     // POSISI VISUALIZER & DUAL SPEAKER
     let visW = 400; let visX = (width - visW) / 2; let visY = height - 160;
-    
-    // Inisialisasi posisi speaker kiri dan kanan
     let spk1X = 250; let spk1Y = height - 300;
     let spk2X = width - 250; let spk2Y = height - 300;
     
@@ -426,7 +424,6 @@
     let particles = []; let weatherParticles = [];
     for (let i = 0; i < 400; i++) { particles.push(new RealisticFilmJitter()); weatherParticles.push(new WeatherParticle()); }
 
-    // LOGIKA SYMMETRIC MUTLAK
     function getSymmetricVal(index, totalItems, bufferLen) {
       try {
         if (!dataArray) return 0;
@@ -438,7 +435,7 @@
     }
 
     // =========================================================
-    // FITUR BARU: GAMBAR DUA MEMBRAN SPEAKER (EFEK PANTULAN BASS)
+    // FITUR SPEAKER BERDENYUT (FRAME LUAR STATIS, MEMBRAN AKTIF)
     // =========================================================
     function drawSpeakers(bufferLen) {
       let style = document.getElementById('speakerStyle').value;
@@ -447,14 +444,14 @@
       let scale = parseFloat(document.getElementById('speakerSize').value);
       let opac = parseFloat(document.getElementById('speakerOpacity').value);
       
-      // Ambil frekuensi rendah untuk mendeteksi dentuman Bass (Indeks 1, 2, 3 dari FFT)
       let bass = 0;
       if(dataArray) { bass = (dataArray[1] + dataArray[2] + dataArray[3]) / (255 * 3); }
       if(isNaN(bass)) bass = 0;
 
-      let baseR = 50 * scale;
-      let bounce = bass * 25 * scale; // Speaker memantul sejauh 25 pixel maksimal
-      let r = baseR + bounce;
+      // UKURAN BINGKAI SPEAKER (STATIC / TIDAK MEMBESAR-MENGECIL)
+      let frameR = 50 * scale; 
+      // UKURAN DENYUT MEMBRAN DALAM (BERGETAR)
+      let pulse = bass * 15 * scale; 
 
       function renderSpk(x, y) {
           ctx.save();
@@ -462,73 +459,84 @@
           ctx.globalAlpha = opac;
 
           if (style === 'golden_cone') {
-              let grad = ctx.createRadialGradient(0,0, r*0.1, 0,0, r);
-              grad.addColorStop(0, '#3e2700'); grad.addColorStop(0.3, '#ffc107'); // Gold Cone
+              ctx.beginPath(); ctx.arc(0,0, frameR, 0, Math.PI*2); 
+              ctx.lineWidth = 8 * scale; ctx.strokeStyle = '#1a1a1a'; ctx.stroke();
+              let coneR = Math.min(frameR * 0.95, frameR * 0.8 + pulse);
+              let grad = ctx.createRadialGradient(0,0, coneR*0.1, 0,0, coneR);
+              grad.addColorStop(0, '#3e2700'); grad.addColorStop(0.3, '#ffc107'); 
               grad.addColorStop(0.8, '#8b5a00'); grad.addColorStop(1, '#111');
-              ctx.beginPath(); ctx.arc(0,0, r, 0, Math.PI*2); ctx.fillStyle = grad; ctx.fill();
-              ctx.beginPath(); ctx.arc(0,0, r, 0, Math.PI*2); ctx.lineWidth = 8 * scale; ctx.strokeStyle = '#1a1a1a'; ctx.stroke(); // Surround
-              ctx.beginPath(); ctx.arc(0,0, r*0.3 + bounce*0.3, 0, Math.PI*2); ctx.fillStyle = '#222'; ctx.fill(); // Dust cap
+              ctx.beginPath(); ctx.arc(0,0, coneR, 0, Math.PI*2); ctx.fillStyle = grad; ctx.fill();
+              ctx.beginPath(); ctx.arc(0,0, frameR*0.25 + pulse*0.5, 0, Math.PI*2); ctx.fillStyle = '#222'; ctx.fill();
           }
           else if (style === 'classic_black') {
-              let grad = ctx.createRadialGradient(0,0, r*0.1, 0,0, r);
+              ctx.beginPath(); ctx.arc(0,0, frameR, 0, Math.PI*2); 
+              ctx.lineWidth = 10 * scale; ctx.strokeStyle = '#222'; ctx.stroke();
+              let coneR = Math.min(frameR * 0.95, frameR * 0.8 + pulse);
+              let grad = ctx.createRadialGradient(0,0, coneR*0.1, 0,0, coneR);
               grad.addColorStop(0, '#444'); grad.addColorStop(0.8, '#111'); grad.addColorStop(1, '#050505');
-              ctx.beginPath(); ctx.arc(0,0, r, 0, Math.PI*2); ctx.fillStyle = grad; ctx.fill();
-              ctx.beginPath(); ctx.arc(0,0, r, 0, Math.PI*2); ctx.lineWidth = 10 * scale; ctx.strokeStyle = '#222'; ctx.stroke();
-              ctx.beginPath(); ctx.arc(0,0, r*0.35 + bounce*0.2, 0, Math.PI*2); ctx.fillStyle = '#0a0a0a'; ctx.fill();
+              ctx.beginPath(); ctx.arc(0,0, coneR, 0, Math.PI*2); ctx.fillStyle = grad; ctx.fill();
+              ctx.beginPath(); ctx.arc(0,0, frameR*0.3 + pulse*0.5, 0, Math.PI*2); ctx.fillStyle = '#0a0a0a'; ctx.fill();
           }
           else if (style === 'white_monitor') {
-              let grad = ctx.createRadialGradient(0,0, r*0.5, 0,0, r);
+              ctx.beginPath(); ctx.arc(0,0, frameR, 0, Math.PI*2); 
+              ctx.lineWidth = 12 * scale; ctx.strokeStyle = '#111'; ctx.stroke();
+              let coneR = Math.min(frameR * 0.95, frameR * 0.75 + pulse);
+              let grad = ctx.createRadialGradient(0,0, coneR*0.5, 0,0, coneR);
               grad.addColorStop(0, '#fff'); grad.addColorStop(0.9, '#ddd'); grad.addColorStop(1, '#999');
-              ctx.beginPath(); ctx.arc(0,0, r, 0, Math.PI*2); ctx.fillStyle = grad; ctx.fill();
-              ctx.beginPath(); ctx.arc(0,0, r, 0, Math.PI*2); ctx.lineWidth = 12 * scale; ctx.strokeStyle = '#111'; ctx.stroke();
-              ctx.beginPath(); ctx.arc(0,0, r*0.25 + bounce*0.2, 0, Math.PI*2); ctx.fillStyle = '#111'; ctx.fill();
+              ctx.beginPath(); ctx.arc(0,0, coneR, 0, Math.PI*2); ctx.fillStyle = grad; ctx.fill();
+              ctx.beginPath(); ctx.arc(0,0, frameR*0.2 + pulse*0.5, 0, Math.PI*2); ctx.fillStyle = '#111'; ctx.fill();
           }
           else if (style === 'silver_alum') {
-              let grad = ctx.createConicGradient ? ctx.createConicGradient(time, 0, 0) : ctx.createRadialGradient(0,0,0,0,0,r);
+              ctx.beginPath(); ctx.arc(0,0, frameR, 0, Math.PI*2); 
+              ctx.lineWidth = 6 * scale; ctx.strokeStyle = '#333'; ctx.stroke();
+              let coneR = Math.min(frameR * 0.95, frameR * 0.85 + pulse);
+              let grad = ctx.createConicGradient ? ctx.createConicGradient(time, 0, 0) : ctx.createRadialGradient(0,0,0,0,0,coneR);
               if(ctx.createConicGradient) { grad.addColorStop(0, '#ddd'); grad.addColorStop(0.25, '#fff'); grad.addColorStop(0.5, '#aaa'); grad.addColorStop(0.75, '#fff'); grad.addColorStop(1, '#ddd'); }
-              ctx.beginPath(); ctx.arc(0,0, r, 0, Math.PI*2); ctx.fillStyle = grad; ctx.fill();
-              ctx.beginPath(); ctx.arc(0,0, r, 0, Math.PI*2); ctx.lineWidth = 6 * scale; ctx.strokeStyle = '#333'; ctx.stroke();
-              ctx.beginPath(); ctx.arc(0,0, r*0.2 + bounce*0.4, 0, Math.PI*2); ctx.fillStyle = '#eee'; ctx.fill();
+              ctx.beginPath(); ctx.arc(0,0, coneR, 0, Math.PI*2); ctx.fillStyle = grad; ctx.fill();
+              ctx.beginPath(); ctx.arc(0,0, frameR*0.2 + pulse*0.6, 0, Math.PI*2); ctx.fillStyle = '#eee'; ctx.fill();
           }
           else if (style === 'red_kevlar') {
-              let grad = ctx.createRadialGradient(0,0, r*0.2, 0,0, r);
+              ctx.beginPath(); ctx.arc(0,0, frameR, 0, Math.PI*2); 
+              ctx.lineWidth = 8 * scale; ctx.strokeStyle = '#111'; ctx.stroke();
+              let coneR = Math.min(frameR * 0.95, frameR * 0.85 + pulse);
+              let grad = ctx.createRadialGradient(0,0, coneR*0.2, 0,0, coneR);
               grad.addColorStop(0, '#500'); grad.addColorStop(0.6, '#b00'); grad.addColorStop(1, '#200');
-              ctx.beginPath(); ctx.arc(0,0, r, 0, Math.PI*2); ctx.fillStyle = grad; ctx.fill();
-              // Texturing
-              ctx.beginPath(); for(let i=0; i<10; i++) { ctx.arc(0,0, r*(i/10), 0, Math.PI*2); } ctx.lineWidth=1; ctx.strokeStyle='rgba(0,0,0,0.3)'; ctx.stroke();
-              ctx.beginPath(); ctx.arc(0,0, r, 0, Math.PI*2); ctx.lineWidth = 8 * scale; ctx.strokeStyle = '#111'; ctx.stroke();
-              ctx.beginPath(); ctx.arc(0,0, r*0.3 + bounce*0.3, 0, Math.PI*2); ctx.fillStyle = '#1a0000'; ctx.fill();
+              ctx.beginPath(); ctx.arc(0,0, coneR, 0, Math.PI*2); ctx.fillStyle = grad; ctx.fill();
+              ctx.beginPath(); for(let i=0; i<10; i++) { ctx.arc(0,0, coneR*(i/10), 0, Math.PI*2); } ctx.lineWidth=1; ctx.strokeStyle='rgba(0,0,0,0.3)'; ctx.stroke();
+              ctx.beginPath(); ctx.arc(0,0, frameR*0.25 + pulse*0.5, 0, Math.PI*2); ctx.fillStyle = '#1a0000'; ctx.fill();
           }
           else if (style === 'neon_ring') {
-              ctx.beginPath(); ctx.arc(0,0, r, 0, Math.PI*2); 
-              ctx.lineWidth = 6 * scale + (bounce*0.5); ctx.strokeStyle = '#00e5ff'; 
-              ctx.shadowBlur = 20; ctx.shadowColor = '#00e5ff'; ctx.stroke(); ctx.shadowBlur = 0;
+              ctx.beginPath(); ctx.arc(0,0, frameR, 0, Math.PI*2); 
+              ctx.lineWidth = 4 * scale + pulse*0.5; ctx.strokeStyle = '#00e5ff'; 
+              ctx.shadowBlur = 20 + pulse; ctx.shadowColor = '#00e5ff'; ctx.stroke(); ctx.shadowBlur = 0;
+              ctx.beginPath(); ctx.arc(0,0, frameR*0.5 + pulse, 0, Math.PI*2);
+              ctx.lineWidth = 2 * scale; ctx.strokeStyle = `rgba(0,229,255,${0.5+bass})`; ctx.stroke();
           }
           else if (style === 'hollow_pulse') {
-              ctx.beginPath(); ctx.arc(0,0, r, 0, Math.PI*2); ctx.lineWidth = 2 * scale; ctx.strokeStyle = '#fff'; ctx.stroke();
-              ctx.beginPath(); ctx.arc(0,0, r*0.7, 0, Math.PI*2); ctx.lineWidth = 1 * scale; ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.stroke();
-              ctx.beginPath(); ctx.arc(0,0, r*0.4, 0, Math.PI*2); ctx.fillStyle = `rgba(255,255,255,${0.2 + bass*0.5})`; ctx.fill();
+              ctx.beginPath(); ctx.arc(0,0, frameR, 0, Math.PI*2); ctx.lineWidth = 2 * scale; ctx.strokeStyle = '#fff'; ctx.stroke();
+              ctx.beginPath(); ctx.arc(0,0, frameR*0.7 + pulse*0.5, 0, Math.PI*2); ctx.lineWidth = 1 * scale; ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.stroke();
+              ctx.beginPath(); ctx.arc(0,0, frameR*0.3 + pulse, 0, Math.PI*2); ctx.fillStyle = `rgba(255,255,255,${0.2 + bass*0.5})`; ctx.fill();
           }
           else if (style === 'glass_dome') {
-              ctx.beginPath(); ctx.arc(0,0, r, 0, Math.PI*2); ctx.fillStyle = 'rgba(255,255,255,0.1)'; ctx.fill();
-              ctx.beginPath(); ctx.arc(0,0, r, 0, Math.PI*2); ctx.lineWidth = 3 * scale; ctx.strokeStyle = 'rgba(255,255,255,0.4)'; ctx.stroke();
-              // Specular reflection
-              ctx.beginPath(); ctx.ellipse(-r*0.3, -r*0.3, r*0.4, r*0.15, Math.PI/4, 0, Math.PI*2); ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.fill();
-              ctx.beginPath(); ctx.arc(0,0, r*0.2 + bounce*0.3, 0, Math.PI*2); ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.fill();
+              ctx.beginPath(); ctx.arc(0,0, frameR, 0, Math.PI*2); ctx.lineWidth = 3 * scale; ctx.strokeStyle = 'rgba(255,255,255,0.4)'; ctx.stroke();
+              let coneR = Math.min(frameR * 0.95, frameR * 0.8 + pulse);
+              ctx.beginPath(); ctx.arc(0,0, coneR, 0, Math.PI*2); ctx.fillStyle = 'rgba(255,255,255,0.1)'; ctx.fill();
+              ctx.beginPath(); ctx.ellipse(-coneR*0.3, -coneR*0.3, coneR*0.4, coneR*0.15, Math.PI/4, 0, Math.PI*2); ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.fill();
+              ctx.beginPath(); ctx.arc(0,0, frameR*0.2 + pulse*0.5, 0, Math.PI*2); ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.fill();
           }
           else if (style === 'dj_strobe') {
               let colors = ['#f00', '#0f0', '#00f', '#0ff', '#f0f', '#ff0'];
               let c = colors[Math.floor(time * 5) % colors.length];
-              ctx.beginPath(); ctx.arc(0,0, r, 0, Math.PI*2); ctx.lineWidth = 10 * scale; ctx.strokeStyle = c; ctx.shadowBlur = 15; ctx.shadowColor = c; ctx.stroke();
-              ctx.beginPath(); ctx.arc(0,0, r*0.5, 0, Math.PI*2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.shadowBlur = 0;
+              ctx.beginPath(); ctx.arc(0,0, frameR, 0, Math.PI*2); ctx.lineWidth = 10 * scale; ctx.strokeStyle = c; ctx.shadowBlur = 15; ctx.shadowColor = c; ctx.stroke();
+              ctx.beginPath(); ctx.arc(0,0, frameR*0.4 + pulse, 0, Math.PI*2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.shadowBlur = 0;
           }
           else if (style === 'shatter_bass') {
-              ctx.beginPath(); ctx.arc(0,0, baseR, 0, Math.PI*2); ctx.lineWidth = 3 * scale; ctx.strokeStyle = '#fff'; ctx.stroke();
+              ctx.beginPath(); ctx.arc(0,0, frameR, 0, Math.PI*2); ctx.lineWidth = 3 * scale; ctx.strokeStyle = '#fff'; ctx.stroke();
               let spikes = 30;
               for(let i=0; i<spikes; i++) {
                   let a = (i * Math.PI * 2) / spikes;
-                  let spikeLen = baseR + (bass * 40 * scale * Math.random());
-                  ctx.beginPath(); ctx.moveTo(Math.cos(a)*baseR, Math.sin(a)*baseR); ctx.lineTo(Math.cos(a)*spikeLen, Math.sin(a)*spikeLen);
+                  let spikeLen = frameR + (bass * 40 * scale * Math.random());
+                  ctx.beginPath(); ctx.moveTo(Math.cos(a)*frameR, Math.sin(a)*frameR); ctx.lineTo(Math.cos(a)*spikeLen, Math.sin(a)*spikeLen);
                   ctx.lineWidth = 2 * scale; ctx.strokeStyle = `rgba(255,255,255,${0.3 + bass})`; ctx.stroke();
               }
           }
