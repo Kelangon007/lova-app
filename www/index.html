@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bass Jazz (Static Frame Speakers)</title>
+  <title>Bass Jazz (Complete Edition)</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body { margin: 0; background-image: linear-gradient(45deg, #222 25%, transparent 25%), linear-gradient(-45deg, #222 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #222 75%), linear-gradient(-45deg, transparent 75%, #222 75%); background-size: 20px 20px; background-color: #333; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; }
@@ -32,6 +32,12 @@
     input[type="range"], select { flex: 1; height: 36px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px; }
     input[type="file"] { display: none; }
     optgroup { background: #111; color: #d4af37; font-weight: bold; }
+
+    /* MENU BERSAMPINGAN (UI BARU) */
+    .layout-grid { display: flex; gap: 15px; width: 100%; box-sizing: border-box; }
+    .layout-col { flex: 1; background: #222; padding: 12px; border-radius: 8px; border: 1px solid #3c3c3c; display: flex; flex-direction: column; gap: 8px; box-sizing: border-box; }
+    .layout-col label { width: 100%; text-align: left; font-size: 10px; margin-bottom: -4px; color: #aaa; font-weight: bold; }
+    .layout-col select, .layout-col input[type="range"] { width: 100%; margin-bottom: 5px; }
   </style>
 </head>
 
@@ -44,7 +50,7 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Bass Jazz (50 Normal Vis + 20 Static Real Cone).</div>
+    <div id="statusBox">Siap. Bass Jazz (UI Baru Bersampingan & Anti-Gagal).</div>
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
       <label for="audioInput" class="file-label" style="border-bottom: 3px solid #00bcd4">2. MUSIK (BANYAK)</label>
@@ -66,108 +72,151 @@
 
     <hr style="border: 0; border-top: 1px solid #333; width: 100%; margin: 5px 0;">
 
-    <div class="row">
-      <label style="color:#d4af37;">VISUALIZER</label>
-      <select id="visType">
-        <optgroup label="=== SOLID & CLASSIC BARS (1-10) ===">
-            <option value="vintage_bars">📊 1. Vintage Solid Bars</option>
-            <option value="winamp_classic">📻 2. Winamp Classic Peaks</option>
-            <option value="classic_eq">🎙️ 3. Classic Green-Yellow-Red EQ</option>
-            <option value="step_eq">🧱 4. Step Block EQ</option>
-            <option value="thin_eq">📏 5. Thin Minimalist EQ</option>
-            <option value="thick_bars">⬛ 6. Bold Heavy Solid Bars</option>
-            <option value="hollow_bars">🔲 7. Hollow Outline Bars</option>
-            <option value="rounded_bars">💊 8. Smooth Rounded Tip Bars</option>
-            <option value="split_eq">⏸️ 9. Split Center EQ Bars</option>
-            <option value="double_mirror">🪞 10. Dual Mirror Bars</option>
-        </optgroup>
-        <optgroup label="=== PEAKS, DOTS & VU METERS (11-20) ===">
-            <option value="dotted_eq">⏺️ 11. Dotted Peak EQ</option>
-            <option value="led_matrix">🚥 12. LED Dot Matrix</option>
-            <option value="analog_vu">🎛️ 13. Analog VU Meter (Amber)</option>
-            <option value="retro_oscilloscope">📺 14. CRT Oscilloscope Line</option>
-            <option value="peak_line">〰️ 15. Floating Peak Line Only</option>
-            <option value="peak_dots_only">⚪ 16. Floating Dots Peak Only</option>
-            <option value="dash_bars">➖ 17. Dashed Segment Bars</option>
-            <option value="meter_blocks">📶 18. Segmented Meter Blocks</option>
-            <option value="soft_glow_bars">🌟 19. Soft Glowing Ambient Bars</option>
-            <option value="white_caps">🧢 20. Solid Bars with White Cap</option>
-        </optgroup>
-        <optgroup label="=== MODERN & GRADIENT BARS (21-30) ===">
-            <option value="liquid_bar">💧 21. Liquid Glowing Cyan Bars</option>
-            <option value="cyber_pulse">⚡ 22. Neon Pulse Bars</option>
-            <option value="mirror_bars">🪞 23. Mirrored Glass Bars</option>
-            <option value="gradient_blocks">🎛️ 24. Cyan-Blue Gradient</option>
-            <option value="sunset_bars">🌅 25. Warm Sunset Gradient</option>
-            <option value="emerald_bars">💎 26. Emerald Green Gradient</option>
-            <option value="purple_haze">🟣 27. Purple-Pink Soft Bars</option>
-            <option value="gold_classic">👑 28. Golden Elegant EQ Bars</option>
-            <option value="monochrome_fade">🎞️ 29. Grayscale Fading Bars</option>
-            <option value="dual_tone">🌗 30. Dual Tone Top-Bottom Bars</option>
-        </optgroup>
-        <optgroup label="=== SMOOTH WAVES & LINES (31-40) ===">
-            <option value="modern_wave">🌊 31. Modern Smooth Wave</option>
-            <option value="filled_wave">🌊 32. Filled Ambient Waveform</option>
-            <option value="double_wave">〰️ 33. Double Layer Wave</option>
-            <option value="thin_wave">✒️ 34. Ultra Thin Crisp Line</option>
-            <option value="shadow_wave">🌒 35. Wave with Soft Shadow</option>
-            <option value="stereo_lines">⏸️ 36. Dual Parallel Lines</option>
-            <option value="smooth_curve">🔔 37. Symmetric Bell Curve Wave</option>
-            <option value="ribbon_wave">🎀 38. Flowing Ribbon Wave</option>
-            <option value="minimal_line">➖ 39. Single Clean Baseline</option>
-            <option value="calm_horizon">🌅 40. Calm Horizon Glow</option>
-        </optgroup>
-        <optgroup label="=== CIRCULAR & CLEAN STUDIO EQS (41-50) ===">
-            <option value="circle_bars">🎡 41. Circular Audio Bars</option>
-            <option value="circle_ring">⭕ 42. Simple Circular Line</option>
-            <option value="circle_dashed">🎯 43. Circular Dashed EQ</option>
-            <option value="circle_mirror">🪞 44. Inner & Outer Circle Bars</option>
-            <option value="vinyl_record">💿 45. Spinning Vinyl Record</option>
-            <option value="block_tower">🏙️ 46. Clean 3D EQ Blocks</option>
-            <option value="equalizer_3d">🛠️ 47. Cylinder Studio EQ</option>
-            <option value="floating_blocks">🧊 48. Floating Ambient Blocks</option>
-            <option value="center_pulse">🔘 49. Center Expanding Bars</option>
-            <option value="classic_studio">🎙️ 50. Pro Studio Rack EQ</option>
-        </optgroup>
-      </select>
+    <!-- VISUALIZER & SPEAKER BERADA DI SAMPING -->
+    <div class="layout-grid">
+      
+      <!-- KOLOM KIRI (VISUALIZER) -->
+      <div class="layout-col">
+        <label style="color:#00d2ff; text-align:center; font-size:12px; margin-bottom:10px;">VISUALIZER</label>
+        <select id="visType">
+            <optgroup label="=== SOLID BARS ===">
+                <option value="vintage_bars">📊 1. Vintage Solid Bars</option>
+                <option value="winamp_classic">📻 2. Winamp Peaks</option>
+                <option value="classic_eq">🎙️ 3. Classic Green-Red EQ</option>
+                <option value="step_eq">🧱 4. Step Block EQ</option>
+                <option value="thin_eq">📏 5. Thin Minimalist EQ</option>
+                <option value="thick_bars">⬛ 6. Bold Solid Bars</option>
+                <option value="hollow_bars">🔲 7. Hollow Outline Bars</option>
+                <option value="rounded_bars">💊 8. Rounded Tip Bars</option>
+                <option value="split_eq">⏸️ 9. Split Center EQ</option>
+                <option value="double_mirror">🪞 10. Dual Mirror Bars</option>
+            </optgroup>
+            <optgroup label="=== PEAKS & DOTS ===">
+                <option value="dotted_eq">⏺️ 11. Dotted Peak EQ</option>
+                <option value="led_matrix">🚥 12. LED Dot Matrix</option>
+                <option value="analog_vu">🎛️ 13. Analog VU Meter</option>
+                <option value="retro_oscilloscope">📺 14. CRT Oscilloscope</option>
+                <option value="peak_line">〰️ 15. Floating Peak Line</option>
+                <option value="peak_dots_only">⚪ 16. Floating Dots Peak</option>
+                <option value="dash_bars">➖ 17. Dashed Segment Bars</option>
+                <option value="meter_blocks">📶 18. Meter Blocks</option>
+                <option value="soft_glow_bars">🌟 19. Glowing Ambient Bars</option>
+                <option value="white_caps">🧢 20. Bars with White Cap</option>
+            </optgroup>
+            <optgroup label="=== MODERN GRADIENT ===">
+                <option value="liquid_bar">💧 21. Liquid Glowing Cyan</option>
+                <option value="cyber_pulse">⚡ 22. Neon Pulse Bars</option>
+                <option value="mirror_bars">🪞 23. Mirrored Glass Bars</option>
+                <option value="gradient_blocks">🎛️ 24. Cyan-Blue Gradient</option>
+                <option value="sunset_bars">🌅 25. Warm Sunset Gradient</option>
+                <option value="emerald_bars">💎 26. Emerald Green Grad</option>
+                <option value="purple_haze">🟣 27. Purple-Pink Soft</option>
+                <option value="gold_classic">👑 28. Golden Elegant EQ</option>
+                <option value="monochrome_fade">🎞️ 29. Grayscale Fading</option>
+                <option value="dual_tone">🌗 30. Dual Tone Top-Bot</option>
+            </optgroup>
+            <optgroup label="=== WAVES & LINES ===">
+                <option value="modern_wave">🌊 31. Modern Smooth Wave</option>
+                <option value="filled_wave">🌊 32. Filled Ambient Wave</option>
+                <option value="double_wave">〰️ 33. Double Layer Wave</option>
+                <option value="thin_wave">✒️ 34. Ultra Thin Line</option>
+                <option value="shadow_wave">🌒 35. Wave with Shadow</option>
+                <option value="stereo_lines">⏸️ 36. Dual Parallel Lines</option>
+                <option value="smooth_curve">🔔 37. Bell Curve Wave</option>
+                <option value="ribbon_wave">🎀 38. Flowing Ribbon Wave</option>
+                <option value="minimal_line">➖ 39. Minimalist Baseline</option>
+                <option value="calm_horizon">🌅 40. Calm Horizon Glow</option>
+            </optgroup>
+            <optgroup label="=== CIRCULAR & CLEAN ===">
+                <option value="circle_bars">🎡 41. Circular Audio Bars</option>
+                <option value="circle_ring">⭕ 42. Simple Circular Line</option>
+                <option value="circle_dashed">🎯 43. Circular Dashed EQ</option>
+                <option value="circle_mirror">🪞 44. Inner & Outer Circle</option>
+                <option value="vinyl_record">💿 45. Spinning Vinyl</option>
+                <option value="block_tower">🏙️ 46. Clean 3D EQ Blocks</option>
+                <option value="equalizer_3d">🛠️ 47. Cylinder Studio EQ</option>
+                <option value="floating_blocks">🧊 48. Floating Blocks</option>
+                <option value="center_pulse">🔘 49. Center Expanding</option>
+                <option value="classic_studio">🎙️ 50. Pro Studio Rack</option>
+            </optgroup>
+        </select>
+        
+        <label>TINGGI VIS.</label>
+        <input type="range" id="visHeight" min="30" max="600" value="150">
+        
+        <label>LEBAR VIS.</label>
+        <input type="range" id="visWidth" min="100" max="1100" value="400">
+        
+        <label>OPASITAS VIS.</label>
+        <input type="range" id="visOpacity" min="0.1" max="1.0" step="0.05" value="1.0">
+      </div>
+
+      <!-- KOLOM KANAN (SPEAKER) -->
+      <div class="layout-col">
+        <label style="color:#ffb300; text-align:center; font-size:12px; margin-bottom:10px;">EFEK SPEAKER</label>
+        <select id="speakerStyle">
+          <option value="none">🚫 Sembunyikan Speaker</option>
+          <option value="golden_cone">🟡 1. Golden Cone Studio</option>
+          <option value="classic_black">⚫ 2. Classic Black Subwoofer</option>
+          <option value="white_monitor">⚪ 3. White Monitor Cone</option>
+          <option value="kevlar_yellow">🟨 4. Yellow Kevlar Driver</option>
+          <option value="kevlar_red">🟥 5. Red Kevlar Subwoofer</option>
+          <option value="silver_alum">🔘 6. Silver Aluminum Cone</option>
+          <option value="copper_driver">🟠 7. Copper Metallic Cone</option>
+          <option value="paper_vintage">📜 8. Vintage Paper Ribbed</option>
+          <option value="carbon_fiber">🏎️ 9. Carbon Fiber Dark</option>
+          <option value="blue_poly">🟦 10. Blue Polypropylene</option>
+          <option value="white_dimpled">🤍 11. White Dimpled Cone</option>
+          <option value="orange_studio">🟧 12. Orange Studio Monitor</option>
+          <option value="grey_graphite">🪨 13. Grey Graphite Woofer</option>
+          <option value="titanium_dome">⚙️ 14. Titanium Shiny Dome</option>
+          <option value="purple_anodized">🟪 15. Purple Anodized Cone</option>
+          <option value="green_poly">🟩 16. Green Poly Subwoofer</option>
+          <option value="wood_fiber">🪵 17. Brown Wood Fiber Cone</option>
+          <option value="clear_poly">🧊 18. Clear Frosted Poly</option>
+          <option value="ribbed_black">🎼 19. Black Ribbed Studio</option>
+          <option value="bronze_spun">🏺 20. Spun Bronze Klipsch</option>
+        </select>
+
+        <label>UKURAN SPK</label>
+        <input type="range" id="speakerSize" min="0.2" max="5.0" step="0.1" value="1.5">
+
+        <label>OPASITAS SPK</label>
+        <input type="range" id="speakerOpacity" min="0.1" max="1.0" step="0.05" value="1.0">
+        
+        <div style="height: 38px;"></div> <!-- Spacer untuk menyamakan tinggi kolom -->
+      </div>
     </div>
 
-    <div class="row"><label>TINGGI VIS.</label><input type="range" id="visHeight" min="30" max="600" value="150"></div>
-    <div class="row"><label style="color:#00d2ff;">LEBAR VIS.</label><input type="range" id="visWidth" min="100" max="1100" value="400"></div>
-    <div class="row"><label style="color:#e040fb;">OPASITAS VIS.</label><input type="range" id="visOpacity" min="0.1" max="1.0" step="0.05" value="1.0"></div>
+    <hr style="border: 0; border-top: 1px dashed #333; width: 100%; margin: 5px 0;">
 
-    <hr style="border: 0; border-top: 1px solid #333; width: 100%; margin: 5px 0;">
-
-    <!-- 20 MODEL SPEAKER REALISTIS (BINGKAI DIAM, MEMBRAN AKTIF) -->
-    <div class="row">
-      <label style="color:#ffb300;">EFEK SPEAKER</label>
-      <select id="speakerStyle">
-        <option value="none">🚫 Sembunyikan Speaker</option>
-        <option value="golden_cone">🟡 1. Golden Cone Studio</option>
-        <option value="classic_black">⚫ 2. Classic Black Subwoofer</option>
-        <option value="white_monitor">⚪ 3. White Monitor Cone</option>
-        <option value="kevlar_yellow">🟨 4. Yellow Kevlar Driver</option>
-        <option value="kevlar_red">🟥 5. Red Kevlar Subwoofer</option>
-        <option value="silver_alum">🔘 6. Silver Aluminum Cone</option>
-        <option value="copper_driver">🟠 7. Copper Metallic Cone</option>
-        <option value="paper_vintage">📜 8. Vintage Paper Ribbed</option>
-        <option value="carbon_fiber">🏎️ 9. Carbon Fiber Dark</option>
-        <option value="blue_poly">🟦 10. Blue Polypropylene</option>
-        <option value="white_dimpled">🤍 11. White Dimpled Cone</option>
-        <option value="orange_studio">🟧 12. Orange Studio Monitor</option>
-        <option value="grey_graphite">🪨 13. Grey Graphite Woofer</option>
-        <option value="titanium_dome">⚙️ 14. Titanium Shiny Dome</option>
-        <option value="purple_anodized">🟪 15. Purple Anodized Cone</option>
-        <option value="green_poly">🟩 16. Green Poly Subwoofer</option>
-        <option value="wood_fiber">🪵 17. Brown Wood Fiber Cone</option>
-        <option value="clear_poly">🧊 18. Clear Frosted Poly</option>
-        <option value="ribbed_black">🎼 19. Black Ribbed Studio</option>
-        <option value="bronze_spun">🏺 20. Spun Bronze Klipsch-style</option>
-      </select>
+    <!-- EFEK KOPI DAN LILIN BERSAMPINGAN -->
+    <div class="layout-grid">
+      <div class="layout-col">
+        <label style="color:#d7ccc8; text-align:center; font-size:12px; margin-bottom:5px;">ASAP KOPI</label>
+        <select id="coffeeStyle">
+          <option value="none">🚫 Tanpa Asap Kopi</option>
+          <option value="soft_steam">☕ 1. Soft Warm Steam</option>
+          <option value="swirl_vapor">🌪️ 2. Swirling Vapor</option>
+          <option value="thin_wisp">🌬️ 3. Thin Elegant Wisp</option>
+          <option value="heavy_steam">☁️ 4. Heavy Morning Steam</option>
+          <option value="wind_steam">🍃 5. Breezy Coffee Steam</option>
+        </select>
+      </div>
+      <div class="layout-col">
+        <label style="color:#ff8a65; text-align:center; font-size:12px; margin-bottom:5px;">API LILIN</label>
+        <select id="candleStyle">
+          <option value="none">🚫 Tanpa Api Lilin</option>
+          <option value="calm_flame">🕯️ 1. Calm Warm Flame</option>
+          <option value="flicker_flame">🕯️ 2. Flickering Flame</option>
+          <option value="bright_glow">🌟 3. Bright Glowing Flame</option>
+          <option value="blue_base">🔵 4. Blue-Base Real Flame</option>
+          <option value="wind_flame">🌬️ 5. Wind-blown Flame</option>
+        </select>
+      </div>
     </div>
     
-    <div class="row"><label style="color:#ffb300;">UKURAN SPK</label><input type="range" id="speakerSize" min="0.2" max="5.0" step="0.1" value="1.5"></div>
-    <div class="row"><label style="color:#ffb300;">OPASITAS SPK</label><input type="range" id="speakerOpacity" min="0.1" max="1.0" step="0.05" value="1.0"></div>
+    <div class="row" style="margin-top: 5px;"><label style="color:#fff;">UKURAN PROP</label><input type="range" id="propSize" min="0.2" max="5.0" step="0.1" value="1.0"></div>
 
     <hr style="border: 0; border-top: 1px dashed #333; width: 100%; margin: 5px 0;">
 
@@ -271,12 +320,18 @@
       if (mediaRecorder && mediaRecorder.state === 'recording') { statusBox.innerText = `✅ Menyimpan rekaman otomatis...`; setTimeout(() => { stopRecording(); }, 500); }
     }
 
-    // POSISI VISUALIZER & DUAL SPEAKER
+    // POSISI ELEMEN DRAGGABLE
     let visW = 400; let visX = (width - visW) / 2; let visY = height - 160;
     let spk1X = 250; let spk1Y = height - 300;
     let spk2X = width - 250; let spk2Y = height - 300;
     
+    // Posisi default kopi dan 2 lilin (kiri kanan)
+    let coffeeX = 350; let coffeeY = height - 150;
+    let candle1X = 150; let candle1Y = height - 200;
+    let candle2X = width - 150; let candle2Y = height - 200;
+    
     let isDraggingSpk1 = false; let isDraggingSpk2 = false; let isDraggingVis = false;
+    let isDraggingCoffee = false; let isDraggingCandle1 = false; let isDraggingCandle2 = false;
     let dragOffsetX = 0; let dragOffsetY = 0;
 
     function getMousePos(e) {
@@ -295,10 +350,22 @@
       if (dist1 <= Math.max(40, clickRadius) && document.getElementById('speakerStyle').value !== 'none') { 
         isDraggingSpk1 = true; dragOffsetX = pos.x - spk1X; dragOffsetY = pos.y - spk1Y; if (e.cancelable) e.preventDefault(); return; 
       }
-      
       const dist2 = Math.hypot(pos.x - spk2X, pos.y - spk2Y);
       if (dist2 <= Math.max(40, clickRadius) && document.getElementById('speakerStyle').value !== 'none') { 
         isDraggingSpk2 = true; dragOffsetX = pos.x - spk2X; dragOffsetY = pos.y - spk2Y; if (e.cancelable) e.preventDefault(); return; 
+      }
+      
+      // Hitbox Props (Coffee/Candles)
+      if (document.getElementById('coffeeStyle').value !== 'none' && Math.hypot(pos.x - coffeeX, pos.y - coffeeY) <= 50) {
+        isDraggingCoffee = true; dragOffsetX = pos.x - coffeeX; dragOffsetY = pos.y - coffeeY; if (e.cancelable) e.preventDefault(); return;
+      }
+      if (document.getElementById('candleStyle').value !== 'none') {
+        if (Math.hypot(pos.x - candle1X, pos.y - candle1Y) <= 40) {
+            isDraggingCandle1 = true; dragOffsetX = pos.x - candle1X; dragOffsetY = pos.y - candle1Y; if (e.cancelable) e.preventDefault(); return;
+        }
+        if (Math.hypot(pos.x - candle2X, pos.y - candle2Y) <= 40) {
+            isDraggingCandle2 = true; dragOffsetX = pos.x - candle2X; dragOffsetY = pos.y - candle2Y; if (e.cancelable) e.preventDefault(); return;
+        }
       }
       
       if (pos.x >= visX && pos.x <= visX + visW && pos.y >= visY - 150 && pos.y <= visY + 150) { 
@@ -307,14 +374,17 @@
     }
 
     function drag(e) {
-      if (!isDraggingVis && !isDraggingSpk1 && !isDraggingSpk2) return;
+      if (!isDraggingVis && !isDraggingSpk1 && !isDraggingSpk2 && !isDraggingCoffee && !isDraggingCandle1 && !isDraggingCandle2) return;
       const pos = getMousePos(e);
       if (isDraggingSpk1) { spk1X = pos.x - dragOffsetX; spk1Y = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingSpk2) { spk2X = pos.x - dragOffsetX; spk2Y = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
+      if (isDraggingCoffee) { coffeeX = pos.x - dragOffsetX; coffeeY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
+      if (isDraggingCandle1) { candle1X = pos.x - dragOffsetX; candle1Y = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
+      if (isDraggingCandle2) { candle2X = pos.x - dragOffsetX; candle2Y = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingVis) { visX = pos.x - dragOffsetX; visY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); }
     }
 
-    function endDrag() { isDraggingVis = false; isDraggingSpk1 = false; isDraggingSpk2 = false; }
+    function endDrag() { isDraggingVis = false; isDraggingSpk1 = false; isDraggingSpk2 = false; isDraggingCoffee = false; isDraggingCandle1 = false; isDraggingCandle2 = false; }
     canvas.addEventListener('mousedown', startDrag); canvas.addEventListener('mousemove', drag); window.addEventListener('mouseup', endDrag);
     canvas.addEventListener('touchstart', startDrag, { passive: false }); canvas.addEventListener('touchmove', drag, { passive: false }); window.addEventListener('touchend', endDrag);
 
@@ -459,25 +529,17 @@
       if(dataArray) { bass = (dataArray[1] + dataArray[2] + dataArray[3]) / (255 * 3); }
       if(isNaN(bass)) bass = 0;
 
-      // BINGKAI LUAR SPEAKER (STATIC MUTLAK - TIDAK MEMBESAR/MENGECIL)
       let baseR = 50 * scale; 
-      // DENYUT MEMBRAN DALAM SAJA (MAKS 12 PIKSEL)
       let pulse = bass * 12 * scale; 
 
-      // FUNGSI HELPER UNTUK MENGGAMBAR 20 SPEAKER REALISTIS
       function drawRealSpk(x, y, surroundCol, coneStops, capStops, ribs=0) {
-        ctx.save();
-        ctx.translate(x, y);
-        ctx.globalAlpha = opac;
+        ctx.save(); ctx.translate(x, y); ctx.globalAlpha = opac;
 
-        // 1. Static Surround (Karet pinggiran/Basket)
         ctx.beginPath(); ctx.arc(0,0, baseR, 0, Math.PI*2);
         ctx.fillStyle = surroundCol; ctx.fill();
         ctx.lineWidth = 1.5 * scale; ctx.strokeStyle = '#050505'; ctx.stroke();
 
-        // 2. Cone (Membran yang diam di ujung luar, bergerak di tengah)
-        let coneR = baseR * 0.85;
-        let capR = baseR * 0.3 + pulse; 
+        let coneR = baseR * 0.85; let capR = baseR * 0.3 + pulse; 
         
         let grad = ctx.createRadialGradient(0,0, capR, 0,0, coneR);
         coneStops.forEach(st => grad.addColorStop(st[0], st[1]));
@@ -486,20 +548,13 @@
         
         if(ribs > 0) {
             ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(0,0,0,0.3)';
-            for(let i=1; i<=ribs; i++) {
-                ctx.beginPath(); ctx.arc(0,0, capR + (coneR-capR)*(i/(ribs+1)), 0, Math.PI*2); ctx.stroke();
-            }
+            for(let i=1; i<=ribs; i++) { ctx.beginPath(); ctx.arc(0,0, capR + (coneR-capR)*(i/(ribs+1)), 0, Math.PI*2); ctx.stroke(); }
         }
 
-        // 3. Dust Cap (Tutup debu tengah yang memompa maju mundur)
         let capGrad = ctx.createRadialGradient(0,-capR*0.3, 0, 0,0, capR);
         capStops.forEach(st => capGrad.addColorStop(st[0], st[1]));
-        ctx.beginPath(); ctx.arc(0,0, capR, 0, Math.PI*2);
-        ctx.fillStyle = capGrad; ctx.fill();
-        
-        ctx.beginPath(); ctx.arc(0,0, capR, 0, Math.PI*2);
-        ctx.lineWidth = 1 * scale; ctx.strokeStyle = 'rgba(0,0,0,0.6)'; ctx.stroke();
-
+        ctx.beginPath(); ctx.arc(0,0, capR, 0, Math.PI*2); ctx.fillStyle = capGrad; ctx.fill();
+        ctx.beginPath(); ctx.arc(0,0, capR, 0, Math.PI*2); ctx.lineWidth = 1 * scale; ctx.strokeStyle = 'rgba(0,0,0,0.6)'; ctx.stroke();
         ctx.restore();
       }
 
@@ -526,9 +581,72 @@
           else if (style === 'bronze_spun') drawRealSpk(x, y, '#111', [[0,'#cd7f32'], [1,'#8b4513']], [[0,'#cd7f32'], [1,'#8b4513']], 6);
       }
 
-      renderSpk(spk1X, spk1Y);
-      renderSpk(spk2X, spk2Y);
+      renderSpk(spk1X, spk1Y); renderSpk(spk2X, spk2Y);
     }
+
+    // =========================================================
+    // FITUR BARU: KOPI & LILIN (DRAGGABLE)
+    // =========================================================
+    function drawCoffeeSteam(x, y, style, scale) {
+        if(style === 'none') return;
+        ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
+
+        let branches = 2; let hMax = 120; let wMax = 15; let speedMult = 2; let waveFreq = 2; let opacity = 0.4;
+        if(style === 'soft_steam') { branches=2; hMax=100; wMax=12; speedMult=1.5; waveFreq=1.5; opacity=0.3; }
+        if(style === 'swirl_vapor') { branches=3; hMax=140; wMax=18; speedMult=2; waveFreq=3; opacity=0.4; }
+        if(style === 'thin_wisp') { branches=1; hMax=120; wMax=8; speedMult=1; waveFreq=2; opacity=0.25; }
+        if(style === 'heavy_steam') { branches=4; hMax=160; wMax=25; speedMult=3; waveFreq=1.8; opacity=0.5; }
+        if(style === 'wind_steam') { branches=2; hMax=130; wMax=15; speedMult=4; waveFreq=1.5; opacity=0.4; ctx.rotate(15 * Math.PI/180); }
+
+        for(let b=0; b<branches; b++) {
+            let pts = []; let steps = 30; let offsetBase = (b - (branches-1)/2) * 10;
+            for(let i=0; i<=steps; i++) {
+                let prog = i/steps; let w = Math.sin(prog * Math.PI) * wMax; let speed = time * speedMult;
+                let sway = Math.sin(prog * Math.PI * waveFreq - speed + b*1.5) * 20 * Math.pow(prog, 0.8);
+                let px = offsetBase * (1-prog) + sway; let py = -prog * hMax;
+                pts.push({x: px, y: py, w: w});
+            }
+            ctx.beginPath();
+            for(let i=0; i<pts.length; i++) { if(i===0) ctx.moveTo(pts[i].x - pts[i].w, pts[i].y); else ctx.lineTo(pts[i].x - pts[i].w, pts[i].y); }
+            for(let i=pts.length-1; i>=0; i--) { ctx.lineTo(pts[i].x + pts[i].w, pts[i].y); }
+            ctx.closePath();
+            let grad = ctx.createLinearGradient(0,0, 0,-hMax);
+            grad.addColorStop(0, `rgba(255, 255, 255, 0)`); grad.addColorStop(0.2, `rgba(255, 255, 255, ${opacity})`); grad.addColorStop(1, `rgba(255, 255, 255, 0)`);
+            ctx.fillStyle = grad; ctx.fill();
+        }
+        ctx.restore();
+    }
+
+    function drawCandle(x, y, style, scale) {
+        if(style === 'none') return;
+        ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
+
+        let flicker = 0; let sway = 0; let h = 40; let w = 12;
+        if(style === 'calm_flame') { flicker = Math.sin(time * 10) * 0.5; sway = Math.sin(time * 2) * 2; } 
+        else if(style === 'flicker_flame') { flicker = (Math.random() - 0.5) * 4; sway = Math.sin(time * 15) * 3 + (Math.random()-0.5)*2; } 
+        else if(style === 'bright_glow') { flicker = Math.sin(time * 8) * 1; ctx.shadowBlur = 30 + flicker*5; ctx.shadowColor = '#ff9800'; h = 45; w = 15; } 
+        else if(style === 'blue_base') { flicker = Math.sin(time * 12) * 1; } 
+        else if(style === 'wind_flame') { flicker = Math.random() * 3; sway = 15 + Math.sin(time * 20) * 5; }
+
+        ctx.beginPath(); ctx.arc(0, -h/2, w*2.5, 0, Math.PI*2);
+        let gradGlow = ctx.createRadialGradient(0,-h/2,0, 0,-h/2,w*2.5);
+        gradGlow.addColorStop(0, 'rgba(255, 150, 0, 0.4)'); gradGlow.addColorStop(1, 'rgba(255, 150, 0, 0)');
+        ctx.fillStyle = gradGlow; ctx.fill();
+
+        function drawFlamePath(fw, fh, fsway) {
+            ctx.beginPath(); ctx.moveTo(0, 0); 
+            ctx.bezierCurveTo(fw, 0, fw*0.8, -fh*0.5, fsway, -fh); 
+            ctx.bezierCurveTo(-fw*0.8, -fh*0.5, -fw, 0, 0, 0); 
+        }
+
+        drawFlamePath(w, h + flicker, sway);
+        ctx.fillStyle = (style === 'blue_base') ? 'rgba(0, 100, 255, 0.8)' : 'rgba(255, 100, 0, 0.8)'; ctx.fill();
+        drawFlamePath(w*0.6, (h + flicker)*0.7, sway*0.7); ctx.fillStyle = 'rgba(255, 200, 0, 0.9)'; ctx.fill();
+        drawFlamePath(w*0.3, (h + flicker)*0.3, sway*0.3); ctx.fillStyle = '#fff'; ctx.fill();
+
+        ctx.restore();
+    }
+
 
     // ===============================================
     // 50 NORMAL, STANDARD & CLEAN VISUALIZERS
@@ -887,8 +1005,15 @@
         drawVisualizer(analyser.frequencyBinCount);
       }
 
+      // RENDER SPEAKER DRAGGABLE
       drawSpeakers(isAudioInit ? analyser.frequencyBinCount : 128);
       
+      // RENDER COFFEE & CANDLES
+      let propScale = parseFloat(document.getElementById('propSize').value);
+      drawCoffeeSteam(coffeeX, coffeeY, document.getElementById('coffeeStyle').value, propScale);
+      drawCandle(candle1X, candle1Y, document.getElementById('candleStyle').value, propScale);
+      drawCandle(candle2X, candle2Y, document.getElementById('candleStyle').value, propScale);
+
       for (let i = 0; i < config.count; i++) { if (particles[i]) { particles[i].update(); particles[i].draw(); } if (weatherParticles[i]) { weatherParticles[i].update(); weatherParticles[i].draw(); } }
 
       if (config.type !== 'none') { const grad = ctx.createRadialGradient(width/2, height/2, height*0.4, width/2, height/2, width*0.8); grad.addColorStop(0, 'rgba(0,0,0,0)'); grad.addColorStop(1, 'rgba(0,0,0,0.7)'); ctx.fillStyle = grad; ctx.fillRect(-10, -10, width+20, height+20); }
@@ -931,25 +1056,57 @@
       const oldVid = document.getElementById('previewVid'); if(oldVid) oldVid.remove(); const oldBtn = document.getElementById('shareBtnDewa'); if(oldBtn) oldBtn.remove();
       const vid = document.createElement('video'); vid.id = 'previewVid'; vid.src = url; vid.controls = true; vid.setAttribute('controlsList', 'nodownload'); vid.style.width = "100%"; vid.style.marginTop = "20px"; vid.style.border = "3px solid #00d2ff"; vid.style.borderRadius = "8px";
       const saveBtn = document.createElement('button'); saveBtn.id = 'shareBtnDewa'; saveBtn.innerText = "📥 SIMPAN VIDEO KE HP / PC"; saveBtn.style.width = "100%"; saveBtn.style.padding = "15px"; saveBtn.style.marginTop = "10px"; saveBtn.style.background = "linear-gradient(135deg, #00ffaa, #00bcd4)"; saveBtn.style.color = "black"; saveBtn.style.border = "none"; saveBtn.style.borderRadius = "8px"; saveBtn.style.fontWeight = "bold"; saveBtn.style.fontSize = "14px"; saveBtn.style.cursor = "pointer";
+      
       let isSaving = false;
       saveBtn.onclick = async () => {
         if (isSaving) return; isSaving = true; saveBtn.innerText = "⏳ MEMULAI PROSES SIMPAN...";
+        
+        // FUNGSI JALUR CADANGAN AMAN (100% WORKS)
+        const downloadBrowser = () => {
+            statusBox.innerText = "⏳ Mengunduh ke folder Download...";
+            const a = document.createElement('a'); a.style.display = 'none'; a.href = url; a.download = `BassJazz_720p_${Date.now()}.webm`;
+            document.body.appendChild(a); a.click(); setTimeout(() => { document.body.removeChild(a); }, 100);
+            saveBtn.innerText = "✅ VIDEO SUKSES DIUNDUH!"; statusBox.innerText = `🎉 SUKSES! Periksa folder Download atau Galeri Anda.`;
+        };
+
         try {
           if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem) {
-            const FS = window.Capacitor.Plugins.Filesystem; const fileName = `BassJazz_720p_${Date.now()}.webm`; await FS.writeFile({ path: fileName, data: "", directory: 'DOCUMENTS' });
-            const chunkSize = 1572864; const totalChunks = Math.ceil(finalBlob.size / chunkSize);
-            for (let i = 0; i < totalChunks; i++) {
-              const start = i * chunkSize; const end = Math.min(start + chunkSize, finalBlob.size); const chunk = finalBlob.slice(start, end);
-              const base64Chunk = await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result.split(',')[1]); reader.onerror = reject; reader.readAsDataURL(chunk); });
-              await FS.appendFile({ path: fileName, data: base64Chunk, directory: 'DOCUMENTS' });
-              const percent = Math.round(((i + 1) / totalChunks) * 100); statusBox.innerText = `⏳ Menulis ke memori HP... ${percent}%`; saveBtn.innerText = `⏳ MENYIMPAN... ${percent}%`;
+            const FS = window.Capacitor.Plugins.Filesystem; 
+            
+            // 1. MINTA IZIN DULU SEBELUM NAMBAH ERROR
+            try { 
+                let perm = await FS.checkPermissions();
+                if (perm.publicStorage !== 'granted') await FS.requestPermissions(); 
+            } catch(e) {} 
+            
+            const fileName = `BassJazz_720p_${Date.now()}.webm`; 
+            
+            try {
+                await FS.writeFile({ path: fileName, data: "", directory: 'DOCUMENTS' });
+                const chunkSize = 1572864; const totalChunks = Math.ceil(finalBlob.size / chunkSize);
+                for (let i = 0; i < totalChunks; i++) {
+                  const start = i * chunkSize; const end = Math.min(start + chunkSize, finalBlob.size); const chunk = finalBlob.slice(start, end);
+                  const base64Chunk = await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result.split(',')[1]); reader.onerror = reject; reader.readAsDataURL(chunk); });
+                  await FS.appendFile({ path: fileName, data: base64Chunk, directory: 'DOCUMENTS' });
+                  const percent = Math.round(((i + 1) / totalChunks) * 100); statusBox.innerText = `⏳ Menulis ke memori HP... ${percent}%`; saveBtn.innerText = `⏳ MENYIMPAN... ${percent}%`;
+                }
+                saveBtn.innerText = "✅ TERSIMPAN DI DOCUMENTS HP!"; statusBox.innerText = `🎉 SUKSES! Video 720p tersimpan di folder Documents!`;
+            } catch(fsError) {
+                console.warn("Capacitor FS Error:", fsError);
+                // JIKA TERJADI ERROR "MISSING DIRECTORY" ATAU SCOPED STORAGE BLOKIR, PAKAI CARA CADANGAN
+                downloadBrowser();
             }
-            saveBtn.innerText = "✅ TERSIMPAN DI DOCUMENTS HP!"; statusBox.innerText = `🎉 SUKSES! Video 720p tersimpan di folder Documents!`;
           } else {
-            statusBox.innerText = "⏳ Mengunduh lewat Browser..."; const a = document.createElement('a'); a.style.display = 'none'; a.href = url; a.download = `BassJazz_720p_${Date.now()}.webm`; document.body.appendChild(a); a.click(); setTimeout(() => { document.body.removeChild(a); }, 100); saveBtn.innerText = "✅ VIDEO SUKSES DIUNDUH!"; statusBox.innerText = `🎉 SUKSES! Video berhasil diunduh ke perangkat Anda.`;
+            downloadBrowser();
           }
-        } catch(e) { saveBtn.innerText = "❌ GAGAL MENYIMPAN"; statusBox.innerText = "Terjadi Error: " + e.message; isSaving = false; }
+        } catch(e) { 
+            console.warn("Fatal Error:", e);
+            try { downloadBrowser(); } catch(err2) {
+                saveBtn.innerText = "❌ GAGAL MENYIMPAN"; statusBox.innerText = "Terjadi Error: " + e.message; isSaving = false; 
+            }
+        }
       };
+      
       const controlsDiv = document.getElementById('controls'); controlsDiv.appendChild(vid); controlsDiv.appendChild(saveBtn); saveBtn.scrollIntoView({ behavior: 'smooth' }); setTimeout(() => { if(!isSaving) saveBtn.click(); }, 1500);
     }
   </script>
