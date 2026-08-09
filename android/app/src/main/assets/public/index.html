@@ -38,6 +38,10 @@
     .layout-col { flex: 1; background: #222; padding: 12px; border-radius: 8px; border: 1px solid #3c3c3c; display: flex; flex-direction: column; gap: 8px; box-sizing: border-box; }
     .layout-col label { width: 100%; text-align: left; font-size: 10px; margin-bottom: -4px; color: #aaa; font-weight: bold; }
     .layout-col select, .layout-col input[type="range"] { width: 100%; margin-bottom: 5px; }
+
+    /* TOMBOL FALLBACK MANUAL DOWNLOAD */
+    #manualLinkBtn { display: block; width: 100%; box-sizing: border-box; text-align: center; padding: 15px; margin-top: 10px; background: #333; color: #fff; border: 1px solid #555; border-radius: 8px; font-weight: bold; font-size: 14px; text-decoration: none; cursor: pointer; transition: 0.3s; }
+    #manualLinkBtn:hover { background: #444; }
   </style>
 </head>
 
@@ -50,7 +54,7 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Bass Jazz (UI Baru Bersampingan & Anti-Gagal).</div>
+    <div id="statusBox">Siap. Bass Jazz (Lilin Realistis & Fix Izin Android 10).</div>
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
       <label for="audioInput" class="file-label" style="border-bottom: 3px solid #00bcd4">2. MUSIK (BANYAK)</label>
@@ -184,7 +188,7 @@
         <label>OPASITAS SPK</label>
         <input type="range" id="speakerOpacity" min="0.1" max="1.0" step="0.05" value="1.0">
         
-        <div style="height: 38px;"></div> <!-- Spacer untuk menyamakan tinggi kolom -->
+        <div style="height: 38px;"></div>
       </div>
     </div>
 
@@ -325,7 +329,6 @@
     let spk1X = 250; let spk1Y = height - 300;
     let spk2X = width - 250; let spk2Y = height - 300;
     
-    // Posisi default kopi dan 2 lilin (kiri kanan)
     let coffeeX = 350; let coffeeY = height - 150;
     let candle1X = 150; let candle1Y = height - 200;
     let candle2X = width - 150; let candle2Y = height - 200;
@@ -355,7 +358,6 @@
         isDraggingSpk2 = true; dragOffsetX = pos.x - spk2X; dragOffsetY = pos.y - spk2Y; if (e.cancelable) e.preventDefault(); return; 
       }
       
-      // Hitbox Props (Coffee/Candles)
       if (document.getElementById('coffeeStyle').value !== 'none' && Math.hypot(pos.x - coffeeX, pos.y - coffeeY) <= 50) {
         isDraggingCoffee = true; dragOffsetX = pos.x - coffeeX; dragOffsetY = pos.y - coffeeY; if (e.cancelable) e.preventDefault(); return;
       }
@@ -585,7 +587,7 @@
     }
 
     // =========================================================
-    // FITUR BARU: KOPI & LILIN (DRAGGABLE)
+    // FITUR EFEK PROP: ASAP KOPI
     // =========================================================
     function drawCoffeeSteam(x, y, style, scale) {
         if(style === 'none') return;
@@ -617,32 +619,58 @@
         ctx.restore();
     }
 
+    // =========================================================
+    // FITUR EFEK PROP: API LILIN (HYPER-REALISTIC)
+    // =========================================================
     function drawCandle(x, y, style, scale) {
         if(style === 'none') return;
         ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
 
-        let flicker = 0; let sway = 0; let h = 40; let w = 12;
-        if(style === 'calm_flame') { flicker = Math.sin(time * 10) * 0.5; sway = Math.sin(time * 2) * 2; } 
-        else if(style === 'flicker_flame') { flicker = (Math.random() - 0.5) * 4; sway = Math.sin(time * 15) * 3 + (Math.random()-0.5)*2; } 
-        else if(style === 'bright_glow') { flicker = Math.sin(time * 8) * 1; ctx.shadowBlur = 30 + flicker*5; ctx.shadowColor = '#ff9800'; h = 45; w = 15; } 
-        else if(style === 'blue_base') { flicker = Math.sin(time * 12) * 1; } 
-        else if(style === 'wind_flame') { flicker = Math.random() * 3; sway = 15 + Math.sin(time * 20) * 5; }
+        let flicker = 0; let sway = 0; let h = 60; let w = 15;
+        if(style === 'calm_flame') { flicker = Math.sin(time * 5) * 1.5; sway = Math.sin(time * 1.5) * 1.5; }
+        else if(style === 'flicker_flame') { flicker = (Math.random() - 0.5) * 6; sway = Math.sin(time * 10) * 4 + (Math.random()-0.5)*3; }
+        else if(style === 'bright_glow') { flicker = Math.sin(time * 6) * 2; ctx.shadowBlur = 40 + flicker*5; ctx.shadowColor = '#ff9800'; h = 70; w = 18; }
+        else if(style === 'blue_base') { flicker = Math.sin(time * 8) * 1; }
+        else if(style === 'wind_flame') { flicker = Math.random() * 4; sway = 15 + Math.sin(time * 15) * 8; }
 
-        ctx.beginPath(); ctx.arc(0, -h/2, w*2.5, 0, Math.PI*2);
-        let gradGlow = ctx.createRadialGradient(0,-h/2,0, 0,-h/2,w*2.5);
-        gradGlow.addColorStop(0, 'rgba(255, 150, 0, 0.4)'); gradGlow.addColorStop(1, 'rgba(255, 150, 0, 0)');
+        // Glowing Halo Area
+        ctx.beginPath(); ctx.arc(0, -h*0.6, w*4, 0, Math.PI*2);
+        let gradGlow = ctx.createRadialGradient(0,-h*0.6,0, 0,-h*0.6,w*4);
+        gradGlow.addColorStop(0, 'rgba(255, 140, 0, 0.4)'); gradGlow.addColorStop(1, 'rgba(255, 140, 0, 0)');
         ctx.fillStyle = gradGlow; ctx.fill();
 
-        function drawFlamePath(fw, fh, fsway) {
-            ctx.beginPath(); ctx.moveTo(0, 0); 
-            ctx.bezierCurveTo(fw, 0, fw*0.8, -fh*0.5, fsway, -fh); 
-            ctx.bezierCurveTo(-fw*0.8, -fh*0.5, -fw, 0, 0, 0); 
+        // 1. Sumbu Lilin (Wick)
+        ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(sway*0.1, -8);
+        ctx.lineWidth = 2.5; ctx.strokeStyle = '#222'; ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(sway*0.1, -8); ctx.lineTo(sway*0.2, -12);
+        ctx.strokeStyle = '#ff3300'; ctx.stroke(); 
+
+        // Fungsi bantu bentuk api (Teardrop Shape)
+        function drawTeardrop(fw, fh, offsetX, offsetY, color) {
+            ctx.beginPath();
+            ctx.moveTo(offsetX, offsetY - fh); // Ujung atas
+            ctx.bezierCurveTo(offsetX + fw, offsetY - fh*0.5, fw, 5, 0, 5); // Kanan
+            ctx.bezierCurveTo(-fw, 5, offsetX - fw, offsetY - fh*0.5, offsetX, offsetY - fh); // Kiri
+            ctx.fillStyle = color; ctx.fill();
         }
 
-        drawFlamePath(w, h + flicker, sway);
-        ctx.fillStyle = (style === 'blue_base') ? 'rgba(0, 100, 255, 0.8)' : 'rgba(255, 100, 0, 0.8)'; ctx.fill();
-        drawFlamePath(w*0.6, (h + flicker)*0.7, sway*0.7); ctx.fillStyle = 'rgba(255, 200, 0, 0.9)'; ctx.fill();
-        drawFlamePath(w*0.3, (h + flicker)*0.3, sway*0.3); ctx.fillStyle = '#fff'; ctx.fill();
+        // 2. Api Luar (Orange Semi-Transparan)
+        drawTeardrop(w, h + flicker, sway, 0, 'rgba(255, 80, 0, 0.7)');
+        
+        // 3. Api Tengah (Kuning Menyala)
+        drawTeardrop(w*0.7, (h + flicker)*0.8, sway*0.7, -2, 'rgba(255, 200, 0, 0.9)');
+        
+        // 4. Api Inti (Putih Silau)
+        drawTeardrop(w*0.4, (h + flicker)*0.5, sway*0.4, -4, 'rgba(255, 255, 255, 0.95)');
+        
+        // 5. Dasar Biru (Blue Base)
+        ctx.beginPath();
+        ctx.moveTo(0, -10);
+        ctx.bezierCurveTo(w*0.6, -10, w*0.5, 5, 0, 5);
+        ctx.bezierCurveTo(-w*0.5, 5, -w*0.6, -10, 0, -10);
+        let blueGrad = ctx.createRadialGradient(0,0,0, 0,0,w*0.6);
+        blueGrad.addColorStop(0, 'rgba(0, 100, 255, 0)'); blueGrad.addColorStop(0.8, (style === 'blue_base') ? 'rgba(0, 150, 255, 0.8)' : 'rgba(0, 150, 255, 0.4)'); blueGrad.addColorStop(1, 'rgba(0, 50, 255, 0)');
+        ctx.fillStyle = blueGrad; ctx.fill();
 
         ctx.restore();
     }
@@ -1053,31 +1081,33 @@
 
     function triggerDownload(finalBlob) {
       statusBox.innerText = "⏳ Memproses pemotongan file video..."; const url = URL.createObjectURL(finalBlob);
-      const oldVid = document.getElementById('previewVid'); if(oldVid) oldVid.remove(); const oldBtn = document.getElementById('shareBtnDewa'); if(oldBtn) oldBtn.remove();
-      const vid = document.createElement('video'); vid.id = 'previewVid'; vid.src = url; vid.controls = true; vid.setAttribute('controlsList', 'nodownload'); vid.style.width = "100%"; vid.style.marginTop = "20px"; vid.style.border = "3px solid #00d2ff"; vid.style.borderRadius = "8px";
-      const saveBtn = document.createElement('button'); saveBtn.id = 'shareBtnDewa'; saveBtn.innerText = "📥 SIMPAN VIDEO KE HP / PC"; saveBtn.style.width = "100%"; saveBtn.style.padding = "15px"; saveBtn.style.marginTop = "10px"; saveBtn.style.background = "linear-gradient(135deg, #00ffaa, #00bcd4)"; saveBtn.style.color = "black"; saveBtn.style.border = "none"; saveBtn.style.borderRadius = "8px"; saveBtn.style.fontWeight = "bold"; saveBtn.style.fontSize = "14px"; saveBtn.style.cursor = "pointer";
+      const oldVid = document.getElementById('previewVid'); if(oldVid) oldVid.remove(); 
+      const oldBtn = document.getElementById('shareBtnDewa'); if(oldBtn) oldBtn.remove();
+      const oldLink = document.getElementById('manualLinkBtn'); if(oldLink) oldLink.remove();
       
+      const vid = document.createElement('video'); vid.id = 'previewVid'; vid.src = url; vid.controls = true; vid.setAttribute('controlsList', 'nodownload'); vid.style.width = "100%"; vid.style.marginTop = "20px"; vid.style.border = "3px solid #00d2ff"; vid.style.borderRadius = "8px";
+      const saveBtn = document.createElement('button'); saveBtn.id = 'shareBtnDewa'; saveBtn.innerText = "📥 SIMPAN KE DOKUMEN (CAPACITOR)"; saveBtn.style.width = "100%"; saveBtn.style.padding = "15px"; saveBtn.style.marginTop = "10px"; saveBtn.style.background = "linear-gradient(135deg, #00ffaa, #00bcd4)"; saveBtn.style.color = "black"; saveBtn.style.border = "none"; saveBtn.style.borderRadius = "8px"; saveBtn.style.fontWeight = "bold"; saveBtn.style.fontSize = "14px"; saveBtn.style.cursor = "pointer";
+      
+      const fallbackBtn = document.createElement('a'); fallbackBtn.id = 'manualLinkBtn'; fallbackBtn.innerText = "⬇️ DOWNLOAD MANUAL (JIKA GAGAL)"; fallbackBtn.href = url; fallbackBtn.download = `BassJazz_720p_${Date.now()}.webm`;
+
       let isSaving = false;
       saveBtn.onclick = async () => {
-        if (isSaving) return; isSaving = true; saveBtn.innerText = "⏳ MEMULAI PROSES SIMPAN...";
+        if (isSaving) return; isSaving = true; saveBtn.innerText = "⏳ MEMINTA IZIN & MENYIMPAN...";
         
-        // FUNGSI JALUR CADANGAN AMAN (100% WORKS)
         const downloadBrowser = () => {
-            statusBox.innerText = "⏳ Mengunduh ke folder Download...";
-            const a = document.createElement('a'); a.style.display = 'none'; a.href = url; a.download = `BassJazz_720p_${Date.now()}.webm`;
-            document.body.appendChild(a); a.click(); setTimeout(() => { document.body.removeChild(a); }, 100);
-            saveBtn.innerText = "✅ VIDEO SUKSES DIUNDUH!"; statusBox.innerText = `🎉 SUKSES! Periksa folder Download atau Galeri Anda.`;
+            statusBox.innerText = "⏳ Mengunduh lewat Download Manager HP...";
+            fallbackBtn.click();
+            saveBtn.innerText = "✅ MENGGUNAKAN DOWNLOAD BAWAAN"; statusBox.innerText = `🎉 SUKSES! Periksa folder Download atau Galeri Anda.`;
         };
 
         try {
           if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem) {
             const FS = window.Capacitor.Plugins.Filesystem; 
             
-            // 1. MINTA IZIN DULU SEBELUM NAMBAH ERROR
             try { 
                 let perm = await FS.checkPermissions();
-                if (perm.publicStorage !== 'granted') await FS.requestPermissions(); 
-            } catch(e) {} 
+                if (perm.publicStorage !== 'granted' && perm.publicStorage !== 'authorized') await FS.requestPermissions(); 
+            } catch(e) { console.warn("Capacitor Perm Check Err:", e); } 
             
             const fileName = `BassJazz_720p_${Date.now()}.webm`; 
             
@@ -1090,10 +1120,9 @@
                   await FS.appendFile({ path: fileName, data: base64Chunk, directory: 'DOCUMENTS' });
                   const percent = Math.round(((i + 1) / totalChunks) * 100); statusBox.innerText = `⏳ Menulis ke memori HP... ${percent}%`; saveBtn.innerText = `⏳ MENYIMPAN... ${percent}%`;
                 }
-                saveBtn.innerText = "✅ TERSIMPAN DI DOCUMENTS HP!"; statusBox.innerText = `🎉 SUKSES! Video 720p tersimpan di folder Documents!`;
+                saveBtn.innerText = "✅ TERSIMPAN DI FOLDER DOKUMEN!"; statusBox.innerText = `🎉 SUKSES! Video 720p tersimpan di folder Documents!`;
             } catch(fsError) {
                 console.warn("Capacitor FS Error:", fsError);
-                // JIKA TERJADI ERROR "MISSING DIRECTORY" ATAU SCOPED STORAGE BLOKIR, PAKAI CARA CADANGAN
                 downloadBrowser();
             }
           } else {
@@ -1107,7 +1136,12 @@
         }
       };
       
-      const controlsDiv = document.getElementById('controls'); controlsDiv.appendChild(vid); controlsDiv.appendChild(saveBtn); saveBtn.scrollIntoView({ behavior: 'smooth' }); setTimeout(() => { if(!isSaving) saveBtn.click(); }, 1500);
+      const controlsDiv = document.getElementById('controls'); 
+      controlsDiv.appendChild(vid); 
+      controlsDiv.appendChild(saveBtn); 
+      controlsDiv.appendChild(fallbackBtn);
+      saveBtn.scrollIntoView({ behavior: 'smooth' }); 
+      setTimeout(() => { if(!isSaving && window.Capacitor) saveBtn.click(); }, 1500);
     }
   </script>
 </body>
