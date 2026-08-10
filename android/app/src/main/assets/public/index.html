@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bass Jazz (Cinematic Particle & Hyper-Real Props)</title>
+  <title>Bass Jazz (Color Wheel Update)</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body { margin: 0; background-image: linear-gradient(45deg, #222 25%, transparent 25%), linear-gradient(-45deg, #222 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #222 75%), linear-gradient(-45deg, transparent 75%, #222 75%); background-size: 20px 20px; background-color: #333; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; }
@@ -30,7 +30,6 @@
     .row { display: flex; align-items: center; gap: 10px; }
     label { font-size: 11px; width: 80px; color: #ccc; font-weight: 600; }
     input[type="range"], select { flex: 1; height: 36px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px; }
-    input[type="color"] { border: none; border-radius: 4px; cursor: pointer; background: none; }
     input[type="file"] { display: none; }
     optgroup { background: #111; color: #d4af37; font-weight: bold; }
 
@@ -55,7 +54,7 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Bass Jazz (Cinematic Particle & Hyper-Real Props).</div>
+    <div id="statusBox">Siap. Bass Jazz (Color Wheel Update).</div>
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
       <label for="audioInput" class="file-label" style="border-bottom: 3px solid #00bcd4">2. MUSIK (BANYAK)</label>
@@ -156,7 +155,7 @@
         <input type="range" id="visOpacity" min="0.1" max="1.0" step="0.05" value="1.0">
       </div>
 
-      <!-- KOLOM KANAN (SPEAKER PUMP & SHAKE) -->
+      <!-- KOLOM KANAN (SPEAKER PUMP & SHAKE & COLOR WHEEL) -->
       <div class="layout-col">
         <label style="color:#ffb300; text-align:center; font-size:12px; margin-bottom:10px;">EFEK SPEAKER (DAUN)</label>
         <select id="speakerStyle">
@@ -189,14 +188,17 @@
         <label style="color:#ff5252;">GETARAN & DORONGAN</label>
         <input type="range" id="speakerShake" min="0" max="30" step="1" value="10">
 
-        <!-- COLOR PICKER BARU -->
+        <!-- COLOR WHEEL BARU (CANVAS) -->
         <label style="color:#ffb300; display:flex; justify-content:space-between; align-items:center;">
           WARNA DAUN
           <span style="font-size:9px; color:#fff; display:flex; align-items:center;">
              <input type="checkbox" id="useCustomColor" style="margin:0 4px 0 0; width:12px; height:12px;"> Aktifkan
           </span>
         </label>
-        <input type="color" id="speakerColor" value="#ff3300" style="padding:0; height:32px; width:100%;">
+        <div style="width: 100%; display: flex; justify-content: center; margin-top: 5px; margin-bottom: 5px;">
+            <canvas id="colorWheel" width="200" height="200" style="width: 100%; max-width: 160px; aspect-ratio: 1/1; border-radius: 8px; border: 2px solid #555; cursor: crosshair; touch-action: none; box-shadow: 0 4px 10px rgba(0,0,0,0.5);"></canvas>
+        </div>
+        <input type="hidden" id="speakerColor" value="#ff3300">
       </div>
     </div>
 
@@ -229,6 +231,7 @@
     </div>
     
     <div class="row" style="margin-top: 5px;"><label style="color:#fff;">UKURAN PROP</label><input type="range" id="propSize" min="0.2" max="5.0" step="0.1" value="1.0"></div>
+    <div class="row" style="margin-top: 5px;"><label style="color:#ff8a65;">KCPTN PROP</label><input type="range" id="propSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
 
     <hr style="border: 0; border-top: 1px dashed #333; width: 100%; margin: 5px 0;">
 
@@ -260,7 +263,7 @@
       </select>
     </div>
 
-    <div class="row"><label>KECEPATAN</label><input type="range" id="fxSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
+    <div class="row"><label style="color:#00e5ff;">KECEPATAN FX</label><input type="range" id="fxSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
     <div class="row"><label>JUMLAH FX</label><input type="range" id="count" min="0" max="400" value="100"></div>
 
     <button class="btn-record" id="recordBtn" onclick="startCountdownAndRecord()">🔴 MULAI REKAM 720p</button>
@@ -332,6 +335,70 @@
       statusBox.innerText = `✅ Semua lagu selesai.`; playBtn.innerText = "▶ PLAY ACAK"; progressBar.value = 0; currTimeEl.innerText = "00:00"; durTimeEl.innerText = "00:00";
       if (mediaRecorder && mediaRecorder.state === 'recording') { statusBox.innerText = `✅ Menyimpan rekaman otomatis...`; setTimeout(() => { stopRecording(); }, 500); }
     }
+
+    // =========================================================
+    // COLOR WHEEL SCRIPT (GRADASI 360 DERAJAT)
+    // =========================================================
+    const cwCanvas = document.getElementById('colorWheel');
+    const cwCtx = cwCanvas.getContext('2d', {willReadFrequently: true});
+    
+    function drawColorWheel() {
+        const w = cwCanvas.width;
+        const h = cwCanvas.height;
+        const cx = w / 2;
+        const cy = h / 2;
+        
+        if(cwCtx.createConicGradient) {
+            const grad = cwCtx.createConicGradient(0, cx, cy);
+            grad.addColorStop(0, "red");
+            grad.addColorStop(1/6, "magenta");
+            grad.addColorStop(2/6, "blue");
+            grad.addColorStop(3/6, "cyan");
+            grad.addColorStop(4/6, "green");
+            grad.addColorStop(5/6, "yellow");
+            grad.addColorStop(1, "red");
+            cwCtx.fillStyle = grad;
+            cwCtx.fillRect(0, 0, w, h);
+        } else {
+            // Fallback untuk browser lawas
+            for(let angle=0; angle<360; angle++) {
+                cwCtx.beginPath();
+                cwCtx.moveTo(cx, cy);
+                cwCtx.arc(cx, cy, cx*1.5, angle*Math.PI/180, (angle+1.5)*Math.PI/180);
+                cwCtx.fillStyle = `hsl(${angle}, 100%, 50%)`;
+                cwCtx.fill();
+            }
+        }
+    }
+    drawColorWheel();
+
+    function pickColor(e) {
+        const rect = cwCanvas.getBoundingClientRect();
+        const scaleX = cwCanvas.width / rect.width;
+        const scaleY = cwCanvas.height / rect.height;
+        let clientX = e.clientX;
+        let clientY = e.clientY;
+        if(e.touches && e.touches.length > 0) {
+           clientX = e.touches[0].clientX;
+           clientY = e.touches[0].clientY;
+        }
+        let x = (clientX - rect.left) * scaleX;
+        let y = (clientY - rect.top) * scaleY;
+        
+        const pixel = cwCtx.getImageData(x, y, 1, 1).data;
+        const hex = "#" + (1 << 24 | pixel[0] << 16 | pixel[1] << 8 | pixel[2]).toString(16).slice(1);
+        document.getElementById('speakerColor').value = hex;
+        document.getElementById('useCustomColor').checked = true;
+    }
+    
+    let isPickingColor = false;
+    cwCanvas.addEventListener('mousedown', (e) => { isPickingColor = true; pickColor(e); });
+    cwCanvas.addEventListener('mousemove', (e) => { if(isPickingColor) pickColor(e); });
+    window.addEventListener('mouseup', () => { isPickingColor = false; });
+    cwCanvas.addEventListener('touchstart', (e) => { isPickingColor = true; pickColor(e); }, {passive:false});
+    cwCanvas.addEventListener('touchmove', (e) => { if(isPickingColor) { e.preventDefault(); pickColor(e); } }, {passive:false});
+    window.addEventListener('touchend', () => { isPickingColor = false; });
+
 
     // POSISI ELEMEN DRAGGABLE
     let visW = 400; let visX = (width - visW) / 2; let visY = height - 160;
@@ -488,14 +555,12 @@
             this.life += this.wobbleSpeed;
             
             if (['dust_motes', 'golden_pollen', 'magic_sparks', 'floating_embers'].includes(config.type)) {
-                // Mengambang ke atas pelan (Drifting upward)
                 this.y -= this.speedY * sm * 0.5;
                 this.x += Math.sin(this.life) * 1 * sm + Math.sin(wind)*2;
             } else if (config.type === 'bokeh_orbs' || config.type === 'fairy_light') {
                 this.y -= this.speedY * sm * 0.3;
                 this.x += Math.sin(this.life) * 0.5 * sm + Math.sin(wind)*1;
             } else {
-                // Jatuh ke bawah (Falling snow/ash)
                 this.y += this.speedY * sm;
                 this.x += Math.sin(this.life) * 1 * sm + Math.sin(wind)*3;
             }
@@ -567,17 +632,15 @@
       let shakeX = (Math.random() - 0.5) * bass * shakeIntensity;
       let shakeY = (Math.random() - 0.5) * bass * shakeIntensity;
       
-      // EFEK PUMP (Membesar sedikit ke depan layaknya memompa udara)
       let pump = 1 + (bass * 0.1 * (shakeIntensity > 0 ? 1 : 0)); 
 
       function drawRealSpk(x, y, coneStops, capStops, ribs=0) {
         ctx.save(); 
         
         ctx.translate(x + shakeX, y + shakeY); 
-        ctx.scale(pump, pump); // PUMP ANIMATION
+        ctx.scale(pump, pump);
 
         let coneR = baseR; 
-        // UKURAN DUST CAP DIPERBESAR SUPAYA REALISTIS
         let capR = baseR * 0.45; 
         
         let customColor = document.getElementById('speakerColor').value;
@@ -653,27 +716,27 @@
     }
 
     // =========================================================
-    // FITUR PROP HYPER-REALISTIC: ASAP KOPI DENGAN BLUR
+    // FITUR EFEK PROP: ASAP KOPI TEBAL
     // =========================================================
-    function drawCoffeeSteam(x, y, style, scale) {
+    function drawCoffeeSteam(x, y, style, scale, propSpeed) {
         if(style === 'none') return;
         ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
 
-        let branches = 3; let hMax = 150; let wMax = 20; let speedMult = 1.5; let waveFreq = 1.5; let opacity = 0.3;
-        if(style === 'soft_steam') { branches=2; hMax=120; wMax=15; speedMult=1; waveFreq=1.2; opacity=0.25; }
-        if(style === 'swirl_vapor') { branches=4; hMax=160; wMax=25; speedMult=1.8; waveFreq=2.5; opacity=0.35; }
-        if(style === 'thin_wisp') { branches=1; hMax=140; wMax=10; speedMult=0.8; waveFreq=2; opacity=0.2; }
-        if(style === 'heavy_steam') { branches=5; hMax=180; wMax=30; speedMult=2; waveFreq=1.5; opacity=0.4; }
-        if(style === 'wind_steam') { branches=3; hMax=150; wMax=20; speedMult=2.5; waveFreq=1.5; opacity=0.3; ctx.rotate(20 * Math.PI/180); }
+        let branches = 4; let hMax = 180; let wMax = 30; let speedMult = 1.5; let waveFreq = 1.5; let opacity = 0.7;
+        if(style === 'soft_steam') { branches=3; hMax=150; wMax=25; speedMult=1; waveFreq=1.2; opacity=0.6; }
+        if(style === 'swirl_vapor') { branches=5; hMax=200; wMax=40; speedMult=1.8; waveFreq=2.5; opacity=0.75; }
+        if(style === 'thin_wisp') { branches=2; hMax=160; wMax=15; speedMult=0.8; waveFreq=2; opacity=0.5; }
+        if(style === 'heavy_steam') { branches=6; hMax=220; wMax=50; speedMult=2; waveFreq=1.5; opacity=0.85; }
+        if(style === 'wind_steam') { branches=4; hMax=180; wMax=35; speedMult=2.5; waveFreq=1.5; opacity=0.7; ctx.rotate(20 * Math.PI/180); }
 
         ctx.globalCompositeOperation = 'screen';
-        ctx.filter = 'blur(8px)'; 
+        ctx.filter = 'blur(4px)'; 
 
         for(let b=0; b<branches; b++) {
-            let pts = []; let steps = 20; let offsetBase = (b - (branches-1)/2) * 15;
+            let pts = []; let steps = 25; let offsetBase = (b - (branches-1)/2) * 20;
             for(let i=0; i<=steps; i++) {
-                let prog = i/steps; let w = Math.sin(prog * Math.PI) * wMax; let speed = time * speedMult;
-                let sway = Math.sin(prog * Math.PI * waveFreq - speed + b) * 25 * Math.pow(prog, 1.2);
+                let prog = i/steps; let w = Math.sin(prog * Math.PI) * wMax; let speed = time * speedMult * propSpeed;
+                let sway = Math.sin(prog * Math.PI * waveFreq - speed + b) * 30 * Math.pow(prog, 1.2);
                 let px = offsetBase * (1-prog) + sway; let py = -prog * hMax;
                 pts.push({x: px, y: py, w: w});
             }
@@ -692,7 +755,7 @@
             ctx.closePath();
             
             let grad = ctx.createLinearGradient(0,0, 0,-hMax);
-            grad.addColorStop(0, `rgba(200, 200, 200, 0)`); grad.addColorStop(0.3, `rgba(220, 220, 220, ${opacity})`); grad.addColorStop(1, `rgba(200, 200, 200, 0)`);
+            grad.addColorStop(0, `rgba(255, 255, 255, 0)`); grad.addColorStop(0.4, `rgba(255, 255, 255, ${opacity})`); grad.addColorStop(1, `rgba(255, 255, 255, 0)`);
             ctx.fillStyle = grad; ctx.fill();
         }
         ctx.filter = 'none'; ctx.globalCompositeOperation = 'source-over';
@@ -702,11 +765,11 @@
     // =========================================================
     // FITUR PROP HYPER-REALISTIC: API LILIN BERLAPIS (ORGANIK)
     // =========================================================
-    function drawCandle(x, y, style, scale) {
+    function drawCandle(x, y, style, scale, propSpeed) {
         if(style === 'none') return;
         ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
 
-        let t = time * 2;
+        let t = time * 2 * propSpeed;
         let flicker = 0; let sway = 0; let h = 65; let w = 16;
         let baseColor = 'rgba(255, 140, 0, 0.8)';
         let midColor = 'rgba(255, 210, 0, 0.9)';
@@ -751,7 +814,6 @@
         }
         ctx.restore();
     }
-
 
     // ===============================================
     // 50 NORMAL, STANDARD & CLEAN VISUALIZERS
@@ -1094,7 +1156,7 @@
     }
 
     function animate() {
-      ctx.fillStyle = "#000"; ctx.fillRect(0, 0, width, height); time += (0.05 * config.fxSpeed); 
+      ctx.fillStyle = "#000"; ctx.fillRect(0, 0, width, height); time += 0.05; // Time utama konstan
       ctx.save();
       
       if (isBgReady) { const scale = Math.max(width / bgImageElement.width, height / bgImageElement.height); const x = (width / 2) - (bgImageElement.width / 2) * scale; const y = (height / 2) - (bgImageElement.height / 2) * scale; ctx.drawImage(bgImageElement, x, y, bgImageElement.width * scale, bgImageElement.height * scale); }
@@ -1107,13 +1169,14 @@
       // RENDER SPEAKER DRAGGABLE
       drawSpeakers(isAudioInit ? analyser.frequencyBinCount : 128);
       
-      // RENDER COFFEE & CANDLES
+      // RENDER COFFEE & CANDLES (DENGAN SPEED TERPISAH)
       let propScale = parseFloat(document.getElementById('propSize').value);
-      drawCoffeeSteam(coffeeX, coffeeY, document.getElementById('coffeeStyle').value, propScale);
-      drawCandle(candle1X, candle1Y, document.getElementById('candleStyle').value, propScale);
-      drawCandle(candle2X, candle2Y, document.getElementById('candleStyle').value, propScale);
+      let propSpeed = parseFloat(document.getElementById('propSpeed').value);
+      drawCoffeeSteam(coffeeX, coffeeY, document.getElementById('coffeeStyle').value, propScale, propSpeed);
+      drawCandle(candle1X, candle1Y, document.getElementById('candleStyle').value, propScale, propSpeed);
+      drawCandle(candle2X, candle2Y, document.getElementById('candleStyle').value, propScale, propSpeed);
 
-      // RENDER CINEMATIC PARTICLES
+      // RENDER CINEMATIC PARTICLES (DENGAN FX SPEED NATIVE)
       for (let i = 0; i < config.count; i++) { 
         if (cinematicParticles[i]) { 
             cinematicParticles[i].update(); 
