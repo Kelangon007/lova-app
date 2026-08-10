@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bass Jazz (Color Wheel Update)</title>
+  <title>Bass Jazz (Lightweight Vector Smoke)</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body { margin: 0; background-image: linear-gradient(45deg, #222 25%, transparent 25%), linear-gradient(-45deg, #222 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #222 75%), linear-gradient(-45deg, transparent 75%, #222 75%); background-size: 20px 20px; background-color: #333; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; }
@@ -30,6 +30,7 @@
     .row { display: flex; align-items: center; gap: 10px; }
     label { font-size: 11px; width: 80px; color: #ccc; font-weight: 600; }
     input[type="range"], select { flex: 1; height: 36px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px; }
+    input[type="color"] { border: none; border-radius: 4px; cursor: pointer; background: none; }
     input[type="file"] { display: none; }
     optgroup { background: #111; color: #d4af37; font-weight: bold; }
 
@@ -54,7 +55,7 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Bass Jazz (Color Wheel Update).</div>
+    <div id="statusBox">Siap. Bass Jazz (Lightweight Vector Smoke).</div>
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
       <label for="audioInput" class="file-label" style="border-bottom: 3px solid #00bcd4">2. MUSIK (BANYAK)</label>
@@ -360,7 +361,6 @@
             cwCtx.fillStyle = grad;
             cwCtx.fillRect(0, 0, w, h);
         } else {
-            // Fallback untuk browser lawas
             for(let angle=0; angle<360; angle++) {
                 cwCtx.beginPath();
                 cwCtx.moveTo(cx, cy);
@@ -405,7 +405,7 @@
     let spk1X = 250; let spk1Y = height - 300;
     let spk2X = width - 250; let spk2Y = height - 300;
     
-    // Posisi default kopi dan 2 lilin (kiri kanan)
+    // Posisi default kopi dan 2 lilin
     let coffeeX = 350; let coffeeY = height - 150;
     let candle1X = 150; let candle1Y = height - 200;
     let candle2X = width - 150; let candle2Y = height - 200;
@@ -435,7 +435,6 @@
         isDraggingSpk2 = true; dragOffsetX = pos.x - spk2X; dragOffsetY = pos.y - spk2Y; if (e.cancelable) e.preventDefault(); return; 
       }
       
-      // Hitbox Props (Coffee/Candles)
       if (document.getElementById('coffeeStyle').value !== 'none' && Math.hypot(pos.x - coffeeX, pos.y - coffeeY) <= 50) {
         isDraggingCoffee = true; dragOffsetX = pos.x - coffeeX; dragOffsetY = pos.y - coffeeY; if (e.cancelable) e.preventDefault(); return;
       }
@@ -531,7 +530,7 @@
     let time = 0;
 
     // =========================================================
-    // FITUR BARU: 10 PARTIKEL SINEMATIK SUPER LEMBUT
+    // FITUR: 10 PARTIKEL SINEMATIK SUPER LEMBUT
     // =========================================================
     class CinematicParticle {
         constructor() { this.reset(true); }
@@ -578,7 +577,7 @@
             if(config.type === 'dust_motes') { c1=`rgba(255,230,150,${this.currentOpacity})`; ctx.shadowBlur=this.size*2; ctx.shadowColor='#ffeb3b'; }
             else if(config.type === 'magic_sparks') { c1=`rgba(200,255,255,${this.currentOpacity})`; ctx.shadowBlur=this.size*3; ctx.shadowColor='#00e5ff'; }
             else if(config.type === 'floating_embers') { c1=`rgba(255,100,0,${this.currentOpacity})`; ctx.shadowBlur=this.size*3; ctx.shadowColor='#ff3d00'; }
-            else if(config.type === 'bokeh_orbs') { c1=`rgba(255,255,255,${this.currentOpacity*0.5})`; ctx.filter = 'blur(3px)'; }
+            else if(config.type === 'bokeh_orbs') { c1=`rgba(255,255,255,${this.currentOpacity*0.5})`; }
             else if(config.type === 'snow_dust') { c1=`rgba(255,255,255,${this.currentOpacity})`; ctx.shadowBlur=this.size; ctx.shadowColor='#fff'; }
             else if(config.type === 'fairy_light') { c1=`rgba(255,200,255,${this.currentOpacity})`; ctx.shadowBlur=this.size*4; ctx.shadowColor='#e040fb'; }
             else if(config.type === 'ash_particles') { c1=`rgba(50,50,50,${this.currentOpacity+0.4})`; }
@@ -595,7 +594,6 @@
             ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
             ctx.fillStyle = c1;
             ctx.fill();
-            ctx.filter = 'none';
             ctx.restore();
         }
     }
@@ -614,7 +612,7 @@
     }
 
     // =========================================================
-    // FITUR SPEAKER: MANGKOK DUSTCAP BESAR & EFEK PUMP (DORONGAN BASS)
+    // FITUR SPEAKER BERDENYUT (FRAME LUAR STATIS, MEMBRAN AKTIF)
     // =========================================================
     function drawSpeakers(bufferLen) {
       let style = document.getElementById('speakerStyle').value;
@@ -627,138 +625,119 @@
       if(isNaN(bass)) bass = 0;
 
       let baseR = 50 * scale; 
-      
-      let shakeIntensity = parseFloat(document.getElementById('speakerShake').value);
-      let shakeX = (Math.random() - 0.5) * bass * shakeIntensity;
-      let shakeY = (Math.random() - 0.5) * bass * shakeIntensity;
-      
-      let pump = 1 + (bass * 0.1 * (shakeIntensity > 0 ? 1 : 0)); 
+      let pulse = bass * 12 * scale; 
 
-      function drawRealSpk(x, y, coneStops, capStops, ribs=0) {
-        ctx.save(); 
+      function drawRealSpk(x, y, surroundCol, coneStops, capStops, ribs=0) {
+        ctx.save(); ctx.translate(x, y);
+
+        ctx.beginPath(); ctx.arc(0,0, baseR, 0, Math.PI*2);
+        ctx.fillStyle = surroundCol; ctx.fill();
+        ctx.lineWidth = 1.5 * scale; ctx.strokeStyle = '#050505'; ctx.stroke();
+
+        let coneR = baseR * 0.85; let capR = baseR * 0.3 + pulse; 
         
-        ctx.translate(x + shakeX, y + shakeY); 
-        ctx.scale(pump, pump);
-
-        let coneR = baseR; 
-        let capR = baseR * 0.45; 
-        
-        let customColor = document.getElementById('speakerColor').value;
-        let useColor = document.getElementById('useCustomColor').checked;
-
-        // 1. Gambar Daun Speaker (Cone Base)
         let grad = ctx.createRadialGradient(0,0, capR, 0,0, coneR);
         coneStops.forEach(st => grad.addColorStop(st[0], st[1]));
         ctx.beginPath(); ctx.arc(0,0, coneR, 0, Math.PI*2);
         ctx.fillStyle = grad; ctx.fill();
         
-        // 2. Garis Tekstur (Ribs)
         if(ribs > 0) {
-            ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(0,0,0,0.4)';
-            for(let i=1; i<=ribs; i++) { 
-                ctx.beginPath(); ctx.arc(0,0, capR + (coneR-capR)*(i/(ribs+1)), 0, Math.PI*2); ctx.stroke(); 
-            }
+            ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+            for(let i=1; i<=ribs; i++) { ctx.beginPath(); ctx.arc(0,0, capR + (coneR-capR)*(i/(ribs+1)), 0, Math.PI*2); ctx.stroke(); }
         }
 
-        // 3. Overlay Warna Custom
-        if(useColor) {
-            ctx.globalCompositeOperation = 'overlay';
-            ctx.beginPath(); ctx.arc(0,0, coneR, 0, Math.PI*2);
-            ctx.fillStyle = customColor;
-            ctx.fill();
-            ctx.globalCompositeOperation = 'source-over'; 
-        }
-
-        // 4. Pelindung Debu Tengah (Dust Cap) Besar
         let capGrad = ctx.createRadialGradient(0,-capR*0.3, 0, 0,0, capR);
         capStops.forEach(st => capGrad.addColorStop(st[0], st[1]));
         ctx.beginPath(); ctx.arc(0,0, capR, 0, Math.PI*2); ctx.fillStyle = capGrad; ctx.fill();
-        
-        // 5. Cincin Emas Mengelilingi Dust Cap
-        ctx.beginPath(); ctx.arc(0,0, capR, 0, Math.PI*2); 
-        ctx.lineWidth = 2 * scale; 
-        let ringGrad = ctx.createLinearGradient(-capR, -capR, capR, capR);
-        ringGrad.addColorStop(0, '#ffca28'); ringGrad.addColorStop(0.5, '#fff8e1'); ringGrad.addColorStop(1, '#ff8f00');
-        ctx.strokeStyle = ringGrad; 
-        ctx.stroke();
-
-        // 6. Garis Halus Tepi Luar Daun
-        ctx.beginPath(); ctx.arc(0,0, coneR, 0, Math.PI*2);
-        ctx.lineWidth = 2 * scale; ctx.strokeStyle = '#111'; ctx.stroke();
-
+        ctx.beginPath(); ctx.arc(0,0, capR, 0, Math.PI*2); ctx.lineWidth = 1 * scale; ctx.strokeStyle = 'rgba(0,0,0,0.6)'; ctx.stroke();
         ctx.restore();
       }
 
       function renderSpk(x, y) {
-          if (style === 'golden_cone') drawRealSpk(x, y, [[0,'#ffca28'], [1,'#8b5a00']], [[0,'#444'], [1,'#111']]);
-          else if (style === 'classic_black') drawRealSpk(x, y, [[0,'#333'], [1,'#0a0a0a']], [[0,'#222'], [1,'#050505']]);
-          else if (style === 'white_monitor') drawRealSpk(x, y, [[0,'#fff'], [1,'#ccc']], [[0,'#333'], [1,'#111']]);
-          else if (style === 'kevlar_yellow') drawRealSpk(x, y, [[0,'#fbc02d'], [1,'#f57f17']], [[0,'#222'], [1,'#000']], 3);
-          else if (style === 'kevlar_red') drawRealSpk(x, y, [[0,'#e53935'], [1,'#b71c1c']], [[0,'#222'], [1,'#000']], 3);
-          else if (style === 'silver_alum') drawRealSpk(x, y, [[0,'#eee'], [1,'#888']], [[0,'#ddd'], [1,'#666']]);
-          else if (style === 'copper_driver') drawRealSpk(x, y, [[0,'#d88c51'], [1,'#8a5626']], [[0,'#a0632c'], [1,'#472c13']]);
-          else if (style === 'paper_vintage') drawRealSpk(x, y, [[0,'#8c7b6c'], [1,'#4a4139']], [[0,'#222'], [1,'#111']], 6);
-          else if (style === 'carbon_fiber') drawRealSpk(x, y, [[0,'#555'], [1,'#222']], [[0,'#333'], [1,'#111']]);
-          else if (style === 'blue_poly') drawRealSpk(x, y, [[0,'#1e3f66'], [1,'#0c1929']], [[0,'#222'], [1,'#000']]);
-          else if (style === 'white_dimpled') drawRealSpk(x, y, [[0,'#f5f5f5'], [1,'#a0a0a0']], [[0,'#ddd'], [1,'#888']]);
-          else if (style === 'orange_studio') drawRealSpk(x, y, [[0,'#ff9800'], [1,'#e65100']], [[0,'#222'], [1,'#000']]);
-          else if (style === 'grey_graphite') drawRealSpk(x, y, [[0,'#757575'], [1,'#424242']], [[0,'#212121'], [1,'#000']]);
-          else if (style === 'titanium_dome') drawRealSpk(x, y, [[0,'#b0bec5'], [1,'#546e7a']], [[0,'#cfd8dc'], [1,'#455a64']]);
-          else if (style === 'purple_anodized') drawRealSpk(x, y, [[0,'#7b1fa2'], [1,'#4a148c']], [[0,'#222'], [1,'#111']]);
-          else if (style === 'green_poly') drawRealSpk(x, y, [[0,'#2e7d32'], [1,'#1b5e20']], [[0,'#222'], [1,'#000']]);
-          else if (style === 'wood_fiber') drawRealSpk(x, y, [[0,'#5d4037'], [1,'#3e2723']], [[0,'#222'], [1,'#111']]);
-          else if (style === 'clear_poly') drawRealSpk(x, y, [[0,'#cfd8dc'], [1,'#90a4ae']], [[0,'#37474f'], [1,'#263238']]);
-          else if (style === 'ribbed_black') drawRealSpk(x, y, [[0,'#424242'], [1,'#212121']], [[0,'#111'], [1,'#000']], 8);
-          else if (style === 'bronze_spun') drawRealSpk(x, y, [[0,'#cd7f32'], [1,'#8b4513']], [[0,'#cd7f32'], [1,'#8b4513']], 6);
+          if (style === 'golden_cone') drawRealSpk(x, y, '#111', [[0,'#ffca28'], [1,'#8b5a00']], [[0,'#444'], [1,'#111']]);
+          else if (style === 'classic_black') drawRealSpk(x, y, '#1a1a1a', [[0,'#333'], [1,'#0a0a0a']], [[0,'#222'], [1,'#050505']]);
+          else if (style === 'white_monitor') drawRealSpk(x, y, '#111', [[0,'#fff'], [1,'#ccc']], [[0,'#333'], [1,'#111']]);
+          else if (style === 'kevlar_yellow') drawRealSpk(x, y, '#111', [[0,'#fbc02d'], [1,'#f57f17']], [[0,'#222'], [1,'#000']], 3);
+          else if (style === 'kevlar_red') drawRealSpk(x, y, '#111', [[0,'#e53935'], [1,'#b71c1c']], [[0,'#222'], [1,'#000']], 3);
+          else if (style === 'silver_alum') drawRealSpk(x, y, '#222', [[0,'#eee'], [1,'#888']], [[0,'#ddd'], [1,'#666']]);
+          else if (style === 'copper_driver') drawRealSpk(x, y, '#111', [[0,'#d88c51'], [1,'#8a5626']], [[0,'#a0632c'], [1,'#472c13']]);
+          else if (style === 'paper_vintage') drawRealSpk(x, y, '#222', [[0,'#8c7b6c'], [1,'#4a4139']], [[0,'#222'], [1,'#111']], 4);
+          else if (style === 'carbon_fiber') drawRealSpk(x, y, '#1a1a1a', [[0,'#555'], [1,'#222']], [[0,'#333'], [1,'#111']]);
+          else if (style === 'blue_poly') drawRealSpk(x, y, '#111', [[0,'#1e3f66'], [1,'#0c1929']], [[0,'#222'], [1,'#000']]);
+          else if (style === 'white_dimpled') drawRealSpk(x, y, '#222', [[0,'#f5f5f5'], [1,'#a0a0a0']], [[0,'#ddd'], [1,'#888']]);
+          else if (style === 'orange_studio') drawRealSpk(x, y, '#111', [[0,'#ff9800'], [1,'#e65100']], [[0,'#222'], [1,'#000']]);
+          else if (style === 'grey_graphite') drawRealSpk(x, y, '#111', [[0,'#757575'], [1,'#424242']], [[0,'#212121'], [1,'#000']]);
+          else if (style === 'titanium_dome') drawRealSpk(x, y, '#222', [[0,'#b0bec5'], [1,'#546e7a']], [[0,'#cfd8dc'], [1,'#455a64']]);
+          else if (style === 'purple_anodized') drawRealSpk(x, y, '#111', [[0,'#7b1fa2'], [1,'#4a148c']], [[0,'#222'], [1,'#111']]);
+          else if (style === 'green_poly') drawRealSpk(x, y, '#111', [[0,'#2e7d32'], [1,'#1b5e20']], [[0,'#222'], [1,'#000']]);
+          else if (style === 'wood_fiber') drawRealSpk(x, y, '#111', [[0,'#5d4037'], [1,'#3e2723']], [[0,'#222'], [1,'#111']]);
+          else if (style === 'clear_poly') drawRealSpk(x, y, '#333', [[0,'#cfd8dc'], [1,'#90a4ae']], [[0,'#37474f'], [1,'#263238']]);
+          else if (style === 'ribbed_black') drawRealSpk(x, y, '#111', [[0,'#424242'], [1,'#212121']], [[0,'#111'], [1,'#000']], 5);
+          else if (style === 'bronze_spun') drawRealSpk(x, y, '#111', [[0,'#cd7f32'], [1,'#8b4513']], [[0,'#cd7f32'], [1,'#8b4513']], 6);
       }
 
       renderSpk(spk1X, spk1Y); renderSpk(spk2X, spk2Y);
     }
 
     // =========================================================
-    // FITUR EFEK PROP: ASAP KOPI TEBAL
+    // FITUR PROP HYPER-REALISTIC: VECTOR RIBBON COFFEE SMOKE
     // =========================================================
     function drawCoffeeSteam(x, y, style, scale, propSpeed) {
         if(style === 'none') return;
         ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
 
-        let branches = 4; let hMax = 180; let wMax = 30; let speedMult = 1.5; let waveFreq = 1.5; let opacity = 0.7;
-        if(style === 'soft_steam') { branches=3; hMax=150; wMax=25; speedMult=1; waveFreq=1.2; opacity=0.6; }
-        if(style === 'swirl_vapor') { branches=5; hMax=200; wMax=40; speedMult=1.8; waveFreq=2.5; opacity=0.75; }
-        if(style === 'thin_wisp') { branches=2; hMax=160; wMax=15; speedMult=0.8; waveFreq=2; opacity=0.5; }
-        if(style === 'heavy_steam') { branches=6; hMax=220; wMax=50; speedMult=2; waveFreq=1.5; opacity=0.85; }
-        if(style === 'wind_steam') { branches=4; hMax=180; wMax=35; speedMult=2.5; waveFreq=1.5; opacity=0.7; ctx.rotate(20 * Math.PI/180); }
-
-        ctx.globalCompositeOperation = 'screen';
-        ctx.filter = 'blur(4px)'; 
+        let branches = 3; let hMax = 150; let wMax = 30; let speedMult = 1.5; let waveFreq = 2.0; let opacity = 0.3;
+        if(style === 'soft_steam') { branches=2; hMax=120; wMax=20; speedMult=1; waveFreq=1.5; opacity=0.25; }
+        if(style === 'swirl_vapor') { branches=4; hMax=180; wMax=40; speedMult=1.8; waveFreq=2.5; opacity=0.35; }
+        if(style === 'thin_wisp') { branches=2; hMax=140; wMax=15; speedMult=1.2; waveFreq=3; opacity=0.2; }
+        if(style === 'heavy_steam') { branches=5; hMax=200; wMax=45; speedMult=2; waveFreq=1.8; opacity=0.4; }
+        if(style === 'wind_steam') { branches=3; hMax=160; wMax=35; speedMult=2.5; waveFreq=2.0; opacity=0.3; ctx.rotate(20 * Math.PI/180); }
 
         for(let b=0; b<branches; b++) {
-            let pts = []; let steps = 25; let offsetBase = (b - (branches-1)/2) * 20;
+            let pts = []; let steps = 40; 
             for(let i=0; i<=steps; i++) {
-                let prog = i/steps; let w = Math.sin(prog * Math.PI) * wMax; let speed = time * speedMult * propSpeed;
-                let sway = Math.sin(prog * Math.PI * waveFreq - speed + b) * 30 * Math.pow(prog, 1.2);
-                let px = offsetBase * (1-prog) + sway; let py = -prog * hMax;
+                let prog = i/steps; 
+                let speed = time * speedMult * propSpeed;
+                let w = (5 + Math.sin(prog * Math.PI * 3 + speed) * 5) * Math.sin(prog * Math.PI); 
+                
+                let sway = Math.sin(prog * Math.PI * waveFreq - speed + b * 1.3) * wMax * Math.pow(prog, 0.8);
+                let secondarySway = Math.sin(prog * Math.PI * waveFreq * 2.1 - speed * 1.4 + b * 2) * (wMax * 0.4) * prog;
+                
+                let px = sway + secondarySway; 
+                let py = -prog * hMax;
                 pts.push({x: px, y: py, w: w});
             }
             
+            // Draw Ribbon Fill
             ctx.beginPath();
             ctx.moveTo(pts[0].x - pts[0].w, pts[0].y);
-            for(let i=1; i<pts.length; i++) { 
-                let xc = (pts[i].x - pts[i].w + pts[i-1].x - pts[i-1].w) / 2; let yc = (pts[i].y + pts[i-1].y) / 2;
-                ctx.quadraticCurveTo(pts[i-1].x - pts[i-1].w, pts[i-1].y, xc, yc);
-            }
-            ctx.lineTo(pts[pts.length-1].x + pts[pts.length-1].w, pts[pts.length-1].y);
-            for(let i=pts.length-2; i>=0; i--) { 
-                let xc = (pts[i].x + pts[i].w + pts[i+1].x + pts[i+1].w) / 2; let yc = (pts[i].y + pts[i+1].y) / 2;
-                ctx.quadraticCurveTo(pts[i+1].x + pts[i+1].w, pts[i+1].y, xc, yc);
-            }
+            for(let i=1; i<pts.length; i++) ctx.lineTo(pts[i].x - pts[i].w, pts[i].y);
+            for(let i=pts.length-1; i>=0; i--) ctx.lineTo(pts[i].x + pts[i].w, pts[i].y);
             ctx.closePath();
             
             let grad = ctx.createLinearGradient(0,0, 0,-hMax);
-            grad.addColorStop(0, `rgba(255, 255, 255, 0)`); grad.addColorStop(0.4, `rgba(255, 255, 255, ${opacity})`); grad.addColorStop(1, `rgba(255, 255, 255, 0)`);
-            ctx.fillStyle = grad; ctx.fill();
+            grad.addColorStop(0, `rgba(255, 255, 255, 0)`); 
+            grad.addColorStop(0.5, `rgba(255, 255, 255, ${opacity})`); 
+            grad.addColorStop(1, `rgba(255, 255, 255, 0)`);
+            ctx.fillStyle = grad; 
+            ctx.fill();
+
+            // Draw Bright Ribbon Edge (Vector Look)
+            ctx.beginPath();
+            ctx.moveTo(pts[0].x - pts[0].w, pts[0].y);
+            for(let i=1; i<pts.length; i++) ctx.lineTo(pts[i].x - pts[i].w, pts[i].y);
+            ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * 1.8})`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            
+            // Draw secondary fade line
+            ctx.beginPath();
+            ctx.moveTo(pts[0].x + pts[0].w, pts[0].y);
+            for(let i=1; i<pts.length; i++) ctx.lineTo(pts[i].x + pts[i].w, pts[i].y);
+            ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * 0.5})`; 
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
         }
-        ctx.filter = 'none'; ctx.globalCompositeOperation = 'source-over';
         ctx.restore();
     }
 
@@ -781,19 +760,19 @@
         else if(style === 'blue_base') { flicker = Math.sin(t*5)*2; baseColor = 'rgba(0, 150, 255, 0.8)'; midColor = 'rgba(100, 200, 255, 0.9)'; }
         else if(style === 'wind_flame') { flicker = Math.random()*5; sway = 15 + Math.sin(t*8)*5; }
 
-        // Glow Halo (Pendaran Cahaya)
+        // Glow Halo
         ctx.beginPath(); ctx.arc(0, -h*0.5, w*3, 0, Math.PI*2);
         let gradGlow = ctx.createRadialGradient(0,-h*0.5,0, 0,-h*0.5,w*4);
         gradGlow.addColorStop(0, 'rgba(255, 120, 0, 0.25)'); gradGlow.addColorStop(1, 'rgba(255, 120, 0, 0)');
         ctx.fillStyle = gradGlow; ctx.fill();
 
-        // Wick (Sumbu Lilin)
+        // Wick
         ctx.beginPath(); ctx.moveTo(0, 5); ctx.lineTo(sway*0.05, -8);
         ctx.lineWidth = 3; ctx.strokeStyle = '#111'; ctx.stroke();
         ctx.beginPath(); ctx.moveTo(sway*0.05, -8); ctx.lineTo(sway*0.1, -12);
         ctx.lineWidth = 2; ctx.strokeStyle = '#ff5722'; ctx.stroke();
 
-        // Layer Api (Organic Teardrop Curve)
+        // Layer Api
         function drawFlame(fw, fh, fsway, color) {
             ctx.beginPath();
             ctx.moveTo(0, 2);
@@ -802,11 +781,11 @@
             ctx.fillStyle = color; ctx.fill();
         }
 
-        drawFlame(w, h + flicker, sway, baseColor); // Outer
-        drawFlame(w*0.7, (h + flicker)*0.75, sway*0.7, midColor); // Mid
-        drawFlame(w*0.35, (h + flicker)*0.45, sway*0.3, coreColor); // Core
+        drawFlame(w, h + flicker, sway, baseColor); 
+        drawFlame(w*0.7, (h + flicker)*0.75, sway*0.7, midColor); 
+        drawFlame(w*0.35, (h + flicker)*0.45, sway*0.3, coreColor); 
         
-        // Base Biru Nyata di Pangkal Sumbu
+        // Base Biru
         if(style !== 'blue_base') {
             ctx.beginPath(); ctx.moveTo(0, 4); ctx.bezierCurveTo(w*0.5, 4, w*0.4, -5, 0, -5); ctx.bezierCurveTo(-w*0.4, -5, -w*0.5, 4, 0, 4);
             let bg = ctx.createRadialGradient(0,0,0, 0,0,w*0.5); bg.addColorStop(0,'rgba(0,100,255,0.6)'); bg.addColorStop(1,'rgba(0,50,255,0)');
@@ -814,6 +793,7 @@
         }
         ctx.restore();
     }
+
 
     // ===============================================
     // 50 NORMAL, STANDARD & CLEAN VISUALIZERS
@@ -1156,7 +1136,7 @@
     }
 
     function animate() {
-      ctx.fillStyle = "#000"; ctx.fillRect(0, 0, width, height); time += 0.05; // Time utama konstan
+      ctx.fillStyle = "#000"; ctx.fillRect(0, 0, width, height); time += 0.05;
       ctx.save();
       
       if (isBgReady) { const scale = Math.max(width / bgImageElement.width, height / bgImageElement.height); const x = (width / 2) - (bgImageElement.width / 2) * scale; const y = (height / 2) - (bgImageElement.height / 2) * scale; ctx.drawImage(bgImageElement, x, y, bgImageElement.width * scale, bgImageElement.height * scale); }
@@ -1169,14 +1149,14 @@
       // RENDER SPEAKER DRAGGABLE
       drawSpeakers(isAudioInit ? analyser.frequencyBinCount : 128);
       
-      // RENDER COFFEE & CANDLES (DENGAN SPEED TERPISAH)
+      // RENDER COFFEE & CANDLES
       let propScale = parseFloat(document.getElementById('propSize').value);
       let propSpeed = parseFloat(document.getElementById('propSpeed').value);
       drawCoffeeSteam(coffeeX, coffeeY, document.getElementById('coffeeStyle').value, propScale, propSpeed);
       drawCandle(candle1X, candle1Y, document.getElementById('candleStyle').value, propScale, propSpeed);
       drawCandle(candle2X, candle2Y, document.getElementById('candleStyle').value, propScale, propSpeed);
 
-      // RENDER CINEMATIC PARTICLES (DENGAN FX SPEED NATIVE)
+      // RENDER CINEMATIC PARTICLES
       for (let i = 0; i < config.count; i++) { 
         if (cinematicParticles[i]) { 
             cinematicParticles[i].update(); 
