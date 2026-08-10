@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bass Jazz (Complete Edition)</title>
+  <title>Bass Jazz (Cinematic Particle & Hyper-Real Props)</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body { margin: 0; background-image: linear-gradient(45deg, #222 25%, transparent 25%), linear-gradient(-45deg, #222 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #222 75%), linear-gradient(-45deg, transparent 75%, #222 75%); background-size: 20px 20px; background-color: #333; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; }
@@ -55,7 +55,7 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Bass Jazz (Shake Speaker + Custom Color).</div>
+    <div id="statusBox">Siap. Bass Jazz (Cinematic Particle & Hyper-Real Props).</div>
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
       <label for="audioInput" class="file-label" style="border-bottom: 3px solid #00bcd4">2. MUSIK (BANYAK)</label>
@@ -156,28 +156,28 @@
         <input type="range" id="visOpacity" min="0.1" max="1.0" step="0.05" value="1.0">
       </div>
 
-      <!-- KOLOM KANAN (SPEAKER SHAKE) -->
+      <!-- KOLOM KANAN (SPEAKER PUMP & SHAKE) -->
       <div class="layout-col">
-        <label style="color:#ffb300; text-align:center; font-size:12px; margin-bottom:10px;">EFEK SPEAKER GETAR</label>
+        <label style="color:#ffb300; text-align:center; font-size:12px; margin-bottom:10px;">EFEK SPEAKER (DAUN)</label>
         <select id="speakerStyle">
           <option value="none">🚫 Sembunyikan Speaker</option>
           <option value="golden_cone">🟡 1. Golden Cone Studio</option>
-          <option value="classic_black">⚫ 2. Classic Black Subwoofer</option>
+          <option value="classic_black">⚫ 2. Classic Black Woofer</option>
           <option value="white_monitor">⚪ 3. White Monitor Cone</option>
           <option value="kevlar_yellow">🟨 4. Yellow Kevlar Driver</option>
-          <option value="kevlar_red">🟥 5. Red Kevlar Subwoofer</option>
+          <option value="kevlar_red">🟥 5. Red Kevlar Woofer</option>
           <option value="silver_alum">🔘 6. Silver Aluminum Cone</option>
           <option value="copper_driver">🟠 7. Copper Metallic Cone</option>
           <option value="paper_vintage">📜 8. Vintage Paper Ribbed</option>
           <option value="carbon_fiber">🏎️ 9. Carbon Fiber Dark</option>
           <option value="blue_poly">🟦 10. Blue Polypropylene</option>
           <option value="white_dimpled">🤍 11. White Dimpled Cone</option>
-          <option value="orange_studio">🟧 12. Orange Studio Monitor</option>
+          <option value="orange_studio">🟧 12. Orange Studio Mon</option>
           <option value="grey_graphite">🪨 13. Grey Graphite Woofer</option>
           <option value="titanium_dome">⚙️ 14. Titanium Shiny Dome</option>
           <option value="purple_anodized">🟪 15. Purple Anodized Cone</option>
-          <option value="green_poly">🟩 16. Green Poly Subwoofer</option>
-          <option value="wood_fiber">🪵 17. Brown Wood Fiber Cone</option>
+          <option value="green_poly">🟩 16. Green Poly Woofer</option>
+          <option value="wood_fiber">🪵 17. Brown Wood Fiber</option>
           <option value="clear_poly">🧊 18. Clear Frosted Poly</option>
           <option value="ribbed_black">🎼 19. Black Ribbed Studio</option>
           <option value="bronze_spun">🏺 20. Spun Bronze Klipsch</option>
@@ -186,7 +186,7 @@
         <label>UKURAN SPK (STATIS)</label>
         <input type="range" id="speakerSize" min="0.2" max="5.0" step="0.1" value="1.5">
 
-        <label style="color:#ff5252;">GETARAN SPK</label>
+        <label style="color:#ff5252;">GETARAN & DORONGAN</label>
         <input type="range" id="speakerShake" min="0" max="30" step="1" value="10">
 
         <!-- COLOR PICKER BARU -->
@@ -233,18 +233,19 @@
     <hr style="border: 0; border-top: 1px dashed #333; width: 100%; margin: 5px 0;">
 
     <div class="row">
-      <label>EFEK FILM</label>
+      <label style="color:#00e5ff;">PARTIKEL SINEMATIK</label>
       <select id="type">
-        <option value="vintage">🎞️ Vintage HD (Kotor, Debu, Rambut)</option>
-        <option value="grain">🎬 Grains (Bintik & Debu Saja)</option>
-        <option value="scratch">📽️ Scratches (Garis Vertikal Saja)</option>
-        <option value="sepia_dust">📜 Sepia Dust (Klasik Coklat)</option>
-        <option value="old_tv">📺 Old TV (Scanline & Noise)</option>
-        <option value="flicker_8mm">🎞️ 8mm Flicker (Kedap-Kedip)</option>
-        <option value="rain">🌧️ Hujan Realistis</option>
-        <option value="snow">❄️ Salju Lembut</option>
-        <option value="fireflies">✨ Kunang-Kunang</option>
-        <option value="none">Tanpa Efek</option>
+        <option value="none">🚫 Tanpa Partikel</option>
+        <option value="dust_motes">✨ 1. Butiran Debu Emas</option>
+        <option value="magic_sparks">💫 2. Percikan Sihir Biru</option>
+        <option value="floating_embers">🔥 3. Bara Api Terbang</option>
+        <option value="bokeh_orbs">🫧 4. Bokeh Orbs Sinematik</option>
+        <option value="snow_dust">❄️ 5. Debu Salju Halus</option>
+        <option value="fairy_light">🧚 6. Cahaya Peri Berpendar</option>
+        <option value="ash_particles">🌪️ 7. Abu Hitam Melayang</option>
+        <option value="starlight_glint">🌟 8. Kilauan Bintang Halus</option>
+        <option value="deep_sea_motes">🌊 9. Partikel Air Laut</option>
+        <option value="golden_pollen">🌼 10. Serbuk Sari Emas</option>
       </select>
     </div>
 
@@ -337,7 +338,7 @@
     let spk1X = 250; let spk1Y = height - 300;
     let spk2X = width - 250; let spk2Y = height - 300;
     
-    // Posisi default kopi dan 2 lilin
+    // Posisi default kopi dan 2 lilin (kiri kanan)
     let coffeeX = 350; let coffeeY = height - 150;
     let candle1X = 150; let candle1Y = height - 200;
     let candle2X = width - 150; let candle2Y = height - 200;
@@ -367,6 +368,7 @@
         isDraggingSpk2 = true; dragOffsetX = pos.x - spk2X; dragOffsetY = pos.y - spk2Y; if (e.cancelable) e.preventDefault(); return; 
       }
       
+      // Hitbox Props (Coffee/Candles)
       if (document.getElementById('coffeeStyle').value !== 'none' && Math.hypot(pos.x - coffeeX, pos.y - coffeeY) <= 50) {
         isDraggingCoffee = true; dragOffsetX = pos.x - coffeeX; dragOffsetY = pos.y - coffeeY; if (e.cancelable) e.preventDefault(); return;
       }
@@ -449,7 +451,7 @@
       } else { audioPlayer.pause(); playBtn.innerText = "▶ RESUME"; statusBox.innerText = "⏸ Musik Dijeda."; }
     }
 
-    const config = { type: 'vintage', count: 100, visType: 'vintage_bars', visHeight: 150, visOpacity: 1.0, fxAngle: 0, fxSpeed: 1.0 };
+    const config = { type: 'none', count: 100, visType: 'vintage_bars', visHeight: 150, visOpacity: 1.0, fxAngle: 0, fxSpeed: 1.0 };
     document.getElementById('visType').addEventListener('change', (e) => { config.visType = e.target.value; peakHeights.fill(0); });
     document.getElementById('visOpacity').addEventListener('input', (e) => config.visOpacity = parseFloat(e.target.value));
     document.getElementById('type').addEventListener('change', (e) => config.type = e.target.value);
@@ -461,60 +463,80 @@
 
     let time = 0;
 
-    class RealisticFilmJitter {
-      constructor() { this.reset(); }
-      reset() {
-        this.x = (Math.random() * width * 1.5) - (width * 0.25); this.y = (Math.random() * height * 1.5) - (height * 0.25);
-        this.life = Math.random() * 5 + 2; this.alpha = Math.random() * 0.5 + 0.1;
-        const rand = Math.random();
-        if (rand < 0.05) { this.pType = 'scratch'; this.length = Math.random() * height / 2 + 100; this.color = Math.random() > 0.5 ? `rgba(255,255,255,${this.alpha*0.6})` : `rgba(0,0,0,${this.alpha*0.8})`; } 
-        else if (rand < 0.15) { this.pType = 'hair'; this.cp1x = (Math.random() - 0.5) * 80; this.cp1y = (Math.random() - 0.5) * 80; this.cp2x = (Math.random() - 0.5) * 80; this.cp2y = (Math.random() - 0.5) * 80; this.endX = (Math.random() - 0.5) * 100; this.endY = (Math.random() - 0.5) * 100; this.color = `rgba(0, 0, 0, ${this.alpha * 1.2})`; } 
-        else { this.pType = 'dust'; this.radius = Math.random() * 3 + 1.0; this.color = Math.random() > 0.6 ? `rgba(0,0,0,${this.alpha})` : `rgba(255,255,255,${this.alpha*0.6})`; }
-      }
-      update() { if (['none', 'rain', 'snow', 'fireflies'].includes(config.type)) return; this.life -= config.fxSpeed; if (this.life <= 0) this.reset(); }
-      draw() {
-        if (['none', 'rain', 'snow', 'fireflies'].includes(config.type)) return;
-        let showDustHair = ['vintage', 'grain', 'sepia_dust', 'flicker_8mm'].includes(config.type);
-        let showScratch = ['vintage', 'scratch', 'sepia_dust', 'flicker_8mm'].includes(config.type);
-        if (config.type === 'old_tv' && this.pType !== 'dust') return;
-        if (config.type === 'old_tv' && this.pType === 'dust') { this.radius = Math.random() * 1.5; this.color = `rgba(255,255,255,${this.alpha*0.3})`; }
-        ctx.save(); ctx.translate(this.x, this.y); if (config.fxAngle !== 0) ctx.rotate(config.fxAngle * Math.PI / 180);
-        if (this.pType === 'dust' && (showDustHair || config.type === 'old_tv')) { ctx.fillStyle = this.color; ctx.beginPath(); ctx.arc(0, 0, this.radius, 0, Math.PI*2); ctx.fill(); } 
-        else if (this.pType === 'hair' && showDustHair) { ctx.strokeStyle = this.color; ctx.lineWidth = 1.5 + Math.random(); ctx.beginPath(); ctx.moveTo(0, 0); ctx.bezierCurveTo(this.cp1x, this.cp1y, this.cp2x, this.cp2y, this.endX, this.endY); ctx.stroke(); } 
-        else if (this.pType === 'scratch' && showScratch) { ctx.strokeStyle = this.color; ctx.lineWidth = Math.random() * 2.0 + 1.0; ctx.beginPath(); ctx.moveTo(0, 0); let currentY = 0; let currentX = 0; for (let i = 0; i < this.length; i += 20) { currentY += 20; currentX += (Math.random() - 0.5) * 3; ctx.lineTo(currentX, currentY); } ctx.stroke(); }
-        ctx.restore();
-      }
+    // =========================================================
+    // FITUR BARU: 10 PARTIKEL SINEMATIK SUPER LEMBUT
+    // =========================================================
+    class CinematicParticle {
+        constructor() { this.reset(true); }
+        reset(init = false) {
+            this.x = Math.random() * width;
+            this.y = init ? (Math.random() * height) : -20 - Math.random()*50;
+            this.size = Math.random() * 3 + 1;
+            this.speedY = Math.random() * 1.5 + 0.5;
+            this.opacity = Math.random() * 0.6 + 0.2;
+            this.life = Math.random() * 100;
+            this.wobbleSpeed = Math.random() * 0.05 + 0.01;
+            
+            if(config.type === 'bokeh_orbs') { this.size = Math.random() * 15 + 5; this.opacity = Math.random()*0.3+0.1; }
+            if(config.type === 'snow_dust' || config.type === 'ash_particles') { this.speedY = Math.random() * 2 + 1; }
+        }
+        update() {
+            if(config.type === 'none') return;
+            let wind = config.fxAngle * Math.PI / 180;
+            let sm = config.fxSpeed;
+            
+            this.life += this.wobbleSpeed;
+            
+            if (['dust_motes', 'golden_pollen', 'magic_sparks', 'floating_embers'].includes(config.type)) {
+                // Mengambang ke atas pelan (Drifting upward)
+                this.y -= this.speedY * sm * 0.5;
+                this.x += Math.sin(this.life) * 1 * sm + Math.sin(wind)*2;
+            } else if (config.type === 'bokeh_orbs' || config.type === 'fairy_light') {
+                this.y -= this.speedY * sm * 0.3;
+                this.x += Math.sin(this.life) * 0.5 * sm + Math.sin(wind)*1;
+            } else {
+                // Jatuh ke bawah (Falling snow/ash)
+                this.y += this.speedY * sm;
+                this.x += Math.sin(this.life) * 1 * sm + Math.sin(wind)*3;
+            }
+            
+            this.currentOpacity = this.opacity * (0.5 + 0.5*Math.sin(this.life*2));
+            
+            if(this.y > height + 50 || this.y < -50 || this.x > width+50 || this.x < -50) this.reset();
+        }
+        draw() {
+            if(config.type === 'none') return;
+            ctx.save();
+            ctx.beginPath();
+            
+            let c1;
+            if(config.type === 'dust_motes') { c1=`rgba(255,230,150,${this.currentOpacity})`; ctx.shadowBlur=this.size*2; ctx.shadowColor='#ffeb3b'; }
+            else if(config.type === 'magic_sparks') { c1=`rgba(200,255,255,${this.currentOpacity})`; ctx.shadowBlur=this.size*3; ctx.shadowColor='#00e5ff'; }
+            else if(config.type === 'floating_embers') { c1=`rgba(255,100,0,${this.currentOpacity})`; ctx.shadowBlur=this.size*3; ctx.shadowColor='#ff3d00'; }
+            else if(config.type === 'bokeh_orbs') { c1=`rgba(255,255,255,${this.currentOpacity*0.5})`; ctx.filter = 'blur(3px)'; }
+            else if(config.type === 'snow_dust') { c1=`rgba(255,255,255,${this.currentOpacity})`; ctx.shadowBlur=this.size; ctx.shadowColor='#fff'; }
+            else if(config.type === 'fairy_light') { c1=`rgba(255,200,255,${this.currentOpacity})`; ctx.shadowBlur=this.size*4; ctx.shadowColor='#e040fb'; }
+            else if(config.type === 'ash_particles') { c1=`rgba(50,50,50,${this.currentOpacity+0.4})`; }
+            else if(config.type === 'starlight_glint') { c1=`rgba(255,255,255,${this.currentOpacity})`; 
+                let rot = this.life;
+                ctx.translate(this.x, this.y); ctx.rotate(rot);
+                ctx.moveTo(-this.size, 0); ctx.lineTo(this.size, 0); ctx.moveTo(0, -this.size); ctx.lineTo(0, this.size);
+                ctx.strokeStyle=c1; ctx.lineWidth=1; ctx.stroke();
+                ctx.restore(); return;
+            }
+            else if(config.type === 'deep_sea_motes') { c1=`rgba(100,200,255,${this.currentOpacity*0.7})`; ctx.shadowBlur=this.size*2; ctx.shadowColor='#00bcd4'; }
+            else if(config.type === 'golden_pollen') { c1=`rgba(255,215,0,${this.currentOpacity})`; ctx.shadowBlur=this.size*2; ctx.shadowColor='#ffb300'; }
+            
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+            ctx.fillStyle = c1;
+            ctx.fill();
+            ctx.filter = 'none';
+            ctx.restore();
+        }
     }
 
-    class WeatherParticle {
-      constructor() { this.reset(true); }
-      reset(init = false) {
-        this.x = Math.random() * width; this.y = init ? (Math.random() * height) : -20;
-        this.speed = Math.random() * 2 + 1; this.size = Math.random() * 2 + 1; this.opacity = Math.random() * 0.5 + 0.3;
-        this.angle = Math.random() * Math.PI * 2; this.wobble = Math.random() * 0.05;
-        const layer = Math.random();
-        if (layer < 0.5) { this.layer = 'back'; this.layerSpeed = 0.5; this.size *= 0.5; } else if (layer < 0.85) { this.layer = 'mid'; this.layerSpeed = 1.0; } else { this.layer = 'front'; this.layerSpeed = 1.8; this.size *= 1.5; }
-      }
-      update() {
-        if (!['rain', 'snow', 'fireflies'].includes(config.type)) return;
-        let windAngle = config.fxAngle * Math.PI / 180; let speedMult = config.fxSpeed * this.layerSpeed;
-        if (config.type === 'rain') { this.y += this.speed * 10 * speedMult; this.x += Math.sin(windAngle) * (this.speed * 8); if (this.y > height) this.reset(); } 
-        else if (config.type === 'snow') { this.y += this.speed * 1.5 * speedMult; this.angle += this.wobble * config.fxSpeed; this.x += Math.sin(this.angle) * 1.5 + Math.sin(windAngle) * 3; if (this.y > height) this.reset(); } 
-        else if (config.type === 'fireflies') { this.y -= this.speed * 0.5 * speedMult; this.angle += this.wobble * config.fxSpeed; this.x += Math.cos(this.angle) * 2 + Math.sin(windAngle) * 1; this.opacity = Math.abs(Math.sin(time * 1.5 + this.x * 0.05)) * 0.8 + 0.2; if (this.y < -20) { this.reset(); this.y = height + 20; } }
-        if (this.x > width + 50) this.x = -50; else if (this.x < -50) this.x = width + 50;
-      }
-      draw() {
-        if (!['rain', 'snow', 'fireflies'].includes(config.type)) return;
-        ctx.save();
-        if (config.type === 'rain') { ctx.strokeStyle = `rgba(185, 222, 255, ${this.opacity * 0.6})`; ctx.lineWidth = this.layer === 'front' ? 3 : 1.5; ctx.beginPath(); ctx.moveTo(this.x, this.y); let windOffset = Math.sin(config.fxAngle * Math.PI / 180) * 15; ctx.lineTo(this.x - windOffset, this.y - this.speed * 10 * config.fxSpeed); ctx.stroke(); } 
-        else if (config.type === 'snow') { ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`; ctx.shadowBlur = this.layer === 'front' ? 8 : 0; ctx.shadowColor = '#fff'; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); } 
-        else if (config.type === 'fireflies') { ctx.fillStyle = `rgba(215, 255, 40, ${this.opacity})`; ctx.shadowBlur = this.size * 5; ctx.shadowColor = '#d7ff28'; ctx.beginPath(); ctx.arc(this.x, this.y, this.size * 1.2, 0, Math.PI * 2); ctx.fill(); }
-        ctx.restore();
-      }
-    }
-
-    let particles = []; let weatherParticles = [];
-    for (let i = 0; i < 400; i++) { particles.push(new RealisticFilmJitter()); weatherParticles.push(new WeatherParticle()); }
+    let cinematicParticles = [];
+    for(let i=0; i<300; i++) cinematicParticles.push(new CinematicParticle());
 
     function getSymmetricVal(index, totalItems, bufferLen) {
       try {
@@ -527,15 +549,13 @@
     }
 
     // =========================================================
-    // FITUR SPEAKER BERGETAR (SHAKE TANPA FRAME LUAR)
+    // FITUR SPEAKER: MANGKOK DUSTCAP BESAR & EFEK PUMP (DORONGAN BASS)
     // =========================================================
     function drawSpeakers(bufferLen) {
       let style = document.getElementById('speakerStyle').value;
       if (style === 'none') return;
       
       let scale = parseFloat(document.getElementById('speakerSize').value);
-      // Gak pake opacity slider lagi, langsung 100% biar realistis, tapi kalau mau tetap pakai:
-      // let opac = parseFloat(document.getElementById('speakerOpacity').value);
       
       let bass = 0;
       if(dataArray) { bass = (dataArray[1] + dataArray[2] + dataArray[3]) / (255 * 3); }
@@ -543,22 +563,23 @@
 
       let baseR = 50 * scale; 
       
-      // LOGIKA GETAR (SHAKE)
       let shakeIntensity = parseFloat(document.getElementById('speakerShake').value);
       let shakeX = (Math.random() - 0.5) * bass * shakeIntensity;
       let shakeY = (Math.random() - 0.5) * bass * shakeIntensity;
+      
+      // EFEK PUMP (Membesar sedikit ke depan layaknya memompa udara)
+      let pump = 1 + (bass * 0.1 * (shakeIntensity > 0 ? 1 : 0)); 
 
       function drawRealSpk(x, y, coneStops, capStops, ribs=0) {
         ctx.save(); 
         
-        // Translasi posisi termasuk getarannya (Shake)
         ctx.translate(x + shakeX, y + shakeY); 
-        // ctx.globalAlpha = opac; // Opsional jika mau speaker transparan
+        ctx.scale(pump, pump); // PUMP ANIMATION
 
-        let coneR = baseR; // Cone daun jadi bagian paling luar (tanpa karet merah/hitam)
-        let capR = baseR * 0.3; 
+        let coneR = baseR; 
+        // UKURAN DUST CAP DIPERBESAR SUPAYA REALISTIS
+        let capR = baseR * 0.45; 
         
-        // WARNA CUSTOM OVERLAY (Mewarnai daun speaker)
         let customColor = document.getElementById('speakerColor').value;
         let useColor = document.getElementById('useCustomColor').checked;
 
@@ -576,21 +597,21 @@
             }
         }
 
-        // 3. Terapkan Warna Custom pakai Blending Mode Overlay (Menjaga 3D)
+        // 3. Overlay Warna Custom
         if(useColor) {
             ctx.globalCompositeOperation = 'overlay';
             ctx.beginPath(); ctx.arc(0,0, coneR, 0, Math.PI*2);
             ctx.fillStyle = customColor;
             ctx.fill();
-            ctx.globalCompositeOperation = 'source-over'; // Reset blend mode
+            ctx.globalCompositeOperation = 'source-over'; 
         }
 
-        // 4. Pelindung Debu Tengah (Dust Cap)
+        // 4. Pelindung Debu Tengah (Dust Cap) Besar
         let capGrad = ctx.createRadialGradient(0,-capR*0.3, 0, 0,0, capR);
         capStops.forEach(st => capGrad.addColorStop(st[0], st[1]));
         ctx.beginPath(); ctx.arc(0,0, capR, 0, Math.PI*2); ctx.fillStyle = capGrad; ctx.fill();
         
-        // 5. Cincin Emas Mengelilingi Dust Cap (Persis Foto)
+        // 5. Cincin Emas Mengelilingi Dust Cap
         ctx.beginPath(); ctx.arc(0,0, capR, 0, Math.PI*2); 
         ctx.lineWidth = 2 * scale; 
         let ringGrad = ctx.createLinearGradient(-capR, -capR, capR, capR);
@@ -598,14 +619,13 @@
         ctx.strokeStyle = ringGrad; 
         ctx.stroke();
 
-        // 6. Garis Halus Tepi Luar Daun (Biar gak kasar)
+        // 6. Garis Halus Tepi Luar Daun
         ctx.beginPath(); ctx.arc(0,0, coneR, 0, Math.PI*2);
         ctx.lineWidth = 2 * scale; ctx.strokeStyle = '#111'; ctx.stroke();
 
         ctx.restore();
       }
 
-      // Pemanggilan 20 Model tanpa argumen outer-ring
       function renderSpk(x, y) {
           if (style === 'golden_cone') drawRealSpk(x, y, [[0,'#ffca28'], [1,'#8b5a00']], [[0,'#444'], [1,'#111']]);
           else if (style === 'classic_black') drawRealSpk(x, y, [[0,'#333'], [1,'#0a0a0a']], [[0,'#222'], [1,'#050505']]);
@@ -633,82 +653,102 @@
     }
 
     // =========================================================
-    // FITUR EFEK PROP: ASAP KOPI
+    // FITUR PROP HYPER-REALISTIC: ASAP KOPI DENGAN BLUR
     // =========================================================
     function drawCoffeeSteam(x, y, style, scale) {
         if(style === 'none') return;
         ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
 
-        let branches = 2; let hMax = 120; let wMax = 15; let speedMult = 2; let waveFreq = 2; let opacity = 0.4;
-        if(style === 'soft_steam') { branches=2; hMax=100; wMax=12; speedMult=1.5; waveFreq=1.5; opacity=0.3; }
-        if(style === 'swirl_vapor') { branches=3; hMax=140; wMax=18; speedMult=2; waveFreq=3; opacity=0.4; }
-        if(style === 'thin_wisp') { branches=1; hMax=120; wMax=8; speedMult=1; waveFreq=2; opacity=0.25; }
-        if(style === 'heavy_steam') { branches=4; hMax=160; wMax=25; speedMult=3; waveFreq=1.8; opacity=0.5; }
-        if(style === 'wind_steam') { branches=2; hMax=130; wMax=15; speedMult=4; waveFreq=1.5; opacity=0.4; ctx.rotate(15 * Math.PI/180); }
+        let branches = 3; let hMax = 150; let wMax = 20; let speedMult = 1.5; let waveFreq = 1.5; let opacity = 0.3;
+        if(style === 'soft_steam') { branches=2; hMax=120; wMax=15; speedMult=1; waveFreq=1.2; opacity=0.25; }
+        if(style === 'swirl_vapor') { branches=4; hMax=160; wMax=25; speedMult=1.8; waveFreq=2.5; opacity=0.35; }
+        if(style === 'thin_wisp') { branches=1; hMax=140; wMax=10; speedMult=0.8; waveFreq=2; opacity=0.2; }
+        if(style === 'heavy_steam') { branches=5; hMax=180; wMax=30; speedMult=2; waveFreq=1.5; opacity=0.4; }
+        if(style === 'wind_steam') { branches=3; hMax=150; wMax=20; speedMult=2.5; waveFreq=1.5; opacity=0.3; ctx.rotate(20 * Math.PI/180); }
+
+        ctx.globalCompositeOperation = 'screen';
+        ctx.filter = 'blur(8px)'; 
 
         for(let b=0; b<branches; b++) {
-            let pts = []; let steps = 30; let offsetBase = (b - (branches-1)/2) * 10;
+            let pts = []; let steps = 20; let offsetBase = (b - (branches-1)/2) * 15;
             for(let i=0; i<=steps; i++) {
                 let prog = i/steps; let w = Math.sin(prog * Math.PI) * wMax; let speed = time * speedMult;
-                let sway = Math.sin(prog * Math.PI * waveFreq - speed + b*1.5) * 20 * Math.pow(prog, 0.8);
+                let sway = Math.sin(prog * Math.PI * waveFreq - speed + b) * 25 * Math.pow(prog, 1.2);
                 let px = offsetBase * (1-prog) + sway; let py = -prog * hMax;
                 pts.push({x: px, y: py, w: w});
             }
+            
             ctx.beginPath();
-            for(let i=0; i<pts.length; i++) { if(i===0) ctx.moveTo(pts[i].x - pts[i].w, pts[i].y); else ctx.lineTo(pts[i].x - pts[i].w, pts[i].y); }
-            for(let i=pts.length-1; i>=0; i--) { ctx.lineTo(pts[i].x + pts[i].w, pts[i].y); }
+            ctx.moveTo(pts[0].x - pts[0].w, pts[0].y);
+            for(let i=1; i<pts.length; i++) { 
+                let xc = (pts[i].x - pts[i].w + pts[i-1].x - pts[i-1].w) / 2; let yc = (pts[i].y + pts[i-1].y) / 2;
+                ctx.quadraticCurveTo(pts[i-1].x - pts[i-1].w, pts[i-1].y, xc, yc);
+            }
+            ctx.lineTo(pts[pts.length-1].x + pts[pts.length-1].w, pts[pts.length-1].y);
+            for(let i=pts.length-2; i>=0; i--) { 
+                let xc = (pts[i].x + pts[i].w + pts[i+1].x + pts[i+1].w) / 2; let yc = (pts[i].y + pts[i+1].y) / 2;
+                ctx.quadraticCurveTo(pts[i+1].x + pts[i+1].w, pts[i+1].y, xc, yc);
+            }
             ctx.closePath();
+            
             let grad = ctx.createLinearGradient(0,0, 0,-hMax);
-            grad.addColorStop(0, `rgba(255, 255, 255, 0)`); grad.addColorStop(0.2, `rgba(255, 255, 255, ${opacity})`); grad.addColorStop(1, `rgba(255, 255, 255, 0)`);
+            grad.addColorStop(0, `rgba(200, 200, 200, 0)`); grad.addColorStop(0.3, `rgba(220, 220, 220, ${opacity})`); grad.addColorStop(1, `rgba(200, 200, 200, 0)`);
             ctx.fillStyle = grad; ctx.fill();
         }
+        ctx.filter = 'none'; ctx.globalCompositeOperation = 'source-over';
         ctx.restore();
     }
 
     // =========================================================
-    // FITUR EFEK PROP: API LILIN (HYPER-REALISTIC)
+    // FITUR PROP HYPER-REALISTIC: API LILIN BERLAPIS (ORGANIK)
     // =========================================================
     function drawCandle(x, y, style, scale) {
         if(style === 'none') return;
         ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
 
-        let flicker = 0; let sway = 0; let h = 60; let w = 15;
-        if(style === 'calm_flame') { flicker = Math.sin(time * 5) * 1.5; sway = Math.sin(time * 1.5) * 1.5; }
-        else if(style === 'flicker_flame') { flicker = (Math.random() - 0.5) * 6; sway = Math.sin(time * 10) * 4 + (Math.random()-0.5)*3; }
-        else if(style === 'bright_glow') { flicker = Math.sin(time * 6) * 2; ctx.shadowBlur = 40 + flicker*5; ctx.shadowColor = '#ff9800'; h = 70; w = 18; }
-        else if(style === 'blue_base') { flicker = Math.sin(time * 8) * 1; }
-        else if(style === 'wind_flame') { flicker = Math.random() * 4; sway = 15 + Math.sin(time * 15) * 8; }
+        let t = time * 2;
+        let flicker = 0; let sway = 0; let h = 65; let w = 16;
+        let baseColor = 'rgba(255, 140, 0, 0.8)';
+        let midColor = 'rgba(255, 210, 0, 0.9)';
+        let coreColor = 'rgba(255, 255, 255, 0.95)';
 
-        // Glowing Halo Area
-        ctx.beginPath(); ctx.arc(0, -h*0.6, w*4, 0, Math.PI*2);
-        let gradGlow = ctx.createRadialGradient(0,-h*0.6,0, 0,-h*0.6,w*4);
-        gradGlow.addColorStop(0, 'rgba(255, 140, 0, 0.4)'); gradGlow.addColorStop(1, 'rgba(255, 140, 0, 0)');
+        if(style === 'calm_flame') { flicker = Math.sin(t*3)*2; sway = Math.sin(t)*1; }
+        else if(style === 'flicker_flame') { flicker = Math.sin(t*10)*4 + Math.random()*2; sway = Math.sin(t*5)*3; }
+        else if(style === 'bright_glow') { flicker = Math.sin(t*4)*2; h = 75; w = 18; ctx.shadowBlur = 50 + flicker*5; ctx.shadowColor = '#ff9800'; }
+        else if(style === 'blue_base') { flicker = Math.sin(t*5)*2; baseColor = 'rgba(0, 150, 255, 0.8)'; midColor = 'rgba(100, 200, 255, 0.9)'; }
+        else if(style === 'wind_flame') { flicker = Math.random()*5; sway = 15 + Math.sin(t*8)*5; }
+
+        // Glow Halo (Pendaran Cahaya)
+        ctx.beginPath(); ctx.arc(0, -h*0.5, w*3, 0, Math.PI*2);
+        let gradGlow = ctx.createRadialGradient(0,-h*0.5,0, 0,-h*0.5,w*4);
+        gradGlow.addColorStop(0, 'rgba(255, 120, 0, 0.25)'); gradGlow.addColorStop(1, 'rgba(255, 120, 0, 0)');
         ctx.fillStyle = gradGlow; ctx.fill();
 
-        // Sumbu Lilin (Wick)
-        ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(sway*0.1, -8);
-        ctx.lineWidth = 2.5; ctx.strokeStyle = '#222'; ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(sway*0.1, -8); ctx.lineTo(sway*0.2, -12);
-        ctx.strokeStyle = '#ff3300'; ctx.stroke(); 
+        // Wick (Sumbu Lilin)
+        ctx.beginPath(); ctx.moveTo(0, 5); ctx.lineTo(sway*0.05, -8);
+        ctx.lineWidth = 3; ctx.strokeStyle = '#111'; ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(sway*0.05, -8); ctx.lineTo(sway*0.1, -12);
+        ctx.lineWidth = 2; ctx.strokeStyle = '#ff5722'; ctx.stroke();
 
-        // Bentuk Api
-        function drawTeardrop(fw, fh, offsetX, offsetY, color) {
+        // Layer Api (Organic Teardrop Curve)
+        function drawFlame(fw, fh, fsway, color) {
             ctx.beginPath();
-            ctx.moveTo(offsetX, offsetY - fh); 
-            ctx.bezierCurveTo(offsetX + fw, offsetY - fh*0.5, fw, 5, 0, 5); 
-            ctx.bezierCurveTo(-fw, 5, offsetX - fw, offsetY - fh*0.5, offsetX, offsetY - fh); 
+            ctx.moveTo(0, 2);
+            ctx.bezierCurveTo(fw, 2, fw*0.9, -fh*0.4, fsway, -fh);
+            ctx.bezierCurveTo(-fw*0.9, -fh*0.4, -fw, 2, 0, 2);
             ctx.fillStyle = color; ctx.fill();
         }
 
-        drawTeardrop(w, h + flicker, sway, 0, 'rgba(255, 80, 0, 0.7)');
-        drawTeardrop(w*0.7, (h + flicker)*0.8, sway*0.7, -2, 'rgba(255, 200, 0, 0.9)');
-        drawTeardrop(w*0.4, (h + flicker)*0.5, sway*0.4, -4, 'rgba(255, 255, 255, 0.95)');
+        drawFlame(w, h + flicker, sway, baseColor); // Outer
+        drawFlame(w*0.7, (h + flicker)*0.75, sway*0.7, midColor); // Mid
+        drawFlame(w*0.35, (h + flicker)*0.45, sway*0.3, coreColor); // Core
         
-        ctx.beginPath(); ctx.moveTo(0, -10); ctx.bezierCurveTo(w*0.6, -10, w*0.5, 5, 0, 5); ctx.bezierCurveTo(-w*0.5, 5, -w*0.6, -10, 0, -10);
-        let blueGrad = ctx.createRadialGradient(0,0,0, 0,0,w*0.6);
-        blueGrad.addColorStop(0, 'rgba(0, 100, 255, 0)'); blueGrad.addColorStop(0.8, (style === 'blue_base') ? 'rgba(0, 150, 255, 0.8)' : 'rgba(0, 150, 255, 0.4)'); blueGrad.addColorStop(1, 'rgba(0, 50, 255, 0)');
-        ctx.fillStyle = blueGrad; ctx.fill();
-
+        // Base Biru Nyata di Pangkal Sumbu
+        if(style !== 'blue_base') {
+            ctx.beginPath(); ctx.moveTo(0, 4); ctx.bezierCurveTo(w*0.5, 4, w*0.4, -5, 0, -5); ctx.bezierCurveTo(-w*0.4, -5, -w*0.5, 4, 0, 4);
+            let bg = ctx.createRadialGradient(0,0,0, 0,0,w*0.5); bg.addColorStop(0,'rgba(0,100,255,0.6)'); bg.addColorStop(1,'rgba(0,50,255,0)');
+            ctx.fillStyle = bg; ctx.fill();
+        }
         ctx.restore();
     }
 
@@ -1057,13 +1097,7 @@
       ctx.fillStyle = "#000"; ctx.fillRect(0, 0, width, height); time += (0.05 * config.fxSpeed); 
       ctx.save();
       
-      if (['vintage', 'grain', 'scratch', 'sepia_dust', 'old_tv', 'flicker_8mm'].includes(config.type)) { const jitterX = (Math.random() - 0.5) * 1.5; const jitterY = (Math.random() - 0.5) * 1.5; ctx.translate(jitterX, jitterY); }
       if (isBgReady) { const scale = Math.max(width / bgImageElement.width, height / bgImageElement.height); const x = (width / 2) - (bgImageElement.width / 2) * scale; const y = (height / 2) - (bgImageElement.height / 2) * scale; ctx.drawImage(bgImageElement, x, y, bgImageElement.width * scale, bgImageElement.height * scale); }
-      
-      if (config.type === 'sepia_dust') { ctx.fillStyle = 'rgba(112, 66, 20, 0.35)'; ctx.fillRect(-10, -10, width+20, height+20); } 
-      else if (config.type === 'old_tv') { ctx.fillStyle = 'rgba(0, 0, 0, 0.25)'; for (let i = 0; i < height; i += 4) { ctx.fillRect(0, i, width, 1.5); } ctx.fillStyle = 'rgba(0, 255, 0, 0.05)'; ctx.fillRect(-10, -10, width+20, height+20); } 
-      else if (config.type === 'flicker_8mm') { let flicker = Math.random() * 0.25; ctx.fillStyle = `rgba(0, 0, 0, ${flicker})`; ctx.fillRect(-10, -10, width+20, height+20); } 
-      else if (config.type !== 'none') { ctx.fillStyle = "rgba(10, 5, 0, 0.1)"; ctx.fillRect(-10, -10, width+20, height+20); }
 
       if (isAudioInit && currentObjectUrl) {
         if (!audioPlayer.paused) analyser.getByteFrequencyData(dataArray); else for (let i = 0; i < dataArray.length; i++) dataArray[i] = Math.max(0, dataArray[i] - 10);
@@ -1079,9 +1113,15 @@
       drawCandle(candle1X, candle1Y, document.getElementById('candleStyle').value, propScale);
       drawCandle(candle2X, candle2Y, document.getElementById('candleStyle').value, propScale);
 
-      for (let i = 0; i < config.count; i++) { if (particles[i]) { particles[i].update(); particles[i].draw(); } if (weatherParticles[i]) { weatherParticles[i].update(); weatherParticles[i].draw(); } }
+      // RENDER CINEMATIC PARTICLES
+      for (let i = 0; i < config.count; i++) { 
+        if (cinematicParticles[i]) { 
+            cinematicParticles[i].update(); 
+            cinematicParticles[i].draw(); 
+        } 
+      }
 
-      if (config.type !== 'none') { const grad = ctx.createRadialGradient(width/2, height/2, height*0.4, width/2, height/2, width*0.8); grad.addColorStop(0, 'rgba(0,0,0,0)'); grad.addColorStop(1, 'rgba(0,0,0,0.7)'); ctx.fillStyle = grad; ctx.fillRect(-10, -10, width+20, height+20); }
+      if (config.type !== 'none') { const grad = ctx.createRadialGradient(width/2, height/2, height*0.4, width/2, height/2, width*0.8); grad.addColorStop(0, 'rgba(0,0,0,0)'); grad.addColorStop(1, 'rgba(0,0,0,0.4)'); ctx.fillStyle = grad; ctx.fillRect(-10, -10, width+20, height+20); }
 
       ctx.restore(); requestAnimationFrame(animate);
     }
@@ -1119,18 +1159,21 @@
     function triggerDownload(finalBlob) {
       statusBox.innerText = "⏳ Memproses pemotongan file video..."; const url = URL.createObjectURL(finalBlob);
       const oldVid = document.getElementById('previewVid'); if(oldVid) oldVid.remove(); const oldBtn = document.getElementById('shareBtnDewa'); if(oldBtn) oldBtn.remove();
-      const vid = document.createElement('video'); vid.id = 'previewVid'; vid.src = url; vid.controls = true; vid.setAttribute('controlsList', 'nodownload'); vid.style.width = "100%"; vid.style.marginTop = "20px"; vid.style.border = "3px solid #00d2ff"; vid.style.borderRadius = "8px";
-      const saveBtn = document.createElement('button'); saveBtn.id = 'shareBtnDewa'; saveBtn.innerText = "📥 SIMPAN VIDEO KE HP / PC"; saveBtn.style.width = "100%"; saveBtn.style.padding = "15px"; saveBtn.style.marginTop = "10px"; saveBtn.style.background = "linear-gradient(135deg, #00ffaa, #00bcd4)"; saveBtn.style.color = "black"; saveBtn.style.border = "none"; saveBtn.style.borderRadius = "8px"; saveBtn.style.fontWeight = "bold"; saveBtn.style.fontSize = "14px"; saveBtn.style.cursor = "pointer";
+      const oldLinkBtn = document.getElementById('manualLinkBtn'); if(oldLinkBtn) oldLinkBtn.remove();
       
+      const vid = document.createElement('video'); vid.id = 'previewVid'; vid.src = url; vid.controls = true; vid.setAttribute('controlsList', 'nodownload'); vid.style.width = "100%"; vid.style.marginTop = "20px"; vid.style.border = "3px solid #00d2ff"; vid.style.borderRadius = "8px";
+      const saveBtn = document.createElement('button'); saveBtn.id = 'shareBtnDewa'; saveBtn.innerText = "📥 SIMPAN KE DOKUMEN (CAPACITOR)"; saveBtn.style.width = "100%"; saveBtn.style.padding = "15px"; saveBtn.style.marginTop = "10px"; saveBtn.style.background = "linear-gradient(135deg, #00ffaa, #00bcd4)"; saveBtn.style.color = "black"; saveBtn.style.border = "none"; saveBtn.style.borderRadius = "8px"; saveBtn.style.fontWeight = "bold"; saveBtn.style.fontSize = "14px"; saveBtn.style.cursor = "pointer";
+      
+      const fallbackBtn = document.createElement('a'); fallbackBtn.id = 'manualLinkBtn'; fallbackBtn.innerText = "⬇️ DOWNLOAD MANUAL (JIKA GAGAL)"; fallbackBtn.href = url; fallbackBtn.download = `BassJazz_720p_${Date.now()}.webm`;
+
       let isSaving = false;
       saveBtn.onclick = async () => {
-        if (isSaving) return; isSaving = true; saveBtn.innerText = "⏳ MEMULAI PROSES SIMPAN...";
+        if (isSaving) return; isSaving = true; saveBtn.innerText = "⏳ MEMINTA IZIN & MENYIMPAN...";
         
         const downloadBrowser = () => {
             statusBox.innerText = "⏳ Mengunduh lewat Download Manager HP...";
-            const a = document.createElement('a'); a.style.display = 'none'; a.href = url; a.download = `BassJazz_720p_${Date.now()}.webm`;
-            document.body.appendChild(a); a.click(); setTimeout(() => { document.body.removeChild(a); }, 100);
-            saveBtn.innerText = "✅ VIDEO SUKSES DIUNDUH!"; statusBox.innerText = `🎉 SUKSES! Periksa folder Download atau Galeri Anda.`;
+            fallbackBtn.click();
+            saveBtn.innerText = "✅ MENGGUNAKAN DOWNLOAD BAWAAN"; statusBox.innerText = `🎉 SUKSES! Periksa folder Download atau Galeri Anda.`;
         };
 
         try {
@@ -1169,11 +1212,7 @@
         }
       };
       
-      const controlsDiv = document.getElementById('controls'); 
-      controlsDiv.appendChild(vid); 
-      controlsDiv.appendChild(saveBtn); 
-      saveBtn.scrollIntoView({ behavior: 'smooth' }); 
-      setTimeout(() => { if(!isSaving && window.Capacitor) saveBtn.click(); }, 1500);
+      const controlsDiv = document.getElementById('controls'); controlsDiv.appendChild(vid); controlsDiv.appendChild(saveBtn); controlsDiv.appendChild(fallbackBtn); saveBtn.scrollIntoView({ behavior: 'smooth' }); setTimeout(() => { if(!isSaving && window.Capacitor) saveBtn.click(); }, 1500);
     }
   </script>
 </body>
