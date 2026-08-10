@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bass Jazz (Lightweight Vector Smoke)</title>
+  <title>Bass Jazz (Final Realistic Edition)</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body { margin: 0; background-image: linear-gradient(45deg, #222 25%, transparent 25%), linear-gradient(-45deg, #222 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #222 75%), linear-gradient(-45deg, transparent 75%, #222 75%); background-size: 20px 20px; background-color: #333; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; }
@@ -30,7 +30,6 @@
     .row { display: flex; align-items: center; gap: 10px; }
     label { font-size: 11px; width: 80px; color: #ccc; font-weight: 600; }
     input[type="range"], select { flex: 1; height: 36px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px; }
-    input[type="color"] { border: none; border-radius: 4px; cursor: pointer; background: none; }
     input[type="file"] { display: none; }
     optgroup { background: #111; color: #d4af37; font-weight: bold; }
 
@@ -39,6 +38,12 @@
     .layout-col { flex: 1; background: #222; padding: 12px; border-radius: 8px; border: 1px solid #3c3c3c; display: flex; flex-direction: column; gap: 8px; box-sizing: border-box; }
     .layout-col label { width: 100%; text-align: left; font-size: 10px; margin-bottom: -4px; color: #aaa; font-weight: bold; }
     .layout-col select, .layout-col input[type="range"] { width: 100%; margin-bottom: 5px; }
+
+    /* PALET WARNA BULAT & TOGGLE */
+    .swatch { width: 18px; height: 18px; border-radius: 50%; cursor: pointer; border: 2px solid #555; transition: 0.2s; }
+    .swatch:hover { border: 2px solid #fff; transform: scale(1.2); }
+    .toggle-color-btn { width: 100%; padding: 8px; background: #333; color: #ffb300; border: 1px solid #555; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; transition: 0.2s; }
+    .toggle-color-btn:hover { background: #444; }
 
     /* TOMBOL FALLBACK MANUAL DOWNLOAD */
     #manualLinkBtn { display: block; width: 100%; box-sizing: border-box; text-align: center; padding: 15px; margin-top: 10px; background: #333; color: #fff; border: 1px solid #555; border-radius: 8px; font-weight: bold; font-size: 14px; text-decoration: none; cursor: pointer; transition: 0.3s; }
@@ -55,7 +60,7 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Bass Jazz (Lightweight Vector Smoke).</div>
+    <div id="statusBox">Siap. Bass Jazz (Real Static Dustcap & Thick Coffee).</div>
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
       <label for="audioInput" class="file-label" style="border-bottom: 3px solid #00bcd4">2. MUSIK (BANYAK)</label>
@@ -156,7 +161,7 @@
         <input type="range" id="visOpacity" min="0.1" max="1.0" step="0.05" value="1.0">
       </div>
 
-      <!-- KOLOM KANAN (SPEAKER PUMP & SHAKE & COLOR WHEEL) -->
+      <!-- KOLOM KANAN (SPEAKER SHAKE & MENU WARNA TERSEMBUNYI) -->
       <div class="layout-col">
         <label style="color:#ffb300; text-align:center; font-size:12px; margin-bottom:10px;">EFEK SPEAKER (DAUN)</label>
         <select id="speakerStyle">
@@ -183,23 +188,34 @@
           <option value="bronze_spun">🏺 20. Spun Bronze Klipsch</option>
         </select>
 
-        <label>UKURAN SPK (STATIS)</label>
+        <label>UKURAN SPK</label>
         <input type="range" id="speakerSize" min="0.2" max="5.0" step="0.1" value="1.5">
 
-        <label style="color:#ff5252;">GETARAN & DORONGAN</label>
+        <label style="color:#ff5252;">GETARAN (SHAKE)</label>
         <input type="range" id="speakerShake" min="0" max="30" step="1" value="10">
 
-        <!-- COLOR WHEEL BARU (CANVAS) -->
-        <label style="color:#ffb300; display:flex; justify-content:space-between; align-items:center;">
-          WARNA DAUN
-          <span style="font-size:9px; color:#fff; display:flex; align-items:center;">
-             <input type="checkbox" id="useCustomColor" style="margin:0 4px 0 0; width:12px; height:12px;"> Aktifkan
-          </span>
-        </label>
-        <div style="width: 100%; display: flex; justify-content: center; margin-top: 5px; margin-bottom: 5px;">
-            <canvas id="colorWheel" width="200" height="200" style="width: 100%; max-width: 160px; aspect-ratio: 1/1; border-radius: 8px; border: 2px solid #555; cursor: crosshair; touch-action: none; box-shadow: 0 4px 10px rgba(0,0,0,0.5);"></canvas>
+        <!-- TOMBOL MENU WARNA (HIDDEN/TOGGLE) -->
+        <button class="toggle-color-btn" onclick="toggleColorMenu()">🎨 ATUR WARNA DAUN ▼</button>
+        
+        <div id="colorPanel" style="display: none; width: 100%; flex-direction: column; align-items: center; gap: 8px; margin-top: 5px;">
+            <label style="color:#fff; display:flex; justify-content:center; align-items:center;">
+              <input type="checkbox" id="useCustomColor" style="margin:0 4px 0 0; width:12px; height:12px;"> Aktifkan Warna Custom
+            </label>
+            <div style="width: 100%; display: flex; justify-content: center; margin-bottom: 5px;">
+                <canvas id="colorWheel" width="200" height="200" style="width: 100%; max-width: 140px; aspect-ratio: 1/1; border-radius: 8px; border: 2px solid #555; cursor: crosshair; touch-action: none; box-shadow: 0 4px 10px rgba(0,0,0,0.5);"></canvas>
+            </div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content:center;">
+              <div class="swatch" style="background:#ff3300;" onclick="setColor('#ff3300')"></div>
+              <div class="swatch" style="background:#ff9800;" onclick="setColor('#ff9800')"></div>
+              <div class="swatch" style="background:#ffeb3b;" onclick="setColor('#ffeb3b')"></div>
+              <div class="swatch" style="background:#4caf50;" onclick="setColor('#4caf50')"></div>
+              <div class="swatch" style="background:#00e5ff;" onclick="setColor('#00e5ff')"></div>
+              <div class="swatch" style="background:#2979ff;" onclick="setColor('#2979ff')"></div>
+              <div class="swatch" style="background:#d500f9;" onclick="setColor('#d500f9')"></div>
+              <div class="swatch" style="background:#ffffff;" onclick="setColor('#ffffff')"></div>
+            </div>
+            <input type="hidden" id="speakerColor" value="#ff3300">
         </div>
-        <input type="hidden" id="speakerColor" value="#ff3300">
       </div>
     </div>
 
@@ -338,8 +354,18 @@
     }
 
     // =========================================================
-    // COLOR WHEEL SCRIPT (GRADASI 360 DERAJAT)
+    // COLOR WHEEL SCRIPT & TOGGLE
     // =========================================================
+    function toggleColorMenu() {
+        const panel = document.getElementById('colorPanel');
+        panel.style.display = panel.style.display === 'none' ? 'flex' : 'none';
+    }
+
+    function setColor(hex) {
+        document.getElementById('speakerColor').value = hex;
+        document.getElementById('useCustomColor').checked = true;
+    }
+
     const cwCanvas = document.getElementById('colorWheel');
     const cwCtx = cwCanvas.getContext('2d', {willReadFrequently: true});
     
@@ -351,22 +377,14 @@
         
         if(cwCtx.createConicGradient) {
             const grad = cwCtx.createConicGradient(0, cx, cy);
-            grad.addColorStop(0, "red");
-            grad.addColorStop(1/6, "magenta");
-            grad.addColorStop(2/6, "blue");
-            grad.addColorStop(3/6, "cyan");
-            grad.addColorStop(4/6, "green");
-            grad.addColorStop(5/6, "yellow");
+            grad.addColorStop(0, "red"); grad.addColorStop(1/6, "magenta"); grad.addColorStop(2/6, "blue");
+            grad.addColorStop(3/6, "cyan"); grad.addColorStop(4/6, "green"); grad.addColorStop(5/6, "yellow");
             grad.addColorStop(1, "red");
-            cwCtx.fillStyle = grad;
-            cwCtx.fillRect(0, 0, w, h);
+            cwCtx.fillStyle = grad; cwCtx.fillRect(0, 0, w, h);
         } else {
             for(let angle=0; angle<360; angle++) {
-                cwCtx.beginPath();
-                cwCtx.moveTo(cx, cy);
-                cwCtx.arc(cx, cy, cx*1.5, angle*Math.PI/180, (angle+1.5)*Math.PI/180);
-                cwCtx.fillStyle = `hsl(${angle}, 100%, 50%)`;
-                cwCtx.fill();
+                cwCtx.beginPath(); cwCtx.moveTo(cx, cy); cwCtx.arc(cx, cy, cx*1.5, angle*Math.PI/180, (angle+1.5)*Math.PI/180);
+                cwCtx.fillStyle = `hsl(${angle}, 100%, 50%)`; cwCtx.fill();
             }
         }
     }
@@ -376,19 +394,13 @@
         const rect = cwCanvas.getBoundingClientRect();
         const scaleX = cwCanvas.width / rect.width;
         const scaleY = cwCanvas.height / rect.height;
-        let clientX = e.clientX;
-        let clientY = e.clientY;
-        if(e.touches && e.touches.length > 0) {
-           clientX = e.touches[0].clientX;
-           clientY = e.touches[0].clientY;
-        }
-        let x = (clientX - rect.left) * scaleX;
-        let y = (clientY - rect.top) * scaleY;
+        let clientX = e.clientX; let clientY = e.clientY;
+        if(e.touches && e.touches.length > 0) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; }
+        let x = (clientX - rect.left) * scaleX; let y = (clientY - rect.top) * scaleY;
         
         const pixel = cwCtx.getImageData(x, y, 1, 1).data;
         const hex = "#" + (1 << 24 | pixel[0] << 16 | pixel[1] << 8 | pixel[2]).toString(16).slice(1);
-        document.getElementById('speakerColor').value = hex;
-        document.getElementById('useCustomColor').checked = true;
+        setColor(hex);
     }
     
     let isPickingColor = false;
@@ -435,6 +447,7 @@
         isDraggingSpk2 = true; dragOffsetX = pos.x - spk2X; dragOffsetY = pos.y - spk2Y; if (e.cancelable) e.preventDefault(); return; 
       }
       
+      // Hitbox Props (Coffee/Candles)
       if (document.getElementById('coffeeStyle').value !== 'none' && Math.hypot(pos.x - coffeeX, pos.y - coffeeY) <= 50) {
         isDraggingCoffee = true; dragOffsetX = pos.x - coffeeX; dragOffsetY = pos.y - coffeeY; if (e.cancelable) e.preventDefault(); return;
       }
@@ -612,7 +625,7 @@
     }
 
     // =========================================================
-    // FITUR SPEAKER BERDENYUT (FRAME LUAR STATIS, MEMBRAN AKTIF)
+    // FITUR SPEAKER: DUSTCAP MEMOMPA KE DEPAN, TIDAK MENGECIL DARI UKURAN ASLI
     // =========================================================
     function drawSpeakers(bufferLen) {
       let style = document.getElementById('speakerStyle').value;
@@ -625,73 +638,115 @@
       if(isNaN(bass)) bass = 0;
 
       let baseR = 50 * scale; 
-      let pulse = bass * 12 * scale; 
+      
+      let shakeIntensity = parseFloat(document.getElementById('speakerShake').value);
+      // Getar (Shake)
+      let shakeX = (Math.random() - 0.5) * bass * shakeIntensity;
+      let shakeY = (Math.random() - 0.5) * bass * shakeIntensity;
 
-      function drawRealSpk(x, y, surroundCol, coneStops, capStops, ribs=0) {
-        ctx.save(); ctx.translate(x, y);
+      function drawRealSpk(x, y, coneStops, capStops, ribs=0) {
+        ctx.save(); 
 
-        ctx.beginPath(); ctx.arc(0,0, baseR, 0, Math.PI*2);
-        ctx.fillStyle = surroundCol; ctx.fill();
-        ctx.lineWidth = 1.5 * scale; ctx.strokeStyle = '#050505'; ctx.stroke();
+        // Getaran dipusatkan ke seluruh badan speaker 
+        ctx.translate(x + shakeX, y + shakeY); 
 
-        let coneR = baseR * 0.85; let capR = baseR * 0.3 + pulse; 
+        let coneR = baseR; // Daun statis ukurannya
         
-        let grad = ctx.createRadialGradient(0,0, capR, 0,0, coneR);
+        // INI YANG DIUBAH: Dustcap memompa keluar (membesar) sesuai bass, 
+        // tapi ukuran minimalnya tetap baseR * 0.45 (tidak mengecil saat pause)
+        let pumpAmount = bass * 15 * scale; 
+        let capR = (baseR * 0.45) + pumpAmount; 
+        
+        let customColor = document.getElementById('speakerColor').value;
+        let useColor = document.getElementById('useCustomColor').checked;
+
+        // 2. Gambar Daun Speaker (Cone) - TETAP STATIS
+        let grad = ctx.createRadialGradient(0,0, baseR * 0.45, 0,0, coneR); 
         coneStops.forEach(st => grad.addColorStop(st[0], st[1]));
         ctx.beginPath(); ctx.arc(0,0, coneR, 0, Math.PI*2);
         ctx.fillStyle = grad; ctx.fill();
         
+        // 3. Garis Tekstur (Ribs)
         if(ribs > 0) {
-            ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(0,0,0,0.3)';
-            for(let i=1; i<=ribs; i++) { ctx.beginPath(); ctx.arc(0,0, capR + (coneR-capR)*(i/(ribs+1)), 0, Math.PI*2); ctx.stroke(); }
+            ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(0,0,0,0.4)';
+            for(let i=1; i<=ribs; i++) { 
+                ctx.beginPath(); ctx.arc(0,0, (baseR * 0.45) + (coneR - baseR * 0.45)*(i/(ribs+1)), 0, Math.PI*2); ctx.stroke(); 
+            }
         }
 
+        // 4. Color Blending 
+        if(useColor) {
+            ctx.save();
+            ctx.beginPath(); ctx.arc(0,0, coneR, 0, Math.PI*2);
+            ctx.clip();
+            ctx.globalCompositeOperation = 'color'; 
+            ctx.fillStyle = customColor;
+            ctx.fillRect(-coneR, -coneR, coneR*2, coneR*2);
+            ctx.restore();
+        }
+
+        // 5. Pelindung Debu Tengah (Dust Cap) MEMOMPA
         let capGrad = ctx.createRadialGradient(0,-capR*0.3, 0, 0,0, capR);
         capStops.forEach(st => capGrad.addColorStop(st[0], st[1]));
         ctx.beginPath(); ctx.arc(0,0, capR, 0, Math.PI*2); ctx.fillStyle = capGrad; ctx.fill();
-        ctx.beginPath(); ctx.arc(0,0, capR, 0, Math.PI*2); ctx.lineWidth = 1 * scale; ctx.strokeStyle = 'rgba(0,0,0,0.6)'; ctx.stroke();
+        
+        // 6. Cincin Emas Mengelilingi Dust Cap ikut memompa
+        ctx.beginPath(); ctx.arc(0,0, capR, 0, Math.PI*2); 
+        ctx.lineWidth = 2 * scale; 
+        let ringGrad = ctx.createLinearGradient(-capR, -capR, capR, capR);
+        ringGrad.addColorStop(0, '#ffca28'); ringGrad.addColorStop(0.5, '#fff8e1'); ringGrad.addColorStop(1, '#ff8f00');
+        ctx.strokeStyle = ringGrad; 
+        ctx.stroke();
+
+        // 7. Garis Halus Tepi Luar Daun (Batas luar)
+        ctx.beginPath(); ctx.arc(0,0, coneR, 0, Math.PI*2);
+        ctx.lineWidth = 2 * scale; ctx.strokeStyle = '#111'; ctx.stroke();
+
         ctx.restore();
       }
 
       function renderSpk(x, y) {
-          if (style === 'golden_cone') drawRealSpk(x, y, '#111', [[0,'#ffca28'], [1,'#8b5a00']], [[0,'#444'], [1,'#111']]);
-          else if (style === 'classic_black') drawRealSpk(x, y, '#1a1a1a', [[0,'#333'], [1,'#0a0a0a']], [[0,'#222'], [1,'#050505']]);
-          else if (style === 'white_monitor') drawRealSpk(x, y, '#111', [[0,'#fff'], [1,'#ccc']], [[0,'#333'], [1,'#111']]);
-          else if (style === 'kevlar_yellow') drawRealSpk(x, y, '#111', [[0,'#fbc02d'], [1,'#f57f17']], [[0,'#222'], [1,'#000']], 3);
-          else if (style === 'kevlar_red') drawRealSpk(x, y, '#111', [[0,'#e53935'], [1,'#b71c1c']], [[0,'#222'], [1,'#000']], 3);
-          else if (style === 'silver_alum') drawRealSpk(x, y, '#222', [[0,'#eee'], [1,'#888']], [[0,'#ddd'], [1,'#666']]);
-          else if (style === 'copper_driver') drawRealSpk(x, y, '#111', [[0,'#d88c51'], [1,'#8a5626']], [[0,'#a0632c'], [1,'#472c13']]);
-          else if (style === 'paper_vintage') drawRealSpk(x, y, '#222', [[0,'#8c7b6c'], [1,'#4a4139']], [[0,'#222'], [1,'#111']], 4);
-          else if (style === 'carbon_fiber') drawRealSpk(x, y, '#1a1a1a', [[0,'#555'], [1,'#222']], [[0,'#333'], [1,'#111']]);
-          else if (style === 'blue_poly') drawRealSpk(x, y, '#111', [[0,'#1e3f66'], [1,'#0c1929']], [[0,'#222'], [1,'#000']]);
-          else if (style === 'white_dimpled') drawRealSpk(x, y, '#222', [[0,'#f5f5f5'], [1,'#a0a0a0']], [[0,'#ddd'], [1,'#888']]);
-          else if (style === 'orange_studio') drawRealSpk(x, y, '#111', [[0,'#ff9800'], [1,'#e65100']], [[0,'#222'], [1,'#000']]);
-          else if (style === 'grey_graphite') drawRealSpk(x, y, '#111', [[0,'#757575'], [1,'#424242']], [[0,'#212121'], [1,'#000']]);
-          else if (style === 'titanium_dome') drawRealSpk(x, y, '#222', [[0,'#b0bec5'], [1,'#546e7a']], [[0,'#cfd8dc'], [1,'#455a64']]);
-          else if (style === 'purple_anodized') drawRealSpk(x, y, '#111', [[0,'#7b1fa2'], [1,'#4a148c']], [[0,'#222'], [1,'#111']]);
-          else if (style === 'green_poly') drawRealSpk(x, y, '#111', [[0,'#2e7d32'], [1,'#1b5e20']], [[0,'#222'], [1,'#000']]);
-          else if (style === 'wood_fiber') drawRealSpk(x, y, '#111', [[0,'#5d4037'], [1,'#3e2723']], [[0,'#222'], [1,'#111']]);
-          else if (style === 'clear_poly') drawRealSpk(x, y, '#333', [[0,'#cfd8dc'], [1,'#90a4ae']], [[0,'#37474f'], [1,'#263238']]);
-          else if (style === 'ribbed_black') drawRealSpk(x, y, '#111', [[0,'#424242'], [1,'#212121']], [[0,'#111'], [1,'#000']], 5);
-          else if (style === 'bronze_spun') drawRealSpk(x, y, '#111', [[0,'#cd7f32'], [1,'#8b4513']], [[0,'#cd7f32'], [1,'#8b4513']], 6);
+          if (style === 'golden_cone') drawRealSpk(x, y, [[0,'#ffca28'], [1,'#8b5a00']], [[0,'#444'], [1,'#111']]);
+          else if (style === 'classic_black') drawRealSpk(x, y, [[0,'#333'], [1,'#0a0a0a']], [[0,'#222'], [1,'#050505']]);
+          else if (style === 'white_monitor') drawRealSpk(x, y, [[0,'#fff'], [1,'#ccc']], [[0,'#333'], [1,'#111']]);
+          else if (style === 'kevlar_yellow') drawRealSpk(x, y, [[0,'#fbc02d'], [1,'#f57f17']], [[0,'#222'], [1,'#000']], 3);
+          else if (style === 'kevlar_red') drawRealSpk(x, y, [[0,'#e53935'], [1,'#b71c1c']], [[0,'#222'], [1,'#000']], 3);
+          else if (style === 'silver_alum') drawRealSpk(x, y, [[0,'#eee'], [1,'#888']], [[0,'#ddd'], [1,'#666']]);
+          else if (style === 'copper_driver') drawRealSpk(x, y, [[0,'#d88c51'], [1,'#8a5626']], [[0,'#a0632c'], [1,'#472c13']]);
+          else if (style === 'paper_vintage') drawRealSpk(x, y, [[0,'#8c7b6c'], [1,'#4a4139']], [[0,'#222'], [1,'#111']], 6);
+          else if (style === 'carbon_fiber') drawRealSpk(x, y, [[0,'#555'], [1,'#222']], [[0,'#333'], [1,'#111']]);
+          else if (style === 'blue_poly') drawRealSpk(x, y, [[0,'#1e3f66'], [1,'#0c1929']], [[0,'#222'], [1,'#000']]);
+          else if (style === 'white_dimpled') drawRealSpk(x, y, [[0,'#f5f5f5'], [1,'#a0a0a0']], [[0,'#ddd'], [1,'#888']]);
+          else if (style === 'orange_studio') drawRealSpk(x, y, [[0,'#ff9800'], [1,'#e65100']], [[0,'#222'], [1,'#000']]);
+          else if (style === 'grey_graphite') drawRealSpk(x, y, [[0,'#757575'], [1,'#424242']], [[0,'#212121'], [1,'#000']]);
+          else if (style === 'titanium_dome') drawRealSpk(x, y, [[0,'#b0bec5'], [1,'#546e7a']], [[0,'#cfd8dc'], [1,'#455a64']]);
+          else if (style === 'purple_anodized') drawRealSpk(x, y, [[0,'#7b1fa2'], [1,'#4a148c']], [[0,'#222'], [1,'#111']]);
+          else if (style === 'green_poly') drawRealSpk(x, y, [[0,'#2e7d32'], [1,'#1b5e20']], [[0,'#222'], [1,'#000']]);
+          else if (style === 'wood_fiber') drawRealSpk(x, y, [[0,'#5d4037'], [1,'#3e2723']], [[0,'#222'], [1,'#111']]);
+          else if (style === 'clear_poly') drawRealSpk(x, y, [[0,'#cfd8dc'], [1,'#90a4ae']], [[0,'#37474f'], [1,'#263238']]);
+          else if (style === 'ribbed_black') drawRealSpk(x, y, [[0,'#424242'], [1,'#212121']], [[0,'#111'], [1,'#000']], 8);
+          else if (style === 'bronze_spun') drawRealSpk(x, y, [[0,'#cd7f32'], [1,'#8b4513']], [[0,'#cd7f32'], [1,'#8b4513']], 6);
       }
 
       renderSpk(spk1X, spk1Y); renderSpk(spk2X, spk2Y);
     }
 
     // =========================================================
-    // FITUR PROP HYPER-REALISTIC: VECTOR RIBBON COFFEE SMOKE
+    // FITUR PROP: ASAP KOPI DITEBALKAN
     // =========================================================
     function drawCoffeeSteam(x, y, style, scale, propSpeed) {
         if(style === 'none') return;
         ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
 
-        let branches = 3; let hMax = 150; let wMax = 30; let speedMult = 1.5; let waveFreq = 2.0; let opacity = 0.3;
-        if(style === 'soft_steam') { branches=2; hMax=120; wMax=20; speedMult=1; waveFreq=1.5; opacity=0.25; }
-        if(style === 'swirl_vapor') { branches=4; hMax=180; wMax=40; speedMult=1.8; waveFreq=2.5; opacity=0.35; }
-        if(style === 'thin_wisp') { branches=2; hMax=140; wMax=15; speedMult=1.2; waveFreq=3; opacity=0.2; }
-        if(style === 'heavy_steam') { branches=5; hMax=200; wMax=45; speedMult=2; waveFreq=1.8; opacity=0.4; }
-        if(style === 'wind_steam') { branches=3; hMax=160; wMax=35; speedMult=2.5; waveFreq=2.0; opacity=0.3; ctx.rotate(20 * Math.PI/180); }
+        let branches = 3; let hMax = 150; let wMax = 30; let speedMult = 1.5; let waveFreq = 2.0; let opacity = 0.8;
+        if(style === 'soft_steam') { branches=2; hMax=120; wMax=20; speedMult=1; waveFreq=1.5; opacity=0.7; }
+        if(style === 'swirl_vapor') { branches=4; hMax=180; wMax=40; speedMult=1.8; waveFreq=2.5; opacity=0.85; }
+        if(style === 'thin_wisp') { branches=2; hMax=140; wMax=15; speedMult=1.2; waveFreq=3; opacity=0.6; }
+        if(style === 'heavy_steam') { branches=5; hMax=200; wMax=45; speedMult=2; waveFreq=1.8; opacity=0.95; }
+        if(style === 'wind_steam') { branches=3; hMax=160; wMax=35; speedMult=2.5; waveFreq=2.0; opacity=0.75; ctx.rotate(20 * Math.PI/180); }
+
+        ctx.globalCompositeOperation = 'screen';
+        ctx.filter = 'blur(4px)'; 
 
         for(let b=0; b<branches; b++) {
             let pts = []; let steps = 40; 
@@ -699,10 +754,8 @@
                 let prog = i/steps; 
                 let speed = time * speedMult * propSpeed;
                 let w = (5 + Math.sin(prog * Math.PI * 3 + speed) * 5) * Math.sin(prog * Math.PI); 
-                
                 let sway = Math.sin(prog * Math.PI * waveFreq - speed + b * 1.3) * wMax * Math.pow(prog, 0.8);
                 let secondarySway = Math.sin(prog * Math.PI * waveFreq * 2.1 - speed * 1.4 + b * 2) * (wMax * 0.4) * prog;
-                
                 let px = sway + secondarySway; 
                 let py = -prog * hMax;
                 pts.push({x: px, y: py, w: w});
@@ -722,20 +775,20 @@
             ctx.fillStyle = grad; 
             ctx.fill();
 
-            // Draw Bright Ribbon Edge (Vector Look)
+            // Draw Bright Ribbon Edge (Lebih tebal)
             ctx.beginPath();
             ctx.moveTo(pts[0].x - pts[0].w, pts[0].y);
             for(let i=1; i<pts.length; i++) ctx.lineTo(pts[i].x - pts[i].w, pts[i].y);
-            ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * 1.8})`;
-            ctx.lineWidth = 1;
+            ctx.strokeStyle = `rgba(255, 255, 255, ${Math.min(1, opacity * 1.8)})`;
+            ctx.lineWidth = 2; // Ditebalkan
             ctx.stroke();
             
-            // Draw secondary fade line
+            // Garis dalam biar lebih pekat
             ctx.beginPath();
             ctx.moveTo(pts[0].x + pts[0].w, pts[0].y);
             for(let i=1; i<pts.length; i++) ctx.lineTo(pts[i].x + pts[i].w, pts[i].y);
-            ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * 0.5})`; 
-            ctx.lineWidth = 0.5;
+            ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * 0.8})`; 
+            ctx.lineWidth = 1;
             ctx.stroke();
         }
         ctx.restore();
@@ -1136,7 +1189,7 @@
     }
 
     function animate() {
-      ctx.fillStyle = "#000"; ctx.fillRect(0, 0, width, height); time += 0.05;
+      ctx.fillStyle = "#000"; ctx.fillRect(0, 0, width, height); time += 0.05; // Time utama konstan
       ctx.save();
       
       if (isBgReady) { const scale = Math.max(width / bgImageElement.width, height / bgImageElement.height); const x = (width / 2) - (bgImageElement.width / 2) * scale; const y = (height / 2) - (bgImageElement.height / 2) * scale; ctx.drawImage(bgImageElement, x, y, bgImageElement.width * scale, bgImageElement.height * scale); }
@@ -1149,14 +1202,14 @@
       // RENDER SPEAKER DRAGGABLE
       drawSpeakers(isAudioInit ? analyser.frequencyBinCount : 128);
       
-      // RENDER COFFEE & CANDLES
+      // RENDER COFFEE & CANDLES (DENGAN SPEED TERPISAH)
       let propScale = parseFloat(document.getElementById('propSize').value);
       let propSpeed = parseFloat(document.getElementById('propSpeed').value);
       drawCoffeeSteam(coffeeX, coffeeY, document.getElementById('coffeeStyle').value, propScale, propSpeed);
       drawCandle(candle1X, candle1Y, document.getElementById('candleStyle').value, propScale, propSpeed);
       drawCandle(candle2X, candle2Y, document.getElementById('candleStyle').value, propScale, propSpeed);
 
-      // RENDER CINEMATIC PARTICLES
+      // RENDER CINEMATIC PARTICLES (DENGAN FX SPEED NATIVE)
       for (let i = 0; i < config.count; i++) { 
         if (cinematicParticles[i]) { 
             cinematicParticles[i].update(); 
