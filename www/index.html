@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bass Jazz (Final Realistic Edition)</title>
+  <title>Bass Jazz (Static 3D Parallax Speaker)</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body { margin: 0; background-image: linear-gradient(45deg, #222 25%, transparent 25%), linear-gradient(-45deg, #222 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #222 75%), linear-gradient(-45deg, transparent 75%, #222 75%); background-size: 20px 20px; background-color: #333; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; }
@@ -60,7 +60,7 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Bass Jazz (Real Static Dustcap & Thick Coffee).</div>
+    <div id="statusBox">Siap. Bass Jazz (Static 3D Parallax Speakers).</div>
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
       <label for="audioInput" class="file-label" style="border-bottom: 3px solid #00bcd4">2. MUSIK (BANYAK)</label>
@@ -191,7 +191,7 @@
         <label>UKURAN SPK</label>
         <input type="range" id="speakerSize" min="0.2" max="5.0" step="0.1" value="1.5">
 
-        <label style="color:#ff5252;">GETARAN (SHAKE)</label>
+        <label style="color:#ff5252;">GETARAN & DORONGAN</label>
         <input type="range" id="speakerShake" min="0" max="30" step="1" value="10">
 
         <!-- TOMBOL MENU WARNA (HIDDEN/TOGGLE) -->
@@ -417,7 +417,6 @@
     let spk1X = 250; let spk1Y = height - 300;
     let spk2X = width - 250; let spk2Y = height - 300;
     
-    // Posisi default kopi dan 2 lilin
     let coffeeX = 350; let coffeeY = height - 150;
     let candle1X = 150; let candle1Y = height - 200;
     let candle2X = width - 150; let candle2Y = height - 200;
@@ -447,7 +446,7 @@
         isDraggingSpk2 = true; dragOffsetX = pos.x - spk2X; dragOffsetY = pos.y - spk2Y; if (e.cancelable) e.preventDefault(); return; 
       }
       
-      // Hitbox Props (Coffee/Candles)
+      // Hitbox Props
       if (document.getElementById('coffeeStyle').value !== 'none' && Math.hypot(pos.x - coffeeX, pos.y - coffeeY) <= 50) {
         isDraggingCoffee = true; dragOffsetX = pos.x - coffeeX; dragOffsetY = pos.y - coffeeY; if (e.cancelable) e.preventDefault(); return;
       }
@@ -625,7 +624,7 @@
     }
 
     // =========================================================
-    // FITUR SPEAKER: DUSTCAP MEMOMPA KE DEPAN, TIDAK MENGECIL DARI UKURAN ASLI
+    // FITUR SPEAKER: DUSTCAP STATIS + EFEK PARALLAX (DORONGAN 3D KEDEPAN)
     // =========================================================
     function drawSpeakers(bufferLen) {
       let style = document.getElementById('speakerStyle').value;
@@ -640,41 +639,39 @@
       let baseR = 50 * scale; 
       
       let shakeIntensity = parseFloat(document.getElementById('speakerShake').value);
-      // Getar (Shake)
+      
+      // Getar (Shake) utama untuk keseluruhan speaker
       let shakeX = (Math.random() - 0.5) * bass * shakeIntensity;
       let shakeY = (Math.random() - 0.5) * bass * shakeIntensity;
 
       function drawRealSpk(x, y, coneStops, capStops, ribs=0) {
         ctx.save(); 
 
-        // Getaran dipusatkan ke seluruh badan speaker 
+        // Posisikan dan terapkan shake utama
         ctx.translate(x + shakeX, y + shakeY); 
 
-        let coneR = baseR; // Daun statis ukurannya
-        
-        // INI YANG DIUBAH: Dustcap memompa keluar (membesar) sesuai bass, 
-        // tapi ukuran minimalnya tetap baseR * 0.45 (tidak mengecil saat pause)
-        let pumpAmount = bass * 15 * scale; 
-        let capR = (baseR * 0.45) + pumpAmount; 
+        // UKURAN DIKUNCI MATI (100% STATIS, NO PUMP SCALE)
+        let coneR = baseR; 
+        let capR = baseR * 0.45; 
         
         let customColor = document.getElementById('speakerColor').value;
         let useColor = document.getElementById('useCustomColor').checked;
 
-        // 2. Gambar Daun Speaker (Cone) - TETAP STATIS
-        let grad = ctx.createRadialGradient(0,0, baseR * 0.45, 0,0, coneR); 
+        // 1. Gambar Daun Speaker (Cone Base)
+        let grad = ctx.createRadialGradient(0,0, capR, 0,0, coneR);
         coneStops.forEach(st => grad.addColorStop(st[0], st[1]));
         ctx.beginPath(); ctx.arc(0,0, coneR, 0, Math.PI*2);
         ctx.fillStyle = grad; ctx.fill();
         
-        // 3. Garis Tekstur (Ribs)
+        // 2. Garis Tekstur (Ribs)
         if(ribs > 0) {
             ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(0,0,0,0.4)';
             for(let i=1; i<=ribs; i++) { 
-                ctx.beginPath(); ctx.arc(0,0, (baseR * 0.45) + (coneR - baseR * 0.45)*(i/(ribs+1)), 0, Math.PI*2); ctx.stroke(); 
+                ctx.beginPath(); ctx.arc(0,0, capR + (coneR-capR)*(i/(ribs+1)), 0, Math.PI*2); ctx.stroke(); 
             }
         }
 
-        // 4. Color Blending 
+        // 3. Overlay Warna Custom
         if(useColor) {
             ctx.save();
             ctx.beginPath(); ctx.arc(0,0, coneR, 0, Math.PI*2);
@@ -685,12 +682,25 @@
             ctx.restore();
         }
 
-        // 5. Pelindung Debu Tengah (Dust Cap) MEMOMPA
+        // 4. EFEK PARALLAX BASS (Ilusi menonjol ke depan untuk Dust Cap)
+        // Dustcap dikasih offset getaran sedikit lebih besar dari daun speaker
+        let capPunchX = (Math.random() - 0.5) * bass * (shakeIntensity * 0.5);
+        let capPunchY = (Math.random() - 0.5) * bass * (shakeIntensity * 0.5);
+        ctx.translate(capPunchX, capPunchY);
+
+        // Tambahkan bayangan (Drop Shadow) saat bass nendang buat ngasih ilusi 3D pop-out
+        ctx.shadowBlur = bass * 15 * scale;
+        ctx.shadowColor = 'rgba(0,0,0,0.8)';
+
+        // 5. Pelindung Debu Tengah (Dust Cap) STATIS & BESAR
         let capGrad = ctx.createRadialGradient(0,-capR*0.3, 0, 0,0, capR);
         capStops.forEach(st => capGrad.addColorStop(st[0], st[1]));
         ctx.beginPath(); ctx.arc(0,0, capR, 0, Math.PI*2); ctx.fillStyle = capGrad; ctx.fill();
         
-        // 6. Cincin Emas Mengelilingi Dust Cap ikut memompa
+        // Matikan shadow agar tidak merusak elemen selanjutnya
+        ctx.shadowBlur = 0;
+
+        // 6. Cincin Emas Mengelilingi Dust Cap
         ctx.beginPath(); ctx.arc(0,0, capR, 0, Math.PI*2); 
         ctx.lineWidth = 2 * scale; 
         let ringGrad = ctx.createLinearGradient(-capR, -capR, capR, capR);
@@ -699,6 +709,8 @@
         ctx.stroke();
 
         // 7. Garis Halus Tepi Luar Daun (Batas luar)
+        // Reset posisi dulu biar garis luarnya gak ikut menceng sama dustcap
+        ctx.translate(-capPunchX, -capPunchY);
         ctx.beginPath(); ctx.arc(0,0, coneR, 0, Math.PI*2);
         ctx.lineWidth = 2 * scale; ctx.strokeStyle = '#111'; ctx.stroke();
 
