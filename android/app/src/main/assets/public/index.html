@@ -30,6 +30,7 @@
     .row { display: flex; align-items: center; gap: 10px; }
     label { font-size: 11px; width: 80px; color: #ccc; font-weight: 600; }
     input[type="range"], select { flex: 1; height: 36px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px; }
+    input[type="color"] { border: none; border-radius: 4px; cursor: pointer; background: none; }
     input[type="file"] { display: none; }
     optgroup { background: #111; color: #d4af37; font-weight: bold; }
 
@@ -54,7 +55,7 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Bass Jazz (Lilin Realistis & Fix Izin Android 10).</div>
+    <div id="statusBox">Siap. Bass Jazz (Shake Speaker + Custom Color).</div>
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
       <label for="audioInput" class="file-label" style="border-bottom: 3px solid #00bcd4">2. MUSIK (BANYAK)</label>
@@ -155,9 +156,9 @@
         <input type="range" id="visOpacity" min="0.1" max="1.0" step="0.05" value="1.0">
       </div>
 
-      <!-- KOLOM KANAN (SPEAKER) -->
+      <!-- KOLOM KANAN (SPEAKER SHAKE) -->
       <div class="layout-col">
-        <label style="color:#ffb300; text-align:center; font-size:12px; margin-bottom:10px;">EFEK SPEAKER</label>
+        <label style="color:#ffb300; text-align:center; font-size:12px; margin-bottom:10px;">EFEK SPEAKER GETAR</label>
         <select id="speakerStyle">
           <option value="none">🚫 Sembunyikan Speaker</option>
           <option value="golden_cone">🟡 1. Golden Cone Studio</option>
@@ -182,13 +183,20 @@
           <option value="bronze_spun">🏺 20. Spun Bronze Klipsch</option>
         </select>
 
-        <label>UKURAN SPK</label>
+        <label>UKURAN SPK (STATIS)</label>
         <input type="range" id="speakerSize" min="0.2" max="5.0" step="0.1" value="1.5">
 
-        <label>OPASITAS SPK</label>
-        <input type="range" id="speakerOpacity" min="0.1" max="1.0" step="0.05" value="1.0">
-        
-        <div style="height: 38px;"></div>
+        <label style="color:#ff5252;">GETARAN SPK</label>
+        <input type="range" id="speakerShake" min="0" max="30" step="1" value="10">
+
+        <!-- COLOR PICKER BARU -->
+        <label style="color:#ffb300; display:flex; justify-content:space-between; align-items:center;">
+          WARNA DAUN
+          <span style="font-size:9px; color:#fff; display:flex; align-items:center;">
+             <input type="checkbox" id="useCustomColor" style="margin:0 4px 0 0; width:12px; height:12px;"> Aktifkan
+          </span>
+        </label>
+        <input type="color" id="speakerColor" value="#ff3300" style="padding:0; height:32px; width:100%;">
       </div>
     </div>
 
@@ -329,6 +337,7 @@
     let spk1X = 250; let spk1Y = height - 300;
     let spk2X = width - 250; let spk2Y = height - 300;
     
+    // Posisi default kopi dan 2 lilin
     let coffeeX = 350; let coffeeY = height - 150;
     let candle1X = 150; let candle1Y = height - 200;
     let candle2X = width - 150; let candle2Y = height - 200;
@@ -518,69 +527,106 @@
     }
 
     // =========================================================
-    // FITUR SPEAKER BERDENYUT (FRAME LUAR STATIS, MEMBRAN AKTIF)
+    // FITUR SPEAKER BERGETAR (SHAKE TANPA FRAME LUAR)
     // =========================================================
     function drawSpeakers(bufferLen) {
       let style = document.getElementById('speakerStyle').value;
       if (style === 'none') return;
       
       let scale = parseFloat(document.getElementById('speakerSize').value);
-      let opac = parseFloat(document.getElementById('speakerOpacity').value);
+      // Gak pake opacity slider lagi, langsung 100% biar realistis, tapi kalau mau tetap pakai:
+      // let opac = parseFloat(document.getElementById('speakerOpacity').value);
       
       let bass = 0;
       if(dataArray) { bass = (dataArray[1] + dataArray[2] + dataArray[3]) / (255 * 3); }
       if(isNaN(bass)) bass = 0;
 
       let baseR = 50 * scale; 
-      let pulse = bass * 12 * scale; 
+      
+      // LOGIKA GETAR (SHAKE)
+      let shakeIntensity = parseFloat(document.getElementById('speakerShake').value);
+      let shakeX = (Math.random() - 0.5) * bass * shakeIntensity;
+      let shakeY = (Math.random() - 0.5) * bass * shakeIntensity;
 
-      function drawRealSpk(x, y, surroundCol, coneStops, capStops, ribs=0) {
-        ctx.save(); ctx.translate(x, y); ctx.globalAlpha = opac;
-
-        ctx.beginPath(); ctx.arc(0,0, baseR, 0, Math.PI*2);
-        ctx.fillStyle = surroundCol; ctx.fill();
-        ctx.lineWidth = 1.5 * scale; ctx.strokeStyle = '#050505'; ctx.stroke();
-
-        let coneR = baseR * 0.85; let capR = baseR * 0.3 + pulse; 
+      function drawRealSpk(x, y, coneStops, capStops, ribs=0) {
+        ctx.save(); 
         
+        // Translasi posisi termasuk getarannya (Shake)
+        ctx.translate(x + shakeX, y + shakeY); 
+        // ctx.globalAlpha = opac; // Opsional jika mau speaker transparan
+
+        let coneR = baseR; // Cone daun jadi bagian paling luar (tanpa karet merah/hitam)
+        let capR = baseR * 0.3; 
+        
+        // WARNA CUSTOM OVERLAY (Mewarnai daun speaker)
+        let customColor = document.getElementById('speakerColor').value;
+        let useColor = document.getElementById('useCustomColor').checked;
+
+        // 1. Gambar Daun Speaker (Cone Base)
         let grad = ctx.createRadialGradient(0,0, capR, 0,0, coneR);
         coneStops.forEach(st => grad.addColorStop(st[0], st[1]));
         ctx.beginPath(); ctx.arc(0,0, coneR, 0, Math.PI*2);
         ctx.fillStyle = grad; ctx.fill();
         
+        // 2. Garis Tekstur (Ribs)
         if(ribs > 0) {
-            ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(0,0,0,0.3)';
-            for(let i=1; i<=ribs; i++) { ctx.beginPath(); ctx.arc(0,0, capR + (coneR-capR)*(i/(ribs+1)), 0, Math.PI*2); ctx.stroke(); }
+            ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(0,0,0,0.4)';
+            for(let i=1; i<=ribs; i++) { 
+                ctx.beginPath(); ctx.arc(0,0, capR + (coneR-capR)*(i/(ribs+1)), 0, Math.PI*2); ctx.stroke(); 
+            }
         }
 
+        // 3. Terapkan Warna Custom pakai Blending Mode Overlay (Menjaga 3D)
+        if(useColor) {
+            ctx.globalCompositeOperation = 'overlay';
+            ctx.beginPath(); ctx.arc(0,0, coneR, 0, Math.PI*2);
+            ctx.fillStyle = customColor;
+            ctx.fill();
+            ctx.globalCompositeOperation = 'source-over'; // Reset blend mode
+        }
+
+        // 4. Pelindung Debu Tengah (Dust Cap)
         let capGrad = ctx.createRadialGradient(0,-capR*0.3, 0, 0,0, capR);
         capStops.forEach(st => capGrad.addColorStop(st[0], st[1]));
         ctx.beginPath(); ctx.arc(0,0, capR, 0, Math.PI*2); ctx.fillStyle = capGrad; ctx.fill();
-        ctx.beginPath(); ctx.arc(0,0, capR, 0, Math.PI*2); ctx.lineWidth = 1 * scale; ctx.strokeStyle = 'rgba(0,0,0,0.6)'; ctx.stroke();
+        
+        // 5. Cincin Emas Mengelilingi Dust Cap (Persis Foto)
+        ctx.beginPath(); ctx.arc(0,0, capR, 0, Math.PI*2); 
+        ctx.lineWidth = 2 * scale; 
+        let ringGrad = ctx.createLinearGradient(-capR, -capR, capR, capR);
+        ringGrad.addColorStop(0, '#ffca28'); ringGrad.addColorStop(0.5, '#fff8e1'); ringGrad.addColorStop(1, '#ff8f00');
+        ctx.strokeStyle = ringGrad; 
+        ctx.stroke();
+
+        // 6. Garis Halus Tepi Luar Daun (Biar gak kasar)
+        ctx.beginPath(); ctx.arc(0,0, coneR, 0, Math.PI*2);
+        ctx.lineWidth = 2 * scale; ctx.strokeStyle = '#111'; ctx.stroke();
+
         ctx.restore();
       }
 
+      // Pemanggilan 20 Model tanpa argumen outer-ring
       function renderSpk(x, y) {
-          if (style === 'golden_cone') drawRealSpk(x, y, '#111', [[0,'#ffca28'], [1,'#8b5a00']], [[0,'#444'], [1,'#111']]);
-          else if (style === 'classic_black') drawRealSpk(x, y, '#1a1a1a', [[0,'#333'], [1,'#0a0a0a']], [[0,'#222'], [1,'#050505']]);
-          else if (style === 'white_monitor') drawRealSpk(x, y, '#111', [[0,'#fff'], [1,'#ccc']], [[0,'#333'], [1,'#111']]);
-          else if (style === 'kevlar_yellow') drawRealSpk(x, y, '#111', [[0,'#fbc02d'], [1,'#f57f17']], [[0,'#222'], [1,'#000']], 3);
-          else if (style === 'kevlar_red') drawRealSpk(x, y, '#111', [[0,'#e53935'], [1,'#b71c1c']], [[0,'#222'], [1,'#000']], 3);
-          else if (style === 'silver_alum') drawRealSpk(x, y, '#222', [[0,'#eee'], [1,'#888']], [[0,'#ddd'], [1,'#666']]);
-          else if (style === 'copper_driver') drawRealSpk(x, y, '#111', [[0,'#d88c51'], [1,'#8a5626']], [[0,'#a0632c'], [1,'#472c13']]);
-          else if (style === 'paper_vintage') drawRealSpk(x, y, '#222', [[0,'#8c7b6c'], [1,'#4a4139']], [[0,'#222'], [1,'#111']], 4);
-          else if (style === 'carbon_fiber') drawRealSpk(x, y, '#1a1a1a', [[0,'#555'], [1,'#222']], [[0,'#333'], [1,'#111']]);
-          else if (style === 'blue_poly') drawRealSpk(x, y, '#111', [[0,'#1e3f66'], [1,'#0c1929']], [[0,'#222'], [1,'#000']]);
-          else if (style === 'white_dimpled') drawRealSpk(x, y, '#222', [[0,'#f5f5f5'], [1,'#a0a0a0']], [[0,'#ddd'], [1,'#888']]);
-          else if (style === 'orange_studio') drawRealSpk(x, y, '#111', [[0,'#ff9800'], [1,'#e65100']], [[0,'#222'], [1,'#000']]);
-          else if (style === 'grey_graphite') drawRealSpk(x, y, '#111', [[0,'#757575'], [1,'#424242']], [[0,'#212121'], [1,'#000']]);
-          else if (style === 'titanium_dome') drawRealSpk(x, y, '#222', [[0,'#b0bec5'], [1,'#546e7a']], [[0,'#cfd8dc'], [1,'#455a64']]);
-          else if (style === 'purple_anodized') drawRealSpk(x, y, '#111', [[0,'#7b1fa2'], [1,'#4a148c']], [[0,'#222'], [1,'#111']]);
-          else if (style === 'green_poly') drawRealSpk(x, y, '#111', [[0,'#2e7d32'], [1,'#1b5e20']], [[0,'#222'], [1,'#000']]);
-          else if (style === 'wood_fiber') drawRealSpk(x, y, '#111', [[0,'#5d4037'], [1,'#3e2723']], [[0,'#222'], [1,'#111']]);
-          else if (style === 'clear_poly') drawRealSpk(x, y, '#333', [[0,'#cfd8dc'], [1,'#90a4ae']], [[0,'#37474f'], [1,'#263238']]);
-          else if (style === 'ribbed_black') drawRealSpk(x, y, '#111', [[0,'#424242'], [1,'#212121']], [[0,'#111'], [1,'#000']], 5);
-          else if (style === 'bronze_spun') drawRealSpk(x, y, '#111', [[0,'#cd7f32'], [1,'#8b4513']], [[0,'#cd7f32'], [1,'#8b4513']], 6);
+          if (style === 'golden_cone') drawRealSpk(x, y, [[0,'#ffca28'], [1,'#8b5a00']], [[0,'#444'], [1,'#111']]);
+          else if (style === 'classic_black') drawRealSpk(x, y, [[0,'#333'], [1,'#0a0a0a']], [[0,'#222'], [1,'#050505']]);
+          else if (style === 'white_monitor') drawRealSpk(x, y, [[0,'#fff'], [1,'#ccc']], [[0,'#333'], [1,'#111']]);
+          else if (style === 'kevlar_yellow') drawRealSpk(x, y, [[0,'#fbc02d'], [1,'#f57f17']], [[0,'#222'], [1,'#000']], 3);
+          else if (style === 'kevlar_red') drawRealSpk(x, y, [[0,'#e53935'], [1,'#b71c1c']], [[0,'#222'], [1,'#000']], 3);
+          else if (style === 'silver_alum') drawRealSpk(x, y, [[0,'#eee'], [1,'#888']], [[0,'#ddd'], [1,'#666']]);
+          else if (style === 'copper_driver') drawRealSpk(x, y, [[0,'#d88c51'], [1,'#8a5626']], [[0,'#a0632c'], [1,'#472c13']]);
+          else if (style === 'paper_vintage') drawRealSpk(x, y, [[0,'#8c7b6c'], [1,'#4a4139']], [[0,'#222'], [1,'#111']], 6);
+          else if (style === 'carbon_fiber') drawRealSpk(x, y, [[0,'#555'], [1,'#222']], [[0,'#333'], [1,'#111']]);
+          else if (style === 'blue_poly') drawRealSpk(x, y, [[0,'#1e3f66'], [1,'#0c1929']], [[0,'#222'], [1,'#000']]);
+          else if (style === 'white_dimpled') drawRealSpk(x, y, [[0,'#f5f5f5'], [1,'#a0a0a0']], [[0,'#ddd'], [1,'#888']]);
+          else if (style === 'orange_studio') drawRealSpk(x, y, [[0,'#ff9800'], [1,'#e65100']], [[0,'#222'], [1,'#000']]);
+          else if (style === 'grey_graphite') drawRealSpk(x, y, [[0,'#757575'], [1,'#424242']], [[0,'#212121'], [1,'#000']]);
+          else if (style === 'titanium_dome') drawRealSpk(x, y, [[0,'#b0bec5'], [1,'#546e7a']], [[0,'#cfd8dc'], [1,'#455a64']]);
+          else if (style === 'purple_anodized') drawRealSpk(x, y, [[0,'#7b1fa2'], [1,'#4a148c']], [[0,'#222'], [1,'#111']]);
+          else if (style === 'green_poly') drawRealSpk(x, y, [[0,'#2e7d32'], [1,'#1b5e20']], [[0,'#222'], [1,'#000']]);
+          else if (style === 'wood_fiber') drawRealSpk(x, y, [[0,'#5d4037'], [1,'#3e2723']], [[0,'#222'], [1,'#111']]);
+          else if (style === 'clear_poly') drawRealSpk(x, y, [[0,'#cfd8dc'], [1,'#90a4ae']], [[0,'#37474f'], [1,'#263238']]);
+          else if (style === 'ribbed_black') drawRealSpk(x, y, [[0,'#424242'], [1,'#212121']], [[0,'#111'], [1,'#000']], 8);
+          else if (style === 'bronze_spun') drawRealSpk(x, y, [[0,'#cd7f32'], [1,'#8b4513']], [[0,'#cd7f32'], [1,'#8b4513']], 6);
       }
 
       renderSpk(spk1X, spk1Y); renderSpk(spk2X, spk2Y);
@@ -639,35 +685,26 @@
         gradGlow.addColorStop(0, 'rgba(255, 140, 0, 0.4)'); gradGlow.addColorStop(1, 'rgba(255, 140, 0, 0)');
         ctx.fillStyle = gradGlow; ctx.fill();
 
-        // 1. Sumbu Lilin (Wick)
+        // Sumbu Lilin (Wick)
         ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(sway*0.1, -8);
         ctx.lineWidth = 2.5; ctx.strokeStyle = '#222'; ctx.stroke();
         ctx.beginPath(); ctx.moveTo(sway*0.1, -8); ctx.lineTo(sway*0.2, -12);
         ctx.strokeStyle = '#ff3300'; ctx.stroke(); 
 
-        // Fungsi bantu bentuk api (Teardrop Shape)
+        // Bentuk Api
         function drawTeardrop(fw, fh, offsetX, offsetY, color) {
             ctx.beginPath();
-            ctx.moveTo(offsetX, offsetY - fh); // Ujung atas
-            ctx.bezierCurveTo(offsetX + fw, offsetY - fh*0.5, fw, 5, 0, 5); // Kanan
-            ctx.bezierCurveTo(-fw, 5, offsetX - fw, offsetY - fh*0.5, offsetX, offsetY - fh); // Kiri
+            ctx.moveTo(offsetX, offsetY - fh); 
+            ctx.bezierCurveTo(offsetX + fw, offsetY - fh*0.5, fw, 5, 0, 5); 
+            ctx.bezierCurveTo(-fw, 5, offsetX - fw, offsetY - fh*0.5, offsetX, offsetY - fh); 
             ctx.fillStyle = color; ctx.fill();
         }
 
-        // 2. Api Luar (Orange Semi-Transparan)
         drawTeardrop(w, h + flicker, sway, 0, 'rgba(255, 80, 0, 0.7)');
-        
-        // 3. Api Tengah (Kuning Menyala)
         drawTeardrop(w*0.7, (h + flicker)*0.8, sway*0.7, -2, 'rgba(255, 200, 0, 0.9)');
-        
-        // 4. Api Inti (Putih Silau)
         drawTeardrop(w*0.4, (h + flicker)*0.5, sway*0.4, -4, 'rgba(255, 255, 255, 0.95)');
         
-        // 5. Dasar Biru (Blue Base)
-        ctx.beginPath();
-        ctx.moveTo(0, -10);
-        ctx.bezierCurveTo(w*0.6, -10, w*0.5, 5, 0, 5);
-        ctx.bezierCurveTo(-w*0.5, 5, -w*0.6, -10, 0, -10);
+        ctx.beginPath(); ctx.moveTo(0, -10); ctx.bezierCurveTo(w*0.6, -10, w*0.5, 5, 0, 5); ctx.bezierCurveTo(-w*0.5, 5, -w*0.6, -10, 0, -10);
         let blueGrad = ctx.createRadialGradient(0,0,0, 0,0,w*0.6);
         blueGrad.addColorStop(0, 'rgba(0, 100, 255, 0)'); blueGrad.addColorStop(0.8, (style === 'blue_base') ? 'rgba(0, 150, 255, 0.8)' : 'rgba(0, 150, 255, 0.4)'); blueGrad.addColorStop(1, 'rgba(0, 50, 255, 0)');
         ctx.fillStyle = blueGrad; ctx.fill();
@@ -1081,23 +1118,19 @@
 
     function triggerDownload(finalBlob) {
       statusBox.innerText = "⏳ Memproses pemotongan file video..."; const url = URL.createObjectURL(finalBlob);
-      const oldVid = document.getElementById('previewVid'); if(oldVid) oldVid.remove(); 
-      const oldBtn = document.getElementById('shareBtnDewa'); if(oldBtn) oldBtn.remove();
-      const oldLink = document.getElementById('manualLinkBtn'); if(oldLink) oldLink.remove();
-      
+      const oldVid = document.getElementById('previewVid'); if(oldVid) oldVid.remove(); const oldBtn = document.getElementById('shareBtnDewa'); if(oldBtn) oldBtn.remove();
       const vid = document.createElement('video'); vid.id = 'previewVid'; vid.src = url; vid.controls = true; vid.setAttribute('controlsList', 'nodownload'); vid.style.width = "100%"; vid.style.marginTop = "20px"; vid.style.border = "3px solid #00d2ff"; vid.style.borderRadius = "8px";
-      const saveBtn = document.createElement('button'); saveBtn.id = 'shareBtnDewa'; saveBtn.innerText = "📥 SIMPAN KE DOKUMEN (CAPACITOR)"; saveBtn.style.width = "100%"; saveBtn.style.padding = "15px"; saveBtn.style.marginTop = "10px"; saveBtn.style.background = "linear-gradient(135deg, #00ffaa, #00bcd4)"; saveBtn.style.color = "black"; saveBtn.style.border = "none"; saveBtn.style.borderRadius = "8px"; saveBtn.style.fontWeight = "bold"; saveBtn.style.fontSize = "14px"; saveBtn.style.cursor = "pointer";
+      const saveBtn = document.createElement('button'); saveBtn.id = 'shareBtnDewa'; saveBtn.innerText = "📥 SIMPAN VIDEO KE HP / PC"; saveBtn.style.width = "100%"; saveBtn.style.padding = "15px"; saveBtn.style.marginTop = "10px"; saveBtn.style.background = "linear-gradient(135deg, #00ffaa, #00bcd4)"; saveBtn.style.color = "black"; saveBtn.style.border = "none"; saveBtn.style.borderRadius = "8px"; saveBtn.style.fontWeight = "bold"; saveBtn.style.fontSize = "14px"; saveBtn.style.cursor = "pointer";
       
-      const fallbackBtn = document.createElement('a'); fallbackBtn.id = 'manualLinkBtn'; fallbackBtn.innerText = "⬇️ DOWNLOAD MANUAL (JIKA GAGAL)"; fallbackBtn.href = url; fallbackBtn.download = `BassJazz_720p_${Date.now()}.webm`;
-
       let isSaving = false;
       saveBtn.onclick = async () => {
-        if (isSaving) return; isSaving = true; saveBtn.innerText = "⏳ MEMINTA IZIN & MENYIMPAN...";
+        if (isSaving) return; isSaving = true; saveBtn.innerText = "⏳ MEMULAI PROSES SIMPAN...";
         
         const downloadBrowser = () => {
             statusBox.innerText = "⏳ Mengunduh lewat Download Manager HP...";
-            fallbackBtn.click();
-            saveBtn.innerText = "✅ MENGGUNAKAN DOWNLOAD BAWAAN"; statusBox.innerText = `🎉 SUKSES! Periksa folder Download atau Galeri Anda.`;
+            const a = document.createElement('a'); a.style.display = 'none'; a.href = url; a.download = `BassJazz_720p_${Date.now()}.webm`;
+            document.body.appendChild(a); a.click(); setTimeout(() => { document.body.removeChild(a); }, 100);
+            saveBtn.innerText = "✅ VIDEO SUKSES DIUNDUH!"; statusBox.innerText = `🎉 SUKSES! Periksa folder Download atau Galeri Anda.`;
         };
 
         try {
@@ -1139,7 +1172,6 @@
       const controlsDiv = document.getElementById('controls'); 
       controlsDiv.appendChild(vid); 
       controlsDiv.appendChild(saveBtn); 
-      controlsDiv.appendChild(fallbackBtn);
       saveBtn.scrollIntoView({ behavior: 'smooth' }); 
       setTimeout(() => { if(!isSaving && window.Capacitor) saveBtn.click(); }, 1500);
     }
