@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>test part 1 (Props & FX Fixed)</title>
+  <title>test part 1 (Anti-Crash Photo Engine)</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body { margin: 0; background-image: linear-gradient(45deg, #222 25%, transparent 25%), linear-gradient(-45deg, #222 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #222 75%), linear-gradient(-45deg, transparent 75%, #222 75%); background-size: 20px 20px; background-color: #333; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; }
@@ -35,7 +35,7 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. test part 1 (Fixed Props & FX).</div>
+    <div id="statusBox">Siap. test part 1 (Anti-Crash Photo Engine).</div>
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
       <label for="audioInput" class="file-label" style="border-bottom: 3px solid #00bcd4">2. MUSIK</label>
@@ -69,7 +69,6 @@
     </div>
     <hr style="border:0; border-top:1px dashed #333; margin:5px 0;">
     
-    <!-- FIX PROP OPTIONS -->
     <div class="layout-grid">
       <div class="layout-col">
         <label style="color:#d7ccc8;">ASAP KOPI</label>
@@ -125,26 +124,46 @@
   <script>
     const canvas=document.getElementById('canvas'), ctx=canvas.getContext('2d'), audioPlayer=document.getElementById('audioPlayer');
     const width=1280, height=720;
-    let audioFiles=[], currentPlayIndex=0, currentUrl=null, isBgReady=false, bgImg=new Image();
+    
+    // VARIABEL UTAMA
+    let audioFiles=[], currentPlayIndex=0, currentUrl=null, currentBgUrl=null;
+    let isBgReady=false, bgImg=new Image();
     let audioCtx, analyser, dataArray, isAudioInit=false, peakH=new Array(120).fill(0);
-    let bgSc=1, bgX=0, bgY=0;
+    let bgGlobalScale=1, bgGlobalX=0, bgGlobalY=0;
 
+    // KOORDINAT DRAG: 2 Speaker, 1 Asap, 2 Lilin, 1 Vis
     let visW=400, visX=(width-visW)/2, visY=height-160;
     let spk1X=250, spk1Y=height-300, spk2X=width-250, spk2Y=height-300;
-    let cof1X=350, cof1Y=height-150, cof2X=width-350, cof2Y=height-150;
-    let can1X=150, can1Y=height-200, can2X=width-150, can2Y=height-200, can3X=200, can3Y=height-100, can4X=width-200, can4Y=height-100;
+    let cof1X=width/2, cof1Y=height-150;
+    let can1X=150, can1Y=height-200, can2X=width-150, can2Y=height-200;
+    
     let dragT=null, dOffX=0, dOffY=0, isDragProg=false, time=0;
 
     function formatT(s) { if(isNaN(s))return"00:00"; let m=Math.floor(s/60); return `${m.toString().padStart(2,'0')}:${Math.floor(s%60).toString().padStart(2,'0')}`; }
 
+    // SYSTEM FOTO ANTI-CRASH MEMORY (NATIVE URL)
     document.getElementById('bgInput').addEventListener('change', e => {
       if(e.target.files[0]) {
-        const reader=new FileReader();
-        reader.onload=ev=>{ bgImg.onload=()=>{ if(bgImg.naturalWidth>0){isBgReady=true; document.getElementById('statusBox').innerText="✅ Foto Oke.";} }; bgImg.src=ev.target.result; };
-        reader.readAsDataURL(e.target.files[0]);
+        let file = e.target.files[0];
+        if(!file.type.startsWith('image/')) return alert('Harus file gambar!');
+        
+        if(currentBgUrl) URL.revokeObjectURL(currentBgUrl);
+        currentBgUrl = URL.createObjectURL(file);
+        
+        bgImg.onload = () => { 
+            if(bgImg.naturalWidth > 0 && bgImg.naturalHeight > 0) {
+                isBgReady=true; 
+                document.getElementById('statusBox').innerText="✅ Foto Latar Berhasil Dimuat."; 
+            } else {
+                document.getElementById('statusBox').innerText="❌ Error: Dimensi foto tidak terbaca.";
+            }
+        };
+        bgImg.onerror = () => { document.getElementById('statusBox').innerText="❌ Gagal memuat foto."; };
+        bgImg.src = currentBgUrl;
       }
     });
 
+    // SYSTEM AUDIO
     document.getElementById('audioInput').addEventListener('change', e => {
       if(e.target.files.length) { audioFiles=Array.from(e.target.files).sort(()=>Math.random()-0.5); currentPlayIndex=0; document.getElementById('playBtn').innerText="▶ PLAY MUSIK"; document.getElementById('statusBox').innerText=`${audioFiles.length} Lagu Siap!`; }
     });
@@ -153,9 +172,12 @@
       if(!audioFiles.length) return;
       if(currentUrl) URL.revokeObjectURL(currentUrl);
       currentUrl=URL.createObjectURL(audioFiles[currentPlayIndex]); audioPlayer.src=currentUrl; audioPlayer.load();
-      if(!audioCtx){ audioCtx=new(window.AudioContext||window.webkitAudioContext)(); analyser=audioCtx.createAnalyser(); analyser.fftSize=256;
+      if(!audioCtx){ 
+        audioCtx=new(window.AudioContext||window.webkitAudioContext)(); 
+        analyser=audioCtx.createAnalyser(); analyser.fftSize=256;
         let src=audioCtx.createMediaElementSource(audioPlayer), dest=audioCtx.createMediaStreamDestination();
-        src.connect(analyser); analyser.connect(audioCtx.destination); analyser.connect(dest); window.mediaDest=dest; dataArray=new Uint8Array(analyser.frequencyBinCount); isAudioInit=true; }
+        src.connect(analyser); analyser.connect(audioCtx.destination); analyser.connect(dest); window.mediaDest=dest; dataArray=new Uint8Array(analyser.frequencyBinCount); isAudioInit=true; 
+      }
       audioPlayer.play(); document.getElementById('playBtn').innerText="⏸ PAUSE"; currentPlayIndex=(currentPlayIndex+1)%audioFiles.length;
     }
     audioPlayer.addEventListener('ended', playRandomSong);
@@ -168,28 +190,33 @@
     document.getElementById('progressBar').addEventListener('input', e=>{ isDragProg=true; if(audioPlayer.duration)audioPlayer.currentTime=(e.target.value/100)*audioPlayer.duration; });
     document.getElementById('progressBar').addEventListener('change', ()=>isDragProg=false);
 
+    // SYSTEM DRAG (DIBUAT SAFE AGAR KOORDINAT TIDAK NAN)
     function getPos(e){ let r=canvas.getBoundingClientRect(), ev=e.touches?e.touches[0]:e; return {x:(ev.clientX-r.left)*(width/r.width), y:(ev.clientY-r.top)*(height/r.height)}; }
+    
     function sDrag(e){
       let p=getPos(e), sr=parseFloat(document.getElementById('speakerSize').value)*60, tar=[
-        {id:'s1',x:spk1X,y:spk1Y,r:sr},{id:'s2',x:spk2X,y:spk2Y,r:sr}, {id:'cf1',x:cof1X,y:cof1Y,r:40},{id:'cf2',x:cof2X,y:cof2Y,r:40},
-        {id:'cn1',x:can1X,y:can1Y,r:30},{id:'cn2',x:can2X,y:can2Y,r:30},{id:'cn3',x:can3X,y:can3Y,r:30},{id:'cn4',x:can4X,y:can4Y,r:30}
+        {id:'s1',x:spk1X,y:spk1Y,r:sr},{id:'s2',x:spk2X,y:spk2Y,r:sr}, 
+        {id:'cf1',x:cof1X,y:cof1Y,r:50},
+        {id:'cn1',x:can1X,y:can1Y,r:40},{id:'cn2',x:can2X,y:can2Y,r:40}
       ];
       if(p.x>=visX-visW/2 && p.x<=visX+visW/2 && p.y>=visY-150 && p.y<=visY+50){ dragT='v'; dOffX=p.x-visX; dOffY=p.y-visY; if(e.cancelable)e.preventDefault(); return; }
       for(let t of tar) if(Math.hypot(p.x-t.x, p.y-t.y)<=t.r){ dragT=t.id; dOffX=p.x-t.x; dOffY=p.y-t.y; if(e.cancelable)e.preventDefault(); break; }
     }
+    
     function dDrag(e){
       if(!dragT)return; let p=getPos(e), nx=p.x-dOffX, ny=p.y-dOffY;
+      if(isNaN(nx) || isNaN(ny)) return; // Anti-NaN Poisoning
       if(dragT==='v'){visX=nx; visY=ny;} else if(dragT==='s1'){spk1X=nx; spk1Y=ny;} else if(dragT==='s2'){spk2X=nx; spk2Y=ny;}
-      else if(dragT==='cf1'){cof1X=nx; cof1Y=ny;} else if(dragT==='cf2'){cof2X=nx; cof2Y=ny;}
-      else if(dragT==='cn1'){can1X=nx; can1Y=ny;} else if(dragT==='cn2'){can2X=nx; can2Y=ny;} else if(dragT==='cn3'){can3X=nx; can3Y=ny;} else if(dragT==='cn4'){can4X=nx; can4Y=ny;}
+      else if(dragT==='cf1'){cof1X=nx; cof1Y=ny;}
+      else if(dragT==='cn1'){can1X=nx; can1Y=ny;} else if(dragT==='cn2'){can2X=nx; can2Y=ny;}
       if(e.cancelable)e.preventDefault();
     }
+    
     canvas.addEventListener('mousedown',sDrag); canvas.addEventListener('mousemove',dDrag); window.addEventListener('mouseup',()=>dragT=null);
     canvas.addEventListener('touchstart',sDrag,{passive:false}); canvas.addEventListener('touchmove',dDrag,{passive:false}); window.addEventListener('touchend',()=>dragT=null);
 
     function getSym(i, t){ if(!dataArray)return 0; return dataArray[Math.floor(Math.abs(i-t/2)/(t/2)*dataArray.length*0.6)]/255; }
     
-    // VISUALIZER 40 MACAM
     function drawVis(bLen) {
       let st=document.getElementById('visType').value, vh=parseInt(document.getElementById('visHeight').value); visW=parseInt(document.getElementById('visWidth').value);
       ctx.save(); ctx.translate(visX, visY); ctx.translate(-visW/2, 0); ctx.globalAlpha=parseFloat(document.getElementById('visOpacity').value);
@@ -269,12 +296,12 @@
       ctx.restore();
     }
 
-    // CLIPPING BASS (TIDAK ADA PERUBAHAN)
+    // CLIPPING BASS MATI-MATIAN KUNCI
     function drawBass(x, y) {
       if(document.getElementById('speakerStyle').value==='none' || !isBgReady || !bgImg.naturalWidth) return;
-      let sc=parseFloat(document.getElementById('speakerSize').value), bs=0;
+      let sc=parseFloat(document.getElementById('speakerSize').value) || 1.5, bs=0;
       if(dataArray&&!audioPlayer.paused){ let mb=Math.max(dataArray[0],dataArray[1],dataArray[2])/255; if(mb>0.4) bs=Math.pow((mb-0.4)/0.6, 1.5); }
-      let r=50*sc, shk=parseFloat(document.getElementById('speakerShake').value), pmp=parseFloat(document.getElementById('speakerPump').value);
+      let r=50*sc, shk=parseFloat(document.getElementById('speakerShake').value) || 10, pmp=parseFloat(document.getElementById('speakerPump').value) || 0.5;
       let sx=x+(Math.random()-0.5)*bs*shk, sy=y+(Math.random()-0.5)*bs*shk, p=1.0+bs*pmp;
 
       ctx.save(); ctx.translate(sx,sy); ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2); ctx.fillStyle="rgba(0,0,0,0.15)"; ctx.fill(); ctx.restore();
@@ -288,7 +315,7 @@
       ctx.restore();
     }
 
-    // FIX ASAP KOPI (RESTORED FULL)
+    // ASAP KOPI
     let coffeeParticles = [];
     for(let i=0; i<60; i++) {
         coffeeParticles.push({ baseX: (Math.random() - 0.5) * 30, speedY: Math.random() * 1.5 + 0.5, size: Math.random() * 12 + 6, life: Math.random() * 150, maxLife: Math.random() * 100 + 60, sway: Math.random() * 0.04 + 0.01, opac: Math.random() * 0.4 + 0.1 });
@@ -319,7 +346,7 @@
         ctx.restore();
     }
 
-    // FIX API LILIN (RESTORED FULL)
+    // API LILIN
     function drawCandle(x, y, style, scale, propSpeed) {
         if(style === 'none') return;
         ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
@@ -362,7 +389,7 @@
         ctx.restore();
     }
 
-    // FIX PARTIKEL SINEMATIK (RESTORED FULL CLASS)
+    // PARTIKEL SINEMATIK
     class CinematicParticle {
         constructor() { this.reset(true); }
         reset(init = false) {
@@ -432,45 +459,67 @@
         }
     }
 
+    // SIAPKAN 400 PARTIKEL SEKALIGUS AGAR SLIDER MAX 400 AMAN SENTOSA
     let cinematicParticles = [];
-    for(let i=0; i<300; i++) cinematicParticles.push(new CinematicParticle());
+    for(let i=0; i<400; i++) cinematicParticles.push(new CinematicParticle());
 
     function animate() {
-      ctx.fillStyle="#000"; ctx.fillRect(0,0,width,height); time+=0.05;
-      if(isBgReady&&bgImg.naturalWidth){ bgGlobalScale=Math.max(width/bgImg.naturalWidth,height/bgImg.naturalHeight); bgGlobalX=(width/2)-(bgImg.naturalWidth/2)*bgGlobalScale; bgGlobalY=(height/2)-(bgImg.naturalHeight/2)*bgGlobalScale; ctx.drawImage(bgImg,bgGlobalX,bgGlobalY,bgImg.naturalWidth*bgGlobalScale,bgImg.naturalHeight*bgGlobalScale); }
+      // 1. CLEAR CANVAS
+      try { ctx.fillStyle="#000"; ctx.fillRect(0,0,width,height); time+=0.05; } catch(e){}
+
+      // 2. GAMBAR FOTO LATAR (ANTI-CRASH)
+      if(isBgReady && bgImg.naturalWidth > 0 && bgImg.naturalHeight > 0){
+        try {
+          bgGlobalScale=Math.max(width/bgImg.naturalWidth,height/bgImg.naturalHeight);
+          bgGlobalX=Math.floor((width/2)-(bgImg.naturalWidth/2)*bgGlobalScale);
+          bgGlobalY=Math.floor((height/2)-(bgImg.naturalHeight/2)*bgGlobalScale);
+          let drawW=Math.floor(bgImg.naturalWidth*bgGlobalScale);
+          let drawH=Math.floor(bgImg.naturalHeight*bgGlobalScale);
+          ctx.drawImage(bgImg, bgGlobalX, bgGlobalY, drawW, drawH);
+        } catch(e) { console.error(e); }
+      }
+
       if(isAudioInit&&!audioPlayer.paused) analyser.getByteFrequencyData(dataArray);
       
-      // RENDER VISUALIZER
-      drawVis(isAudioInit?analyser.frequencyBinCount:128); 
+      // 3. RENDER VISUALIZER
+      try { drawVis(isAudioInit?analyser.frequencyBinCount:128); } catch(e){}
       
-      // RENDER 2 SPEAKER
-      drawBass(spk1X,spk1Y); drawBass(spk2X,spk2Y);
+      // 4. RENDER 2 SPEAKER (CLIPPING)
+      try { drawBass(spk1X,spk1Y); drawBass(spk2X,spk2Y); } catch(e){}
       
-      let pSz = parseFloat(document.getElementById('propSize').value);
-      let pSpd = parseFloat(document.getElementById('propSpeed').value);
+      let pSz = parseFloat(document.getElementById('propSize').value) || 1.0;
+      let pSpd = parseFloat(document.getElementById('propSpeed').value) || 1.0;
       
-      // RENDER 2 KOPI
-      let cs = document.getElementById('coffeeStyle').value;
-      drawCoffeeSteam(cof1X, cof1Y, cs, pSz, pSpd);
-      drawCoffeeSteam(cof2X, cof2Y, cs, pSz, pSpd);
+      // 5. RENDER 1 KOPI (ASAP)
+      try {
+        let cs = document.getElementById('coffeeStyle').value;
+        drawCoffeeSteam(cof1X, cof1Y, cs, pSz, pSpd);
+      } catch(e){}
       
-      // RENDER 4 LILIN
-      let ls = document.getElementById('candleStyle').value;
-      drawCandle(can1X, can1Y, ls, pSz, pSpd);
-      drawCandle(can2X, can2Y, ls, pSz, pSpd);
-      drawCandle(can3X, can3Y, ls, pSz, pSpd);
-      drawCandle(can4X, can4Y, ls, pSz, pSpd);
+      // 6. RENDER 2 LILIN
+      try {
+        let ls = document.getElementById('candleStyle').value;
+        drawCandle(can1X, can1Y, ls, pSz, pSpd);
+        drawCandle(can2X, can2Y, ls, pSz, pSpd);
+      } catch(e){}
 
-      // RENDER PARTIKEL SINEMATIK
-      let fxCount = parseInt(document.getElementById('count').value);
-      for(let i=0; i<fxCount; i++) { cinematicParticles[i].update(); cinematicParticles[i].draw(); }
+      // 7. RENDER PARTIKEL SINEMATIK (SLIDER 400)
+      try {
+        let fxCount = parseInt(document.getElementById('count').value) || 0;
+        for(let i=0; i<fxCount; i++) { 
+           if(cinematicParticles[i]) {
+              cinematicParticles[i].update(); 
+              cinematicParticles[i].draw(); 
+           }
+        }
+      } catch(e){}
 
       requestAnimationFrame(animate);
     } 
     animate();
 
     let mediaRec, chnk=[];
-    function startRecording(){ if(!isAudioInit)return alert("Putar musik!"); audioPlayer.play(); document.getElementById('stopOverlay').style.display='block'; let str=canvas.captureStream(30), comb=new MediaStream([...str.getTracks(),window.mediaDest.stream.getAudioTracks()[0]]); mediaRec=new MediaRecorder(comb,{mimeType:'video/webm'}); mediaRec.ondataavailable=e=>chnk.push(e.data); mediaRec.onstop=()=>{ let b=new Blob(chnk,{type:'video/webm'}); chnk=[]; let a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=`test_${Date.now()}.webm`; a.click(); document.getElementById('stopOverlay').style.display='none'; }; mediaRec.start(); }
+    function startRecording(){ if(!isAudioInit)return alert("Putar musik!"); audioPlayer.play(); document.getElementById('stopOverlay').style.display='block'; let str=canvas.captureStream(30), comb=new MediaStream([...str.getTracks(),window.mediaDest.stream.getAudioTracks()[0]]); mediaRec=new MediaRecorder(comb,{mimeType:'video/webm'}); mediaRec.ondataavailable=e=>chnk.push(e.data); mediaRec.onstop=()=>{ let b=new Blob(chnk,{type:'video/webm'}); chnk=[]; let a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=`test_part1_${Date.now()}.webm`; a.click(); document.getElementById('stopOverlay').style.display='none'; }; mediaRec.start(); }
     function stopRecording(){ if(mediaRec)mediaRec.stop(); audioPlayer.pause(); }
   </script>
 </body>
