@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>test part 1 (No Circle Vis, Pure Bass)</title>
+  <title>test part 1 (Props & FX Fixed)</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body { margin: 0; background-image: linear-gradient(45deg, #222 25%, transparent 25%), linear-gradient(-45deg, #222 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #222 75%), linear-gradient(-45deg, transparent 75%, #222 75%); background-size: 20px 20px; background-color: #333; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; }
@@ -35,7 +35,7 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. test part 1 (40 Vis Lurus, No Bulat).</div>
+    <div id="statusBox">Siap. test part 1 (Fixed Props & FX).</div>
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
       <label for="audioInput" class="file-label" style="border-bottom: 3px solid #00bcd4">2. MUSIK</label>
@@ -68,28 +68,55 @@
       </div>
     </div>
     <hr style="border:0; border-top:1px dashed #333; margin:5px 0;">
+    
+    <!-- FIX PROP OPTIONS -->
     <div class="layout-grid">
       <div class="layout-col">
         <label style="color:#d7ccc8;">ASAP KOPI</label>
-        <select id="coffeeStyle"><option value="none">🚫 Tanpa Asap</option><option value="soft_steam">☕ Soft Steam</option><option value="heavy_steam">☁️ Heavy Steam</option></select>
+        <select id="coffeeStyle">
+          <option value="none">🚫 Tanpa Asap Kopi</option>
+          <option value="soft_steam">☕ 1. Soft Warm Steam</option>
+          <option value="swirl_vapor">🌪️ 2. Swirling Vapor</option>
+          <option value="thin_wisp">🌬️ 3. Thin Elegant Wisp</option>
+          <option value="heavy_steam">☁️ 4. Heavy Morning Steam</option>
+          <option value="wind_steam">🍃 5. Breezy Coffee Steam</option>
+        </select>
       </div>
       <div class="layout-col">
         <label style="color:#ff8a65;">API LILIN</label>
-        <select id="candleStyle"><option value="none">🚫 Tanpa Lilin</option><option value="calm_flame">🕯️ Calm Flame</option></select>
+        <select id="candleStyle">
+          <option value="none">🚫 Tanpa Api Lilin</option>
+          <option value="calm_flame">🕯️ 1. Calm Warm Flame</option>
+          <option value="flicker_flame">🕯️ 2. Flickering Flame</option>
+          <option value="bright_glow">🌟 3. Bright Glowing Flame</option>
+          <option value="blue_base">🔵 4. Blue-Base Real Flame</option>
+          <option value="wind_flame">🌬️ 5. Wind-blown Flame</option>
+        </select>
       </div>
     </div>
     <div class="row"><label>UKURAN PROP</label><input type="range" id="propSize" min="0.2" max="5.0" step="0.1" value="1.0"></div>
     <div class="row"><label>KCPTN PROP</label><input type="range" id="propSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
     <hr style="border:0; border-top:1px dashed #333; margin:5px 0;">
+    
     <div class="row">
       <label style="color:#00e5ff;">PARTIKEL</label>
       <select id="type">
-        <option value="none">🚫 Tanpa Partikel</option><option value="dust_motes">✨ Debu Emas</option><option value="magic_sparks">💫 Sihir Biru</option>
-        <option value="floating_embers">🔥 Bara Terbang</option><option value="bokeh_orbs">🫧 Bokeh Orbs</option><option value="snow_dust">❄️ Salju</option>
+        <option value="none">🚫 Tanpa Partikel</option>
+        <option value="dust_motes">✨ Debu Emas</option>
+        <option value="magic_sparks">💫 Sihir Biru</option>
+        <option value="floating_embers">🔥 Bara Terbang</option>
+        <option value="bokeh_orbs">🫧 Bokeh Orbs</option>
+        <option value="snow_dust">❄️ Salju</option>
+        <option value="fairy_light">🧚 Cahaya Peri</option>
+        <option value="ash_particles">🌪️ Abu Hitam</option>
+        <option value="starlight_glint">🌟 Kilau Bintang</option>
+        <option value="deep_sea_motes">🌊 Partikel Laut</option>
+        <option value="golden_pollen">🌼 Serbuk Emas</option>
       </select>
     </div>
     <div class="row"><label>ARAH</label><select id="fxAngle"><option value="0">Lurus</option><option value="15">Kanan 15°</option><option value="-15">Kiri 15°</option></select></div>
     <div class="row"><label>SPEED FX</label><input type="range" id="fxSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
+    <div class="row"><label>JUMLAH FX</label><input type="range" id="count" min="0" max="400" value="100"></div>
     <button class="btn-record" onclick="startRecording()">🔴 MULAI REKAM 720p</button>
   </div>
 
@@ -242,7 +269,8 @@
       ctx.restore();
     }
 
-    function drawBass(x,y) {
+    // CLIPPING BASS (TIDAK ADA PERUBAHAN)
+    function drawBass(x, y) {
       if(document.getElementById('speakerStyle').value==='none' || !isBgReady || !bgImg.naturalWidth) return;
       let sc=parseFloat(document.getElementById('speakerSize').value), bs=0;
       if(dataArray&&!audioPlayer.paused){ let mb=Math.max(dataArray[0],dataArray[1],dataArray[2])/255; if(mb>0.4) bs=Math.pow((mb-0.4)/0.6, 1.5); }
@@ -260,54 +288,186 @@
       ctx.restore();
     }
 
-    let cPts=Array.from({length:60}, ()=>({x:(Math.random()-0.5)*30,y:Math.random()*1.5+0.5,s:Math.random()*12+6,l:Math.random()*150,m:Math.random()*100+60,sw:Math.random()*0.04+0.01,o:Math.random()*0.4+0.1}));
-    function drawProps(s, pSpd) {
-      let cs=document.getElementById('coffeeStyle').value, ls=document.getElementById('candleStyle').value;
-      if(cs!=='none'){
-        let lim=cs==='soft_steam'?15:50, sm=cs==='soft_steam'?0.8:1.5;
-        for(let pos of [{x:cof1X,y:cof1Y},{x:cof2X,y:cof2Y}]){
-          ctx.save(); ctx.translate(pos.x,pos.y); ctx.scale(s,s);
-          for(let i=0;i<lim;i++){ let p=cPts[i]; p.l+=pSpd*sm; if(p.l>p.m){p.l=0;p.x=(Math.random()-0.5)*30;}
-            let o=p.o*(1-(p.l/p.m)); if(o>0){ ctx.beginPath(); ctx.arc(p.x+Math.sin(p.l*p.sw)*25, -p.l*p.y, p.s+(p.l*0.4), 0, Math.PI*2); ctx.fillStyle=`rgba(240,240,240,${o})`; ctx.fill(); }
-          } ctx.restore();
+    // FIX ASAP KOPI (RESTORED FULL)
+    let coffeeParticles = [];
+    for(let i=0; i<60; i++) {
+        coffeeParticles.push({ baseX: (Math.random() - 0.5) * 30, speedY: Math.random() * 1.5 + 0.5, size: Math.random() * 12 + 6, life: Math.random() * 150, maxLife: Math.random() * 100 + 60, sway: Math.random() * 0.04 + 0.01, opac: Math.random() * 0.4 + 0.1 });
+    }
+    function drawCoffeeSteam(x, y, style, scale, propSpeed) {
+        if(style === 'none') return;
+        ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
+        let limit = 25; let speedMult = 1.0;
+        if(style === 'soft_steam') { limit=15; speedMult=0.8; }
+        if(style === 'swirl_vapor') { limit=40; speedMult=1.2; }
+        if(style === 'thin_wisp') { limit=10; speedMult=0.6; }
+        if(style === 'heavy_steam') { limit=60; speedMult=1.5; }
+        if(style === 'wind_steam') { limit=30; speedMult=1.8; ctx.rotate(20 * Math.PI/180); }
+
+        for(let i=0; i<limit; i++) {
+            let p = coffeeParticles[i];
+            p.life += propSpeed * speedMult;
+            if(p.life > p.maxLife) { p.life = 0; p.baseX = (Math.random() - 0.5) * 30; }
+            let curY = -p.life * p.speedY;
+            let curX = p.baseX + Math.sin(p.life * p.sway) * 25;
+            let curSize = p.size + (p.life * 0.4);
+            let curOpac = p.opac * (1 - (p.life / p.maxLife));
+
+            if(curOpac > 0) {
+                ctx.beginPath(); ctx.arc(curX, curY, curSize, 0, Math.PI*2); ctx.fillStyle = `rgba(240, 240, 240, ${curOpac})`; ctx.fill();
+            }
         }
-      }
-      if(ls!=='none'){
-        let t=time*2*pSpd, f=Math.sin(t*3)*2, sw=Math.sin(t)*1;
-        for(let pos of [{x:can1X,y:can1Y},{x:can2X,y:can2Y},{x:can3X,y:can3Y},{x:can4X,y:can4Y}]){
-          ctx.save(); ctx.translate(pos.x,pos.y); ctx.scale(s,s);
-          ctx.beginPath(); ctx.arc(0,-32,48,0,Math.PI*2); let g=ctx.createRadialGradient(0,-32,0,0,-32,64); g.addColorStop(0,'rgba(255,120,0,0.25)'); g.addColorStop(1,'rgba(255,120,0,0)'); ctx.fillStyle=g; ctx.fill();
-          ctx.beginPath(); ctx.moveTo(0,5); ctx.lineTo(sw*0.05,-8); ctx.lineWidth=3; ctx.strokeStyle='#111'; ctx.stroke();
-          let df=(fw,fh,fsw,c)=>{ ctx.beginPath(); ctx.moveTo(0,2); ctx.bezierCurveTo(fw,2,fw*0.9,-fh*0.4,fsw,-fh); ctx.bezierCurveTo(-fw*0.9,-fh*0.4,-fw,2,0,2); ctx.fillStyle=c; ctx.fill(); };
-          df(16,65+f,sw,'rgba(255,140,0,0.8)'); df(11,48+f*0.75,sw*0.7,'rgba(255,210,0,0.9)'); df(5,29+f*0.45,sw*0.3,'rgba(255,255,255,0.95)');
-          ctx.restore();
-        }
-      }
+        ctx.restore();
     }
 
-    let pFx=Array.from({length:300}, ()=>({x:Math.random()*width,y:Math.random()*height,s:Math.random()*3+1,sy:Math.random()*1.5+0.5,o:Math.random()*0.6+0.2,l:Math.random()*100,ws:Math.random()*0.05+0.01}));
-    function drawFx() {
-      let t=document.getElementById('type').value; if(t==='none')return;
-      let c=parseInt(document.getElementById('count').value), sp=parseFloat(document.getElementById('fxSpeed').value), wnd=parseInt(document.getElementById('fxAngle').value)*Math.PI/180;
-      ctx.save();
-      for(let i=0;i<c;i++){
-        let p=pFx[i]; p.l+=p.ws;
-        if(['dust_motes','magic_sparks','floating_embers'].includes(t)){ p.y-=p.sy*sp*0.5; p.x+=Math.sin(p.l)*sp+Math.sin(wnd)*2; } else{ p.y+=p.sy*sp; p.x+=Math.sin(p.l)*sp+Math.sin(wnd)*3; }
-        if(p.y>height+50||p.y<-50||p.x>width+50||p.x<-50) { p.y=-20; p.x=Math.random()*width; }
-        let co = p.o*(0.5+0.5*Math.sin(p.l*2)); ctx.beginPath();
-        if(t==='dust_motes'){ ctx.fillStyle=`rgba(255,230,150,${co})`; ctx.shadowBlur=p.s*2; ctx.shadowColor='#ffeb3b'; } else if(t==='snow_dust'){ ctx.fillStyle=`rgba(255,255,255,${co})`; } else { ctx.fillStyle=`rgba(200,255,255,${co})`; }
-        ctx.arc(p.x,p.y,p.s,0,Math.PI*2); ctx.fill();
-      } ctx.restore();
+    // FIX API LILIN (RESTORED FULL)
+    function drawCandle(x, y, style, scale, propSpeed) {
+        if(style === 'none') return;
+        ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
+
+        let t = time * 2 * propSpeed;
+        let flicker = 0; let sway = 0; let h = 65; let w = 16;
+        let baseColor = 'rgba(255, 140, 0, 0.8)';
+        let midColor = 'rgba(255, 210, 0, 0.9)';
+        let coreColor = 'rgba(255, 255, 255, 0.95)';
+
+        if(style === 'calm_flame') { flicker = Math.sin(t*3)*2; sway = Math.sin(t)*1; }
+        else if(style === 'flicker_flame') { flicker = Math.sin(t*10)*4 + Math.random()*2; sway = Math.sin(t*5)*3; }
+        else if(style === 'bright_glow') { flicker = Math.sin(t*4)*2; h = 75; w = 18; ctx.shadowBlur = 50 + flicker*5; ctx.shadowColor = '#ff9800'; }
+        else if(style === 'blue_base') { flicker = Math.sin(t*5)*2; baseColor = 'rgba(0, 150, 255, 0.8)'; midColor = 'rgba(100, 200, 255, 0.9)'; }
+        else if(style === 'wind_flame') { flicker = Math.random()*5; sway = 15 + Math.sin(t*8)*5; }
+
+        ctx.beginPath(); ctx.arc(0, -h*0.5, w*3, 0, Math.PI*2);
+        let gradGlow = ctx.createRadialGradient(0,-h*0.5,0, 0,-h*0.5,w*4);
+        gradGlow.addColorStop(0, 'rgba(255, 120, 0, 0.25)'); gradGlow.addColorStop(1, 'rgba(255, 120, 0, 0)');
+        ctx.fillStyle = gradGlow; ctx.fill();
+
+        ctx.beginPath(); ctx.moveTo(0, 5); ctx.lineTo(sway*0.05, -8);
+        ctx.lineWidth = 3; ctx.strokeStyle = '#111'; ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(sway*0.05, -8); ctx.lineTo(sway*0.1, -12);
+        ctx.lineWidth = 2; ctx.strokeStyle = '#ff5722'; ctx.stroke();
+
+        function drawFlame(fw, fh, fsway, color) {
+            ctx.beginPath();
+            ctx.moveTo(0, 2);
+            ctx.bezierCurveTo(fw, 2, fw*0.9, -fh*0.4, fsway, -fh);
+            ctx.bezierCurveTo(-fw*0.9, -fh*0.4, -fw, 2, 0, 2);
+            ctx.fillStyle = color; ctx.fill();
+        }
+
+        drawFlame(w, h + flicker, sway, baseColor); 
+        drawFlame(w*0.7, (h + flicker)*0.75, sway*0.7, midColor); 
+        drawFlame(w*0.35, (h + flicker)*0.45, sway*0.3, coreColor); 
+        
+        ctx.shadowBlur = 0;
+        ctx.restore();
     }
+
+    // FIX PARTIKEL SINEMATIK (RESTORED FULL CLASS)
+    class CinematicParticle {
+        constructor() { this.reset(true); }
+        reset(init = false) {
+            this.x = Math.random() * width;
+            this.y = init ? (Math.random() * height) : -20 - Math.random()*50;
+            let t = document.getElementById('type').value;
+            this.size = Math.random() * 3 + 1;
+            this.speedY = Math.random() * 1.5 + 0.5;
+            this.opacity = Math.random() * 0.6 + 0.2;
+            this.life = Math.random() * 100;
+            this.wobbleSpeed = Math.random() * 0.05 + 0.01;
+            
+            if(t === 'bokeh_orbs') { this.size = Math.random() * 15 + 5; this.opacity = Math.random()*0.3+0.1; }
+            if(t === 'snow_dust' || t === 'ash_particles') { this.speedY = Math.random() * 2 + 1; }
+        }
+        update() {
+            let t = document.getElementById('type').value;
+            if(t === 'none') return;
+            let wind = parseFloat(document.getElementById('fxAngle').value) * Math.PI / 180;
+            let sm = parseFloat(document.getElementById('fxSpeed').value);
+            
+            this.life += this.wobbleSpeed;
+            
+            if (['dust_motes', 'golden_pollen', 'magic_sparks', 'floating_embers'].includes(t)) {
+                this.y -= this.speedY * sm * 0.5;
+                this.x += Math.sin(this.life) * 1 * sm + Math.sin(wind)*2;
+            } else if (t === 'bokeh_orbs' || t === 'fairy_light') {
+                this.y -= this.speedY * sm * 0.3;
+                this.x += Math.sin(this.life) * 0.5 * sm + Math.sin(wind)*1;
+            } else {
+                this.y += this.speedY * sm;
+                this.x += Math.sin(this.life) * 1 * sm + Math.sin(wind)*3;
+            }
+            
+            this.currentOpacity = this.opacity * (0.5 + 0.5*Math.sin(this.life*2));
+            
+            if(this.y > height + 50 || this.y < -50 || this.x > width+50 || this.x < -50) this.reset();
+        }
+        draw() {
+            let t = document.getElementById('type').value;
+            if(t === 'none') return;
+            ctx.save();
+            ctx.beginPath();
+            
+            let c1;
+            if(t === 'dust_motes') { c1=`rgba(255,230,150,${this.currentOpacity})`; ctx.shadowBlur=this.size*2; ctx.shadowColor='#ffeb3b'; }
+            else if(t === 'magic_sparks') { c1=`rgba(200,255,255,${this.currentOpacity})`; ctx.shadowBlur=this.size*3; ctx.shadowColor='#00e5ff'; }
+            else if(t === 'floating_embers') { c1=`rgba(255,100,0,${this.currentOpacity})`; ctx.shadowBlur=this.size*3; ctx.shadowColor='#ff3d00'; }
+            else if(t === 'bokeh_orbs') { c1=`rgba(255,255,255,${this.currentOpacity*0.5})`; }
+            else if(t === 'snow_dust') { c1=`rgba(255,255,255,${this.currentOpacity})`; ctx.shadowBlur=this.size; ctx.shadowColor='#fff'; }
+            else if(t === 'fairy_light') { c1=`rgba(255,200,255,${this.currentOpacity})`; ctx.shadowBlur=this.size*4; ctx.shadowColor='#e040fb'; }
+            else if(t === 'ash_particles') { c1=`rgba(50,50,50,${this.currentOpacity+0.4})`; }
+            else if(t === 'starlight_glint') { c1=`rgba(255,255,255,${this.currentOpacity})`; 
+                let rot = this.life;
+                ctx.translate(this.x, this.y); ctx.rotate(rot);
+                ctx.moveTo(-this.size, 0); ctx.lineTo(this.size, 0); ctx.moveTo(0, -this.size); ctx.lineTo(0, this.size);
+                ctx.strokeStyle=c1; ctx.lineWidth=1; ctx.stroke();
+                ctx.restore(); return;
+            }
+            else if(t === 'deep_sea_motes') { c1=`rgba(100,200,255,${this.currentOpacity*0.7})`; ctx.shadowBlur=this.size*2; ctx.shadowColor='#00bcd4'; }
+            else if(t === 'golden_pollen') { c1=`rgba(255,215,0,${this.currentOpacity})`; ctx.shadowBlur=this.size*2; ctx.shadowColor='#ffb300'; }
+            
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+            ctx.fillStyle = c1;
+            ctx.fill();
+            ctx.restore();
+        }
+    }
+
+    let cinematicParticles = [];
+    for(let i=0; i<300; i++) cinematicParticles.push(new CinematicParticle());
 
     function animate() {
       ctx.fillStyle="#000"; ctx.fillRect(0,0,width,height); time+=0.05;
       if(isBgReady&&bgImg.naturalWidth){ bgGlobalScale=Math.max(width/bgImg.naturalWidth,height/bgImg.naturalHeight); bgGlobalX=(width/2)-(bgImg.naturalWidth/2)*bgGlobalScale; bgGlobalY=(height/2)-(bgImg.naturalHeight/2)*bgGlobalScale; ctx.drawImage(bgImg,bgGlobalX,bgGlobalY,bgImg.naturalWidth*bgGlobalScale,bgImg.naturalHeight*bgGlobalScale); }
       if(isAudioInit&&!audioPlayer.paused) analyser.getByteFrequencyData(dataArray);
-      drawVis(isAudioInit?analyser.frequencyBinCount:128); drawBass(spk1X,spk1Y); drawBass(spk2X,spk2Y);
-      drawProps(parseFloat(document.getElementById('propSize').value), parseFloat(document.getElementById('propSpeed').value)); drawFx();
+      
+      // RENDER VISUALIZER
+      drawVis(isAudioInit?analyser.frequencyBinCount:128); 
+      
+      // RENDER 2 SPEAKER
+      drawBass(spk1X,spk1Y); drawBass(spk2X,spk2Y);
+      
+      let pSz = parseFloat(document.getElementById('propSize').value);
+      let pSpd = parseFloat(document.getElementById('propSpeed').value);
+      
+      // RENDER 2 KOPI
+      let cs = document.getElementById('coffeeStyle').value;
+      drawCoffeeSteam(cof1X, cof1Y, cs, pSz, pSpd);
+      drawCoffeeSteam(cof2X, cof2Y, cs, pSz, pSpd);
+      
+      // RENDER 4 LILIN
+      let ls = document.getElementById('candleStyle').value;
+      drawCandle(can1X, can1Y, ls, pSz, pSpd);
+      drawCandle(can2X, can2Y, ls, pSz, pSpd);
+      drawCandle(can3X, can3Y, ls, pSz, pSpd);
+      drawCandle(can4X, can4Y, ls, pSz, pSpd);
+
+      // RENDER PARTIKEL SINEMATIK
+      let fxCount = parseInt(document.getElementById('count').value);
+      for(let i=0; i<fxCount; i++) { cinematicParticles[i].update(); cinematicParticles[i].draw(); }
+
       requestAnimationFrame(animate);
-    } animate();
+    } 
+    animate();
 
     let mediaRec, chnk=[];
     function startRecording(){ if(!isAudioInit)return alert("Putar musik!"); audioPlayer.play(); document.getElementById('stopOverlay').style.display='block'; let str=canvas.captureStream(30), comb=new MediaStream([...str.getTracks(),window.mediaDest.stream.getAudioTracks()[0]]); mediaRec=new MediaRecorder(comb,{mimeType:'video/webm'}); mediaRec.ondataavailable=e=>chnk.push(e.data); mediaRec.onstop=()=>{ let b=new Blob(chnk,{type:'video/webm'}); chnk=[]; let a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=`test_${Date.now()}.webm`; a.click(); document.getElementById('stopOverlay').style.display='none'; }; mediaRec.start(); }
