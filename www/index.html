@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>test part 1 (Anti-Crash Photo Engine)</title>
+  <title>test part 1 (Auto-Stop & Save Fixed)</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body { margin: 0; background-image: linear-gradient(45deg, #222 25%, transparent 25%), linear-gradient(-45deg, #222 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #222 75%), linear-gradient(-45deg, transparent 75%, #222 75%); background-size: 20px 20px; background-color: #333; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; }
@@ -19,6 +19,7 @@
     #progressBar::-webkit-slider-thumb { -webkit-appearance: none; width: 15px; height: 15px; background: #f39c12; border-radius: 50%; }
     .btn-record { width: 100%; padding: 15px; background: linear-gradient(135deg, #ff4444, #d32f2f); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
     #stopOverlay { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(220, 20, 60, 0.95); color: white; padding: 15px 30px; border-radius: 50px; z-index: 100; font-weight: bold; border: 3px solid white; cursor: pointer; }
+    #countdownOverlay { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 100px; font-weight: bold; color: white; text-shadow: 0 0 20px rgba(0,0,0,0.8); z-index: 100; }
     #statusBox { font-size: 12px; text-align: center; color: #d4af37; font-weight: bold; }
     label { font-size: 11px; color: #ccc; font-weight: 600; width: 80px; }
     input[type="range"], select { flex: 1; height: 36px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px; }
@@ -31,16 +32,17 @@
 <body>
   <div id="canvas-wrapper">
     <canvas id="canvas" width="1280" height="720"></canvas>
+    <div id="countdownOverlay">3</div>
     <div id="stopOverlay" onclick="stopRecording()">⏹ STOP & SIMPAN</div>
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. test part 1 (Anti-Crash Photo Engine).</div>
+    <div id="statusBox">Siap. test part 1 (Auto-Stop & Save).</div>
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
       <label for="audioInput" class="file-label" style="border-bottom: 3px solid #00bcd4">2. MUSIK</label>
     </div>
-    <div class="play-group"><button id="playBtn" onclick="togglePlay()">⚠ PUTAR MUSIK</button><button id="nextBtn" onclick="playRandomSong()">⏭ NEXT</button></div>
+    <div class="play-group"><button id="playBtn" onclick="togglePlay()">⚠ PUTAR MUSIK</button><button id="nextBtn" onclick="playRandomSong(true)">⏭ NEXT</button></div>
     <div class="progress-container"><span id="currTime" class="time-text">00:00</span><input type="range" id="progressBar" value="0" min="0" step="0.1"><span id="durTime" class="time-text">00:00</span></div>
     <input type="file" id="bgInput" accept="image/*"><input type="file" id="audioInput" accept="audio/*" multiple>
     <hr style="border:0; border-top:1px solid #333; margin:5px 0;">
@@ -116,7 +118,7 @@
     <div class="row"><label>ARAH</label><select id="fxAngle"><option value="0">Lurus</option><option value="15">Kanan 15°</option><option value="-15">Kiri 15°</option></select></div>
     <div class="row"><label>SPEED FX</label><input type="range" id="fxSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
     <div class="row"><label>JUMLAH FX</label><input type="range" id="count" min="0" max="400" value="100"></div>
-    <button class="btn-record" onclick="startRecording()">🔴 MULAI REKAM 720p</button>
+    <button class="btn-record" id="recordBtn" onclick="startCountdownAndRecord()">🔴 MULAI REKAM 720p</button>
   </div>
 
   <audio id="audioPlayer" crossorigin="anonymous"></audio>
@@ -130,6 +132,7 @@
     let isBgReady=false, bgImg=new Image();
     let audioCtx, analyser, dataArray, isAudioInit=false, peakH=new Array(120).fill(0);
     let bgGlobalScale=1, bgGlobalX=0, bgGlobalY=0;
+    let playTimeout = null; 
 
     // KOORDINAT DRAG: 2 Speaker, 1 Asap, 2 Lilin, 1 Vis
     let visW=400, visX=(width-visW)/2, visY=height-160;
@@ -141,12 +144,11 @@
 
     function formatT(s) { if(isNaN(s))return"00:00"; let m=Math.floor(s/60); return `${m.toString().padStart(2,'0')}:${Math.floor(s%60).toString().padStart(2,'0')}`; }
 
-    // SYSTEM FOTO ANTI-CRASH MEMORY (NATIVE URL)
+    // SYSTEM FOTO ANTI-CRASH MEMORY
     document.getElementById('bgInput').addEventListener('change', e => {
       if(e.target.files[0]) {
         let file = e.target.files[0];
         if(!file.type.startsWith('image/')) return alert('Harus file gambar!');
-        
         if(currentBgUrl) URL.revokeObjectURL(currentBgUrl);
         currentBgUrl = URL.createObjectURL(file);
         
@@ -163,25 +165,87 @@
       }
     });
 
-    // SYSTEM AUDIO
+    // ===============================================
+    // SYSTEM AUDIO, PLAYLIST & AUTO STOP RECORDING
+    // ===============================================
     document.getElementById('audioInput').addEventListener('change', e => {
-      if(e.target.files.length) { audioFiles=Array.from(e.target.files).sort(()=>Math.random()-0.5); currentPlayIndex=0; document.getElementById('playBtn').innerText="▶ PLAY MUSIK"; document.getElementById('statusBox').innerText=`${audioFiles.length} Lagu Siap!`; }
+      if(e.target.files.length) { 
+          audioFiles=Array.from(e.target.files).sort(()=>Math.random()-0.5); 
+          currentPlayIndex=0; 
+          document.getElementById('playBtn').innerText="▶ PLAY MUSIK"; 
+          document.getElementById('statusBox').innerText=`${audioFiles.length} Lagu Siap Diputar!`; 
+      }
     });
 
-    function playRandomSong() {
-      if(!audioFiles.length) return;
-      if(currentUrl) URL.revokeObjectURL(currentUrl);
-      currentUrl=URL.createObjectURL(audioFiles[currentPlayIndex]); audioPlayer.src=currentUrl; audioPlayer.load();
-      if(!audioCtx){ 
-        audioCtx=new(window.AudioContext||window.webkitAudioContext)(); 
-        analyser=audioCtx.createAnalyser(); analyser.fftSize=256;
-        let src=audioCtx.createMediaElementSource(audioPlayer), dest=audioCtx.createMediaStreamDestination();
-        src.connect(analyser); analyser.connect(audioCtx.destination); analyser.connect(dest); window.mediaDest=dest; dataArray=new Uint8Array(analyser.frequencyBinCount); isAudioInit=true; 
-      }
-      audioPlayer.play(); document.getElementById('playBtn').innerText="⏸ PAUSE"; currentPlayIndex=(currentPlayIndex+1)%audioFiles.length;
+    function stopEverything() {
+        audioPlayer.pause();
+        if(playTimeout) clearTimeout(playTimeout);
+        document.getElementById('playBtn').innerText="▶ PLAY MUSIK";
+        document.getElementById('statusBox').innerText="✅ Semua lagu selesai diputar.";
+        currentPlayIndex = 0; // Reset ke lagu awal buat sesi berikutnya
+        
+        // OTOMATIS BERHENTIKAN REKAMAN & SAVE KETIKA LAGU HABIS
+        if(mediaRecorder && mediaRecorder.state !== 'inactive') {
+            stopRecording();
+        }
     }
-    audioPlayer.addEventListener('ended', playRandomSong);
-    function togglePlay() { if(!audioFiles.length)return alert("Pilih Musik!"); if(audioPlayer.paused){if(!audioPlayer.src)playRandomSong();else{audioPlayer.play(); document.getElementById('playBtn').innerText="⏸ PAUSE";}}else{audioPlayer.pause(); document.getElementById('playBtn').innerText="▶ RESUME";} }
+
+    function playRandomSong(isInstant = false) {
+      if(!audioFiles.length) return;
+      if(playTimeout) clearTimeout(playTimeout);
+      
+      // CEK JIKA SEMUA LAGU SUDAH SELESAI
+      if(currentPlayIndex >= audioFiles.length) {
+          stopEverything();
+          return;
+      }
+
+      let delay = isInstant ? 0 : 3000;
+      
+      if(!isInstant) {
+          audioPlayer.pause();
+          document.getElementById('playBtn').innerText = "⏳ TUNGGU...";
+          document.getElementById('statusBox').innerText = "⏳ Jeda pergantian lagu 3 detik...";
+      }
+
+      playTimeout = setTimeout(() => {
+          if(currentUrl) URL.revokeObjectURL(currentUrl);
+          currentUrl=URL.createObjectURL(audioFiles[currentPlayIndex]); 
+          audioPlayer.src=currentUrl; audioPlayer.load();
+          
+          if(!audioCtx){ 
+            audioCtx=new(window.AudioContext||window.webkitAudioContext)(); 
+            analyser=audioCtx.createAnalyser(); analyser.fftSize=256;
+            let src=audioCtx.createMediaElementSource(audioPlayer), dest=audioCtx.createMediaStreamDestination();
+            src.connect(analyser); analyser.connect(audioCtx.destination); analyser.connect(dest); window.mediaDest=dest; dataArray=new Uint8Array(analyser.frequencyBinCount); isAudioInit=true; 
+          }
+          
+          audioPlayer.play().catch(e=>console.log(e)); 
+          document.getElementById('playBtn').innerText="⏸ PAUSE"; 
+          
+          // TAMPILAN INDIKATOR JUMLAH LAGU (1/5)
+          let songName = audioFiles[currentPlayIndex].name.replace(/\.[^/.]+$/, "");
+          document.getElementById('statusBox').innerText=`🎵 Lagu (${currentPlayIndex + 1}/${audioFiles.length}): ${songName.substring(0, 20)}...`;
+          
+          currentPlayIndex++; // Maju ke lagu berikutnya
+      }, delay);
+    }
+    
+    // Trigger saat 1 lagu selesai
+    audioPlayer.addEventListener('ended', () => playRandomSong(false));
+    
+    function togglePlay() { 
+        if(!audioFiles.length) return alert("Pilih Musik!"); 
+        if(audioPlayer.paused) {
+            if(!audioPlayer.src || currentPlayIndex >= audioFiles.length) {
+                if(currentPlayIndex >= audioFiles.length) currentPlayIndex = 0; // Reset jika sudah selesai dan play dipencet lagi
+                playRandomSong(true);
+            }
+            else { audioPlayer.play(); document.getElementById('playBtn').innerText="⏸ PAUSE"; }
+        } else {
+            audioPlayer.pause(); document.getElementById('playBtn').innerText="▶ RESUME";
+        } 
+    }
 
     audioPlayer.addEventListener('timeupdate', ()=>{
       if(isFinite(audioPlayer.duration)&&document.getElementById('durTime').innerText==="00:00") document.getElementById('durTime').innerText=formatT(audioPlayer.duration);
@@ -190,7 +254,7 @@
     document.getElementById('progressBar').addEventListener('input', e=>{ isDragProg=true; if(audioPlayer.duration)audioPlayer.currentTime=(e.target.value/100)*audioPlayer.duration; });
     document.getElementById('progressBar').addEventListener('change', ()=>isDragProg=false);
 
-    // SYSTEM DRAG (DIBUAT SAFE AGAR KOORDINAT TIDAK NAN)
+    // SYSTEM DRAG
     function getPos(e){ let r=canvas.getBoundingClientRect(), ev=e.touches?e.touches[0]:e; return {x:(ev.clientX-r.left)*(width/r.width), y:(ev.clientY-r.top)*(height/r.height)}; }
     
     function sDrag(e){
@@ -205,7 +269,7 @@
     
     function dDrag(e){
       if(!dragT)return; let p=getPos(e), nx=p.x-dOffX, ny=p.y-dOffY;
-      if(isNaN(nx) || isNaN(ny)) return; // Anti-NaN Poisoning
+      if(isNaN(nx) || isNaN(ny)) return; 
       if(dragT==='v'){visX=nx; visY=ny;} else if(dragT==='s1'){spk1X=nx; spk1Y=ny;} else if(dragT==='s2'){spk2X=nx; spk2Y=ny;}
       else if(dragT==='cf1'){cof1X=nx; cof1Y=ny;}
       else if(dragT==='cn1'){can1X=nx; can1Y=ny;} else if(dragT==='cn2'){can2X=nx; can2Y=ny;}
@@ -459,58 +523,39 @@
         }
     }
 
-    // SIAPKAN 400 PARTIKEL SEKALIGUS AGAR SLIDER MAX 400 AMAN SENTOSA
     let cinematicParticles = [];
     for(let i=0; i<400; i++) cinematicParticles.push(new CinematicParticle());
 
     function animate() {
-      // 1. CLEAR CANVAS
       try { ctx.fillStyle="#000"; ctx.fillRect(0,0,width,height); time+=0.05; } catch(e){}
 
-      // 2. GAMBAR FOTO LATAR (ANTI-CRASH)
       if(isBgReady && bgImg.naturalWidth > 0 && bgImg.naturalHeight > 0){
         try {
           bgGlobalScale=Math.max(width/bgImg.naturalWidth,height/bgImg.naturalHeight);
           bgGlobalX=Math.floor((width/2)-(bgImg.naturalWidth/2)*bgGlobalScale);
           bgGlobalY=Math.floor((height/2)-(bgImg.naturalHeight/2)*bgGlobalScale);
-          let drawW=Math.floor(bgImg.naturalWidth*bgGlobalScale);
-          let drawH=Math.floor(bgImg.naturalHeight*bgGlobalScale);
-          ctx.drawImage(bgImg, bgGlobalX, bgGlobalY, drawW, drawH);
-        } catch(e) { console.error(e); }
+          ctx.drawImage(bgImg, bgGlobalX, bgGlobalY, Math.floor(bgImg.naturalWidth*bgGlobalScale), Math.floor(bgImg.naturalHeight*bgGlobalScale));
+        } catch(e) { }
       }
 
       if(isAudioInit&&!audioPlayer.paused) analyser.getByteFrequencyData(dataArray);
-      
-      // 3. RENDER VISUALIZER
       try { drawVis(isAudioInit?analyser.frequencyBinCount:128); } catch(e){}
-      
-      // 4. RENDER 2 SPEAKER (CLIPPING)
       try { drawBass(spk1X,spk1Y); drawBass(spk2X,spk2Y); } catch(e){}
       
       let pSz = parseFloat(document.getElementById('propSize').value) || 1.0;
       let pSpd = parseFloat(document.getElementById('propSpeed').value) || 1.0;
       
-      // 5. RENDER 1 KOPI (ASAP)
-      try {
-        let cs = document.getElementById('coffeeStyle').value;
-        drawCoffeeSteam(cof1X, cof1Y, cs, pSz, pSpd);
-      } catch(e){}
-      
-      // 6. RENDER 2 LILIN
+      try { let cs = document.getElementById('coffeeStyle').value; drawCoffeeSteam(cof1X, cof1Y, cs, pSz, pSpd); } catch(e){}
       try {
         let ls = document.getElementById('candleStyle').value;
         drawCandle(can1X, can1Y, ls, pSz, pSpd);
         drawCandle(can2X, can2Y, ls, pSz, pSpd);
       } catch(e){}
 
-      // 7. RENDER PARTIKEL SINEMATIK (SLIDER 400)
       try {
         let fxCount = parseInt(document.getElementById('count').value) || 0;
         for(let i=0; i<fxCount; i++) { 
-           if(cinematicParticles[i]) {
-              cinematicParticles[i].update(); 
-              cinematicParticles[i].draw(); 
-           }
+           if(cinematicParticles[i]) { cinematicParticles[i].update(); cinematicParticles[i].draw(); }
         }
       } catch(e){}
 
@@ -518,9 +563,117 @@
     } 
     animate();
 
-    let mediaRec, chnk=[];
-    function startRecording(){ if(!isAudioInit)return alert("Putar musik!"); audioPlayer.play(); document.getElementById('stopOverlay').style.display='block'; let str=canvas.captureStream(30), comb=new MediaStream([...str.getTracks(),window.mediaDest.stream.getAudioTracks()[0]]); mediaRec=new MediaRecorder(comb,{mimeType:'video/webm'}); mediaRec.ondataavailable=e=>chnk.push(e.data); mediaRec.onstop=()=>{ let b=new Blob(chnk,{type:'video/webm'}); chnk=[]; let a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=`test_part1_${Date.now()}.webm`; a.click(); document.getElementById('stopOverlay').style.display='none'; }; mediaRec.start(); }
-    function stopRecording(){ if(mediaRec)mediaRec.stop(); audioPlayer.pause(); }
+    // ==========================================
+    // SISTEM RECORDING
+    // ==========================================
+    let mediaRecorder, chunks = []; let recordStartTime = 0;
+    let isCountingDown = false; let countdownTimer = null;
+
+    function startCountdownAndRecord() {
+      if (!isAudioInit || !currentUrl) { alert("Pilih dan siapkan musik dulu!"); return; }
+      if (isCountingDown) { 
+        clearInterval(countdownTimer); isCountingDown = false; 
+        document.getElementById('countdownOverlay').style.display = 'none'; 
+        document.getElementById('recordBtn').innerText = "🔴 MULAI REKAM 720p"; return; 
+      }
+      
+      isCountingDown = true; let counter = 3; 
+      const cdOverlay = document.getElementById('countdownOverlay');
+      cdOverlay.innerText = counter; cdOverlay.style.display = 'block'; 
+      document.getElementById('recordBtn').innerText = "❌ BATALKAN REKAM (" + counter + ")";
+      
+      countdownTimer = setInterval(() => { 
+        counter--; 
+        if (counter > 0) { 
+            cdOverlay.innerText = counter; 
+            document.getElementById('recordBtn').innerText = "❌ BATALKAN REKAM (" + counter + ")"; 
+        } else { 
+            clearInterval(countdownTimer); isCountingDown = false; 
+            cdOverlay.style.display = 'none'; 
+            executeRecording(); 
+        } 
+      }, 1000);
+    }
+
+    function executeRecording() {
+      if (!audioCtx) initAudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume();
+      if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.KeepAwake) { window.Capacitor.Plugins.KeepAwake.keepAwake(); }
+      
+      audioPlayer.play(); document.getElementById('playBtn').innerText = "⏸ PAUSE"; 
+      document.getElementById('stopOverlay').style.display = 'block'; 
+      document.getElementById('statusBox').innerText = "🔴 Merekam Video 720p..."; 
+      document.getElementById('recordBtn').innerText = "🔴 SEDANG MEREKAM";
+      
+      const stream = canvas.captureStream(30); 
+      const combined = new MediaStream([...stream.getVideoTracks(), window.mediaDest.stream.getAudioTracks()[0]]);
+      let options = { mimeType: 'video/webm;codecs=vp8,opus' }; 
+      if (!MediaRecorder.isTypeSupported(options.mimeType)) { options = { mimeType: 'video/webm' }; }
+      try { mediaRecorder = new MediaRecorder(combined, options); } catch (e) { mediaRecorder = new MediaRecorder(combined); }
+      
+      mediaRecorder.ondataavailable = e => { if (e.data && e.data.size > 0) chunks.push(e.data); }; 
+      mediaRecorder.onstop = saveVideoWebM; chunks = []; recordStartTime = Date.now(); mediaRecorder.start();
+    }
+
+    function stopRecording() {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+      if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.KeepAwake) window.Capacitor.Plugins.KeepAwake.allowSleep();
+      audioPlayer.pause(); document.getElementById('playBtn').innerText = "▶ PLAY"; 
+      document.getElementById('stopOverlay').style.display = 'none'; 
+      document.getElementById('recordBtn').innerText = "🔴 MULAI REKAM 720p"; 
+      document.getElementById('statusBox').innerText = "Menyiapkan file video...";
+    }
+
+    function saveVideoWebM() {
+      const blob = new Blob(chunks, { type: 'video/webm' }); const recordDuration = Date.now() - recordStartTime; 
+      document.getElementById('statusBox').innerText = "⏳ Menjahit durasi (Biar bisa di-skip)...";
+      if (typeof ysFixWebmDuration === 'function') { 
+        try { ysFixWebmDuration(blob, recordDuration, function(fixedBlob) { triggerDownload(fixedBlob); }, {logger: false}); } 
+        catch (error) { triggerDownload(blob); } 
+      } else { triggerDownload(blob); }
+    }
+
+    function triggerDownload(finalBlob) {
+      document.getElementById('statusBox').innerText = "⏳ Memproses file video..."; 
+      const url = URL.createObjectURL(finalBlob);
+      
+      // ANTI NUMPUK: Otomatis hapus Preview Video / Tombol Save yang lama jika ada
+      const oldVid = document.getElementById('previewVid'); if(oldVid) oldVid.remove(); 
+      const oldBtn = document.getElementById('shareBtnDewa'); if(oldBtn) oldBtn.remove();
+      const oldLinkBtn = document.getElementById('manualLinkBtn'); if(oldLinkBtn) oldLinkBtn.remove();
+      
+      const vid = document.createElement('video'); vid.id = 'previewVid'; vid.src = url; vid.controls = true; vid.style.width = "100%"; vid.style.marginTop = "20px"; vid.style.border = "3px solid #00d2ff"; vid.style.borderRadius = "8px";
+      const saveBtn = document.createElement('button'); saveBtn.id = 'shareBtnDewa'; saveBtn.innerText = "📥 SIMPAN KE DOKUMEN (CAPACITOR)"; saveBtn.style.width = "100%"; saveBtn.style.padding = "15px"; saveBtn.style.marginTop = "10px"; saveBtn.style.background = "linear-gradient(135deg, #00ffaa, #00bcd4)"; saveBtn.style.color = "black"; saveBtn.style.border = "none"; saveBtn.style.borderRadius = "8px"; saveBtn.style.fontWeight = "bold"; saveBtn.style.cursor = "pointer";
+      const fallbackBtn = document.createElement('a'); fallbackBtn.id = 'manualLinkBtn'; fallbackBtn.innerText = "⬇️ DOWNLOAD MANUAL"; fallbackBtn.href = url; fallbackBtn.download = `test_part1_${Date.now()}.webm`; fallbackBtn.style.display="block"; fallbackBtn.style.textAlign="center"; fallbackBtn.style.padding="15px"; fallbackBtn.style.marginTop="10px"; fallbackBtn.style.background="#333"; fallbackBtn.style.color="#fff"; fallbackBtn.style.borderRadius="8px"; fallbackBtn.style.textDecoration="none";
+
+      let isSaving = false;
+      saveBtn.onclick = async () => {
+        if (isSaving) return; isSaving = true; saveBtn.innerText = "⏳ MENYIMPAN...";
+        const downloadBrowser = () => { document.getElementById('statusBox').innerText = "⏳ Mengunduh..."; fallbackBtn.click(); saveBtn.innerText = "✅ SELESAI"; document.getElementById('statusBox').innerText = `🎉 SUKSES!`; };
+        try {
+          if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem) {
+            const FS = window.Capacitor.Plugins.Filesystem; 
+            try { let perm = await FS.checkPermissions(); if (perm.publicStorage !== 'granted' && perm.publicStorage !== 'authorized') await FS.requestPermissions(); } catch(e) {} 
+            const fileName = `test_part1_${Date.now()}.webm`; 
+            try {
+                await FS.writeFile({ path: fileName, data: "", directory: 'DOCUMENTS' });
+                const chunkSize = 1572864; const totalChunks = Math.ceil(finalBlob.size / chunkSize);
+                for (let i = 0; i < totalChunks; i++) {
+                  const start = i * chunkSize; const end = Math.min(start + chunkSize, finalBlob.size); const chunk = finalBlob.slice(start, end);
+                  const base64Chunk = await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result.split(',')[1]); reader.onerror = reject; reader.readAsDataURL(chunk); });
+                  await FS.appendFile({ path: fileName, data: base64Chunk, directory: 'DOCUMENTS' });
+                  saveBtn.innerText = `⏳ MENYIMPAN... ${Math.round(((i + 1) / totalChunks) * 100)}%`;
+                }
+                saveBtn.innerText = "✅ TERSIMPAN DI FOLDER DOKUMEN!"; document.getElementById('statusBox').innerText = `🎉 SUKSES! Video Tersimpan.`;
+            } catch(fsError) { downloadBrowser(); }
+          } else { downloadBrowser(); }
+        } catch(e) { downloadBrowser(); }
+      };
+      
+      const controlsDiv = document.getElementById('controls'); controlsDiv.appendChild(vid); controlsDiv.appendChild(saveBtn); controlsDiv.appendChild(fallbackBtn); saveBtn.scrollIntoView({ behavior: 'smooth' }); 
+      
+      // OTOMATIS PENCET TOMBOL SAVE SETELAH SELESAI
+      setTimeout(() => { if(!isSaving && window.Capacitor) saveBtn.click(); }, 1500);
+    }
   </script>
 </body>
 </html>
