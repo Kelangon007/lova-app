@@ -2,31 +2,40 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>test part 1 (Auto-Stop & Save Fixed)</title>
+  <title>test mp4 (H.264 Engine)</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
-    body { margin: 0; background-image: linear-gradient(45deg, #222 25%, transparent 25%), linear-gradient(-45deg, #222 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #222 75%), linear-gradient(-45deg, transparent 75%, #222 75%); background-size: 20px 20px; background-color: #333; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; }
-    #canvas-wrapper { position: relative; width: 100%; max-width: 800px; aspect-ratio: 16/9; margin-top: 20px; border: 1px solid rgba(255,255,255,0.3); background: transparent; box-shadow: 0 15px 50px rgba(0,0,0,0.8); cursor: grab; overflow: hidden; }
-    #canvas-wrapper:active { cursor: grabbing; } canvas { width: 100%; height: 100%; display: block; }
-    #controls { width: 90%; max-width: 600px; background: #1a1a1a; padding: 20px; border-radius: 12px; margin-top: 20px; border: 1px solid #333; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-    .btn-group, .play-group, .row { display: flex; gap: 8px; align-items: center; }
-    .file-label { flex: 1; background: #2b2b2b; color: #ccc; padding: 12px 5px; text-align: center; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; border: 1px solid #444; }
-    #playBtn { flex: 2; padding: 15px; background: linear-gradient(135deg, #d4af37, #f39c12); color: #111; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
-    #nextBtn { flex: 1; padding: 15px; background: #444; color: white; border: 1px solid #555; border-radius: 8px; font-weight: bold; cursor: pointer; }
+    body { margin: 0; background-image: linear-gradient(45deg, #222 25%, transparent 25%), linear-gradient(-45deg, #222 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #222 75%), linear-gradient(-45deg, transparent 75%, #222 75%); background-size: 20px 20px; background-color: #333; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; }
+    #canvas-wrapper { position: relative; width: 100%; max-width: 800px; aspect-ratio: 16/9; margin-top: 20px; border: 1px solid rgba(255, 255, 255, 0.3); background: transparent; box-shadow: 0 15px 50px rgba(0, 0, 0, 0.8); cursor: grab; overflow: hidden; }
+    #canvas-wrapper:active { cursor: grabbing; }
+    canvas { width: 100%; height: 100%; display: block; }
+    #controls { width: 90%; max-width: 600px; background: #1a1a1a; padding: 20px; border-radius: 12px; margin-top: 20px; border: 1px solid #333; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); }
+    .btn-group, .play-group { display: flex; gap: 8px; }
+    .file-label { flex: 1; background: #2b2b2b; color: #ccc; padding: 12px 5px; text-align: center; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; border: 1px solid #444; transition: 0.2s; white-space: nowrap; }
+    .file-label:hover { background: #3b3b3b; color: white; }
+    #playBtn { flex: 2; padding: 15px; background: #333; color: #888; border: 1px solid #222; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+    #playBtn.ready { background: linear-gradient(135deg, #d4af37, #f39c12); color: #111; border: none; }
+    #nextBtn { flex: 1; padding: 15px; background: #444; color: #aaa; border: 1px solid #333; border-radius: 8px; font-weight: bold; cursor: not-allowed; transition: 0.3s; }
+    #nextBtn.ready { background: #2a2a2a; color: white; border: 1px solid #555; cursor: pointer; }
     .progress-container { display: flex; align-items: center; gap: 10px; background: #222; padding: 8px; border-radius: 6px; border: 1px solid #333; }
     .time-text { font-size: 11px; font-family: monospace; color: #d4af37; min-width: 40px; text-align: center; }
     #progressBar { flex: 1; height: 5px; -webkit-appearance: none; background: #444; border-radius: 5px; cursor: pointer; }
-    #progressBar::-webkit-slider-thumb { -webkit-appearance: none; width: 15px; height: 15px; background: #f39c12; border-radius: 50%; }
+    #progressBar::-webkit-slider-thumb { -webkit-appearance: none; width: 15px; height: 15px; background: #f39c12; border-radius: 50%; cursor: pointer; }
     .btn-record { width: 100%; padding: 15px; background: linear-gradient(135deg, #ff4444, #d32f2f); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
     #stopOverlay { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(220, 20, 60, 0.95); color: white; padding: 15px 30px; border-radius: 50px; z-index: 100; font-weight: bold; border: 3px solid white; cursor: pointer; }
-    #countdownOverlay { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 100px; font-weight: bold; color: white; text-shadow: 0 0 20px rgba(0,0,0,0.8); z-index: 100; }
-    #statusBox { font-size: 12px; text-align: center; color: #d4af37; font-weight: bold; }
-    label { font-size: 11px; color: #ccc; font-weight: 600; width: 80px; }
+    #countdownOverlay { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 100px; font-weight: bold; color: white; text-shadow: 0 0 20px rgba(0, 0, 0, 0.8); z-index: 100; }
+    #statusBox { font-size: 12px; text-align: center; color: #d4af37; margin-bottom: 5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .row { display: flex; align-items: center; gap: 10px; }
+    label { font-size: 11px; width: 80px; color: #ccc; font-weight: 600; }
     input[type="range"], select { flex: 1; height: 36px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px; }
     input[type="file"] { display: none; }
-    .layout-grid { display: flex; gap: 15px; width: 100%; }
-    .layout-col { flex: 1; background: #222; padding: 12px; border-radius: 8px; border: 1px solid #3c3c3c; display: flex; flex-direction: column; gap: 8px; }
-    .layout-col label { width: 100%; text-align: left; font-size: 10px; margin-bottom: -4px; color: #aaa; }
+    optgroup { background: #111; color: #d4af37; font-weight: bold; }
+    .layout-grid { display: flex; gap: 15px; width: 100%; box-sizing: border-box; }
+    .layout-col { flex: 1; background: #222; padding: 12px; border-radius: 8px; border: 1px solid #3c3c3c; display: flex; flex-direction: column; gap: 8px; box-sizing: border-box; }
+    .layout-col label { width: 100%; text-align: left; font-size: 10px; margin-bottom: -4px; color: #aaa; font-weight: bold; }
+    .layout-col select, .layout-col input[type="range"] { width: 100%; margin-bottom: 5px; }
+    #manualLinkBtn { display: block; width: 100%; box-sizing: border-box; text-align: center; padding: 15px; margin-top: 10px; background: #333; color: #fff; border: 1px solid #555; border-radius: 8px; font-weight: bold; font-size: 14px; text-decoration: none; cursor: pointer; transition: 0.3s; }
+    #manualLinkBtn:hover { background: #444; }
   </style>
 </head>
 <body>
@@ -37,623 +46,398 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. test part 1 (Auto-Stop & Save).</div>
+    <div id="statusBox">Siap. test mp4 (H.264 Inject, Auto-Awake).</div>
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
-      <label for="audioInput" class="file-label" style="border-bottom: 3px solid #00bcd4">2. MUSIK</label>
+      <label for="audioInput" class="file-label" style="border-bottom: 3px solid #00bcd4">2. MUSIK (BANYAK)</label>
     </div>
-    <div class="play-group"><button id="playBtn" onclick="togglePlay()">⚠ PUTAR MUSIK</button><button id="nextBtn" onclick="playRandomSong(true)">⏭ NEXT</button></div>
-    <div class="progress-container"><span id="currTime" class="time-text">00:00</span><input type="range" id="progressBar" value="0" min="0" step="0.1"><span id="durTime" class="time-text">00:00</span></div>
-    <input type="file" id="bgInput" accept="image/*"><input type="file" id="audioInput" accept="audio/*" multiple>
-    <hr style="border:0; border-top:1px solid #333; margin:5px 0;">
+
+    <div class="play-group">
+      <button id="playBtn" onclick="togglePlay()">⚠ PUTAR MUSIK</button>
+      <button id="nextBtn" onclick="playRandomSong(false)">⏭ NEXT</button>
+    </div>
+
+    <div class="progress-container">
+      <span id="currTime" class="time-text">00:00</span>
+      <input type="range" id="progressBar" value="0" min="0" step="0.1">
+      <span id="durTime" class="time-text">00:00</span>
+    </div>
+
+    <input type="file" id="bgInput" accept="image/*">
+    <input type="file" id="audioInput" accept="audio/*" multiple>
+
+    <hr style="border: 0; border-top: 1px solid #333; width: 100%; margin: 5px 0;">
 
     <div class="layout-grid">
       <div class="layout-col">
-        <label style="color:#00d2ff;">VISUALIZER (NO BULAT)</label>
+        <label style="color:#00d2ff; text-align:center; font-size:12px; margin-bottom:10px;">VISUALIZER</label>
         <select id="visType">
-            <optgroup label="SOLID BARS"><option value="vintage_bars">📊 Vintage Bars</option><option value="winamp_classic">📻 Winamp Peaks</option><option value="classic_eq">🎙️ Classic EQ</option><option value="step_eq">🧱 Step Block</option><option value="thin_eq">📏 Thin EQ</option><option value="thick_bars">⬛ Bold Bars</option><option value="hollow_bars">🔲 Hollow Bars</option><option value="rounded_bars">💊 Rounded</option><option value="split_eq">⏸️ Split EQ</option><option value="double_mirror">🪞 Double Mirror</option></optgroup>
-            <optgroup label="PEAKS & DOTS"><option value="dotted_eq">⏺️ Dotted Peak</option><option value="led_matrix">🚥 LED Matrix</option><option value="analog_vu">🎛️ Analog VU</option><option value="retro_oscilloscope">📺 Oscilloscope</option><option value="peak_line">〰️ Floating Peak</option><option value="peak_dots_only">⚪ Dots Peak</option><option value="dash_bars">➖ Dashed Seg</option><option value="meter_blocks">📶 Meter Blocks</option><option value="soft_glow_bars">🌟 Soft Glow</option><option value="white_caps">🧢 White Caps</option></optgroup>
-            <optgroup label="MODERN GRADIENT"><option value="liquid_bar">💧 Liquid Cyan</option><option value="cyber_pulse">⚡ Neon Pulse</option><option value="mirror_bars">🪞 Mirrored Glass</option><option value="gradient_blocks">🎛️ Cyan-Blue Grad</option><option value="sunset_bars">🌅 Sunset Grad</option><option value="emerald_bars">💎 Emerald Grad</option><option value="purple_haze">🟣 Purple Haze</option><option value="gold_classic">👑 Gold EQ</option><option value="monochrome_fade">🎞️ Mono Fade</option><option value="dual_tone">🌗 Dual Tone</option></optgroup>
-            <optgroup label="WAVES & LINES"><option value="modern_wave">🌊 Modern Wave</option><option value="filled_wave">🌊 Filled Wave</option><option value="double_wave">〰️ Double Wave</option><option value="thin_wave">✒️ Thin Line</option><option value="shadow_wave">🌒 Shadow Wave</option><option value="stereo_lines">⏸️ Stereo Lines</option><option value="smooth_curve">🔔 Smooth Curve</option><option value="ribbon_wave">🎀 Ribbon Wave</option><option value="minimal_line">➖ Minimalist Line</option><option value="calm_horizon">🌅 Calm Horizon</option></optgroup>
+            <optgroup label="=== SOLID BARS ==="><option value="vintage_bars">📊 1. Vintage Solid Bars</option><option value="winamp_classic">📻 2. Winamp Peaks</option><option value="classic_eq">🎙️ 3. Classic Green-Red EQ</option><option value="step_eq">🧱 4. Step Block EQ</option><option value="thin_eq">📏 5. Thin Minimalist EQ</option><option value="thick_bars">⬛ 6. Bold Solid Bars</option><option value="hollow_bars">🔲 7. Hollow Outline Bars</option><option value="rounded_bars">💊 8. Rounded Tip Bars</option><option value="split_eq">⏸️ 9. Split Center EQ</option><option value="double_mirror">🪞 10. Dual Mirror Bars</option></optgroup>
+            <optgroup label="=== PEAKS & DOTS ==="><option value="dotted_eq">⏺️ 11. Dotted Peak EQ</option><option value="led_matrix">🚥 12. LED Dot Matrix</option><option value="analog_vu">🎛️ 13. Analog VU Meter</option><option value="retro_oscilloscope">📺 14. CRT Oscilloscope</option><option value="peak_line">〰️ 15. Floating Peak Line</option><option value="peak_dots_only">⚪ 16. Floating Dots Peak</option><option value="dash_bars">➖ 17. Dashed Segment Bars</option><option value="meter_blocks">📶 18. Meter Blocks</option><option value="soft_glow_bars">🌟 19. Glowing Ambient Bars</option><option value="white_caps">🧢 20. Bars with White Cap</option></optgroup>
+            <optgroup label="=== MODERN GRADIENT ==="><option value="liquid_bar">💧 21. Liquid Glowing Cyan</option><option value="cyber_pulse">⚡ 22. Neon Pulse Bars</option><option value="mirror_bars">🪞 23. Mirrored Glass Bars</option><option value="gradient_blocks">🎛️ 24. Cyan-Blue Gradient</option><option value="sunset_bars">🌅 25. Warm Sunset Gradient</option><option value="emerald_bars">💎 26. Emerald Green Grad</option><option value="purple_haze">🟣 27. Purple-Pink Soft</option><option value="gold_classic">👑 28. Golden Elegant EQ</option><option value="monochrome_fade">🎞️ 29. Grayscale Fading</option><option value="dual_tone">🌗 30. Dual Tone Top-Bot</option></optgroup>
+            <optgroup label="=== WAVES & LINES ==="><option value="modern_wave">🌊 31. Modern Smooth Wave</option><option value="filled_wave">🌊 32. Filled Ambient Wave</option><option value="double_wave">〰️ 33. Double Layer Wave</option><option value="thin_wave">✒️ 34. Ultra Thin Line</option><option value="shadow_wave">🌒 35. Wave with Shadow</option><option value="stereo_lines">⏸️ 36. Dual Parallel Lines</option><option value="smooth_curve">🔔 37. Bell Curve Wave</option><option value="ribbon_wave">🎀 38. Flowing Ribbon Wave</option><option value="minimal_line">➖ 39. Minimalist Baseline</option><option value="calm_horizon">🌅 40. Calm Horizon Glow</option></optgroup>
+            <optgroup label="=== CIRCULAR & CLEAN ==="><option value="circle_bars">🎡 41. Circular Audio Bars</option><option value="circle_ring">⭕ 42. Simple Circular Line</option><option value="circle_dashed">🎯 43. Circular Dashed EQ</option><option value="circle_mirror">🪞 44. Inner & Outer Circle</option><option value="vinyl_record">💿 45. Spinning Vinyl</option><option value="block_tower">🏙️ 46. Clean 3D EQ Blocks</option><option value="equalizer_3d">🛠️ 47. Cylinder Studio EQ</option><option value="floating_blocks">🧊 48. Floating Blocks</option><option value="center_pulse">🔘 49. Center Expanding</option><option value="classic_studio">🎙️ 50. Pro Studio Rack</option></optgroup>
         </select>
         <label>TINGGI VIS.</label><input type="range" id="visHeight" min="30" max="600" value="150">
         <label>LEBAR VIS.</label><input type="range" id="visWidth" min="100" max="1100" value="400">
-        <label>OPASITAS.</label><input type="range" id="visOpacity" min="0.1" max="1.0" step="0.05" value="1.0">
+        <label>OPASITAS VIS.</label><input type="range" id="visOpacity" min="0.1" max="1.0" step="0.05" value="1.0">
       </div>
+
       <div class="layout-col">
-        <label style="color:#ffb300;">AREA BASS (LATAR ASLI)</label>
-        <select id="speakerStyle"><option value="clipping_bg">🟢 Aktifkan Area Bass</option><option value="none">🚫 Matikan Efek</option></select>
-        <label style="color:#00ffaa; display:flex; cursor:pointer;"><input type="checkbox" id="showTarget" checked style="margin-right:6px;"> Target [+]</label>
+        <label style="color:#ffb300; text-align:center; font-size:12px; margin-bottom:10px;">AREA BASS (LATAR ASLI)</label>
+        <select id="speakerStyle"><option value="active">🟢 Aktifkan Efek Bass</option><option value="none">🚫 Matikan Efek</option></select>
+        <label style="color:#00ffaa;">TANDA "+" (CROSSHAIR)</label><select id="showCrosshair"><option value="1">➕ Aktif (Tampilkan)</option><option value="0">🚫 Off (Sembunyikan)</option></select>
         <label>UKURAN AREA</label><input type="range" id="speakerSize" min="0.2" max="5.0" step="0.1" value="1.5">
-        <label style="color:#ff5252;">SHAKE</label><input type="range" id="speakerShake" min="0" max="30" value="10">
-        <label style="color:#ff5252;">PUMP</label><input type="range" id="speakerPump" min="0" max="2.0" step="0.1" value="0.5">
+        <label style="color:#ff5252;">GETARAN (SHAKE)</label><input type="range" id="speakerShake" min="0" max="30" step="1" value="10">
+        <label style="color:#ff5252;">DENTUMAN (PUMP)</label><input type="range" id="speakerPump" min="0" max="2.0" step="0.1" value="0.5">
       </div>
     </div>
-    <hr style="border:0; border-top:1px dashed #333; margin:5px 0;">
-    
+
+    <hr style="border: 0; border-top: 1px dashed #333; width: 100%; margin: 5px 0;">
+
     <div class="layout-grid">
       <div class="layout-col">
-        <label style="color:#d7ccc8;">ASAP KOPI</label>
-        <select id="coffeeStyle">
-          <option value="none">🚫 Tanpa Asap Kopi</option>
-          <option value="soft_steam">☕ 1. Soft Warm Steam</option>
-          <option value="swirl_vapor">🌪️ 2. Swirling Vapor</option>
-          <option value="thin_wisp">🌬️ 3. Thin Elegant Wisp</option>
-          <option value="heavy_steam">☁️ 4. Heavy Morning Steam</option>
-          <option value="wind_steam">🍃 5. Breezy Coffee Steam</option>
-        </select>
+        <label style="color:#d7ccc8; text-align:center; font-size:12px; margin-bottom:5px;">ASAP KOPI</label>
+        <select id="coffeeStyle"><option value="none">🚫 Tanpa Asap Kopi</option><option value="soft_steam">☕ 1. Soft Warm Steam</option><option value="swirl_vapor">🌪️ 2. Swirling Vapor</option><option value="thin_wisp">🌬️ 3. Thin Elegant Wisp</option><option value="heavy_steam">☁️ 4. Heavy Morning Steam</option><option value="wind_steam">🍃 5. Breezy Coffee Steam</option></select>
       </div>
       <div class="layout-col">
-        <label style="color:#ff8a65;">API LILIN</label>
-        <select id="candleStyle">
-          <option value="none">🚫 Tanpa Api Lilin</option>
-          <option value="calm_flame">🕯️ 1. Calm Warm Flame</option>
-          <option value="flicker_flame">🕯️ 2. Flickering Flame</option>
-          <option value="bright_glow">🌟 3. Bright Glowing Flame</option>
-          <option value="blue_base">🔵 4. Blue-Base Real Flame</option>
-          <option value="wind_flame">🌬️ 5. Wind-blown Flame</option>
-        </select>
+        <label style="color:#ff8a65; text-align:center; font-size:12px; margin-bottom:5px;">API LILIN</label>
+        <select id="candleStyle"><option value="none">🚫 Tanpa Api Lilin</option><option value="calm_flame">🕯️ 1. Calm Warm Flame</option><option value="flicker_flame">🕯️ 2. Flickering Flame</option><option value="bright_glow">🌟 3. Bright Glowing Flame</option><option value="blue_base">🔵 4. Blue-Base Real Flame</option><option value="wind_flame">🌬️ 5. Wind-blown Flame</option></select>
       </div>
     </div>
-    <div class="row"><label>UKURAN PROP</label><input type="range" id="propSize" min="0.2" max="5.0" step="0.1" value="1.0"></div>
-    <div class="row"><label>KCPTN PROP</label><input type="range" id="propSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
-    <hr style="border:0; border-top:1px dashed #333; margin:5px 0;">
     
+    <div class="row" style="margin-top: 5px;"><label style="color:#fff;">UKURAN PROP</label><input type="range" id="propSize" min="0.2" max="5.0" step="0.1" value="1.0"></div>
+    <div class="row" style="margin-top: 5px;"><label style="color:#ff8a65;">KCPTN PROP</label><input type="range" id="propSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
+
+    <hr style="border: 0; border-top: 1px dashed #333; width: 100%; margin: 5px 0;">
+
     <div class="row">
       <label style="color:#00e5ff;">PARTIKEL</label>
-      <select id="type">
-        <option value="none">🚫 Tanpa Partikel</option>
-        <option value="dust_motes">✨ Debu Emas</option>
-        <option value="magic_sparks">💫 Sihir Biru</option>
-        <option value="floating_embers">🔥 Bara Terbang</option>
-        <option value="bokeh_orbs">🫧 Bokeh Orbs</option>
-        <option value="snow_dust">❄️ Salju</option>
-        <option value="fairy_light">🧚 Cahaya Peri</option>
-        <option value="ash_particles">🌪️ Abu Hitam</option>
-        <option value="starlight_glint">🌟 Kilau Bintang</option>
-        <option value="deep_sea_motes">🌊 Partikel Laut</option>
-        <option value="golden_pollen">🌼 Serbuk Emas</option>
-      </select>
+      <select id="type"><option value="none">🚫 Tanpa Partikel</option><option value="dust_motes">✨ 1. Butiran Debu Emas</option><option value="magic_sparks">💫 2. Percikan Sihir Biru</option><option value="floating_embers">🔥 3. Bara Api Terbang</option><option value="bokeh_orbs">🫧 4. Bokeh Orbs Sinematik</option><option value="snow_dust">❄️ 5. Debu Salju Halus</option><option value="fairy_light">🧚 6. Cahaya Peri Berpendar</option><option value="ash_particles">🌪️ 7. Abu Hitam Melayang</option><option value="starlight_glint">🌟 8. Kilauan Bintang Halus</option><option value="deep_sea_motes">🌊 9. Partikel Air Laut</option><option value="golden_pollen">🌼 10. Serbuk Sari Emas</option></select>
     </div>
-    <div class="row"><label>ARAH</label><select id="fxAngle"><option value="0">Lurus</option><option value="15">Kanan 15°</option><option value="-15">Kiri 15°</option></select></div>
-    <div class="row"><label>SPEED FX</label><input type="range" id="fxSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
+    <div class="row"><label>ARAH EFEK</label><select id="fxAngle"><option value="0">Lurus (Normal)</option><option value="15">Miring Kanan 15°</option><option value="30">Miring Kanan 30°</option><option value="-15">Miring Kiri 15°</option><option value="-30">Miring Kiri 30°</option></select></div>
+    <div class="row"><label style="color:#00e5ff;">KECEPATAN FX</label><input type="range" id="fxSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
     <div class="row"><label>JUMLAH FX</label><input type="range" id="count" min="0" max="400" value="100"></div>
+
     <button class="btn-record" id="recordBtn" onclick="startCountdownAndRecord()">🔴 MULAI REKAM 720p</button>
   </div>
 
   <audio id="audioPlayer" crossorigin="anonymous"></audio>
 
   <script>
-    const canvas=document.getElementById('canvas'), ctx=canvas.getContext('2d'), audioPlayer=document.getElementById('audioPlayer');
-    const width=1280, height=720;
-    
-    // VARIABEL UTAMA
-    let audioFiles=[], currentPlayIndex=0, currentUrl=null, currentBgUrl=null;
-    let isBgReady=false, bgImg=new Image();
-    let audioCtx, analyser, dataArray, isAudioInit=false, peakH=new Array(120).fill(0);
-    let bgGlobalScale=1, bgGlobalX=0, bgGlobalY=0;
-    let playTimeout = null; 
+    const statusBox = document.getElementById('statusBox'); const canvas = document.getElementById('canvas'); const ctx = canvas.getContext('2d'); const audioPlayer = document.getElementById('audioPlayer'); const playBtn = document.getElementById('playBtn'); const nextBtn = document.getElementById('nextBtn'); const stopOverlay = document.getElementById('stopOverlay'); const countdownOverlay = document.getElementById('countdownOverlay'); const recordBtn = document.getElementById('recordBtn'); const progressBar = document.getElementById('progressBar'); const currTimeEl = document.getElementById('currTime'); const durTimeEl = document.getElementById('durTime');
+    let isDraggingProgress = false; const width = 1280; const height = 720;
+    let audioFiles = []; let currentObjectUrl = null; let currentSongName = ""; let playTimeout = null; let isTrackLoaded = false; let shuffledPlaylist = []; let currentPlayIndex = 0; let isCountingDown = false; let countdownTimer = null;
+    let bgGlobalScale = 1; let bgGlobalX = 0; let bgGlobalY = 0; let globalSmoothedBass = 0;
 
-    // KOORDINAT DRAG: 2 Speaker, 1 Asap, 2 Lilin, 1 Vis
-    let visW=400, visX=(width-visW)/2, visY=height-160;
-    let spk1X=250, spk1Y=height-300, spk2X=width-250, spk2Y=height-300;
-    let cof1X=width/2, cof1Y=height-150;
-    let can1X=150, can1Y=height-200, can2X=width-150, can2Y=height-200;
-    
-    let dragT=null, dOffX=0, dOffY=0, isDragProg=false, time=0;
+    function shuffle(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array; }
 
-    function formatT(s) { if(isNaN(s))return"00:00"; let m=Math.floor(s/60); return `${m.toString().padStart(2,'0')}:${Math.floor(s%60).toString().padStart(2,'0')}`; }
-
-    // SYSTEM FOTO ANTI-CRASH MEMORY
-    document.getElementById('bgInput').addEventListener('change', e => {
-      if(e.target.files[0]) {
-        let file = e.target.files[0];
-        if(!file.type.startsWith('image/')) return alert('Harus file gambar!');
-        if(currentBgUrl) URL.revokeObjectURL(currentBgUrl);
-        currentBgUrl = URL.createObjectURL(file);
-        
-        bgImg.onload = () => { 
-            if(bgImg.naturalWidth > 0 && bgImg.naturalHeight > 0) {
-                isBgReady=true; 
-                document.getElementById('statusBox').innerText="✅ Foto Latar Berhasil Dimuat."; 
-            } else {
-                document.getElementById('statusBox').innerText="❌ Error: Dimensi foto tidak terbaca.";
-            }
-        };
-        bgImg.onerror = () => { document.getElementById('statusBox').innerText="❌ Gagal memuat foto."; };
-        bgImg.src = currentBgUrl;
+    document.getElementById('audioInput').addEventListener('change', function(e) {
+      if (this.files.length > 0) {
+        audioFiles = Array.from(this.files); isTrackLoaded = true; shuffledPlaylist = shuffle(Array.from({ length: audioFiles.length }, (v, k) => k));
+        currentPlayIndex = 0; playBtn.innerHTML = "▶ PLAY MUSIK"; playBtn.classList.add('ready'); nextBtn.classList.add('ready');
+        statusBox.innerText = `${audioFiles.length} Lagu dimuat. Siap diputar!`; progressBar.value = 0; currTimeEl.innerText = "00:00"; durTimeEl.innerText = "00:00";
+        audioPlayer.pause(); if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl); currentObjectUrl = null; currentSongName = "Musik Diunggah";
       }
     });
-
-    // ===============================================
-    // SYSTEM AUDIO, PLAYLIST & AUTO STOP RECORDING
-    // ===============================================
-    document.getElementById('audioInput').addEventListener('change', e => {
-      if(e.target.files.length) { 
-          audioFiles=Array.from(e.target.files).sort(()=>Math.random()-0.5); 
-          currentPlayIndex=0; 
-          document.getElementById('playBtn').innerText="▶ PLAY MUSIK"; 
-          document.getElementById('statusBox').innerText=`${audioFiles.length} Lagu Siap Diputar!`; 
-      }
-    });
-
-    function stopEverything() {
-        audioPlayer.pause();
-        if(playTimeout) clearTimeout(playTimeout);
-        document.getElementById('playBtn').innerText="▶ PLAY MUSIK";
-        document.getElementById('statusBox').innerText="✅ Semua lagu selesai diputar.";
-        currentPlayIndex = 0; // Reset ke lagu awal buat sesi berikutnya
-        
-        // OTOMATIS BERHENTIKAN REKAMAN & SAVE KETIKA LAGU HABIS
-        if(mediaRecorder && mediaRecorder.state !== 'inactive') {
-            stopRecording();
-        }
-    }
 
     function playRandomSong(isInstant = false) {
-      if(!audioFiles.length) return;
-      if(playTimeout) clearTimeout(playTimeout);
-      
-      // CEK JIKA SEMUA LAGU SUDAH SELESAI
-      if(currentPlayIndex >= audioFiles.length) {
-          stopEverything();
-          return;
-      }
-
-      let delay = isInstant ? 0 : 3000;
-      
-      if(!isInstant) {
-          audioPlayer.pause();
-          document.getElementById('playBtn').innerText = "⏳ TUNGGU...";
-          document.getElementById('statusBox').innerText = "⏳ Jeda pergantian lagu 3 detik...";
-      }
-
+      if (audioFiles.length === 0) return;
+      if (playTimeout) clearTimeout(playTimeout);
+      if (currentPlayIndex >= shuffledPlaylist.length) { currentPlayIndex = 0; stopEverything(); return; }
+      if (currentObjectUrl && isInstant) { URL.revokeObjectURL(currentObjectUrl); currentObjectUrl = null; }
+      const delayAmount = isInstant ? 0 : 3500;
+      if (!isInstant) { audioPlayer.pause(); playBtn.innerText = "⏳ TUNGGU..."; statusBox.innerText = "⏳ Jeda pergantian lagu..."; currentSongName = "Memuat..."; progressBar.value = 0; currTimeEl.innerText = "00:00"; durTimeEl.innerText = "00:00"; }
       playTimeout = setTimeout(() => {
-          if(currentUrl) URL.revokeObjectURL(currentUrl);
-          currentUrl=URL.createObjectURL(audioFiles[currentPlayIndex]); 
-          audioPlayer.src=currentUrl; audioPlayer.load();
-          
-          if(!audioCtx){ 
-            audioCtx=new(window.AudioContext||window.webkitAudioContext)(); 
-            analyser=audioCtx.createAnalyser(); analyser.fftSize=256;
-            let src=audioCtx.createMediaElementSource(audioPlayer), dest=audioCtx.createMediaStreamDestination();
-            src.connect(analyser); analyser.connect(audioCtx.destination); analyser.connect(dest); window.mediaDest=dest; dataArray=new Uint8Array(analyser.frequencyBinCount); isAudioInit=true; 
-          }
-          
-          audioPlayer.play().catch(e=>console.log(e)); 
-          document.getElementById('playBtn').innerText="⏸ PAUSE"; 
-          
-          // TAMPILAN INDIKATOR JUMLAH LAGU (1/5)
-          let songName = audioFiles[currentPlayIndex].name.replace(/\.[^/.]+$/, "");
-          document.getElementById('statusBox').innerText=`🎵 Lagu (${currentPlayIndex + 1}/${audioFiles.length}): ${songName.substring(0, 20)}...`;
-          
-          currentPlayIndex++; // Maju ke lagu berikutnya
-      }, delay);
-    }
-    
-    // Trigger saat 1 lagu selesai
-    audioPlayer.addEventListener('ended', () => playRandomSong(false));
-    
-    function togglePlay() { 
-        if(!audioFiles.length) return alert("Pilih Musik!"); 
-        if(audioPlayer.paused) {
-            if(!audioPlayer.src || currentPlayIndex >= audioFiles.length) {
-                if(currentPlayIndex >= audioFiles.length) currentPlayIndex = 0; // Reset jika sudah selesai dan play dipencet lagi
-                playRandomSong(true);
-            }
-            else { audioPlayer.play(); document.getElementById('playBtn').innerText="⏸ PAUSE"; }
-        } else {
-            audioPlayer.pause(); document.getElementById('playBtn').innerText="▶ RESUME";
-        } 
+        if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl);
+        const actualFileIndex = shuffledPlaylist[currentPlayIndex]; const selectedFile = audioFiles[actualFileIndex];
+        currentSongName = selectedFile.name.replace(/\.[^/.]+$/, ""); currentObjectUrl = URL.createObjectURL(selectedFile);
+        audioPlayer.src = currentObjectUrl; audioPlayer.load();
+        if (!audioCtx) initAudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume();
+        audioPlayer.play().then(() => { playBtn.innerText = "⏸ PAUSE"; statusBox.innerText = `🎵 Lagu ${currentPlayIndex + 1}/${audioFiles.length}: ${currentSongName}`; currentPlayIndex++; }).catch(err => { playBtn.innerText = "❌ ERROR"; });
+      }, delayAmount);
     }
 
-    audioPlayer.addEventListener('timeupdate', ()=>{
-      if(isFinite(audioPlayer.duration)&&document.getElementById('durTime').innerText==="00:00") document.getElementById('durTime').innerText=formatT(audioPlayer.duration);
-      if(!isDragProg){ document.getElementById('progressBar').value=(audioPlayer.currentTime/audioPlayer.duration)*100||0; document.getElementById('currTime').innerText=formatT(audioPlayer.currentTime); }
+    audioPlayer.addEventListener('ended', () => { playRandomSong(false); });
+
+    function stopEverything() {
+      audioPlayer.pause(); if (playTimeout) clearTimeout(playTimeout);
+      if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl); currentObjectUrl = null; currentSongName = "Playlist Selesai";
+      if (dataArray) dataArray.fill(0); shuffledPlaylist = shuffle(Array.from({ length: audioFiles.length }, (v, k) => k));
+      statusBox.innerText = `✅ Semua lagu selesai.`; playBtn.innerText = "▶ PLAY ACAK"; progressBar.value = 0; currTimeEl.innerText = "00:00"; durTimeEl.innerText = "00:00";
+      if (mediaRecorder && mediaRecorder.state === 'recording') { statusBox.innerText = `✅ Menyimpan rekaman otomatis...`; setTimeout(() => { stopRecording(); }, 500); }
+    }
+
+    let visW = 400; let visX = (width - visW) / 2; let visY = height - 160; let spk1X = 250; let spk1Y = height - 300; let spk2X = width - 250; let spk2Y = height - 300; let coffeeX = 350; let coffeeY = height - 150; let candle1X = 150; let candle1Y = height - 200; let candle2X = width - 150; let candle2Y = height - 200;
+    let isDraggingSpk1 = false; let isDraggingSpk2 = false; let isDraggingVis = false; let isDraggingCoffee = false; let isDraggingCandle1 = false; let isDraggingCandle2 = false; let dragOffsetX = 0; let dragOffsetY = 0;
+
+    function getMousePos(e) { const rect = canvas.getBoundingClientRect(); const scaleX = canvas.width / rect.width; const scaleY = canvas.height / rect.height; let clientX = e.clientX; let clientY = e.clientY; if (e.touches && e.touches.length > 0) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; } return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY }; }
+    function startDrag(e) {
+      const pos = getMousePos(e); const spkScale = parseFloat(document.getElementById('speakerSize').value); const clickRadius = 60 * spkScale;
+      const dist1 = Math.hypot(pos.x - spk1X, pos.y - spk1Y); if (dist1 <= Math.max(40, clickRadius) && document.getElementById('speakerStyle').value !== 'none') { isDraggingSpk1 = true; dragOffsetX = pos.x - spk1X; dragOffsetY = pos.y - spk1Y; if (e.cancelable) e.preventDefault(); return; }
+      const dist2 = Math.hypot(pos.x - spk2X, pos.y - spk2Y); if (dist2 <= Math.max(40, clickRadius) && document.getElementById('speakerStyle').value !== 'none') { isDraggingSpk2 = true; dragOffsetX = pos.x - spk2X; dragOffsetY = pos.y - spk2Y; if (e.cancelable) e.preventDefault(); return; }
+      if (document.getElementById('coffeeStyle').value !== 'none' && Math.hypot(pos.x - coffeeX, pos.y - coffeeY) <= 50) { isDraggingCoffee = true; dragOffsetX = pos.x - coffeeX; dragOffsetY = pos.y - coffeeY; if (e.cancelable) e.preventDefault(); return; }
+      if (document.getElementById('candleStyle').value !== 'none') { if (Math.hypot(pos.x - candle1X, pos.y - candle1Y) <= 40) { isDraggingCandle1 = true; dragOffsetX = pos.x - candle1X; dragOffsetY = pos.y - candle1Y; if (e.cancelable) e.preventDefault(); return; } if (Math.hypot(pos.x - candle2X, pos.y - candle2Y) <= 40) { isDraggingCandle2 = true; dragOffsetX = pos.x - candle2X; dragOffsetY = pos.y - candle2Y; if (e.cancelable) e.preventDefault(); return; } }
+      if (pos.x >= visX && pos.x <= visX + visW && pos.y >= visY - 150 && pos.y <= visY + 150) { isDraggingVis = true; dragOffsetX = pos.x - visX; dragOffsetY = pos.y - visY; if (e.cancelable) e.preventDefault(); }
+    }
+    function drag(e) {
+      if (!isDraggingVis && !isDraggingSpk1 && !isDraggingSpk2 && !isDraggingCoffee && !isDraggingCandle1 && !isDraggingCandle2) return; const pos = getMousePos(e);
+      if (isDraggingSpk1) { spk1X = pos.x - dragOffsetX; spk1Y = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
+      if (isDraggingSpk2) { spk2X = pos.x - dragOffsetX; spk2Y = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
+      if (isDraggingCoffee) { coffeeX = pos.x - dragOffsetX; coffeeY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
+      if (isDraggingCandle1) { candle1X = pos.x - dragOffsetX; candle1Y = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
+      if (isDraggingCandle2) { candle2X = pos.x - dragOffsetX; candle2Y = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
+      if (isDraggingVis) { visX = pos.x - dragOffsetX; visY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); }
+    }
+    function endDrag() { isDraggingVis = false; isDraggingSpk1 = false; isDraggingSpk2 = false; isDraggingCoffee = false; isDraggingCandle1 = false; isDraggingCandle2 = false; }
+    canvas.addEventListener('mousedown', startDrag); canvas.addEventListener('mousemove', drag); window.addEventListener('mouseup', endDrag);
+    canvas.addEventListener('touchstart', startDrag, { passive: false }); canvas.addEventListener('touchmove', drag, { passive: false }); window.addEventListener('touchend', endDrag);
+
+    let audioCtx, source, mediaStreamDestination, analyser, dataArray; let isAudioInit = false; let peakHeights = new Array(120).fill(0);
+    function initAudioContext() {
+      const AudioContext = window.AudioContext || window.webkitAudioContext; audioCtx = new AudioContext(); analyser = audioCtx.createAnalyser(); analyser.fftSize = 256; analyser.smoothingTimeConstant = 0.8;
+      source = audioCtx.createMediaElementSource(audioPlayer); mediaStreamDestination = audioCtx.createMediaStreamDestination();
+      source.connect(analyser); analyser.connect(audioCtx.destination); analyser.connect(mediaStreamDestination); dataArray = new Uint8Array(analyser.frequencyBinCount); isAudioInit = true;
+    }
+
+    let isBgReady = false; let bgImageElement = new Image();
+    document.getElementById('bgInput').addEventListener('change', function(e) {
+      if (this.files[0]) {
+        const file = this.files[0]; if (file.type.startsWith('image/')) { const fileURL = URL.createObjectURL(file); bgImageElement.src = fileURL; bgImageElement.onload = () => { isBgReady = true; statusBox.innerText = "✅ Foto Latar Oke."; }; } else { alert("Harap unggah file Gambar."); }
+      }
     });
-    document.getElementById('progressBar').addEventListener('input', e=>{ isDragProg=true; if(audioPlayer.duration)audioPlayer.currentTime=(e.target.value/100)*audioPlayer.duration; });
-    document.getElementById('progressBar').addEventListener('change', ()=>isDragProg=false);
 
-    // SYSTEM DRAG
-    function getPos(e){ let r=canvas.getBoundingClientRect(), ev=e.touches?e.touches[0]:e; return {x:(ev.clientX-r.left)*(width/r.width), y:(ev.clientY-r.top)*(height/r.height)}; }
-    
-    function sDrag(e){
-      let p=getPos(e), sr=parseFloat(document.getElementById('speakerSize').value)*60, tar=[
-        {id:'s1',x:spk1X,y:spk1Y,r:sr},{id:'s2',x:spk2X,y:spk2Y,r:sr}, 
-        {id:'cf1',x:cof1X,y:cof1Y,r:50},
-        {id:'cn1',x:can1X,y:can1Y,r:40},{id:'cn2',x:can2X,y:can2Y,r:40}
-      ];
-      if(p.x>=visX-visW/2 && p.x<=visX+visW/2 && p.y>=visY-150 && p.y<=visY+50){ dragT='v'; dOffX=p.x-visX; dOffY=p.y-visY; if(e.cancelable)e.preventDefault(); return; }
-      for(let t of tar) if(Math.hypot(p.x-t.x, p.y-t.y)<=t.r){ dragT=t.id; dOffX=p.x-t.x; dOffY=p.y-t.y; if(e.cancelable)e.preventDefault(); break; }
-    }
-    
-    function dDrag(e){
-      if(!dragT)return; let p=getPos(e), nx=p.x-dOffX, ny=p.y-dOffY;
-      if(isNaN(nx) || isNaN(ny)) return; 
-      if(dragT==='v'){visX=nx; visY=ny;} else if(dragT==='s1'){spk1X=nx; spk1Y=ny;} else if(dragT==='s2'){spk2X=nx; spk2Y=ny;}
-      else if(dragT==='cf1'){cof1X=nx; cof1Y=ny;}
-      else if(dragT==='cn1'){can1X=nx; can1Y=ny;} else if(dragT==='cn2'){can2X=nx; can2Y=ny;}
-      if(e.cancelable)e.preventDefault();
-    }
-    
-    canvas.addEventListener('mousedown',sDrag); canvas.addEventListener('mousemove',dDrag); window.addEventListener('mouseup',()=>dragT=null);
-    canvas.addEventListener('touchstart',sDrag,{passive:false}); canvas.addEventListener('touchmove',dDrag,{passive:false}); window.addEventListener('touchend',()=>dragT=null);
+    audioPlayer.addEventListener('loadedmetadata', () => { if (isFinite(audioPlayer.duration)) { durTimeEl.innerText = formatTime(audioPlayer.duration); progressBar.max = 100; } });
+    audioPlayer.addEventListener('timeupdate', () => { if (isFinite(audioPlayer.duration) && durTimeEl.innerText === "00:00") durTimeEl.innerText = formatTime(audioPlayer.duration); if (!isDraggingProgress) { const percent = (audioPlayer.currentTime / audioPlayer.duration) * 100; progressBar.value = isNaN(percent) ? 0 : percent; currTimeEl.innerText = formatTime(audioPlayer.currentTime); } });
+    progressBar.addEventListener('input', () => { isDraggingProgress = true; if (audioPlayer.duration) { const seekTime = (progressBar.value / 100) * audioPlayer.duration; currTimeEl.innerText = formatTime(seekTime); audioPlayer.currentTime = seekTime; } });
+    const releaseSeek = () => { isDraggingProgress = false; }; progressBar.addEventListener('change', releaseSeek); progressBar.addEventListener('touchend', releaseSeek); progressBar.addEventListener('mouseup', releaseSeek);
 
-    function getSym(i, t){ if(!dataArray)return 0; return dataArray[Math.floor(Math.abs(i-t/2)/(t/2)*dataArray.length*0.6)]/255; }
-    
-    function drawVis(bLen) {
-      let st=document.getElementById('visType').value, vh=parseInt(document.getElementById('visHeight').value); visW=parseInt(document.getElementById('visWidth').value);
-      ctx.save(); ctx.translate(visX, visY); ctx.translate(-visW/2, 0); ctx.globalAlpha=parseFloat(document.getElementById('visOpacity').value);
-      let cy=0;
-      
-      let isBars = ['vintage_bars','winamp_classic','classic_eq','step_eq','thin_eq','thick_bars','hollow_bars','rounded_bars','split_eq','double_mirror','dotted_eq','led_matrix','peak_line','peak_dots_only','dash_bars','meter_blocks','soft_glow_bars','white_caps','liquid_bar','cyber_pulse','mirror_bars','gradient_blocks','sunset_bars','emerald_bars','purple_haze','gold_classic','monochrome_fade','dual_tone'].includes(st);
-      let isWave = ['modern_wave','filled_wave','double_wave','thin_wave','shadow_wave','stereo_lines','smooth_curve','ribbon_wave','minimal_line','calm_horizon'].includes(st);
-      
-      if(st==='analog_vu'){
-        let b=dataArray?dataArray[5]/255:0, t=dataArray?dataArray[30]/255:0;
-        let dn=(x,r,v,txt)=>{
-          ctx.save(); ctx.translate(x,0); ctx.beginPath(); ctx.arc(0,0,r,Math.PI,Math.PI*2); ctx.fillStyle='rgba(20,20,20,0.8)'; ctx.fill(); ctx.strokeStyle='#ffb300'; ctx.lineWidth=2; ctx.stroke();
-          for(let i=0;i<=10;i++){ let a=Math.PI+(i/10)*Math.PI; ctx.beginPath(); ctx.moveTo(Math.cos(a)*(r-10),Math.sin(a)*(r-10)); ctx.lineTo(Math.cos(a)*(r-20),Math.sin(a)*(r-20)); ctx.strokeStyle=i>7?'red':'#ffb300'; ctx.stroke(); }
-          ctx.rotate(Math.PI+(v*0.8+0.1)*Math.PI); ctx.beginPath(); ctx.moveTo(0,10); ctx.lineTo(0,-r+25); ctx.strokeStyle='#fff'; ctx.lineWidth=3; ctx.stroke(); ctx.restore();
-          ctx.fillStyle='#ffb300'; ctx.font='bold 16px monospace'; ctx.textAlign='center'; ctx.fillText(txt,x,25);
-        }; dn(visW/4,vh*0.8,b,"L"); dn(visW*0.75,vh*0.8,t,"R");
-      }
-      else if(st==='retro_oscilloscope'){
-        ctx.beginPath(); ctx.moveTo(0,0); for(let i=0;i<=100;i++) ctx.lineTo((i/100)*visW, -getSym(i,100)*vh);
-        ctx.strokeStyle='#0f4'; ctx.lineWidth=3; ctx.shadowBlur=10; ctx.shadowColor='#0f4'; ctx.stroke(); ctx.shadowBlur=0;
-      }
-      else if(isBars) {
-        let n=st.includes('led')||st.includes('mirror')?40:48; let sp=visW/n, bw=sp*0.7;
-        for(let i=0; i<n; i++) {
-          let v=getSym(i,n), h=Math.max(2,v*vh), px=i*sp;
-          if(peakH[i]<=h) peakH[i]=h; else peakH[i]=Math.max(0,peakH[i]-2);
-          
-          if(st==='vintage_bars'){ ctx.fillStyle='#f5f5f0'; ctx.fillRect(px,-h,bw,h); }
-          else if(st==='winamp_classic'){ ctx.fillStyle='rgba(230,235,240,0.7)'; ctx.fillRect(px,-h,bw,h); ctx.fillStyle='red'; ctx.fillRect(px,-peakH[i]-5,bw,4); }
-          else if(st==='classic_eq'){ let g=ctx.createLinearGradient(0,0,0,-vh); g.addColorStop(0,'#00e676'); g.addColorStop(0.6,'yellow'); g.addColorStop(1,'red'); ctx.fillStyle=g; ctx.fillRect(px,-h,bw,h); }
-          else if(st==='step_eq'){ let bl=Math.floor(h/12); for(let j=0;j<bl;j++){ctx.fillStyle=j>(vh/12)*0.7?'#ff5722':'#ffc107'; ctx.fillRect(px,-(j*12)-12,bw,10);} }
-          else if(st==='thin_eq'){ ctx.fillStyle='#fff'; ctx.fillRect(px,-h,2,h); }
-          else if(st==='thick_bars'){ ctx.fillStyle='#fff'; ctx.fillRect(px,-h,sp*0.85,h); }
-          else if(st==='hollow_bars'){ ctx.strokeStyle='rgba(255,255,255,0.8)'; ctx.lineWidth=1.5; ctx.strokeRect(px,-h,bw,h); }
-          else if(st==='rounded_bars'){ ctx.fillStyle='#fff'; ctx.beginPath(); if(ctx.roundRect)ctx.roundRect(px,-h,bw,h,bw/2); else ctx.rect(px,-h,bw,h); ctx.fill(); }
-          else if(st==='split_eq'){ ctx.fillStyle='#fff'; ctx.fillRect(0,-1,visW,2); ctx.fillRect(px,-(h/2)-4,bw,h/2); ctx.fillRect(px,4,bw,h/2); }
-          else if(st==='double_mirror'){ ctx.fillStyle='rgba(255,255,255,0.8)'; ctx.fillRect(px,-h/2,bw,h/2); ctx.fillRect(px,0,bw,h/2); }
-          else if(st==='dotted_eq'){ ctx.fillStyle='rgba(200,200,200,0.5)'; ctx.fillRect(0,0,visW,2); ctx.fillStyle='#00bcd4'; if(h>5){ctx.beginPath(); ctx.arc(px+sp/2,-h,4,0,Math.PI*2); ctx.fill();} }
-          else if(st==='led_matrix'){ let ry=vh/15; let ar=Math.floor(v*15); for(let r=0;r<15;r++){ ctx.fillStyle=r<ar?(r>10?'red':'#8bc34a'):'rgba(255,255,255,0.05)'; ctx.beginPath(); ctx.arc(px+sp/2,-r*ry-ry/2,sp*0.35,0,Math.PI*2); ctx.fill(); } }
-          else if(st==='peak_line'){ ctx.fillStyle='#fff'; ctx.fillRect(px,-peakH[i]-3,bw,3); }
-          else if(st==='peak_dots_only'){ ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(px+sp/2,-peakH[i]-5,4,0,Math.PI*2); ctx.fill(); }
-          else if(st==='dash_bars'){ let ds=Math.floor(h/8); ctx.fillStyle='rgba(255,255,255,0.8)'; for(let j=0;j<ds;j++) ctx.fillRect(px,-(j*8)-4,bw,4); }
-          else if(st==='meter_blocks'){ let ds=Math.floor(h/10); for(let j=0;j<ds;j++){ ctx.fillStyle=j>8?'red':(j>5?'yellow':'#0f4'); ctx.fillRect(px,-(j*10)-8,bw,8); } }
-          else if(st==='soft_glow_bars'){ ctx.fillStyle='#fff'; ctx.shadowBlur=12; ctx.shadowColor='rgba(255,255,255,0.7)'; ctx.fillRect(px,-h,bw,h); ctx.shadowBlur=0; }
-          else if(st==='white_caps'){ ctx.fillStyle='rgba(200,200,200,0.5)'; ctx.fillRect(px,-h,bw,h); ctx.fillStyle='#fff'; ctx.fillRect(px,-h-4,bw,4); }
-          else if(st==='liquid_bar'){ ctx.fillStyle='#00e5ff'; ctx.shadowBlur=15; ctx.shadowColor='#00e5ff'; ctx.beginPath(); if(ctx.roundRect)ctx.roundRect(px,-h,bw,h,bw/2); else ctx.rect(px,-h,bw,h); ctx.fill(); ctx.shadowBlur=0; }
-          else if(st==='cyber_pulse'){ let g=ctx.createLinearGradient(0,0,0,-vh); g.addColorStop(0,'#f50057'); g.addColorStop(1,'#ff4081'); ctx.fillStyle=g; ctx.shadowBlur=10; ctx.shadowColor='#f50057'; ctx.fillRect(px,-h/2-2,bw,h/2); ctx.fillRect(px,2,bw,h/2); ctx.fillStyle='#fff'; ctx.fillRect(px,-h/2-6,bw,2); ctx.fillRect(px,h/2+4,bw,2); ctx.shadowBlur=0; }
-          else if(st==='mirror_bars'){ ctx.fillStyle='rgba(255,255,255,0.9)'; ctx.fillRect(px,-h/2,sp*0.6,h/2); ctx.fillStyle='rgba(255,255,255,0.3)'; ctx.fillRect(px,0,sp*0.6,h*0.4); }
-          else if(st.includes('grad')||st.includes('sunset')||st.includes('emerald')||st.includes('purple')||st.includes('gold')||st.includes('mono')){
-            let g=ctx.createLinearGradient(0,0,0,-vh);
-            if(st==='gradient_blocks'){g.addColorStop(0,'#00c6ff');g.addColorStop(1,'#0072ff');} else if(st==='sunset_bars'){g.addColorStop(0,'#ff3f34');g.addColorStop(0.5,'#ff7f50');g.addColorStop(1,'#fffa65');} else if(st==='emerald_bars'){g.addColorStop(0,'#004d40');g.addColorStop(1,'#18ffff');} else if(st==='purple_haze'){g.addColorStop(0,'#4a148c');g.addColorStop(1,'#ea80fc');} else if(st==='gold_classic'){g.addColorStop(0,'#ff8f00');g.addColorStop(1,'#ffe082');} else {g.addColorStop(0,'rgba(255,255,255,0.1)');g.addColorStop(1,'#fff');}
-            ctx.fillStyle=g; ctx.fillRect(px,-h,bw,h);
-          }
-          else if(st==='dual_tone'){ ctx.fillStyle='#00e5ff'; ctx.fillRect(px,-h/2,bw,h/2); ctx.fillStyle='#ff4081'; ctx.fillRect(px,0,bw,h/2); }
-        }
-      }
-      else if(isWave){
-        let pts=100, sp=visW/pts; ctx.beginPath(); ctx.moveTo(0,0);
-        for(let i=0;i<=pts;i++) {
-          let h=getSym(i,pts)*vh;
-          if(st==='modern_wave'){ ctx.lineTo(i*sp, -h-(Math.sin(i*0.1+time*5)*h*0.2)); }
-          else if(st==='stereo_lines'){ /* handled below */ }
-          else if(st==='smooth_curve'){ if(i<pts){ let nh=getSym(i+1,pts)*vh; ctx.quadraticCurveTo(i*sp,-h, i*sp+sp/2, (-h-nh)/2); } }
-          else ctx.lineTo(i*sp, -h);
-        }
-        if(st==='modern_wave'){ let g=ctx.createLinearGradient(0,0,visW,0); g.addColorStop(0,'#00d2ff'); g.addColorStop(1,'#e040fb'); ctx.strokeStyle=g; ctx.lineWidth=3; ctx.stroke(); ctx.lineTo(visW,0); ctx.lineTo(0,0); ctx.fillStyle='rgba(0,210,255,0.15)'; ctx.fill(); }
-        else if(st==='filled_wave'){ ctx.lineTo(visW,0); ctx.lineTo(0,0); ctx.fillStyle='rgba(255,255,255,0.4)'; ctx.fill(); ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.stroke(); }
-        else if(st==='double_wave'){ ctx.strokeStyle='#fff'; ctx.lineWidth=2.5; ctx.stroke(); ctx.beginPath(); ctx.moveTo(0,0); for(let i=0;i<=pts;i++)ctx.lineTo(i*sp,-getSym(i,pts)*vh*0.6); ctx.strokeStyle='rgba(255,255,255,0.4)'; ctx.stroke(); }
-        else if(st==='thin_wave'){ ctx.strokeStyle='#fff'; ctx.lineWidth=1.5; ctx.stroke(); }
-        else if(st==='shadow_wave'){ ctx.strokeStyle='#fff'; ctx.lineWidth=2.5; ctx.shadowBlur=15; ctx.shadowColor='#fff'; ctx.stroke(); ctx.shadowBlur=0; }
-        else if(st==='minimal_line'){ ctx.strokeStyle='rgba(255,255,255,0.85)'; ctx.lineWidth=2; ctx.stroke(); ctx.fillStyle='rgba(255,255,255,0.4)'; ctx.fillRect(0,0,visW,1); }
-        else if(st==='calm_horizon'){ let g=ctx.createLinearGradient(0,-vh,0,0); g.addColorStop(0,'#fffa65'); g.addColorStop(1,'#ff7f50'); ctx.strokeStyle=g; ctx.lineWidth=3; ctx.stroke(); ctx.lineTo(visW,0); ctx.lineTo(0,0); ctx.fillStyle='rgba(255,127,80,0.1)'; ctx.fill(); }
-        else if(st==='smooth_curve'){ ctx.strokeStyle='#fff'; ctx.lineWidth=2.5; ctx.stroke(); }
-        else if(st==='ribbon_wave'){ for(let l=0;l<3;l++){ ctx.beginPath(); ctx.moveTo(0,0); for(let i=0;i<=pts;i++)ctx.lineTo(i*sp, -getSym(i,pts)*vh*(1-l*0.2)-l*6); ctx.strokeStyle=`rgba(255,255,255,${0.9-l*0.3})`; ctx.lineWidth=2; ctx.stroke(); } }
-        else if(st==='stereo_lines'){ ctx.beginPath(); ctx.moveTo(0,-10); for(let i=0;i<=pts;i++)ctx.lineTo(i*sp, -10-getSym(i,pts)*(vh/2)); ctx.strokeStyle='#00bcd4'; ctx.lineWidth=2; ctx.stroke(); ctx.beginPath(); ctx.moveTo(0,10); for(let i=0;i<=pts;i++)ctx.lineTo(i*sp, 10+getSym(i,pts)*(vh/2)); ctx.strokeStyle='#ff4081'; ctx.stroke(); }
-      }
-      ctx.restore();
+    function togglePlay() {
+      if (!isTrackLoaded) { alert("Pilih Musik Dulu!"); return; }
+      if (!audioCtx) initAudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume();
+      if (audioPlayer.paused) { if (!audioPlayer.src || currentPlayIndex >= shuffledPlaylist.length) playRandomSong(true); else { audioPlayer.play(); playBtn.innerText = "⏸ PAUSE"; statusBox.innerText = `🎵 Lagu ${currentPlayIndex}/${audioFiles.length}: ${currentSongName}`; } } else { audioPlayer.pause(); playBtn.innerText = "▶ RESUME"; statusBox.innerText = "⏸ Musik Dijeda."; }
     }
 
-    // CLIPPING BASS MATI-MATIAN KUNCI
-    function drawBass(x, y) {
-      if(document.getElementById('speakerStyle').value==='none' || !isBgReady || !bgImg.naturalWidth) return;
-      let sc=parseFloat(document.getElementById('speakerSize').value) || 1.5, bs=0;
-      if(dataArray&&!audioPlayer.paused){ let mb=Math.max(dataArray[0],dataArray[1],dataArray[2])/255; if(mb>0.4) bs=Math.pow((mb-0.4)/0.6, 1.5); }
-      let r=50*sc, shk=parseFloat(document.getElementById('speakerShake').value) || 10, pmp=parseFloat(document.getElementById('speakerPump').value) || 0.5;
-      let sx=x+(Math.random()-0.5)*bs*shk, sy=y+(Math.random()-0.5)*bs*shk, p=1.0+bs*pmp;
+    const config = { type: 'none', count: 100, visType: 'vintage_bars', visHeight: 150, visOpacity: 1.0, fxAngle: 0, fxSpeed: 1.0 };
+    document.getElementById('visType').addEventListener('change', (e) => { config.visType = e.target.value; peakHeights.fill(0); });
+    document.getElementById('visOpacity').addEventListener('input', (e) => config.visOpacity = parseFloat(e.target.value));
+    document.getElementById('type').addEventListener('change', (e) => config.type = e.target.value);
+    document.getElementById('fxAngle').addEventListener('change', (e) => config.fxAngle = parseInt(e.target.value));
+    document.getElementById('fxSpeed').addEventListener('input', (e) => config.fxSpeed = parseFloat(e.target.value));
+    document.getElementById('count').addEventListener('input', (e) => config.count = parseInt(e.target.value));
+    document.getElementById('visHeight').addEventListener('input', (e) => config.visHeight = parseInt(e.target.value));
+    document.getElementById('visWidth').addEventListener('input', (e) => { visW = parseInt(e.target.value); visX = (width - visW) / 2; });
 
-      ctx.save(); ctx.translate(sx,sy); ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2); ctx.fillStyle="rgba(0,0,0,0.15)"; ctx.fill(); ctx.restore();
-      ctx.save(); ctx.translate(sx,sy); ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2); ctx.clip(); ctx.scale(p,p); ctx.translate(-sx,-sy);
-      ctx.drawImage(bgImg, bgGlobalX, bgGlobalY, bgImg.naturalWidth*bgGlobalScale, bgImg.naturalHeight*bgGlobalScale); ctx.restore();
-
-      ctx.save(); ctx.translate(sx,sy);
-      ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2); ctx.lineWidth=3; ctx.strokeStyle=`rgba(0,0,0,${Math.max(0.4,bs)})`; ctx.stroke();
-      ctx.beginPath(); ctx.arc(0,0,r-2,0,Math.PI*2); ctx.lineWidth=1; ctx.strokeStyle="rgba(255,255,255,0.3)"; ctx.stroke();
-      if(document.getElementById('showTarget').checked){ ctx.beginPath(); ctx.moveTo(-15,0); ctx.lineTo(15,0); ctx.moveTo(0,-15); ctx.lineTo(0,15); ctx.lineWidth=2; ctx.strokeStyle='red'; ctx.stroke(); ctx.beginPath(); ctx.arc(0,0,4,0,Math.PI*2); ctx.fillStyle='#0f4'; ctx.fill(); }
-      ctx.restore();
-    }
-
-    // ASAP KOPI
-    let coffeeParticles = [];
-    for(let i=0; i<60; i++) {
-        coffeeParticles.push({ baseX: (Math.random() - 0.5) * 30, speedY: Math.random() * 1.5 + 0.5, size: Math.random() * 12 + 6, life: Math.random() * 150, maxLife: Math.random() * 100 + 60, sway: Math.random() * 0.04 + 0.01, opac: Math.random() * 0.4 + 0.1 });
-    }
-    function drawCoffeeSteam(x, y, style, scale, propSpeed) {
-        if(style === 'none') return;
-        ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
-        let limit = 25; let speedMult = 1.0;
-        if(style === 'soft_steam') { limit=15; speedMult=0.8; }
-        if(style === 'swirl_vapor') { limit=40; speedMult=1.2; }
-        if(style === 'thin_wisp') { limit=10; speedMult=0.6; }
-        if(style === 'heavy_steam') { limit=60; speedMult=1.5; }
-        if(style === 'wind_steam') { limit=30; speedMult=1.8; ctx.rotate(20 * Math.PI/180); }
-
-        for(let i=0; i<limit; i++) {
-            let p = coffeeParticles[i];
-            p.life += propSpeed * speedMult;
-            if(p.life > p.maxLife) { p.life = 0; p.baseX = (Math.random() - 0.5) * 30; }
-            let curY = -p.life * p.speedY;
-            let curX = p.baseX + Math.sin(p.life * p.sway) * 25;
-            let curSize = p.size + (p.life * 0.4);
-            let curOpac = p.opac * (1 - (p.life / p.maxLife));
-
-            if(curOpac > 0) {
-                ctx.beginPath(); ctx.arc(curX, curY, curSize, 0, Math.PI*2); ctx.fillStyle = `rgba(240, 240, 240, ${curOpac})`; ctx.fill();
-            }
-        }
-        ctx.restore();
-    }
-
-    // API LILIN
-    function drawCandle(x, y, style, scale, propSpeed) {
-        if(style === 'none') return;
-        ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
-
-        let t = time * 2 * propSpeed;
-        let flicker = 0; let sway = 0; let h = 65; let w = 16;
-        let baseColor = 'rgba(255, 140, 0, 0.8)';
-        let midColor = 'rgba(255, 210, 0, 0.9)';
-        let coreColor = 'rgba(255, 255, 255, 0.95)';
-
-        if(style === 'calm_flame') { flicker = Math.sin(t*3)*2; sway = Math.sin(t)*1; }
-        else if(style === 'flicker_flame') { flicker = Math.sin(t*10)*4 + Math.random()*2; sway = Math.sin(t*5)*3; }
-        else if(style === 'bright_glow') { flicker = Math.sin(t*4)*2; h = 75; w = 18; ctx.shadowBlur = 50 + flicker*5; ctx.shadowColor = '#ff9800'; }
-        else if(style === 'blue_base') { flicker = Math.sin(t*5)*2; baseColor = 'rgba(0, 150, 255, 0.8)'; midColor = 'rgba(100, 200, 255, 0.9)'; }
-        else if(style === 'wind_flame') { flicker = Math.random()*5; sway = 15 + Math.sin(t*8)*5; }
-
-        ctx.beginPath(); ctx.arc(0, -h*0.5, w*3, 0, Math.PI*2);
-        let gradGlow = ctx.createRadialGradient(0,-h*0.5,0, 0,-h*0.5,w*4);
-        gradGlow.addColorStop(0, 'rgba(255, 120, 0, 0.25)'); gradGlow.addColorStop(1, 'rgba(255, 120, 0, 0)');
-        ctx.fillStyle = gradGlow; ctx.fill();
-
-        ctx.beginPath(); ctx.moveTo(0, 5); ctx.lineTo(sway*0.05, -8);
-        ctx.lineWidth = 3; ctx.strokeStyle = '#111'; ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(sway*0.05, -8); ctx.lineTo(sway*0.1, -12);
-        ctx.lineWidth = 2; ctx.strokeStyle = '#ff5722'; ctx.stroke();
-
-        function drawFlame(fw, fh, fsway, color) {
-            ctx.beginPath();
-            ctx.moveTo(0, 2);
-            ctx.bezierCurveTo(fw, 2, fw*0.9, -fh*0.4, fsway, -fh);
-            ctx.bezierCurveTo(-fw*0.9, -fh*0.4, -fw, 2, 0, 2);
-            ctx.fillStyle = color; ctx.fill();
-        }
-
-        drawFlame(w, h + flicker, sway, baseColor); 
-        drawFlame(w*0.7, (h + flicker)*0.75, sway*0.7, midColor); 
-        drawFlame(w*0.35, (h + flicker)*0.45, sway*0.3, coreColor); 
-        
-        ctx.shadowBlur = 0;
-        ctx.restore();
-    }
-
-    // PARTIKEL SINEMATIK
+    let time = 0;
     class CinematicParticle {
         constructor() { this.reset(true); }
-        reset(init = false) {
-            this.x = Math.random() * width;
-            this.y = init ? (Math.random() * height) : -20 - Math.random()*50;
-            let t = document.getElementById('type').value;
-            this.size = Math.random() * 3 + 1;
-            this.speedY = Math.random() * 1.5 + 0.5;
-            this.opacity = Math.random() * 0.6 + 0.2;
-            this.life = Math.random() * 100;
-            this.wobbleSpeed = Math.random() * 0.05 + 0.01;
-            
-            if(t === 'bokeh_orbs') { this.size = Math.random() * 15 + 5; this.opacity = Math.random()*0.3+0.1; }
-            if(t === 'snow_dust' || t === 'ash_particles') { this.speedY = Math.random() * 2 + 1; }
-        }
-        update() {
-            let t = document.getElementById('type').value;
-            if(t === 'none') return;
-            let wind = parseFloat(document.getElementById('fxAngle').value) * Math.PI / 180;
-            let sm = parseFloat(document.getElementById('fxSpeed').value);
-            
-            this.life += this.wobbleSpeed;
-            
-            if (['dust_motes', 'golden_pollen', 'magic_sparks', 'floating_embers'].includes(t)) {
-                this.y -= this.speedY * sm * 0.5;
-                this.x += Math.sin(this.life) * 1 * sm + Math.sin(wind)*2;
-            } else if (t === 'bokeh_orbs' || t === 'fairy_light') {
-                this.y -= this.speedY * sm * 0.3;
-                this.x += Math.sin(this.life) * 0.5 * sm + Math.sin(wind)*1;
-            } else {
-                this.y += this.speedY * sm;
-                this.x += Math.sin(this.life) * 1 * sm + Math.sin(wind)*3;
-            }
-            
-            this.currentOpacity = this.opacity * (0.5 + 0.5*Math.sin(this.life*2));
-            
-            if(this.y > height + 50 || this.y < -50 || this.x > width+50 || this.x < -50) this.reset();
-        }
-        draw() {
-            let t = document.getElementById('type').value;
-            if(t === 'none') return;
-            ctx.save();
-            ctx.beginPath();
-            
-            let c1;
-            if(t === 'dust_motes') { c1=`rgba(255,230,150,${this.currentOpacity})`; ctx.shadowBlur=this.size*2; ctx.shadowColor='#ffeb3b'; }
-            else if(t === 'magic_sparks') { c1=`rgba(200,255,255,${this.currentOpacity})`; ctx.shadowBlur=this.size*3; ctx.shadowColor='#00e5ff'; }
-            else if(t === 'floating_embers') { c1=`rgba(255,100,0,${this.currentOpacity})`; ctx.shadowBlur=this.size*3; ctx.shadowColor='#ff3d00'; }
-            else if(t === 'bokeh_orbs') { c1=`rgba(255,255,255,${this.currentOpacity*0.5})`; }
-            else if(t === 'snow_dust') { c1=`rgba(255,255,255,${this.currentOpacity})`; ctx.shadowBlur=this.size; ctx.shadowColor='#fff'; }
-            else if(t === 'fairy_light') { c1=`rgba(255,200,255,${this.currentOpacity})`; ctx.shadowBlur=this.size*4; ctx.shadowColor='#e040fb'; }
-            else if(t === 'ash_particles') { c1=`rgba(50,50,50,${this.currentOpacity+0.4})`; }
-            else if(t === 'starlight_glint') { c1=`rgba(255,255,255,${this.currentOpacity})`; 
-                let rot = this.life;
-                ctx.translate(this.x, this.y); ctx.rotate(rot);
-                ctx.moveTo(-this.size, 0); ctx.lineTo(this.size, 0); ctx.moveTo(0, -this.size); ctx.lineTo(0, this.size);
-                ctx.strokeStyle=c1; ctx.lineWidth=1; ctx.stroke();
-                ctx.restore(); return;
-            }
-            else if(t === 'deep_sea_motes') { c1=`rgba(100,200,255,${this.currentOpacity*0.7})`; ctx.shadowBlur=this.size*2; ctx.shadowColor='#00bcd4'; }
-            else if(t === 'golden_pollen') { c1=`rgba(255,215,0,${this.currentOpacity})`; ctx.shadowBlur=this.size*2; ctx.shadowColor='#ffb300'; }
-            
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
-            ctx.fillStyle = c1;
-            ctx.fill();
-            ctx.restore();
+        reset(init = false) { this.x = Math.random() * width; this.y = init ? (Math.random() * height) : -20 - Math.random()*50; this.size = Math.random() * 3 + 1; this.speedY = Math.random() * 1.5 + 0.5; this.opacity = Math.random() * 0.6 + 0.2; this.life = Math.random() * 100; this.wobbleSpeed = Math.random() * 0.05 + 0.01; if(config.type === 'bokeh_orbs') { this.size = Math.random() * 15 + 5; this.opacity = Math.random()*0.3+0.1; } if(config.type === 'snow_dust' || config.type === 'ash_particles') { this.speedY = Math.random() * 2 + 1; } }
+        update() { if(config.type === 'none') return; let wind = config.fxAngle * Math.PI / 180; let sm = config.fxSpeed; this.life += this.wobbleSpeed; if (['dust_motes', 'golden_pollen', 'magic_sparks', 'floating_embers'].includes(config.type)) { this.y -= this.speedY * sm * 0.5; this.x += Math.sin(this.life) * 1 * sm + Math.sin(wind)*2; } else if (config.type === 'bokeh_orbs' || config.type === 'fairy_light') { this.y -= this.speedY * sm * 0.3; this.x += Math.sin(this.life) * 0.5 * sm + Math.sin(wind)*1; } else { this.y += this.speedY * sm; this.x += Math.sin(this.life) * 1 * sm + Math.sin(wind)*3; } this.currentOpacity = this.opacity * (0.5 + 0.5*Math.sin(this.life*2)); if(this.y > height + 50 || this.y < -50 || this.x > width+50 || this.x < -50) this.reset(); }
+        draw() { if(config.type === 'none') return; ctx.save(); ctx.beginPath(); let c1; if(config.type === 'dust_motes') { c1=`rgba(255,230,150,${this.currentOpacity})`; ctx.shadowBlur=this.size*2; ctx.shadowColor='#ffeb3b'; } else if(config.type === 'magic_sparks') { c1=`rgba(200,255,255,${this.currentOpacity})`; ctx.shadowBlur=this.size*3; ctx.shadowColor='#00e5ff'; } else if(config.type === 'floating_embers') { c1=`rgba(255,100,0,${this.currentOpacity})`; ctx.shadowBlur=this.size*3; ctx.shadowColor='#ff3d00'; } else if(config.type === 'bokeh_orbs') { c1=`rgba(255,255,255,${this.currentOpacity*0.5})`; } else if(config.type === 'snow_dust') { c1=`rgba(255,255,255,${this.currentOpacity})`; ctx.shadowBlur=this.size; ctx.shadowColor='#fff'; } else if(config.type === 'fairy_light') { c1=`rgba(255,200,255,${this.currentOpacity})`; ctx.shadowBlur=this.size*4; ctx.shadowColor='#e040fb'; } else if(config.type === 'ash_particles') { c1=`rgba(50,50,50,${this.currentOpacity+0.4})`; } else if(config.type === 'starlight_glint') { c1=`rgba(255,255,255,${this.currentOpacity})`; let rot = this.life; ctx.translate(this.x, this.y); ctx.rotate(rot); ctx.moveTo(-this.size, 0); ctx.lineTo(this.size, 0); ctx.moveTo(0, -this.size); ctx.lineTo(0, this.size); ctx.strokeStyle=c1; ctx.lineWidth=1; ctx.stroke(); ctx.restore(); return; } else if(config.type === 'deep_sea_motes') { c1=`rgba(100,200,255,${this.currentOpacity*0.7})`; ctx.shadowBlur=this.size*2; ctx.shadowColor='#00bcd4'; } else if(config.type === 'golden_pollen') { c1=`rgba(255,215,0,${this.currentOpacity})`; ctx.shadowBlur=this.size*2; ctx.shadowColor='#ffb300'; } ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fillStyle = c1; ctx.fill(); ctx.restore(); }
+    }
+    let cinematicParticles = []; for(let i=0; i<300; i++) cinematicParticles.push(new CinematicParticle());
+
+    function getSymmetricVal(index, totalItems, bufferLen) { try { if (!dataArray) return 0; const center = totalItems / 2; const centerDist = Math.abs(index - center) / center; const dataIdx = Math.floor(centerDist * (bufferLen * 0.6)); return dataArray[dataIdx] / 255; } catch (e) { return 0; } }
+
+    function drawSpeakers(bufferLen) {
+      if (!isBgReady || document.getElementById('speakerStyle').value === 'none') return;
+      let scale = parseFloat(document.getElementById('speakerSize').value);
+      let bassSum = 0; let bassCount = 8; 
+      if(dataArray) { for(let i = 1; i <= bassCount; i++) { bassSum += dataArray[i]; } }
+      let rawBass = (bassSum / bassCount) / 255; if(isNaN(rawBass)) rawBass = 0;
+      let punchyBass = Math.pow(rawBass, 2.0);
+      if (punchyBass > globalSmoothedBass) { globalSmoothedBass += (punchyBass - globalSmoothedBass) * 0.8; } else { globalSmoothedBass += (punchyBass - globalSmoothedBass) * 0.15; }
+      let bass = globalSmoothedBass; let baseR = 50 * scale; let shakeIntensity = parseFloat(document.getElementById('speakerShake').value); let pumpIntensity = parseFloat(document.getElementById('speakerPump').value);
+      let shakeX = (Math.random() - 0.5) * bass * shakeIntensity; let shakeY = (Math.random() - 0.5) * bass * shakeIntensity; let pump = 1.0 + (bass * pumpIntensity);
+      function drawLiveBackgroundSpeaker(x, y) {
+        ctx.save(); ctx.translate(x + shakeX, y + shakeY); ctx.beginPath(); ctx.arc(0, 0, baseR, 0, Math.PI * 2); ctx.clip(); ctx.scale(pump, pump);
+        ctx.drawImage(bgImageElement, bgGlobalX - x, bgGlobalY - y, bgImageElement.width * bgGlobalScale, bgImageElement.height * bgGlobalScale);
+        ctx.beginPath(); ctx.arc(0, 0, baseR, 0, Math.PI * 2); ctx.lineWidth = 1; ctx.strokeStyle = `rgba(0, 0, 0, ${bass * 0.4})`; ctx.stroke();
+        if (document.getElementById('showCrosshair').value === '1') { ctx.scale(1/pump, 1/pump); ctx.beginPath(); ctx.moveTo(-15, 0); ctx.lineTo(15, 0); ctx.moveTo(0, -15); ctx.lineTo(0, 15); ctx.strokeStyle = "rgba(0, 255, 170, 0.9)"; ctx.lineWidth = 2; ctx.stroke(); ctx.beginPath(); ctx.arc(0, 0, 2.5, 0, Math.PI * 2); ctx.fillStyle = "#ff4444"; ctx.fill(); }
+        ctx.restore();
+      }
+      drawLiveBackgroundSpeaker(spk1X, spk1Y); drawLiveBackgroundSpeaker(spk2X, spk2Y);
+    }
+
+    function drawCoffeeSteam(x, y, style, scale, propSpeed) {
+        if(style === 'none') return; ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
+        let branches = 3; let hMax = 150; let wMax = 30; let speedMult = 1.5; let waveFreq = 2.0; let opacity = 0.8;
+        if(style === 'soft_steam') { branches=2; hMax=120; wMax=20; speedMult=1; waveFreq=1.5; opacity=0.7; } if(style === 'swirl_vapor') { branches=4; hMax=180; wMax=40; speedMult=1.8; waveFreq=2.5; opacity=0.85; } if(style === 'thin_wisp') { branches=2; hMax=140; wMax=15; speedMult=1.2; waveFreq=3; opacity=0.6; } if(style === 'heavy_steam') { branches=5; hMax=200; wMax=45; speedMult=2; waveFreq=1.8; opacity=0.95; } if(style === 'wind_steam') { branches=3; hMax=160; wMax=35; speedMult=2.5; waveFreq=2.0; opacity=0.75; ctx.rotate(20 * Math.PI/180); }
+        ctx.globalCompositeOperation = 'screen'; ctx.filter = 'blur(4px)'; 
+        for(let b=0; b<branches; b++) {
+            let pts = []; let steps = 40; 
+            for(let i=0; i<=steps; i++) { let prog = i/steps; let speed = time * speedMult * propSpeed; let w = (5 + Math.sin(prog * Math.PI * 3 + speed) * 5) * Math.sin(prog * Math.PI); let sway = Math.sin(prog * Math.PI * waveFreq - speed + b * 1.3) * wMax * Math.pow(prog, 0.8); let secondarySway = Math.sin(prog * Math.PI * waveFreq * 2.1 - speed * 1.4 + b * 2) * (wMax * 0.4) * prog; let px = sway + secondarySway; let py = -prog * hMax; pts.push({x: px, y: py, w: w}); }
+            ctx.beginPath(); ctx.moveTo(pts[0].x - pts[0].w, pts[0].y); for(let i=1; i<pts.length; i++) ctx.lineTo(pts[i].x - pts[i].w, pts[i].y); for(let i=pts.length-1; i>=0; i--) ctx.lineTo(pts[i].x + pts[i].w, pts[i].y); ctx.closePath();
+            let grad = ctx.createLinearGradient(0,0, 0,-hMax); grad.addColorStop(0, `rgba(255, 255, 255, 0)`); grad.addColorStop(0.5, `rgba(255, 255, 255, ${opacity})`); grad.addColorStop(1, `rgba(255, 255, 255, 0)`); ctx.fillStyle = grad; ctx.fill();
+            ctx.beginPath(); ctx.moveTo(pts[0].x - pts[0].w, pts[0].y); for(let i=1; i<pts.length; i++) ctx.lineTo(pts[i].x - pts[i].w, pts[i].y); ctx.strokeStyle = `rgba(255, 255, 255, ${Math.min(1, opacity * 1.8)})`; ctx.lineWidth = 2; ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(pts[0].x + pts[0].w, pts[0].y); for(let i=1; i<pts.length; i++) ctx.lineTo(pts[i].x + pts[i].w, pts[i].y); ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * 0.8})`; ctx.lineWidth = 1; ctx.stroke();
+        } ctx.restore();
+    }
+
+    function drawCandle(x, y, style, scale, propSpeed) {
+        if(style === 'none') return; ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
+        let t = time * 2 * propSpeed; let flicker = 0; let sway = 0; let h = 65; let w = 16;
+        let baseColor = 'rgba(255, 140, 0, 0.8)'; let midColor = 'rgba(255, 210, 0, 0.9)'; let coreColor = 'rgba(255, 255, 255, 0.95)';
+        if(style === 'calm_flame') { flicker = Math.sin(t*3)*2; sway = Math.sin(t)*1; } else if(style === 'flicker_flame') { flicker = Math.sin(t*10)*4 + Math.random()*2; sway = Math.sin(t*5)*3; } else if(style === 'bright_glow') { flicker = Math.sin(t*4)*2; h = 75; w = 18; ctx.shadowBlur = 50 + flicker*5; ctx.shadowColor = '#ff9800'; } else if(style === 'blue_base') { flicker = Math.sin(t*5)*2; baseColor = 'rgba(0, 150, 255, 0.8)'; midColor = 'rgba(100, 200, 255, 0.9)'; } else if(style === 'wind_flame') { flicker = Math.random()*5; sway = 15 + Math.sin(t*8)*5; }
+        ctx.beginPath(); ctx.arc(0, -h*0.5, w*3, 0, Math.PI*2); let gradGlow = ctx.createRadialGradient(0,-h*0.5,0, 0,-h*0.5,w*4); gradGlow.addColorStop(0, 'rgba(255, 120, 0, 0.25)'); gradGlow.addColorStop(1, 'rgba(255, 120, 0, 0)'); ctx.fillStyle = gradGlow; ctx.fill();
+        ctx.beginPath(); ctx.moveTo(0, 5); ctx.lineTo(sway*0.05, -8); ctx.lineWidth = 3; ctx.strokeStyle = '#111'; ctx.stroke(); ctx.beginPath(); ctx.moveTo(sway*0.05, -8); ctx.lineTo(sway*0.1, -12); ctx.lineWidth = 2; ctx.strokeStyle = '#ff5722'; ctx.stroke();
+        function drawFlame(fw, fh, fsway, color) { ctx.beginPath(); ctx.moveTo(0, 2); ctx.bezierCurveTo(fw, 2, fw*0.9, -fh*0.4, fsway, -fh); ctx.bezierCurveTo(-fw*0.9, -fh*0.4, -fw, 2, 0, 2); ctx.fillStyle = color; ctx.fill(); }
+        drawFlame(w, h + flicker, sway, baseColor); drawFlame(w*0.7, (h + flicker)*0.75, sway*0.7, midColor); drawFlame(w*0.35, (h + flicker)*0.45, sway*0.3, coreColor); 
+        if(style !== 'blue_base') { ctx.beginPath(); ctx.moveTo(0, 4); ctx.bezierCurveTo(w*0.5, 4, w*0.4, -5, 0, -5); ctx.bezierCurveTo(-w*0.4, -5, -w*0.5, 4, 0, 4); let bg = ctx.createRadialGradient(0,0,0, 0,0,w*0.5); bg.addColorStop(0,'rgba(0,100,255,0.6)'); bg.addColorStop(1,'rgba(0,50,255,0)'); ctx.fillStyle = bg; ctx.fill(); } ctx.restore();
+    }
+
+    function drawVisualizer(bufferLen) {
+      const style = config.visType; ctx.save(); ctx.translate(visX, visY); ctx.globalAlpha = config.visOpacity; const cy = 0;
+      try {
+        if (style === 'vintage_bars') { let numBars = 48; let spacing = visW / numBars; let barW = spacing * 0.7; ctx.fillStyle = 'rgba(245, 245, 240, 0.9)'; for (let i = 0; i < numBars; i++) { let h = Math.max(5, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillRect(i * spacing, -h, barW, h); } }
+        else if (style === 'winamp_classic') { let numBars = 48; let spacing = visW / numBars; let barW = spacing * 0.7; for (let i = 0; i < numBars; i++) { let h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); if (h >= peakHeights[i]) peakHeights[i] = h; else { peakHeights[i] -= 2.0; if (peakHeights[i] < 0) peakHeights[i] = 0; } ctx.fillStyle = 'rgba(230, 235, 240, 0.7)'; ctx.fillRect(i * spacing, -h, barW, h); ctx.fillStyle = 'rgba(255, 60, 60, 1)'; ctx.fillRect(i * spacing, -peakHeights[i] - 5, barW, 4); } }
+        else if (style === 'classic_eq') { let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.7; for (let i = 0; i < numBars; i++) { let h = Math.max(4, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight); grad.addColorStop(0, '#00e676'); grad.addColorStop(0.6, '#ffeb3b'); grad.addColorStop(1, '#ff3d00'); ctx.fillStyle = grad; ctx.fillRect(i * spacing, -h, barW, h); } }
+        else if (style === 'step_eq') { let numBars = 32; let spacing = visW / numBars; let barW = spacing - 4; let stepH = 12; for (let i = 0; i < numBars; i++) { let h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let blocks = Math.floor(h / stepH); for (let j = 0; j < blocks; j++) { ctx.fillStyle = j > (config.visHeight/stepH)*0.7 ? '#ff5722' : '#ffc107'; ctx.fillRect(i * spacing, -(j * stepH) - stepH, barW, stepH - 2); } } }
+        else if (style === 'thin_eq') { let numBars = 64; let spacing = visW / numBars; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; for (let i = 0; i < numBars; i++) { let h = Math.max(2, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillRect(i * spacing, -h, 2, h); } }
+        else if (style === 'thick_bars') { let numBars = 24; let spacing = visW / numBars; let barW = spacing * 0.85; ctx.fillStyle = 'rgba(255, 255, 255, 0.95)'; for (let i = 0; i < numBars; i++) { let h = Math.max(8, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillRect(i * spacing, -h, barW, h); } }
+        else if (style === 'hollow_bars') { let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.7; ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)'; ctx.lineWidth = 1.5; for (let i = 0; i < numBars; i++) { let h = Math.max(5, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.strokeRect(i * spacing, -h, barW, h); } }
+        else if (style === 'rounded_bars') { let numBars = 36; let spacing = visW / numBars; let barW = spacing * 0.65; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; for (let i = 0; i < numBars; i++) { let h = Math.max(8, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.beginPath(); if(ctx.roundRect) ctx.roundRect(i * spacing, -h, barW, h, [barW/2, barW/2, 0, 0]); else ctx.rect(i * spacing, -h, barW, h); ctx.fill(); } }
+        else if (style === 'split_eq') { let numBars = 48; let spacing = visW / numBars; let barW = spacing * 0.6; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.fillRect(0, -1, visW, 2); for (let i = 0; i < numBars; i++) { let h = Math.max(2, getSymmetricVal(i, numBars, bufferLen) * (config.visHeight / 2)); ctx.fillRect(i * spacing, -h - 4, barW, h); ctx.fillRect(i * spacing, 4, barW, h); } }
+        else if (style === 'double_mirror') { let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.7; ctx.fillStyle = 'rgba(255, 255, 255, 0.85)'; for (let i = 0; i < numBars; i++) { let h = Math.max(3, getSymmetricVal(i, numBars, bufferLen) * (config.visHeight / 2)); ctx.fillRect(i * spacing, -h, barW, h); ctx.fillRect(i * spacing, 0, barW, h); } }
+        else if (style === 'dotted_eq') { let numBars = 48; let spacing = visW / numBars; ctx.fillStyle = 'rgba(200, 200, 200, 0.5)'; ctx.fillRect(0, 0, visW, 2); ctx.fillStyle = '#00bcd4'; for (let i = 0; i < numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let x = i * spacing + (spacing / 2); if (h > 5) { ctx.beginPath(); ctx.arc(x, -h, 4, 0, Math.PI*2); ctx.fill(); } } }
+        else if (style === 'led_matrix') { let cols = 40; let rows = 15; let spaceX = visW / cols; let spaceY = config.visHeight / rows; for(let c=0; c<cols; c++) { let val = getSymmetricVal(c, cols, bufferLen); let activeRows = Math.floor(val * rows); for(let r=0; r<rows; r++) { let x = c * spaceX + spaceX/2; let y = -r * spaceY - spaceY/2; ctx.beginPath(); if(r < activeRows) ctx.fillStyle = (r > rows*0.7) ? '#f44336' : '#8bc34a'; else ctx.fillStyle = 'rgba(255,255,255,0.05)'; ctx.arc(x, y, spaceX*0.35, 0, Math.PI*2); ctx.fill(); } } }
+        else if (style === 'analog_vu') { let valBass = dataArray ? dataArray[Math.floor(bufferLen * 0.05)] / 255 : 0; let valTreble = dataArray ? dataArray[Math.floor(bufferLen * 0.3)] / 255 : 0; let cx = visW/2; function drawNeedle(x, r, val, title) { ctx.save(); ctx.translate(x, 0); ctx.beginPath(); ctx.arc(0, 0, r, Math.PI, Math.PI*2); ctx.fillStyle = 'rgba(20, 20, 20, 0.8)'; ctx.fill(); ctx.strokeStyle = '#ffb300'; ctx.lineWidth = 2; ctx.stroke(); for(let i=0; i<=10; i++) { let a = Math.PI + (i/10)*Math.PI; let r1 = r - 10; let r2 = r - (i%5===0 ? 20 : 15); ctx.beginPath(); ctx.moveTo(Math.cos(a)*r1, Math.sin(a)*r1); ctx.lineTo(Math.cos(a)*r2, Math.sin(a)*r2); ctx.strokeStyle = i>7 ? '#ff4444' : '#ffb300'; ctx.stroke(); } ctx.rotate(Math.PI + (val * 0.8 + 0.1) * Math.PI); ctx.beginPath(); ctx.moveTo(0, 10); ctx.lineTo(0, -r+25); ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.stroke(); ctx.restore(); ctx.fillStyle = '#ffb300'; ctx.font = 'bold 16px monospace'; ctx.textAlign = 'center'; ctx.fillText(title, x, 25); } drawNeedle(cx - visW/4, config.visHeight*0.8, valBass, "L - BASS"); drawNeedle(cx + visW/4, config.visHeight*0.8, valTreble, "R - TREBLE"); }
+        else if (style === 'retro_oscilloscope') { ctx.beginPath(); ctx.moveTo(0, 0); let points = 100; for (let i = 0; i <= points; i++) { let x = (i / points) * visW; let h = getSymmetricVal(i, points, bufferLen) * config.visHeight; ctx.lineTo(x, -h); } ctx.strokeStyle = '#00ff41'; ctx.lineWidth = 3; ctx.shadowBlur = 10; ctx.shadowColor = '#00ff41'; ctx.stroke(); ctx.shadowBlur = 0; }
+        else if (style === 'peak_line') { let numBars = 48; let spacing = visW / numBars; let barW = spacing * 0.8; for (let i = 0; i < numBars; i++) { let h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); if (h >= peakHeights[i]) peakHeights[i] = h; else { peakHeights[i] -= 1.5; if (peakHeights[i] < 0) peakHeights[i] = 0; } ctx.fillStyle = '#fff'; ctx.fillRect(i * spacing, -peakHeights[i] - 3, barW, 3); } }
+        else if (style === 'peak_dots_only') { let numBars = 40; let spacing = visW / numBars; for (let i = 0; i < numBars; i++) { let h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); if (h >= peakHeights[i]) peakHeights[i] = h; else { peakHeights[i] -= 1.5; if (peakHeights[i] < 0) peakHeights[i] = 0; } ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(i * spacing + spacing/2, -peakHeights[i] - 5, 4, 0, Math.PI*2); ctx.fill(); } }
+        else if (style === 'dash_bars') { let numBars = 36; let spacing = visW / numBars; let barW = spacing * 0.7; let dashH = 4; let gapH = 4; for (let i = 0; i < numBars; i++) { let h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let dashes = Math.floor(h / (dashH + gapH)); ctx.fillStyle = 'rgba(255, 255, 255, 0.85)'; for (let j = 0; j < dashes; j++) { ctx.fillRect(i * spacing, -(j * (dashH + gapH)) - dashH, barW, dashH); } } }
+        else if (style === 'meter_blocks') { let numBars = 30; let spacing = visW / numBars; let barW = spacing * 0.75; let segH = 8; for (let i = 0; i < numBars; i++) { let h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let segs = Math.floor(h / (segH + 2)); for (let j = 0; j < segs; j++) { ctx.fillStyle = j > 8 ? '#f44336' : (j > 5 ? '#ffeb3b' : '#00e676'); ctx.fillRect(i * spacing, -(j * (segH + 2)) - segH, barW, segH); } } }
+        else if (style === 'soft_glow_bars') { let numBars = 32; let spacing = visW / numBars; let barW = spacing * 0.65; for (let i = 0; i < numBars; i++) { let h = Math.max(8, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillStyle = '#fff'; ctx.shadowBlur = 12; ctx.shadowColor = 'rgba(255, 255, 255, 0.7)'; ctx.fillRect(i * spacing, -h, barW, h); } ctx.shadowBlur = 0; }
+        else if (style === 'white_caps') { let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.7; for (let i = 0; i < numBars; i++) { let h = Math.max(5, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillStyle = 'rgba(200, 200, 200, 0.5)'; ctx.fillRect(i * spacing, -h, barW, h); ctx.fillStyle = '#fff'; ctx.fillRect(i * spacing, -h - 4, barW, 4); } }
+        else if (style === 'liquid_bar') { let numBars = 32; let spacing = visW / numBars; let barW = spacing * 0.6; for (let i = 0; i < numBars; i++) { let h = Math.max(10, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillStyle = '#00e5ff'; ctx.shadowBlur = 15; ctx.shadowColor = '#00e5ff'; ctx.beginPath(); if(ctx.roundRect) ctx.roundRect(i * spacing, cy - h, barW, h, barW/2); else ctx.rect(i * spacing, cy - h, barW, h); ctx.fill(); } ctx.shadowBlur = 0; }
+        else if (style === 'cyber_pulse') { let numBars = 48; let spacing = visW / numBars; let barW = spacing * 0.7; for (let i = 0; i < numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight); grad.addColorStop(0, '#f50057'); grad.addColorStop(1, '#ff4081'); ctx.fillStyle = grad; ctx.shadowBlur = 10; ctx.shadowColor = '#f50057'; ctx.fillRect(i * spacing, cy - h/2 - 2, barW, h/2); ctx.fillRect(i * spacing, cy + 2, barW, h/2); ctx.fillStyle = '#fff'; ctx.fillRect(i * spacing, cy - h/2 - 6, barW, 2); ctx.fillRect(i * spacing, cy + h/2 + 4, barW, 2); } ctx.shadowBlur = 0; }
+        else if (style === 'mirror_bars') { let numBars = 48; let spacing = visW / numBars; for (let i = 0; i < numBars; i++) { let val = Math.max(2, getSymmetricVal(i, numBars, bufferLen) * (config.visHeight/2)); ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.fillRect(i * spacing, cy - val, spacing * 0.6, val); ctx.fillStyle = 'rgba(255, 255, 255, 0.3)'; ctx.fillRect(i * spacing, cy, spacing * 0.6, val * 0.8); } }
+        else if (style === 'gradient_blocks') { let numBars = 40; let spacing = visW / numBars; for (let i = 0; i < numBars; i++) { let val = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight); grad.addColorStop(0, '#00c6ff'); grad.addColorStop(1, '#0072ff'); ctx.fillStyle = grad; ctx.fillRect(i * spacing, cy - val, spacing * 0.8, val); } }
+        else if (style === 'sunset_bars') { let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.75; for (let i = 0; i < numBars; i++) { let h = Math.max(6, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight); grad.addColorStop(0, '#ff3f34'); grad.addColorStop(0.5, '#ff7f50'); grad.addColorStop(1, '#fffa65'); ctx.fillStyle = grad; ctx.fillRect(i * spacing, -h, barW, h); } }
+        else if (style === 'emerald_bars') { let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.75; for (let i = 0; i < numBars; i++) { let h = Math.max(6, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight); grad.addColorStop(0, '#004d40'); grad.addColorStop(1, '#18ffff'); ctx.fillStyle = grad; ctx.fillRect(i * spacing, -h, barW, h); } }
+        else if (style === 'purple_haze') { let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.75; for (let i = 0; i < numBars; i++) { let h = Math.max(6, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight); grad.addColorStop(0, '#4a148c'); grad.addColorStop(1, '#ea80fc'); ctx.fillStyle = grad; ctx.fillRect(i * spacing, -h, barW, h); } }
+        else if (style === 'gold_classic') { let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.75; for (let i = 0; i < numBars; i++) { let h = Math.max(6, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight); grad.addColorStop(0, '#ff8f00'); grad.addColorStop(1, '#ffe082'); ctx.fillStyle = grad; ctx.fillRect(i * spacing, -h, barW, h); } }
+        else if (style === 'monochrome_fade') { let numBars = 44; let spacing = visW / numBars; let barW = spacing * 0.75; for (let i = 0; i < numBars; i++) { let h = Math.max(6, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight); grad.addColorStop(0, 'rgba(255,255,255,0.1)'); grad.addColorStop(1, 'rgba(255,255,255,0.95)'); ctx.fillStyle = grad; ctx.fillRect(i * spacing, -h, barW, h); } }
+        else if (style === 'dual_tone') { let numBars = 36; let spacing = visW / numBars; let barW = spacing * 0.7; for (let i = 0; i < numBars; i++) { let h = Math.max(4, getSymmetricVal(i, numBars, bufferLen) * (config.visHeight / 2)); ctx.fillStyle = '#00e5ff'; ctx.fillRect(i * spacing, -h, barW, h); ctx.fillStyle = '#ff4081'; ctx.fillRect(i * spacing, 0, barW, h); } }
+        else if (style === 'modern_wave') { ctx.beginPath(); ctx.moveTo(0, cy); let numPoints = 100; let spacing = visW / numPoints; for(let i=0; i<=numPoints; i++) { let val = getSymmetricVal(i, numPoints, bufferLen) * config.visHeight; let y = cy - val - (Math.sin(i*0.1 + time*5)*val*0.2); ctx.lineTo(i*spacing, y); } let grad = ctx.createLinearGradient(0, cy, visW, cy); grad.addColorStop(0, '#00d2ff'); grad.addColorStop(1, '#e040fb'); ctx.strokeStyle = grad; ctx.lineWidth = 3; ctx.stroke(); ctx.lineTo(visW, cy); ctx.lineTo(0, cy); ctx.fillStyle = 'rgba(0, 210, 255, 0.15)'; ctx.fill(); }
+        else if (style === 'filled_wave') { ctx.beginPath(); ctx.moveTo(0, cy); let points = 80; let spacing = visW / points; for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * config.visHeight; ctx.lineTo(i*spacing, -h); } ctx.lineTo(visW, cy); ctx.lineTo(0, cy); ctx.closePath(); ctx.fillStyle = 'rgba(255, 255, 255, 0.4)'; ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke(); }
+        else if (style === 'double_wave') { let points = 80; let spacing = visW / points; ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * config.visHeight; ctx.lineTo(i*spacing, -h); } ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)'; ctx.lineWidth = 2.5; ctx.stroke(); ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * (config.visHeight * 0.6); ctx.lineTo(i*spacing, -h); } ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)'; ctx.lineWidth = 2; ctx.stroke(); }
+        else if (style === 'thin_wave') { ctx.beginPath(); ctx.moveTo(0, cy); let points = 100; let spacing = visW / points; for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * config.visHeight; ctx.lineTo(i*spacing, -h); } ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke(); }
+        else if (style === 'shadow_wave') { ctx.beginPath(); ctx.moveTo(0, cy); let points = 80; let spacing = visW / points; for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * config.visHeight; ctx.lineTo(i*spacing, -h); } ctx.strokeStyle = '#fff'; ctx.lineWidth = 2.5; ctx.shadowBlur = 15; ctx.shadowColor = 'rgba(255, 255, 255, 0.8)'; ctx.stroke(); ctx.shadowBlur = 0; }
+        else if (style === 'stereo_lines') { let points = 80; let spacing = visW / points; ctx.beginPath(); ctx.moveTo(0, -10); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * (config.visHeight/2); ctx.lineTo(i*spacing, -10 - h); } ctx.strokeStyle = '#00bcd4'; ctx.lineWidth = 2; ctx.stroke(); ctx.beginPath(); ctx.moveTo(0, 10); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * (config.visHeight/2); ctx.lineTo(i*spacing, 10 + h); } ctx.strokeStyle = '#ff4081'; ctx.lineWidth = 2; ctx.stroke(); }
+        else if (style === 'smooth_curve') { let points = 60; let spacing = visW / points; ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * config.visHeight; let nextH = getSymmetricVal(i+1, points, bufferLen) * config.visHeight; let xc = (i*spacing + (i+1)*spacing)/2; let yc = (-h - nextH)/2; ctx.quadraticCurveTo(i*spacing, -h, xc, yc); } ctx.strokeStyle = '#fff'; ctx.lineWidth = 2.5; ctx.stroke(); }
+        else if (style === 'ribbon_wave') { let points = 80; let spacing = visW / points; for(let layer=0; layer<3; layer++) { ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * (config.visHeight * (1 - layer*0.2)); ctx.lineTo(i*spacing, -h - layer*6); } ctx.strokeStyle = `rgba(255, 255, 255, ${0.9 - layer*0.3})`; ctx.lineWidth = 2; ctx.stroke(); } }
+        else if (style === 'minimal_line') { let points = 100; let spacing = visW / points; ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * (config.visHeight * 0.7); ctx.lineTo(i*spacing, -h); } ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)'; ctx.lineWidth = 2; ctx.stroke(); ctx.fillStyle = 'rgba(255, 255, 255, 0.4)'; ctx.fillRect(0, cy, visW, 1); }
+        else if (style === 'calm_horizon') { let points = 80; let spacing = visW / points; ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * config.visHeight; ctx.lineTo(i*spacing, -h); } let grad = ctx.createLinearGradient(0, cy - config.visHeight, 0, cy); grad.addColorStop(0, '#fffa65'); grad.addColorStop(1, '#ff7f50'); ctx.strokeStyle = grad; ctx.lineWidth = 3; ctx.stroke(); ctx.fillStyle = 'rgba(255, 127, 80, 0.1)'; ctx.lineTo(visW, cy); ctx.lineTo(0, cy); ctx.fill(); }
+        else if (style === 'circle_bars') { let cx_c = visW / 2; let cy_c = -config.visHeight * 0.6; let radius = config.visHeight * 0.4; let bars = 60; for(let i=0; i<bars; i++) { let val = getSymmetricVal(i, bars, bufferLen) * (config.visHeight * 0.6); let angle = (i * Math.PI * 2) / bars; ctx.save(); ctx.translate(cx_c, cy_c); ctx.rotate(angle); ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.fillRect(-2, radius, 4, Math.max(2, val)); ctx.restore(); } }
+        else if (style === 'circle_ring') { let cx_c = visW / 2; let cy_c = -config.visHeight * 0.6; let radius = config.visHeight * 0.45; let points = 80; ctx.save(); ctx.translate(cx_c, cy_c); ctx.beginPath(); for(let i=0; i<=points; i++) { let val = getSymmetricVal(i, points, bufferLen) * (config.visHeight * 0.4); let angle = (i * Math.PI * 2) / points; let r = radius + val; let x = Math.cos(angle) * r; let y = Math.sin(angle) * r; if(i===0) ctx.moveTo(x, y); else ctx.lineTo(x, y); } ctx.closePath(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 2.5; ctx.stroke(); ctx.restore(); }
+        else if (style === 'circle_dashed') { let cx_c = visW / 2; let cy_c = -config.visHeight * 0.6; let radius = config.visHeight * 0.4; let bars = 48; let dashH = 4; let gapH = 3; for(let i=0; i<bars; i++) { let h = getSymmetricVal(i, bars, bufferLen) * (config.visHeight * 0.6); let angle = (i * Math.PI * 2) / bars; let dashes = Math.floor(h / (dashH + gapH)); ctx.save(); ctx.translate(cx_c, cy_c); ctx.rotate(angle); ctx.fillStyle = 'rgba(255, 255, 255, 0.85)'; for(let j=0; j<dashes; j++) { ctx.fillRect(-1.5, radius + (j * (dashH + gapH)), 3, dashH); } ctx.restore(); } }
+        else if (style === 'circle_mirror') { let cx_c = visW / 2; let cy_c = -config.visHeight * 0.6; let radius = config.visHeight * 0.45; let bars = 60; for(let i=0; i<bars; i++) { let val = Math.max(2, getSymmetricVal(i, bars, bufferLen) * (config.visHeight * 0.4)); let angle = (i * Math.PI * 2) / bars; ctx.save(); ctx.translate(cx_c, cy_c); ctx.rotate(angle); ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.fillRect(-1.5, radius, 3, val); ctx.fillStyle = 'rgba(255, 255, 255, 0.4)'; ctx.fillRect(-1.5, radius - val*0.7, 3, val*0.7); ctx.restore(); } }
+        else if (style === 'vinyl_record') { let cx_c = visW / 2; let cy_c = -config.visHeight * 0.6; let bass = getSymmetricVal(10, 20, bufferLen); ctx.save(); ctx.translate(cx_c, cy_c); ctx.rotate(time); ctx.beginPath(); ctx.arc(0,0, config.visHeight*0.5 + bass*15, 0, Math.PI*2); ctx.fillStyle = '#181818'; ctx.fill(); ctx.lineWidth = 1.5; for(let i=0; i<5; i++) { let val = getSymmetricVal(i*4, 20, bufferLen); ctx.beginPath(); ctx.arc(0,0, config.visHeight*0.12 + i*14, 0, Math.PI*2); ctx.strokeStyle = `rgba(255,255,255,${0.1 + val*0.4})`; ctx.stroke(); } ctx.beginPath(); ctx.arc(0,0, 22, 0, Math.PI*2); ctx.fillStyle = '#d32f2f'; ctx.fill(); ctx.beginPath(); ctx.arc(0,0, 4, 0, Math.PI*2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.restore(); }
+        else if (style === 'block_tower') { let numBars = 30; let spacing = visW/numBars; let barW = spacing*0.6; for(let i=0; i<numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let x = i*spacing; ctx.fillStyle = '#00bcd4'; ctx.fillRect(x, cy-h, barW, h); ctx.fillStyle = '#0097a7'; ctx.beginPath(); ctx.moveTo(x+barW, cy); ctx.lineTo(x+barW+5, cy-5); ctx.lineTo(x+barW+5, cy-h-5); ctx.lineTo(x+barW, cy-h); ctx.fill(); ctx.fillStyle = '#b2ebf2'; ctx.beginPath(); ctx.moveTo(x, cy-h); ctx.lineTo(x+5, cy-h-5); ctx.lineTo(x+barW+5, cy-h-5); ctx.lineTo(x+barW, cy-h); ctx.fill(); } }
+        else if (style === 'equalizer_3d') { let numBars = 32; let spacing = visW/numBars; let barW = spacing*0.7; for(let i=0; i<numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let grad = ctx.createLinearGradient(i*spacing, 0, i*spacing+barW, 0); grad.addColorStop(0, '#555'); grad.addColorStop(0.5, '#fff'); grad.addColorStop(1, '#555'); ctx.fillStyle = grad; ctx.fillRect(i*spacing, cy-h, barW, h); ctx.fillStyle = '#ddd'; ctx.beginPath(); ctx.ellipse(i*spacing+barW/2, cy-h, barW/2, 4, 0, 0, Math.PI*2); ctx.fill(); ctx.fillStyle = '#333'; ctx.beginPath(); ctx.ellipse(i*spacing+barW/2, cy, barW/2, 4, 0, 0, Math.PI*2); ctx.fill(); } }
+        else if (style === 'floating_blocks') { let numBars = 32; let spacing = visW / numBars; let barW = spacing * 0.7; for (let i = 0; i < numBars; i++) { let val = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.fillRect(i * spacing, cy - val, barW, 8); if(val > 10) { ctx.fillStyle = 'rgba(255, 255, 255, 0.35)'; ctx.fillRect(i * spacing, cy - val + 12, barW, val - 12); } } }
+        else if (style === 'center_pulse') { let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.7; let center = visW / 2; for (let i = 0; i < numBars; i++) { let h = Math.max(4, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let x = i * spacing; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.fillRect(x, cy - h/2 - config.visHeight/2, barW, h); } }
+        else if (style === 'classic_studio') { let numBars = 36; let spacing = visW / numBars; let barW = spacing * 0.75; let segH = 6; for (let i = 0; i < numBars; i++) { let h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let segs = Math.floor(h / (segH + 2)); for (let j = 0; j < segs; j++) { ctx.fillStyle = j > 12 ? '#f44336' : (j > 8 ? '#ffeb3b' : '#00e676'); ctx.fillRect(i * spacing, -(j * (segH + 2)) - segH, barW, segH); } } }
+      } catch (e) {}
+      ctx.restore();
+    }
+
+    function animate() {
+      ctx.fillStyle = "#000"; ctx.fillRect(0, 0, width, height); time += 0.05; 
+      ctx.save();
+      if (isBgReady) { bgGlobalScale = Math.max(width / bgImageElement.width, height / bgImageElement.height); bgGlobalX = (width / 2) - (bgImageElement.width / 2) * bgGlobalScale; bgGlobalY = (height / 2) - (bgImageElement.height / 2) * bgGlobalScale; ctx.drawImage(bgImageElement, bgGlobalX, bgGlobalY, bgImageElement.width * bgGlobalScale, bgImageElement.height * bgGlobalScale); }
+      if (isAudioInit && currentObjectUrl) { if (!audioPlayer.paused) analyser.getByteFrequencyData(dataArray); else for (let i = 0; i < dataArray.length; i++) dataArray[i] = Math.max(0, dataArray[i] - 10); drawVisualizer(analyser.frequencyBinCount); }
+      drawSpeakers(isAudioInit ? analyser.frequencyBinCount : 128);
+      let propScale = parseFloat(document.getElementById('propSize').value); let propSpeed = parseFloat(document.getElementById('propSpeed').value);
+      drawCoffeeSteam(coffeeX, coffeeY, document.getElementById('coffeeStyle').value, propScale, propSpeed);
+      drawCandle(candle1X, candle1Y, document.getElementById('candleStyle').value, propScale, propSpeed);
+      drawCandle(candle2X, candle2Y, document.getElementById('candleStyle').value, propScale, propSpeed);
+      for (let i = 0; i < config.count; i++) { if (cinematicParticles[i]) { cinematicParticles[i].update(); cinematicParticles[i].draw(); } }
+      if (config.type !== 'none') { const grad = ctx.createRadialGradient(width/2, height/2, height*0.4, width/2, height/2, width*0.8); grad.addColorStop(0, 'rgba(0,0,0,0)'); grad.addColorStop(1, 'rgba(0,0,0,0.4)'); ctx.fillStyle = grad; ctx.fillRect(-10, -10, width+20, height+20); }
+      ctx.restore(); requestAnimationFrame(animate);
+    }
+    animate();
+
+    let mediaRecorder, chunks = []; let recordStartTime = 0;
+    
+    async function toggleKeepAwake(enable) {
+        if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.KeepAwake) {
+            try { 
+                if(enable) await window.Capacitor.Plugins.KeepAwake.keepAwake(); 
+                else await window.Capacitor.Plugins.KeepAwake.allowSleep(); 
+            } catch(e) { console.warn('KeepAwake Err:', e); }
         }
     }
 
-    let cinematicParticles = [];
-    for(let i=0; i<400; i++) cinematicParticles.push(new CinematicParticle());
-
-    function animate() {
-      try { ctx.fillStyle="#000"; ctx.fillRect(0,0,width,height); time+=0.05; } catch(e){}
-
-      if(isBgReady && bgImg.naturalWidth > 0 && bgImg.naturalHeight > 0){
-        try {
-          bgGlobalScale=Math.max(width/bgImg.naturalWidth,height/bgImg.naturalHeight);
-          bgGlobalX=Math.floor((width/2)-(bgImg.naturalWidth/2)*bgGlobalScale);
-          bgGlobalY=Math.floor((height/2)-(bgImg.naturalHeight/2)*bgGlobalScale);
-          ctx.drawImage(bgImg, bgGlobalX, bgGlobalY, Math.floor(bgImg.naturalWidth*bgGlobalScale), Math.floor(bgImg.naturalHeight*bgGlobalScale));
-        } catch(e) { }
-      }
-
-      if(isAudioInit&&!audioPlayer.paused) analyser.getByteFrequencyData(dataArray);
-      try { drawVis(isAudioInit?analyser.frequencyBinCount:128); } catch(e){}
-      try { drawBass(spk1X,spk1Y); drawBass(spk2X,spk2Y); } catch(e){}
-      
-      let pSz = parseFloat(document.getElementById('propSize').value) || 1.0;
-      let pSpd = parseFloat(document.getElementById('propSpeed').value) || 1.0;
-      
-      try { let cs = document.getElementById('coffeeStyle').value; drawCoffeeSteam(cof1X, cof1Y, cs, pSz, pSpd); } catch(e){}
-      try {
-        let ls = document.getElementById('candleStyle').value;
-        drawCandle(can1X, can1Y, ls, pSz, pSpd);
-        drawCandle(can2X, can2Y, ls, pSz, pSpd);
-      } catch(e){}
-
-      try {
-        let fxCount = parseInt(document.getElementById('count').value) || 0;
-        for(let i=0; i<fxCount; i++) { 
-           if(cinematicParticles[i]) { cinematicParticles[i].update(); cinematicParticles[i].draw(); }
-        }
-      } catch(e){}
-
-      requestAnimationFrame(animate);
-    } 
-    animate();
-
-    // ==========================================
-    // SISTEM RECORDING
-    // ==========================================
-    let mediaRecorder, chunks = []; let recordStartTime = 0;
-    let isCountingDown = false; let countdownTimer = null;
-
     function startCountdownAndRecord() {
-      if (!isAudioInit || !currentUrl) { alert("Pilih dan siapkan musik dulu!"); return; }
-      if (isCountingDown) { 
-        clearInterval(countdownTimer); isCountingDown = false; 
-        document.getElementById('countdownOverlay').style.display = 'none'; 
-        document.getElementById('recordBtn').innerText = "🔴 MULAI REKAM 720p"; return; 
-      }
-      
-      isCountingDown = true; let counter = 3; 
-      const cdOverlay = document.getElementById('countdownOverlay');
-      cdOverlay.innerText = counter; cdOverlay.style.display = 'block'; 
-      document.getElementById('recordBtn').innerText = "❌ BATALKAN REKAM (" + counter + ")";
-      
-      countdownTimer = setInterval(() => { 
-        counter--; 
-        if (counter > 0) { 
-            cdOverlay.innerText = counter; 
-            document.getElementById('recordBtn').innerText = "❌ BATALKAN REKAM (" + counter + ")"; 
-        } else { 
-            clearInterval(countdownTimer); isCountingDown = false; 
-            cdOverlay.style.display = 'none'; 
-            executeRecording(); 
-        } 
-      }, 1000);
+      if (!isAudioInit || !currentObjectUrl) { alert("Pilih dan siapkan musik dulu!"); return; }
+      if (isCountingDown) { clearInterval(countdownTimer); isCountingDown = false; countdownOverlay.style.display = 'none'; recordBtn.innerText = "🔴 MULAI REKAM 720p"; return; }
+      isCountingDown = true; let counter = 3; countdownOverlay.innerText = counter; countdownOverlay.style.display = 'block'; recordBtn.innerText = "❌ BATALKAN REKAM (" + counter + ")";
+      countdownTimer = setInterval(() => { counter--; if (counter > 0) { countdownOverlay.innerText = counter; recordBtn.innerText = "❌ BATALKAN REKAM (" + counter + ")"; } else { clearInterval(countdownTimer); isCountingDown = false; countdownOverlay.style.display = 'none'; executeRecording(); } }, 1000);
     }
 
     function executeRecording() {
       if (!audioCtx) initAudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume();
-      if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.KeepAwake) { window.Capacitor.Plugins.KeepAwake.keepAwake(); }
+      toggleKeepAwake(true);
+      audioPlayer.play(); playBtn.innerText = "⏸ PAUSE"; stopOverlay.style.display = 'block'; statusBox.innerText = "🔴 Merekam Video 720p..."; recordBtn.innerText = "🔴 SEDANG MEREKAM";
+      const stream = canvas.captureStream(30); const combined = new MediaStream([...stream.getVideoTracks(), mediaStreamDestination.stream.getAudioTracks()[0]]);
       
-      audioPlayer.play(); document.getElementById('playBtn').innerText = "⏸ PAUSE"; 
-      document.getElementById('stopOverlay').style.display = 'block'; 
-      document.getElementById('statusBox').innerText = "🔴 Merekam Video 720p..."; 
-      document.getElementById('recordBtn').innerText = "🔴 SEDANG MEREKAM";
+      // MESIN H.264 SAKTI: Nipu WebView biar hasilnya bisa di-copy-paste jadi MP4 di Termux
+      let options = { mimeType: 'video/webm;codecs=h264,opus' }; 
+      if (!MediaRecorder.isTypeSupported(options.mimeType)) { 
+          options = { mimeType: 'video/webm;codecs=h264' }; 
+          if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+              options = { mimeType: 'video/webm' }; 
+          }
+      }
       
-      const stream = canvas.captureStream(30); 
-      const combined = new MediaStream([...stream.getVideoTracks(), window.mediaDest.stream.getAudioTracks()[0]]);
-      let options = { mimeType: 'video/webm;codecs=vp8,opus' }; 
-      if (!MediaRecorder.isTypeSupported(options.mimeType)) { options = { mimeType: 'video/webm' }; }
       try { mediaRecorder = new MediaRecorder(combined, options); } catch (e) { mediaRecorder = new MediaRecorder(combined); }
-      
-      mediaRecorder.ondataavailable = e => { if (e.data && e.data.size > 0) chunks.push(e.data); }; 
-      mediaRecorder.onstop = saveVideoWebM; chunks = []; recordStartTime = Date.now(); mediaRecorder.start();
+      mediaRecorder.ondataavailable = e => { if (e.data && e.data.size > 0) chunks.push(e.data); }; mediaRecorder.onstop = saveVideoWebM; chunks = []; recordStartTime = Date.now(); mediaRecorder.start();
     }
 
     function stopRecording() {
       if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
-      if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.KeepAwake) window.Capacitor.Plugins.KeepAwake.allowSleep();
-      audioPlayer.pause(); document.getElementById('playBtn').innerText = "▶ PLAY"; 
-      document.getElementById('stopOverlay').style.display = 'none'; 
-      document.getElementById('recordBtn').innerText = "🔴 MULAI REKAM 720p"; 
-      document.getElementById('statusBox').innerText = "Menyiapkan file video...";
+      toggleKeepAwake(false);
+      audioPlayer.pause(); playBtn.innerText = "▶ PLAY MUSIK"; stopOverlay.style.display = 'none'; recordBtn.innerText = "🔴 MULAI REKAM 720p"; statusBox.innerText = "Menyiapkan file video..."; if (playTimeout) clearTimeout(playTimeout);
     }
 
     function saveVideoWebM() {
-      const blob = new Blob(chunks, { type: 'video/webm' }); const recordDuration = Date.now() - recordStartTime; 
-      document.getElementById('statusBox').innerText = "⏳ Menjahit durasi (Biar bisa di-skip)...";
-      if (typeof ysFixWebmDuration === 'function') { 
-        try { ysFixWebmDuration(blob, recordDuration, function(fixedBlob) { triggerDownload(fixedBlob); }, {logger: false}); } 
-        catch (error) { triggerDownload(blob); } 
-      } else { triggerDownload(blob); }
+      const blob = new Blob(chunks, { type: 'video/webm' }); const recordDuration = Date.now() - recordStartTime; statusBox.innerText = "⏳ Menjahit durasi (Biar bisa di-skip)...";
+      if (typeof ysFixWebmDuration === 'function') { try { ysFixWebmDuration(blob, recordDuration, function(fixedBlob) { triggerDownload(fixedBlob); }, {logger: false}); } catch (error) { triggerDownload(blob); } } else { triggerDownload(blob); }
     }
 
     function triggerDownload(finalBlob) {
-      document.getElementById('statusBox').innerText = "⏳ Memproses file video..."; 
-      const url = URL.createObjectURL(finalBlob);
+      statusBox.innerText = "⏳ Memproses pemotongan file video..."; const url = URL.createObjectURL(finalBlob);
       
-      // ANTI NUMPUK: Otomatis hapus Preview Video / Tombol Save yang lama jika ada
-      const oldVid = document.getElementById('previewVid'); if(oldVid) oldVid.remove(); 
       const oldBtn = document.getElementById('shareBtnDewa'); if(oldBtn) oldBtn.remove();
       const oldLinkBtn = document.getElementById('manualLinkBtn'); if(oldLinkBtn) oldLinkBtn.remove();
       
-      const vid = document.createElement('video'); vid.id = 'previewVid'; vid.src = url; vid.controls = true; vid.style.width = "100%"; vid.style.marginTop = "20px"; vid.style.border = "3px solid #00d2ff"; vid.style.borderRadius = "8px";
-      const saveBtn = document.createElement('button'); saveBtn.id = 'shareBtnDewa'; saveBtn.innerText = "📥 SIMPAN KE DOKUMEN (CAPACITOR)"; saveBtn.style.width = "100%"; saveBtn.style.padding = "15px"; saveBtn.style.marginTop = "10px"; saveBtn.style.background = "linear-gradient(135deg, #00ffaa, #00bcd4)"; saveBtn.style.color = "black"; saveBtn.style.border = "none"; saveBtn.style.borderRadius = "8px"; saveBtn.style.fontWeight = "bold"; saveBtn.style.cursor = "pointer";
-      const fallbackBtn = document.createElement('a'); fallbackBtn.id = 'manualLinkBtn'; fallbackBtn.innerText = "⬇️ DOWNLOAD MANUAL"; fallbackBtn.href = url; fallbackBtn.download = `test_part1_${Date.now()}.webm`; fallbackBtn.style.display="block"; fallbackBtn.style.textAlign="center"; fallbackBtn.style.padding="15px"; fallbackBtn.style.marginTop="10px"; fallbackBtn.style.background="#333"; fallbackBtn.style.color="#fff"; fallbackBtn.style.borderRadius="8px"; fallbackBtn.style.textDecoration="none";
+      const saveBtn = document.createElement('button'); saveBtn.id = 'shareBtnDewa'; saveBtn.innerText = "📥 SIMPAN KE DOKUMEN (CAPACITOR)"; saveBtn.style.width = "100%"; saveBtn.style.padding = "15px"; saveBtn.style.marginTop = "10px"; saveBtn.style.background = "linear-gradient(135deg, #00ffaa, #00bcd4)"; saveBtn.style.color = "black"; saveBtn.style.border = "none"; saveBtn.style.borderRadius = "8px"; saveBtn.style.fontWeight = "bold"; saveBtn.style.fontSize = "14px"; saveBtn.style.cursor = "pointer";
+      
+      const fallbackBtn = document.createElement('a'); fallbackBtn.id = 'manualLinkBtn'; fallbackBtn.innerText = "⬇️ DOWNLOAD MANUAL (JIKA GAGAL)"; fallbackBtn.href = url; fallbackBtn.download = `test_mp4_720p_${Date.now()}.webm`;
 
       let isSaving = false;
       saveBtn.onclick = async () => {
-        if (isSaving) return; isSaving = true; saveBtn.innerText = "⏳ MENYIMPAN...";
-        const downloadBrowser = () => { document.getElementById('statusBox').innerText = "⏳ Mengunduh..."; fallbackBtn.click(); saveBtn.innerText = "✅ SELESAI"; document.getElementById('statusBox').innerText = `🎉 SUKSES!`; };
+        if (isSaving) return; isSaving = true; saveBtn.innerText = "⏳ MEMINTA IZIN & MENYIMPAN...";
+        
+        const downloadBrowser = () => {
+            statusBox.innerText = "⏳ Mengunduh lewat Download Manager HP...";
+            fallbackBtn.click();
+            saveBtn.innerText = "✅ MENGGUNAKAN DOWNLOAD BAWAAN"; statusBox.innerText = `🎉 SUKSES! Periksa folder Download atau Galeri Anda.`;
+        };
+
         try {
           if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem) {
             const FS = window.Capacitor.Plugins.Filesystem; 
-            try { let perm = await FS.checkPermissions(); if (perm.publicStorage !== 'granted' && perm.publicStorage !== 'authorized') await FS.requestPermissions(); } catch(e) {} 
-            const fileName = `test_part1_${Date.now()}.webm`; 
+            
+            try { 
+                let perm = await FS.checkPermissions();
+                if (perm.publicStorage !== 'granted' && perm.publicStorage !== 'authorized') await FS.requestPermissions(); 
+            } catch(e) { console.warn("Capacitor Perm Check Err:", e); } 
+            
+            const fileName = `test_mp4_720p_${Date.now()}.webm`; 
+            
             try {
                 await FS.writeFile({ path: fileName, data: "", directory: 'DOCUMENTS' });
                 const chunkSize = 1572864; const totalChunks = Math.ceil(finalBlob.size / chunkSize);
@@ -661,18 +445,25 @@
                   const start = i * chunkSize; const end = Math.min(start + chunkSize, finalBlob.size); const chunk = finalBlob.slice(start, end);
                   const base64Chunk = await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result.split(',')[1]); reader.onerror = reject; reader.readAsDataURL(chunk); });
                   await FS.appendFile({ path: fileName, data: base64Chunk, directory: 'DOCUMENTS' });
-                  saveBtn.innerText = `⏳ MENYIMPAN... ${Math.round(((i + 1) / totalChunks) * 100)}%`;
+                  const percent = Math.round(((i + 1) / totalChunks) * 100); statusBox.innerText = `⏳ Menulis ke memori HP... ${percent}%`; saveBtn.innerText = `⏳ MENYIMPAN... ${percent}%`;
                 }
-                saveBtn.innerText = "✅ TERSIMPAN DI FOLDER DOKUMEN!"; document.getElementById('statusBox').innerText = `🎉 SUKSES! Video Tersimpan.`;
-            } catch(fsError) { downloadBrowser(); }
-          } else { downloadBrowser(); }
-        } catch(e) { downloadBrowser(); }
+                saveBtn.innerText = "✅ TERSIMPAN DI FOLDER DOKUMEN!"; statusBox.innerText = `🎉 SUKSES! File H.264 WebM siap di-convert secepat kilat.`;
+            } catch(fsError) {
+                console.warn("Capacitor FS Error:", fsError);
+                downloadBrowser();
+            }
+          } else {
+            downloadBrowser();
+          }
+        } catch(e) { 
+            console.warn("Fatal Error:", e);
+            try { downloadBrowser(); } catch(err2) {
+                saveBtn.innerText = "❌ GAGAL MENYIMPAN"; statusBox.innerText = "Terjadi Error: " + e.message; isSaving = false; 
+            }
+        }
       };
       
-      const controlsDiv = document.getElementById('controls'); controlsDiv.appendChild(vid); controlsDiv.appendChild(saveBtn); controlsDiv.appendChild(fallbackBtn); saveBtn.scrollIntoView({ behavior: 'smooth' }); 
-      
-      // OTOMATIS PENCET TOMBOL SAVE SETELAH SELESAI
-      setTimeout(() => { if(!isSaving && window.Capacitor) saveBtn.click(); }, 1500);
+      const controlsDiv = document.getElementById('controls'); controlsDiv.appendChild(saveBtn); controlsDiv.appendChild(fallbackBtn); saveBtn.scrollIntoView({ behavior: 'smooth' }); setTimeout(() => { if(!isSaving && window.Capacitor) saveBtn.click(); }, 1500);
     }
   </script>
 </body>

@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Bass Jazz</string>
-    <string name="title_activity_main">Bass Jazz</string>
-    <string name="package_name">com.kelangon.bassjazz</string>
-    <string name="custom_url_scheme">com.kelangon.bassjazz</string>
+    <string name="app_name">test mp4</string>
+    <string name="title_activity_main">test mp4</string>
+    <string name="package_name">com.lova.testmp4</string>
+    <string name="custom_url_scheme">com.lova.testmp4</string>
 </resources>
