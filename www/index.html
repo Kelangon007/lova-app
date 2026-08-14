@@ -46,7 +46,7 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. test mp4 (H.264 Inject, Auto-Awake).</div>
+    <div id="statusBox">Siap. test mp4 (Fix ProgressBar & Timer).</div>
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
       <label for="audioInput" class="file-label" style="border-bottom: 3px solid #00bcd4">2. MUSIK (BANYAK)</label>
@@ -59,7 +59,7 @@
 
     <div class="progress-container">
       <span id="currTime" class="time-text">00:00</span>
-      <input type="range" id="progressBar" value="0" min="0" step="0.1">
+      <input type="range" id="progressBar" value="0" min="0" max="100" step="0.1">
       <span id="durTime" class="time-text">00:00</span>
     </div>
 
@@ -125,12 +125,24 @@
   <audio id="audioPlayer" crossorigin="anonymous"></audio>
 
   <script>
-    const statusBox = document.getElementById('statusBox'); const canvas = document.getElementById('canvas'); const ctx = canvas.getContext('2d'); const audioPlayer = document.getElementById('audioPlayer'); const playBtn = document.getElementById('playBtn'); const nextBtn = document.getElementById('nextBtn'); const stopOverlay = document.getElementById('stopOverlay'); const countdownOverlay = document.getElementById('countdownOverlay'); const recordBtn = document.getElementById('recordBtn'); const progressBar = document.getElementById('progressBar'); const currTimeEl = document.getElementById('currTime'); const durTimeEl = document.getElementById('durTime');
+    const statusBox = document.getElementById('statusBox'); const canvas = document.getElementById('canvas'); const ctx = canvas.getContext('2d'); const audioPlayer = document.getElementById('audioPlayer'); const playBtn = document.getElementById('playBtn'); const nextBtn = document.getElementById('nextBtn'); const stopOverlay = document.getElementById('stopOverlay'); const countdownOverlay = document.getElementById('countdownOverlay'); const recordBtn = document.getElementById('recordBtn'); 
+    
+    // VARIABEL PLAYER YANG DIBENERIN:
+    const progressBar = document.getElementById('progressBar'); 
+    const currTimeEl = document.getElementById('currTime'); 
+    const durTimeEl = document.getElementById('durTime');
+    
     let isDraggingProgress = false; const width = 1280; const height = 720;
     let audioFiles = []; let currentObjectUrl = null; let currentSongName = ""; let playTimeout = null; let isTrackLoaded = false; let shuffledPlaylist = []; let currentPlayIndex = 0; let isCountingDown = false; let countdownTimer = null;
     let bgGlobalScale = 1; let bgGlobalX = 0; let bgGlobalY = 0; let globalSmoothedBass = 0;
 
     function shuffle(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array; }
+
+    function formatTime(seconds) {
+      if (isNaN(seconds) || !isFinite(seconds)) return "00:00";
+      const m = Math.floor(seconds / 60); const s = Math.floor(seconds % 60);
+      return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+    }
 
     document.getElementById('audioInput').addEventListener('change', function(e) {
       if (this.files.length > 0) {
@@ -167,6 +179,47 @@
       statusBox.innerText = `✅ Semua lagu selesai.`; playBtn.innerText = "▶ PLAY ACAK"; progressBar.value = 0; currTimeEl.innerText = "00:00"; durTimeEl.innerText = "00:00";
       if (mediaRecorder && mediaRecorder.state === 'recording') { statusBox.innerText = `✅ Menyimpan rekaman otomatis...`; setTimeout(() => { stopRecording(); }, 500); }
     }
+
+    // ==========================================
+    // FUNGSI PROGRESS BAR & TIMER YANG DIBENERIN
+    // ==========================================
+    audioPlayer.addEventListener('loadedmetadata', () => { 
+        if (isFinite(audioPlayer.duration)) { 
+            durTimeEl.innerText = formatTime(audioPlayer.duration); 
+            progressBar.max = 100; 
+        } 
+    });
+    
+    audioPlayer.addEventListener('timeupdate', () => { 
+        if (isFinite(audioPlayer.duration)) {
+            durTimeEl.innerText = formatTime(audioPlayer.duration);
+        }
+        if (!isDraggingProgress && isFinite(audioPlayer.currentTime) && isFinite(audioPlayer.duration)) { 
+            const percent = (audioPlayer.currentTime / audioPlayer.duration) * 100; 
+            progressBar.value = isNaN(percent) ? 0 : percent; 
+            currTimeEl.innerText = formatTime(audioPlayer.currentTime); 
+        } 
+    });
+    
+    progressBar.addEventListener('input', () => { 
+        isDraggingProgress = true; 
+        if (isFinite(audioPlayer.duration)) { 
+            const seekTime = (progressBar.value / 100) * audioPlayer.duration; 
+            currTimeEl.innerText = formatTime(seekTime); 
+        } 
+    });
+    
+    progressBar.addEventListener('change', () => { 
+        if (isFinite(audioPlayer.duration)) { 
+            audioPlayer.currentTime = (progressBar.value / 100) * audioPlayer.duration; 
+        }
+        isDraggingProgress = false; 
+    });
+    
+    progressBar.addEventListener('pointerup', () => { isDraggingProgress = false; });
+    progressBar.addEventListener('touchend', () => { isDraggingProgress = false; });
+    progressBar.addEventListener('mouseup', () => { isDraggingProgress = false; });
+
 
     let visW = 400; let visX = (width - visW) / 2; let visY = height - 160; let spk1X = 250; let spk1Y = height - 300; let spk2X = width - 250; let spk2Y = height - 300; let coffeeX = 350; let coffeeY = height - 150; let candle1X = 150; let candle1Y = height - 200; let candle2X = width - 150; let candle2Y = height - 200;
     let isDraggingSpk1 = false; let isDraggingSpk2 = false; let isDraggingVis = false; let isDraggingCoffee = false; let isDraggingCandle1 = false; let isDraggingCandle2 = false; let dragOffsetX = 0; let dragOffsetY = 0;
@@ -206,11 +259,6 @@
         const file = this.files[0]; if (file.type.startsWith('image/')) { const fileURL = URL.createObjectURL(file); bgImageElement.src = fileURL; bgImageElement.onload = () => { isBgReady = true; statusBox.innerText = "✅ Foto Latar Oke."; }; } else { alert("Harap unggah file Gambar."); }
       }
     });
-
-    audioPlayer.addEventListener('loadedmetadata', () => { if (isFinite(audioPlayer.duration)) { durTimeEl.innerText = formatTime(audioPlayer.duration); progressBar.max = 100; } });
-    audioPlayer.addEventListener('timeupdate', () => { if (isFinite(audioPlayer.duration) && durTimeEl.innerText === "00:00") durTimeEl.innerText = formatTime(audioPlayer.duration); if (!isDraggingProgress) { const percent = (audioPlayer.currentTime / audioPlayer.duration) * 100; progressBar.value = isNaN(percent) ? 0 : percent; currTimeEl.innerText = formatTime(audioPlayer.currentTime); } });
-    progressBar.addEventListener('input', () => { isDraggingProgress = true; if (audioPlayer.duration) { const seekTime = (progressBar.value / 100) * audioPlayer.duration; currTimeEl.innerText = formatTime(seekTime); audioPlayer.currentTime = seekTime; } });
-    const releaseSeek = () => { isDraggingProgress = false; }; progressBar.addEventListener('change', releaseSeek); progressBar.addEventListener('touchend', releaseSeek); progressBar.addEventListener('mouseup', releaseSeek);
 
     function togglePlay() {
       if (!isTrackLoaded) { alert("Pilih Musik Dulu!"); return; }
@@ -383,7 +431,6 @@
       audioPlayer.play(); playBtn.innerText = "⏸ PAUSE"; stopOverlay.style.display = 'block'; statusBox.innerText = "🔴 Merekam Video 720p..."; recordBtn.innerText = "🔴 SEDANG MEREKAM";
       const stream = canvas.captureStream(30); const combined = new MediaStream([...stream.getVideoTracks(), mediaStreamDestination.stream.getAudioTracks()[0]]);
       
-      // MESIN H.264 SAKTI: Nipu WebView biar hasilnya bisa di-copy-paste jadi MP4 di Termux
       let options = { mimeType: 'video/webm;codecs=h264,opus' }; 
       if (!MediaRecorder.isTypeSupported(options.mimeType)) { 
           options = { mimeType: 'video/webm;codecs=h264' }; 
