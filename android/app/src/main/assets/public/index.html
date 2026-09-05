@@ -1,44 +1,42 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>test mp4 (H.264 Engine)</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Noir v.1 (720p - Cinematic Visualizers)</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
-    body { margin: 0; background-image: linear-gradient(45deg, #222 25%, transparent 25%), linear-gradient(-45deg, #222 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #222 75%), linear-gradient(-45deg, transparent 75%, #222 75%); background-size: 20px 20px; background-color: #333; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; }
+    body { margin: 0; background-image: linear-gradient(45deg, #333 25%, transparent 25%), linear-gradient(-45deg, #333 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #333 75%), linear-gradient(-45deg, transparent 75%, #333 75%); background-size: 20px 20px; background-color: #444; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; }
     #canvas-wrapper { position: relative; width: 100%; max-width: 800px; aspect-ratio: 16/9; margin-top: 20px; border: 1px solid rgba(255, 255, 255, 0.3); background: transparent; box-shadow: 0 15px 50px rgba(0, 0, 0, 0.8); cursor: grab; overflow: hidden; }
     #canvas-wrapper:active { cursor: grabbing; }
     canvas { width: 100%; height: 100%; display: block; }
-    #controls { width: 90%; max-width: 600px; background: #1a1a1a; padding: 20px; border-radius: 12px; margin-top: 20px; border: 1px solid #333; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); }
+    #controls { width: 90%; max-width: 600px; background: #222; padding: 20px; border-radius: 12px; margin-top: 20px; border: 1px solid #444; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); }
     .btn-group, .play-group { display: flex; gap: 8px; }
-    .file-label { flex: 1; background: #2b2b2b; color: #ccc; padding: 12px 5px; text-align: center; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; border: 1px solid #444; transition: 0.2s; white-space: nowrap; }
-    .file-label:hover { background: #3b3b3b; color: white; }
-    #playBtn { flex: 2; padding: 15px; background: #333; color: #888; border: 1px solid #222; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-    #playBtn.ready { background: linear-gradient(135deg, #d4af37, #f39c12); color: #111; border: none; }
-    #nextBtn { flex: 1; padding: 15px; background: #444; color: #aaa; border: 1px solid #333; border-radius: 8px; font-weight: bold; cursor: not-allowed; transition: 0.3s; }
-    #nextBtn.ready { background: #2a2a2a; color: white; border: 1px solid #555; cursor: pointer; }
-    .progress-container { display: flex; align-items: center; gap: 10px; background: #222; padding: 8px; border-radius: 6px; border: 1px solid #333; }
-    .time-text { font-size: 11px; font-family: monospace; color: #d4af37; min-width: 40px; text-align: center; }
-    #progressBar { flex: 1; height: 5px; -webkit-appearance: none; background: #444; border-radius: 5px; cursor: pointer; }
-    #progressBar::-webkit-slider-thumb { -webkit-appearance: none; width: 15px; height: 15px; background: #f39c12; border-radius: 50%; cursor: pointer; }
+    .file-label { flex: 1; background: #333; color: #ccc; padding: 12px 5px; text-align: center; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; border: 1px solid #555; transition: 0.2s; white-space: nowrap; }
+    .file-label:hover { background: #444; color: white; }
+    #playBtn { flex: 2; padding: 15px; background: #444; color: #888; border: 2px solid #333; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+    #playBtn.ready { background: linear-gradient(135deg, #00d2ff, #e040fb); color: white; border: none; }
+    #nextBtn { flex: 1; padding: 15px; background: #555; color: #aaa; border: 2px solid #444; border-radius: 8px; font-weight: bold; cursor: not-allowed; transition: 0.3s; }
+    #nextBtn.ready { background: #333; color: white; border: 2px solid #555; cursor: pointer; }
+    .progress-container { display: flex; align-items: center; gap: 10px; background: #333; padding: 8px; border-radius: 6px; border: 1px solid #444; }
+    .time-text { font-size: 11px; font-family: monospace; color: #00d2ff; min-width: 40px; text-align: center; }
+    #progressBar { flex: 1; height: 5px; -webkit-appearance: none; background: #555; border-radius: 5px; cursor: pointer; }
+    #progressBar::-webkit-slider-thumb { -webkit-appearance: none; width: 15px; height: 15px; background: #e040fb; border-radius: 50%; cursor: pointer; }
     .btn-record { width: 100%; padding: 15px; background: linear-gradient(135deg, #ff4444, #d32f2f); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
     #stopOverlay { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(220, 20, 60, 0.95); color: white; padding: 15px 30px; border-radius: 50px; z-index: 100; font-weight: bold; border: 3px solid white; cursor: pointer; }
     #countdownOverlay { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 100px; font-weight: bold; color: white; text-shadow: 0 0 20px rgba(0, 0, 0, 0.8); z-index: 100; }
-    #statusBox { font-size: 12px; text-align: center; color: #d4af37; margin-bottom: 5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    #statusBox { font-size: 12px; text-align: center; color: #00d2ff; margin-bottom: 5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .row { display: flex; align-items: center; gap: 10px; }
     label { font-size: 11px; width: 80px; color: #ccc; font-weight: 600; }
-    input[type="range"], select { flex: 1; height: 36px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px; }
+    input[type="range"], select { flex: 1; height: 36px; background: #333; color: white; border: 1px solid #555; border-radius: 6px; }
     input[type="file"] { display: none; }
-    optgroup { background: #111; color: #d4af37; font-weight: bold; }
-    .layout-grid { display: flex; gap: 15px; width: 100%; box-sizing: border-box; }
-    .layout-col { flex: 1; background: #222; padding: 12px; border-radius: 8px; border: 1px solid #3c3c3c; display: flex; flex-direction: column; gap: 8px; box-sizing: border-box; }
-    .layout-col label { width: 100%; text-align: left; font-size: 10px; margin-bottom: -4px; color: #aaa; font-weight: bold; }
-    .layout-col select, .layout-col input[type="range"] { width: 100%; margin-bottom: 5px; }
-    #manualLinkBtn { display: block; width: 100%; box-sizing: border-box; text-align: center; padding: 15px; margin-top: 10px; background: #333; color: #fff; border: 1px solid #555; border-radius: 8px; font-weight: bold; font-size: 14px; text-decoration: none; cursor: pointer; transition: 0.3s; }
-    #manualLinkBtn:hover { background: #444; }
+    optgroup { background: #111; color: #00d2ff; font-weight: bold; }
   </style>
 </head>
+
 <body>
+
   <div id="canvas-wrapper">
     <canvas id="canvas" width="1280" height="720"></canvas>
     <div id="countdownOverlay">3</div>
@@ -46,10 +44,10 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. test mp4 (H.264 Inject, Auto-Awake).</div>
+    <div id="statusBox">Siap. Noir v.1 Ultimate (Cinematic & Elegant Edition).</div>
     <div class="btn-group">
-      <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
-      <label for="audioInput" class="file-label" style="border-bottom: 3px solid #00bcd4">2. MUSIK (BANYAK)</label>
+      <label for="bgInput" class="file-label" style="border-bottom: 3px solid #00bcd4">1. FOTO LATAR</label>
+      <label for="audioInput" class="file-label" style="border-bottom: 3px solid #e040fb">2. MUSIK (BANYAK)</label>
     </div>
 
     <div class="play-group">
@@ -66,57 +64,106 @@
     <input type="file" id="bgInput" accept="image/*">
     <input type="file" id="audioInput" accept="audio/*" multiple>
 
-    <hr style="border: 0; border-top: 1px solid #333; width: 100%; margin: 5px 0;">
-
-    <div class="layout-grid">
-      <div class="layout-col">
-        <label style="color:#00d2ff; text-align:center; font-size:12px; margin-bottom:10px;">VISUALIZER</label>
-        <select id="visType">
-            <optgroup label="=== SOLID BARS ==="><option value="vintage_bars">📊 1. Vintage Solid Bars</option><option value="winamp_classic">📻 2. Winamp Peaks</option><option value="classic_eq">🎙️ 3. Classic Green-Red EQ</option><option value="step_eq">🧱 4. Step Block EQ</option><option value="thin_eq">📏 5. Thin Minimalist EQ</option><option value="thick_bars">⬛ 6. Bold Solid Bars</option><option value="hollow_bars">🔲 7. Hollow Outline Bars</option><option value="rounded_bars">💊 8. Rounded Tip Bars</option><option value="split_eq">⏸️ 9. Split Center EQ</option><option value="double_mirror">🪞 10. Dual Mirror Bars</option></optgroup>
-            <optgroup label="=== PEAKS & DOTS ==="><option value="dotted_eq">⏺️ 11. Dotted Peak EQ</option><option value="led_matrix">🚥 12. LED Dot Matrix</option><option value="analog_vu">🎛️ 13. Analog VU Meter</option><option value="retro_oscilloscope">📺 14. CRT Oscilloscope</option><option value="peak_line">〰️ 15. Floating Peak Line</option><option value="peak_dots_only">⚪ 16. Floating Dots Peak</option><option value="dash_bars">➖ 17. Dashed Segment Bars</option><option value="meter_blocks">📶 18. Meter Blocks</option><option value="soft_glow_bars">🌟 19. Glowing Ambient Bars</option><option value="white_caps">🧢 20. Bars with White Cap</option></optgroup>
-            <optgroup label="=== MODERN GRADIENT ==="><option value="liquid_bar">💧 21. Liquid Glowing Cyan</option><option value="cyber_pulse">⚡ 22. Neon Pulse Bars</option><option value="mirror_bars">🪞 23. Mirrored Glass Bars</option><option value="gradient_blocks">🎛️ 24. Cyan-Blue Gradient</option><option value="sunset_bars">🌅 25. Warm Sunset Gradient</option><option value="emerald_bars">💎 26. Emerald Green Grad</option><option value="purple_haze">🟣 27. Purple-Pink Soft</option><option value="gold_classic">👑 28. Golden Elegant EQ</option><option value="monochrome_fade">🎞️ 29. Grayscale Fading</option><option value="dual_tone">🌗 30. Dual Tone Top-Bot</option></optgroup>
-            <optgroup label="=== WAVES & LINES ==="><option value="modern_wave">🌊 31. Modern Smooth Wave</option><option value="filled_wave">🌊 32. Filled Ambient Wave</option><option value="double_wave">〰️ 33. Double Layer Wave</option><option value="thin_wave">✒️ 34. Ultra Thin Line</option><option value="shadow_wave">🌒 35. Wave with Shadow</option><option value="stereo_lines">⏸️ 36. Dual Parallel Lines</option><option value="smooth_curve">🔔 37. Bell Curve Wave</option><option value="ribbon_wave">🎀 38. Flowing Ribbon Wave</option><option value="minimal_line">➖ 39. Minimalist Baseline</option><option value="calm_horizon">🌅 40. Calm Horizon Glow</option></optgroup>
-            <optgroup label="=== CIRCULAR & CLEAN ==="><option value="circle_bars">🎡 41. Circular Audio Bars</option><option value="circle_ring">⭕ 42. Simple Circular Line</option><option value="circle_dashed">🎯 43. Circular Dashed EQ</option><option value="circle_mirror">🪞 44. Inner & Outer Circle</option><option value="vinyl_record">💿 45. Spinning Vinyl</option><option value="block_tower">🏙️ 46. Clean 3D EQ Blocks</option><option value="equalizer_3d">🛠️ 47. Cylinder Studio EQ</option><option value="floating_blocks">🧊 48. Floating Blocks</option><option value="center_pulse">🔘 49. Center Expanding</option><option value="classic_studio">🎙️ 50. Pro Studio Rack</option></optgroup>
-        </select>
-        <label>TINGGI VIS.</label><input type="range" id="visHeight" min="30" max="600" value="150">
-        <label>LEBAR VIS.</label><input type="range" id="visWidth" min="100" max="1100" value="400">
-        <label>OPASITAS VIS.</label><input type="range" id="visOpacity" min="0.1" max="1.0" step="0.05" value="1.0">
-      </div>
-
-      <div class="layout-col">
-        <label style="color:#ffb300; text-align:center; font-size:12px; margin-bottom:10px;">AREA BASS (LATAR ASLI)</label>
-        <select id="speakerStyle"><option value="active">🟢 Aktifkan Efek Bass</option><option value="none">🚫 Matikan Efek</option></select>
-        <label style="color:#00ffaa;">TANDA "+" (CROSSHAIR)</label><select id="showCrosshair"><option value="1">➕ Aktif (Tampilkan)</option><option value="0">🚫 Off (Sembunyikan)</option></select>
-        <label>UKURAN AREA</label><input type="range" id="speakerSize" min="0.2" max="5.0" step="0.1" value="1.5">
-        <label style="color:#ff5252;">GETARAN (SHAKE)</label><input type="range" id="speakerShake" min="0" max="30" step="1" value="10">
-        <label style="color:#ff5252;">DENTUMAN (PUMP)</label><input type="range" id="speakerPump" min="0" max="2.0" step="0.1" value="0.5">
-      </div>
-    </div>
-
-    <hr style="border: 0; border-top: 1px dashed #333; width: 100%; margin: 5px 0;">
-
-    <div class="layout-grid">
-      <div class="layout-col">
-        <label style="color:#d7ccc8; text-align:center; font-size:12px; margin-bottom:5px;">ASAP KOPI</label>
-        <select id="coffeeStyle"><option value="none">🚫 Tanpa Asap Kopi</option><option value="soft_steam">☕ 1. Soft Warm Steam</option><option value="swirl_vapor">🌪️ 2. Swirling Vapor</option><option value="thin_wisp">🌬️ 3. Thin Elegant Wisp</option><option value="heavy_steam">☁️ 4. Heavy Morning Steam</option><option value="wind_steam">🍃 5. Breezy Coffee Steam</option></select>
-      </div>
-      <div class="layout-col">
-        <label style="color:#ff8a65; text-align:center; font-size:12px; margin-bottom:5px;">API LILIN</label>
-        <select id="candleStyle"><option value="none">🚫 Tanpa Api Lilin</option><option value="calm_flame">🕯️ 1. Calm Warm Flame</option><option value="flicker_flame">🕯️ 2. Flickering Flame</option><option value="bright_glow">🌟 3. Bright Glowing Flame</option><option value="blue_base">🔵 4. Blue-Base Real Flame</option><option value="wind_flame">🌬️ 5. Wind-blown Flame</option></select>
-      </div>
-    </div>
-    
-    <div class="row" style="margin-top: 5px;"><label style="color:#fff;">UKURAN PROP</label><input type="range" id="propSize" min="0.2" max="5.0" step="0.1" value="1.0"></div>
-    <div class="row" style="margin-top: 5px;"><label style="color:#ff8a65;">KCPTN PROP</label><input type="range" id="propSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
-
-    <hr style="border: 0; border-top: 1px dashed #333; width: 100%; margin: 5px 0;">
+    <hr style="border: 0; border-top: 1px solid #444; width: 100%; margin: 5px 0;">
 
     <div class="row">
-      <label style="color:#00e5ff;">PARTIKEL</label>
-      <select id="type"><option value="none">🚫 Tanpa Partikel</option><option value="dust_motes">✨ 1. Butiran Debu Emas</option><option value="magic_sparks">💫 2. Percikan Sihir Biru</option><option value="floating_embers">🔥 3. Bara Api Terbang</option><option value="bokeh_orbs">🫧 4. Bokeh Orbs Sinematik</option><option value="snow_dust">❄️ 5. Debu Salju Halus</option><option value="fairy_light">🧚 6. Cahaya Peri Berpendar</option><option value="ash_particles">🌪️ 7. Abu Hitam Melayang</option><option value="starlight_glint">🌟 8. Kilauan Bintang Halus</option><option value="deep_sea_motes">🌊 9. Partikel Air Laut</option><option value="golden_pollen">🌼 10. Serbuk Sari Emas</option></select>
+      <label style="color:#00d2ff;">VISUALIZER</label>
+      <select id="visType">
+        <optgroup label="=== SOLID & CLASSIC BARS ===">
+            <option value="vintage_bars">📊 1. Vintage Solid Bars (Off-White)</option>
+            <option value="winamp_classic">📻 2. Winamp Classic Peaks</option>
+            <option value="classic_eq">🎙️ 3. Classic Green-Yellow-Red EQ</option>
+            <option value="step_eq">🧱 4. Step Block EQ (Vintage)</option>
+            <option value="thick_bars">⬛ 5. Bold Heavy Solid Bars</option>
+            <option value="hollow_bars">🔲 6. Hollow Outline Bars</option>
+            <option value="rounded_bars">💊 7. Smooth Rounded Tip Bars</option>
+            <option value="split_eq">⏸️ 8. Split Center EQ Bars</option>
+            <option value="double_mirror">🪞 9. Dual Top-Bottom Mirror Bars</option>
+        </optgroup>
+        <optgroup label="=== CINEMATIC & MINIMALIST (NEW) ===">
+            <option value="elegant_piano">🎹 10. Elegant Piano Keys</option>
+            <option value="cinematic_streaks">🌠 11. Cinematic Light Streaks</option>
+            <option value="ghost_ambient">🌫️ 12. Ghostly Ambient Bars</option>
+            <option value="glitch_tech">📟 13. Glitch Tech Blocks</option>
+            <option value="diamond_eq">♦️ 14. Symmetric Diamond EQ</option>
+            <option value="particle_fountain">✨ 15. Smooth Particle Fountain</option>
+            <option value="digital_rain">🌧️ 16. Digital Matrix Rain EQ</option>
+            <option value="depth_bars">🧊 17. Elegant 3D Depth Bars</option>
+            <option value="glow_pulse">🌟 18. Cinematic Glow Pulse Line</option>
+            <option value="acoustic_wave">〰️ 19. Refined Acoustic Wave</option>
+        </optgroup>
+        <optgroup label="=== MODERN & GRADIENT BARS ===">
+            <option value="liquid_bar">💧 20. Liquid Glowing Cyan Bars</option>
+            <option value="mirror_bars">🪞 21. Mirrored Glass Bars</option>
+            <option value="gradient_blocks">🎛️ 22. Cyan-Blue Gradient Blocks</option>
+            <option value="sunset_bars">🌅 23. Warm Sunset Gradient Bars</option>
+            <option value="emerald_bars">💎 24. Emerald Green Gradient</option>
+            <option value="purple_haze">🟣 25. Purple-Pink Soft Bars</option>
+            <option value="gold_classic">👑 26. Golden Elegant EQ Bars</option>
+            <option value="monochrome_fade">🎞️ 27. Grayscale Fading Bars</option>
+            <option value="dual_tone">🌗 28. Dual Tone Top-Bottom Bars</option>
+        </optgroup>
+        <optgroup label="=== STUDIO & CLEAN EFFECTS ===">
+            <option value="modern_wave">🌊 29. Modern Smooth Wave</option>
+            <option value="filled_wave">🌊 30. Filled Ambient Waveform</option>
+            <option value="stereo_lines">⏸️ 31. Dual Parallel Wave Lines</option>
+            <option value="calm_horizon">🌅 32. Calm Horizon Glow Wave</option>
+            <option value="neon_lines">🚥 33. Vertical Neon Lines</option>
+            <option value="ambient_glow">🌟 34. Bottom Ambient Glow</option>
+            <option value="block_fade">🧱 35. Fading Block EQ</option>
+            <option value="split_glow">⚡ 36. Split Center Glow Bars</option>
+            <option value="wave_points">✨ 37. Connected Wave Points</option>
+            <option value="block_tower">🏙️ 38. Clean 3D EQ Blocks</option>
+            <option value="equalizer_3d">🛠️ 39. Cylinder Studio EQ</option>
+            <option value="floating_blocks">🧊 40. Floating Ambient Blocks</option>
+            <option value="center_pulse">🔘 41. Center Expanding EQ Bars</option>
+            <option value="classic_studio">🎙️ 42. Pro Studio Rack EQ</option>
+        </optgroup>
+      </select>
     </div>
-    <div class="row"><label>ARAH EFEK</label><select id="fxAngle"><option value="0">Lurus (Normal)</option><option value="15">Miring Kanan 15°</option><option value="30">Miring Kanan 30°</option><option value="-15">Miring Kiri 15°</option><option value="-30">Miring Kiri 30°</option></select></div>
-    <div class="row"><label style="color:#00e5ff;">KECEPATAN FX</label><input type="range" id="fxSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
+
+    <div class="row"><label>TINGGI VIS.</label><input type="range" id="visHeight" min="30" max="600" value="150"></div>
+    <div class="row"><label style="color:#00d2ff;">LEBAR VIS.</label><input type="range" id="visWidth" min="100" max="1100" value="400"></div>
+    <div class="row"><label style="color:#e040fb;">OPASITAS VIS.</label><input type="range" id="visOpacity" min="0.1" max="1.0" step="0.05" value="1.0"></div>
+
+    <hr style="border: 0; border-top: 1px dashed #444; width: 100%; margin: 5px 0;">
+
+    <div class="row"><label style="color:#ff9800;">UKURAN ASAP</label><input type="range" id="smokeSize" min="0.2" max="3.0" step="0.1" value="1.0"></div>
+    <div class="row"><label style="color:#ff9800;">PANJANG ASAP 1</label><input type="range" id="smokeLen1" min="0.2" max="3.0" step="0.1" value="1.0"></div>
+    <div class="row"><label style="color:#ff9800;">ARAH ASAP 1</label><input type="range" id="smokeAngle1" min="-60" max="60" value="0"></div>
+    <div class="row"><label style="color:#ff9800;">PANJANG ASAP 2</label><input type="range" id="smokeLen2" min="0.2" max="3.0" step="0.1" value="1.0"></div>
+    <div class="row"><label style="color:#ff9800;">ARAH ASAP 2</label><input type="range" id="smokeAngle2" min="-60" max="60" value="0"></div>
+
+    <hr style="border: 0; border-top: 1px dashed #444; width: 100%; margin: 5px 0;">
+
+    <div class="row">
+      <label>EFEK FILM</label>
+      <select id="type">
+        <option value="vintage">🎞️ Vintage HD (Kotor, Debu, Rambut)</option>
+        <option value="grain">🎬 Grains (Bintik & Debu Saja)</option>
+        <option value="scratch">📽️ Scratches (Garis Vertikal Saja)</option>
+        <option value="sepia_dust">📜 Sepia Dust (Klasik Coklat)</option>
+        <option value="old_tv">📺 Old TV (Scanline & Noise)</option>
+        <option value="flicker_8mm">🎞️ 8mm Flicker (Kedap-Kedip)</option>
+        <option value="rain">🌧️ Hujan Realistis</option>
+        <option value="snow">❄️ Salju Lembut</option>
+        <option value="fireflies">✨ Kunang-Kunang</option>
+        <option value="none">Tanpa Efek</option>
+      </select>
+    </div>
+
+    <div class="row">
+      <label>ARAH EFEK</label>
+      <select id="fxAngle">
+        <option value="0">Lurus (Normal)</option>
+        <option value="15">Miring Kanan 15°</option>
+        <option value="30">Miring Kanan 30°</option>
+        <option value="-15">Miring Kiri 15°</option>
+        <option value="-30">Miring Kiri 30°</option>
+      </select>
+    </div>
+
+    <div class="row"><label>KECEPATAN</label><input type="range" id="fxSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
     <div class="row"><label>JUMLAH FX</label><input type="range" id="count" min="0" max="400" value="100"></div>
 
     <button class="btn-record" id="recordBtn" onclick="startCountdownAndRecord()">🔴 MULAI REKAM 720p</button>
@@ -125,12 +172,30 @@
   <audio id="audioPlayer" crossorigin="anonymous"></audio>
 
   <script>
-    const statusBox = document.getElementById('statusBox'); const canvas = document.getElementById('canvas'); const ctx = canvas.getContext('2d'); const audioPlayer = document.getElementById('audioPlayer'); const playBtn = document.getElementById('playBtn'); const nextBtn = document.getElementById('nextBtn'); const stopOverlay = document.getElementById('stopOverlay'); const countdownOverlay = document.getElementById('countdownOverlay'); const recordBtn = document.getElementById('recordBtn'); const progressBar = document.getElementById('progressBar'); const currTimeEl = document.getElementById('currTime'); const durTimeEl = document.getElementById('durTime');
-    let isDraggingProgress = false; const width = 1280; const height = 720;
-    let audioFiles = []; let currentObjectUrl = null; let currentSongName = ""; let playTimeout = null; let isTrackLoaded = false; let shuffledPlaylist = []; let currentPlayIndex = 0; let isCountingDown = false; let countdownTimer = null;
-    let bgGlobalScale = 1; let bgGlobalX = 0; let bgGlobalY = 0; let globalSmoothedBass = 0;
+    const statusBox = document.getElementById('statusBox');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const audioPlayer = document.getElementById('audioPlayer');
+    const playBtn = document.getElementById('playBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const stopOverlay = document.getElementById('stopOverlay');
+    const countdownOverlay = document.getElementById('countdownOverlay');
+    const recordBtn = document.getElementById('recordBtn');
+    const progressBar = document.getElementById('progressBar');
+    const currTimeEl = document.getElementById('currTime');
+    const durTimeEl = document.getElementById('durTime');
+    let isDraggingProgress = false;
+    
+    const width = 1280;
+    const height = 720;
 
-    function shuffle(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array; }
+    let audioFiles = []; let currentObjectUrl = null; let currentSongName = ""; let playTimeout = null;
+    let isTrackLoaded = false; let shuffledPlaylist = []; let currentPlayIndex = 0; let isCountingDown = false; let countdownTimer = null;
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; }
+      return array;
+    }
 
     document.getElementById('audioInput').addEventListener('change', function(e) {
       if (this.files.length > 0) {
@@ -147,7 +212,10 @@
       if (currentPlayIndex >= shuffledPlaylist.length) { currentPlayIndex = 0; stopEverything(); return; }
       if (currentObjectUrl && isInstant) { URL.revokeObjectURL(currentObjectUrl); currentObjectUrl = null; }
       const delayAmount = isInstant ? 0 : 3500;
-      if (!isInstant) { audioPlayer.pause(); playBtn.innerText = "⏳ TUNGGU..."; statusBox.innerText = "⏳ Jeda pergantian lagu..."; currentSongName = "Memuat..."; progressBar.value = 0; currTimeEl.innerText = "00:00"; durTimeEl.innerText = "00:00"; }
+      if (!isInstant) {
+        audioPlayer.pause(); playBtn.innerText = "⏳ TUNGGU..."; statusBox.innerText = "⏳ Jeda pergantian lagu...";
+        currentSongName = "Memuat..."; progressBar.value = 0; currTimeEl.innerText = "00:00"; durTimeEl.innerText = "00:00";
+      }
       playTimeout = setTimeout(() => {
         if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl);
         const actualFileIndex = shuffledPlaylist[currentPlayIndex]; const selectedFile = audioFiles[actualFileIndex];
@@ -168,57 +236,94 @@
       if (mediaRecorder && mediaRecorder.state === 'recording') { statusBox.innerText = `✅ Menyimpan rekaman otomatis...`; setTimeout(() => { stopRecording(); }, 500); }
     }
 
-    let visW = 400; let visX = (width - visW) / 2; let visY = height - 160; let spk1X = 250; let spk1Y = height - 300; let spk2X = width - 250; let spk2Y = height - 300; let coffeeX = 350; let coffeeY = height - 150; let candle1X = 150; let candle1Y = height - 200; let candle2X = width - 150; let candle2Y = height - 200;
-    let isDraggingSpk1 = false; let isDraggingSpk2 = false; let isDraggingVis = false; let isDraggingCoffee = false; let isDraggingCandle1 = false; let isDraggingCandle2 = false; let dragOffsetX = 0; let dragOffsetY = 0;
+    let visW = 400; let visX = (width - visW) / 2; let visY = height - 160;
+    let smokeX = 150; let smokeY = height - 150; let smokeX2 = width - 250; let smokeY2 = height - 150;
+    let isDraggingSmoke = false; let isDraggingSmoke2 = false; let isDraggingVis = false;
+    let dragOffsetX = 0; let dragOffsetY = 0;
 
-    function getMousePos(e) { const rect = canvas.getBoundingClientRect(); const scaleX = canvas.width / rect.width; const scaleY = canvas.height / rect.height; let clientX = e.clientX; let clientY = e.clientY; if (e.touches && e.touches.length > 0) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; } return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY }; }
+    function getMousePos(e) {
+      const rect = canvas.getBoundingClientRect(); const scaleX = canvas.width / rect.width; const scaleY = canvas.height / rect.height;
+      let clientX = e.clientX; let clientY = e.clientY;
+      if (e.touches && e.touches.length > 0) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; }
+      return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY };
+    }
+
     function startDrag(e) {
-      const pos = getMousePos(e); const spkScale = parseFloat(document.getElementById('speakerSize').value); const clickRadius = 60 * spkScale;
-      const dist1 = Math.hypot(pos.x - spk1X, pos.y - spk1Y); if (dist1 <= Math.max(40, clickRadius) && document.getElementById('speakerStyle').value !== 'none') { isDraggingSpk1 = true; dragOffsetX = pos.x - spk1X; dragOffsetY = pos.y - spk1Y; if (e.cancelable) e.preventDefault(); return; }
-      const dist2 = Math.hypot(pos.x - spk2X, pos.y - spk2Y); if (dist2 <= Math.max(40, clickRadius) && document.getElementById('speakerStyle').value !== 'none') { isDraggingSpk2 = true; dragOffsetX = pos.x - spk2X; dragOffsetY = pos.y - spk2Y; if (e.cancelable) e.preventDefault(); return; }
-      if (document.getElementById('coffeeStyle').value !== 'none' && Math.hypot(pos.x - coffeeX, pos.y - coffeeY) <= 50) { isDraggingCoffee = true; dragOffsetX = pos.x - coffeeX; dragOffsetY = pos.y - coffeeY; if (e.cancelable) e.preventDefault(); return; }
-      if (document.getElementById('candleStyle').value !== 'none') { if (Math.hypot(pos.x - candle1X, pos.y - candle1Y) <= 40) { isDraggingCandle1 = true; dragOffsetX = pos.x - candle1X; dragOffsetY = pos.y - candle1Y; if (e.cancelable) e.preventDefault(); return; } if (Math.hypot(pos.x - candle2X, pos.y - candle2Y) <= 40) { isDraggingCandle2 = true; dragOffsetX = pos.x - candle2X; dragOffsetY = pos.y - candle2Y; if (e.cancelable) e.preventDefault(); return; } }
+      const pos = getMousePos(e); const sScale = parseFloat(document.getElementById('smokeSize').value);
+      const distSmoke = Math.hypot(pos.x - smokeX, pos.y - smokeY);
+      if (distSmoke <= Math.max(40, 30 * sScale)) { isDraggingSmoke = true; dragOffsetX = pos.x - smokeX; dragOffsetY = pos.y - smokeY; if (e.cancelable) e.preventDefault(); return; }
+      const distSmoke2 = Math.hypot(pos.x - smokeX2, pos.y - smokeY2);
+      if (distSmoke2 <= Math.max(40, 30 * sScale)) { isDraggingSmoke2 = true; dragOffsetX = pos.x - smokeX2; dragOffsetY = pos.y - smokeY2; if (e.cancelable) e.preventDefault(); return; }
       if (pos.x >= visX && pos.x <= visX + visW && pos.y >= visY - 150 && pos.y <= visY + 150) { isDraggingVis = true; dragOffsetX = pos.x - visX; dragOffsetY = pos.y - visY; if (e.cancelable) e.preventDefault(); }
     }
+
     function drag(e) {
-      if (!isDraggingVis && !isDraggingSpk1 && !isDraggingSpk2 && !isDraggingCoffee && !isDraggingCandle1 && !isDraggingCandle2) return; const pos = getMousePos(e);
-      if (isDraggingSpk1) { spk1X = pos.x - dragOffsetX; spk1Y = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
-      if (isDraggingSpk2) { spk2X = pos.x - dragOffsetX; spk2Y = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
-      if (isDraggingCoffee) { coffeeX = pos.x - dragOffsetX; coffeeY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
-      if (isDraggingCandle1) { candle1X = pos.x - dragOffsetX; candle1Y = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
-      if (isDraggingCandle2) { candle2X = pos.x - dragOffsetX; candle2Y = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
+      if (!isDraggingVis && !isDraggingSmoke && !isDraggingSmoke2) return;
+      const pos = getMousePos(e);
+      if (isDraggingSmoke) { smokeX = pos.x - dragOffsetX; smokeY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
+      if (isDraggingSmoke2) { smokeX2 = pos.x - dragOffsetX; smokeY2 = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingVis) { visX = pos.x - dragOffsetX; visY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); }
     }
-    function endDrag() { isDraggingVis = false; isDraggingSpk1 = false; isDraggingSpk2 = false; isDraggingCoffee = false; isDraggingCandle1 = false; isDraggingCandle2 = false; }
+
+    function endDrag() { isDraggingVis = false; isDraggingSmoke = false; isDraggingSmoke2 = false; }
     canvas.addEventListener('mousedown', startDrag); canvas.addEventListener('mousemove', drag); window.addEventListener('mouseup', endDrag);
     canvas.addEventListener('touchstart', startDrag, { passive: false }); canvas.addEventListener('touchmove', drag, { passive: false }); window.addEventListener('touchend', endDrag);
 
-    let audioCtx, source, mediaStreamDestination, analyser, dataArray; let isAudioInit = false; let peakHeights = new Array(120).fill(0);
+    let audioCtx, source, mediaStreamDestination, analyser, dataArray;
+    let isAudioInit = false; let peakHeights = new Array(120).fill(0);
+
+    function formatTime(seconds) {
+      if (isNaN(seconds) || !isFinite(seconds)) return "00:00";
+      const m = Math.floor(seconds / 60); const s = Math.floor(seconds % 60);
+      return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+    }
+
     function initAudioContext() {
-      const AudioContext = window.AudioContext || window.webkitAudioContext; audioCtx = new AudioContext(); analyser = audioCtx.createAnalyser(); analyser.fftSize = 256; analyser.smoothingTimeConstant = 0.8;
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      audioCtx = new AudioContext(); analyser = audioCtx.createAnalyser(); analyser.fftSize = 256; analyser.smoothingTimeConstant = 0.8;
       source = audioCtx.createMediaElementSource(audioPlayer); mediaStreamDestination = audioCtx.createMediaStreamDestination();
-      source.connect(analyser); analyser.connect(audioCtx.destination); analyser.connect(mediaStreamDestination); dataArray = new Uint8Array(analyser.frequencyBinCount); isAudioInit = true;
+      source.connect(analyser); analyser.connect(audioCtx.destination); analyser.connect(mediaStreamDestination);
+      dataArray = new Uint8Array(analyser.frequencyBinCount); isAudioInit = true;
     }
 
     let isBgReady = false; let bgImageElement = new Image();
     document.getElementById('bgInput').addEventListener('change', function(e) {
       if (this.files[0]) {
-        const file = this.files[0]; if (file.type.startsWith('image/')) { const fileURL = URL.createObjectURL(file); bgImageElement.src = fileURL; bgImageElement.onload = () => { isBgReady = true; statusBox.innerText = "✅ Foto Latar Oke."; }; } else { alert("Harap unggah file Gambar."); }
+        const file = this.files[0];
+        if (file.type.startsWith('image/')) {
+          const fileURL = URL.createObjectURL(file); bgImageElement.src = fileURL;
+          bgImageElement.onload = () => { isBgReady = true; statusBox.innerText = "✅ Foto Latar Oke."; };
+        } else { alert("Harap unggah file berbentuk Gambar/Foto (JPG, PNG)."); }
       }
     });
 
     audioPlayer.addEventListener('loadedmetadata', () => { if (isFinite(audioPlayer.duration)) { durTimeEl.innerText = formatTime(audioPlayer.duration); progressBar.max = 100; } });
-    audioPlayer.addEventListener('timeupdate', () => { if (isFinite(audioPlayer.duration) && durTimeEl.innerText === "00:00") durTimeEl.innerText = formatTime(audioPlayer.duration); if (!isDraggingProgress) { const percent = (audioPlayer.currentTime / audioPlayer.duration) * 100; progressBar.value = isNaN(percent) ? 0 : percent; currTimeEl.innerText = formatTime(audioPlayer.currentTime); } });
-    progressBar.addEventListener('input', () => { isDraggingProgress = true; if (audioPlayer.duration) { const seekTime = (progressBar.value / 100) * audioPlayer.duration; currTimeEl.innerText = formatTime(seekTime); audioPlayer.currentTime = seekTime; } });
-    const releaseSeek = () => { isDraggingProgress = false; }; progressBar.addEventListener('change', releaseSeek); progressBar.addEventListener('touchend', releaseSeek); progressBar.addEventListener('mouseup', releaseSeek);
+    audioPlayer.addEventListener('timeupdate', () => {
+      if (isFinite(audioPlayer.duration) && durTimeEl.innerText === "00:00") durTimeEl.innerText = formatTime(audioPlayer.duration);
+      if (!isDraggingProgress) { const percent = (audioPlayer.currentTime / audioPlayer.duration) * 100; progressBar.value = isNaN(percent) ? 0 : percent; currTimeEl.innerText = formatTime(audioPlayer.currentTime); }
+    });
+
+    progressBar.addEventListener('input', () => {
+      isDraggingProgress = true;
+      if (audioPlayer.duration) { const seekTime = (progressBar.value / 100) * audioPlayer.duration; currTimeEl.innerText = formatTime(seekTime); audioPlayer.currentTime = seekTime; }
+    });
+    const releaseSeek = () => { isDraggingProgress = false; };
+    progressBar.addEventListener('change', releaseSeek); progressBar.addEventListener('touchend', releaseSeek); progressBar.addEventListener('mouseup', releaseSeek);
 
     function togglePlay() {
       if (!isTrackLoaded) { alert("Pilih Musik Dulu!"); return; }
       if (!audioCtx) initAudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume();
-      if (audioPlayer.paused) { if (!audioPlayer.src || currentPlayIndex >= shuffledPlaylist.length) playRandomSong(true); else { audioPlayer.play(); playBtn.innerText = "⏸ PAUSE"; statusBox.innerText = `🎵 Lagu ${currentPlayIndex}/${audioFiles.length}: ${currentSongName}`; } } else { audioPlayer.pause(); playBtn.innerText = "▶ RESUME"; statusBox.innerText = "⏸ Musik Dijeda."; }
+      if (audioPlayer.paused) {
+        if (!audioPlayer.src || currentPlayIndex >= shuffledPlaylist.length) playRandomSong(true);
+        else { audioPlayer.play(); playBtn.innerText = "⏸ PAUSE"; statusBox.innerText = `🎵 Lagu ${currentPlayIndex}/${audioFiles.length}: ${currentSongName}`; }
+      } else { audioPlayer.pause(); playBtn.innerText = "▶ RESUME"; statusBox.innerText = "⏸ Musik Dijeda."; }
     }
 
-    const config = { type: 'none', count: 100, visType: 'vintage_bars', visHeight: 150, visOpacity: 1.0, fxAngle: 0, fxSpeed: 1.0 };
+    const config = { 
+        type: 'vintage', count: 100, visType: 'vintage_bars', visHeight: 150, visOpacity: 1.0, 
+        fxAngle: 0, fxSpeed: 1.0, smokeLen1: 1.0, smokeLen2: 1.0 
+    };
+    
     document.getElementById('visType').addEventListener('change', (e) => { config.visType = e.target.value; peakHeights.fill(0); });
     document.getElementById('visOpacity').addEventListener('input', (e) => config.visOpacity = parseFloat(e.target.value));
     document.getElementById('type').addEventListener('change', (e) => config.type = e.target.value);
@@ -227,149 +332,423 @@
     document.getElementById('count').addEventListener('input', (e) => config.count = parseInt(e.target.value));
     document.getElementById('visHeight').addEventListener('input', (e) => config.visHeight = parseInt(e.target.value));
     document.getElementById('visWidth').addEventListener('input', (e) => { visW = parseInt(e.target.value); visX = (width - visW) / 2; });
+    
+    document.getElementById('smokeLen1').addEventListener('input', (e) => config.smokeLen1 = parseFloat(e.target.value));
+    document.getElementById('smokeLen2').addEventListener('input', (e) => config.smokeLen2 = parseFloat(e.target.value));
 
     let time = 0;
-    class CinematicParticle {
-        constructor() { this.reset(true); }
-        reset(init = false) { this.x = Math.random() * width; this.y = init ? (Math.random() * height) : -20 - Math.random()*50; this.size = Math.random() * 3 + 1; this.speedY = Math.random() * 1.5 + 0.5; this.opacity = Math.random() * 0.6 + 0.2; this.life = Math.random() * 100; this.wobbleSpeed = Math.random() * 0.05 + 0.01; if(config.type === 'bokeh_orbs') { this.size = Math.random() * 15 + 5; this.opacity = Math.random()*0.3+0.1; } if(config.type === 'snow_dust' || config.type === 'ash_particles') { this.speedY = Math.random() * 2 + 1; } }
-        update() { if(config.type === 'none') return; let wind = config.fxAngle * Math.PI / 180; let sm = config.fxSpeed; this.life += this.wobbleSpeed; if (['dust_motes', 'golden_pollen', 'magic_sparks', 'floating_embers'].includes(config.type)) { this.y -= this.speedY * sm * 0.5; this.x += Math.sin(this.life) * 1 * sm + Math.sin(wind)*2; } else if (config.type === 'bokeh_orbs' || config.type === 'fairy_light') { this.y -= this.speedY * sm * 0.3; this.x += Math.sin(this.life) * 0.5 * sm + Math.sin(wind)*1; } else { this.y += this.speedY * sm; this.x += Math.sin(this.life) * 1 * sm + Math.sin(wind)*3; } this.currentOpacity = this.opacity * (0.5 + 0.5*Math.sin(this.life*2)); if(this.y > height + 50 || this.y < -50 || this.x > width+50 || this.x < -50) this.reset(); }
-        draw() { if(config.type === 'none') return; ctx.save(); ctx.beginPath(); let c1; if(config.type === 'dust_motes') { c1=`rgba(255,230,150,${this.currentOpacity})`; ctx.shadowBlur=this.size*2; ctx.shadowColor='#ffeb3b'; } else if(config.type === 'magic_sparks') { c1=`rgba(200,255,255,${this.currentOpacity})`; ctx.shadowBlur=this.size*3; ctx.shadowColor='#00e5ff'; } else if(config.type === 'floating_embers') { c1=`rgba(255,100,0,${this.currentOpacity})`; ctx.shadowBlur=this.size*3; ctx.shadowColor='#ff3d00'; } else if(config.type === 'bokeh_orbs') { c1=`rgba(255,255,255,${this.currentOpacity*0.5})`; } else if(config.type === 'snow_dust') { c1=`rgba(255,255,255,${this.currentOpacity})`; ctx.shadowBlur=this.size; ctx.shadowColor='#fff'; } else if(config.type === 'fairy_light') { c1=`rgba(255,200,255,${this.currentOpacity})`; ctx.shadowBlur=this.size*4; ctx.shadowColor='#e040fb'; } else if(config.type === 'ash_particles') { c1=`rgba(50,50,50,${this.currentOpacity+0.4})`; } else if(config.type === 'starlight_glint') { c1=`rgba(255,255,255,${this.currentOpacity})`; let rot = this.life; ctx.translate(this.x, this.y); ctx.rotate(rot); ctx.moveTo(-this.size, 0); ctx.lineTo(this.size, 0); ctx.moveTo(0, -this.size); ctx.lineTo(0, this.size); ctx.strokeStyle=c1; ctx.lineWidth=1; ctx.stroke(); ctx.restore(); return; } else if(config.type === 'deep_sea_motes') { c1=`rgba(100,200,255,${this.currentOpacity*0.7})`; ctx.shadowBlur=this.size*2; ctx.shadowColor='#00bcd4'; } else if(config.type === 'golden_pollen') { c1=`rgba(255,215,0,${this.currentOpacity})`; ctx.shadowBlur=this.size*2; ctx.shadowColor='#ffb300'; } ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fillStyle = c1; ctx.fill(); ctx.restore(); }
-    }
-    let cinematicParticles = []; for(let i=0; i<300; i++) cinematicParticles.push(new CinematicParticle());
 
-    function getSymmetricVal(index, totalItems, bufferLen) { try { if (!dataArray) return 0; const center = totalItems / 2; const centerDist = Math.abs(index - center) / center; const dataIdx = Math.floor(centerDist * (bufferLen * 0.6)); return dataArray[dataIdx] / 255; } catch (e) { return 0; } }
-
-    function drawSpeakers(bufferLen) {
-      if (!isBgReady || document.getElementById('speakerStyle').value === 'none') return;
-      let scale = parseFloat(document.getElementById('speakerSize').value);
-      let bassSum = 0; let bassCount = 8; 
-      if(dataArray) { for(let i = 1; i <= bassCount; i++) { bassSum += dataArray[i]; } }
-      let rawBass = (bassSum / bassCount) / 255; if(isNaN(rawBass)) rawBass = 0;
-      let punchyBass = Math.pow(rawBass, 2.0);
-      if (punchyBass > globalSmoothedBass) { globalSmoothedBass += (punchyBass - globalSmoothedBass) * 0.8; } else { globalSmoothedBass += (punchyBass - globalSmoothedBass) * 0.15; }
-      let bass = globalSmoothedBass; let baseR = 50 * scale; let shakeIntensity = parseFloat(document.getElementById('speakerShake').value); let pumpIntensity = parseFloat(document.getElementById('speakerPump').value);
-      let shakeX = (Math.random() - 0.5) * bass * shakeIntensity; let shakeY = (Math.random() - 0.5) * bass * shakeIntensity; let pump = 1.0 + (bass * pumpIntensity);
-      function drawLiveBackgroundSpeaker(x, y) {
-        ctx.save(); ctx.translate(x + shakeX, y + shakeY); ctx.beginPath(); ctx.arc(0, 0, baseR, 0, Math.PI * 2); ctx.clip(); ctx.scale(pump, pump);
-        ctx.drawImage(bgImageElement, bgGlobalX - x, bgGlobalY - y, bgImageElement.width * bgGlobalScale, bgImageElement.height * bgGlobalScale);
-        ctx.beginPath(); ctx.arc(0, 0, baseR, 0, Math.PI * 2); ctx.lineWidth = 1; ctx.strokeStyle = `rgba(0, 0, 0, ${bass * 0.4})`; ctx.stroke();
-        if (document.getElementById('showCrosshair').value === '1') { ctx.scale(1/pump, 1/pump); ctx.beginPath(); ctx.moveTo(-15, 0); ctx.lineTo(15, 0); ctx.moveTo(0, -15); ctx.lineTo(0, 15); ctx.strokeStyle = "rgba(0, 255, 170, 0.9)"; ctx.lineWidth = 2; ctx.stroke(); ctx.beginPath(); ctx.arc(0, 0, 2.5, 0, Math.PI * 2); ctx.fillStyle = "#ff4444"; ctx.fill(); }
+    class RealisticFilmJitter {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = (Math.random() * width * 1.5) - (width * 0.25); this.y = (Math.random() * height * 1.5) - (height * 0.25);
+        this.life = Math.random() * 5 + 2; this.alpha = Math.random() * 0.5 + 0.1;
+        const rand = Math.random();
+        if (rand < 0.05) { this.pType = 'scratch'; this.length = Math.random() * height / 2 + 100; this.color = Math.random() > 0.5 ? `rgba(255,255,255,${this.alpha*0.6})` : `rgba(0,0,0,${this.alpha*0.8})`; } 
+        else if (rand < 0.15) { this.pType = 'hair'; this.cp1x = (Math.random() - 0.5) * 80; this.cp1y = (Math.random() - 0.5) * 80; this.cp2x = (Math.random() - 0.5) * 80; this.cp2y = (Math.random() - 0.5) * 80; this.endX = (Math.random() - 0.5) * 100; this.endY = (Math.random() - 0.5) * 100; this.color = `rgba(0, 0, 0, ${this.alpha * 1.2})`; } 
+        else { this.pType = 'dust'; this.radius = Math.random() * 3 + 1.0; this.color = Math.random() > 0.6 ? `rgba(0,0,0,${this.alpha})` : `rgba(255,255,255,${this.alpha*0.6})`; }
+      }
+      update() { if (['none', 'rain', 'snow', 'fireflies'].includes(config.type)) return; this.life -= config.fxSpeed; if (this.life <= 0) this.reset(); }
+      draw() {
+        if (['none', 'rain', 'snow', 'fireflies'].includes(config.type)) return;
+        let showDustHair = ['vintage', 'grain', 'sepia_dust', 'flicker_8mm'].includes(config.type);
+        let showScratch = ['vintage', 'scratch', 'sepia_dust', 'flicker_8mm'].includes(config.type);
+        if (config.type === 'old_tv' && this.pType !== 'dust') return;
+        if (config.type === 'old_tv' && this.pType === 'dust') { this.radius = Math.random() * 1.5; this.color = `rgba(255,255,255,${this.alpha*0.3})`; }
+        ctx.save(); ctx.translate(this.x, this.y); if (config.fxAngle !== 0) ctx.rotate(config.fxAngle * Math.PI / 180);
+        if (this.pType === 'dust' && (showDustHair || config.type === 'old_tv')) { ctx.fillStyle = this.color; ctx.beginPath(); ctx.arc(0, 0, this.radius, 0, Math.PI*2); ctx.fill(); } 
+        else if (this.pType === 'hair' && showDustHair) { ctx.strokeStyle = this.color; ctx.lineWidth = 1.5 + Math.random(); ctx.beginPath(); ctx.moveTo(0, 0); ctx.bezierCurveTo(this.cp1x, this.cp1y, this.cp2x, this.cp2y, this.endX, this.endY); ctx.stroke(); } 
+        else if (this.pType === 'scratch' && showScratch) { ctx.strokeStyle = this.color; ctx.lineWidth = Math.random() * 2.0 + 1.0; ctx.beginPath(); ctx.moveTo(0, 0); let currentY = 0; let currentX = 0; for (let i = 0; i < this.length; i += 20) { currentY += 20; currentX += (Math.random() - 0.5) * 3; ctx.lineTo(currentX, currentY); } ctx.stroke(); }
         ctx.restore();
       }
-      drawLiveBackgroundSpeaker(spk1X, spk1Y); drawLiveBackgroundSpeaker(spk2X, spk2Y);
     }
 
-    function drawCoffeeSteam(x, y, style, scale, propSpeed) {
-        if(style === 'none') return; ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
-        let branches = 3; let hMax = 150; let wMax = 30; let speedMult = 1.5; let waveFreq = 2.0; let opacity = 0.8;
-        if(style === 'soft_steam') { branches=2; hMax=120; wMax=20; speedMult=1; waveFreq=1.5; opacity=0.7; } if(style === 'swirl_vapor') { branches=4; hMax=180; wMax=40; speedMult=1.8; waveFreq=2.5; opacity=0.85; } if(style === 'thin_wisp') { branches=2; hMax=140; wMax=15; speedMult=1.2; waveFreq=3; opacity=0.6; } if(style === 'heavy_steam') { branches=5; hMax=200; wMax=45; speedMult=2; waveFreq=1.8; opacity=0.95; } if(style === 'wind_steam') { branches=3; hMax=160; wMax=35; speedMult=2.5; waveFreq=2.0; opacity=0.75; ctx.rotate(20 * Math.PI/180); }
-        ctx.globalCompositeOperation = 'screen'; ctx.filter = 'blur(4px)'; 
-        for(let b=0; b<branches; b++) {
-            let pts = []; let steps = 40; 
-            for(let i=0; i<=steps; i++) { let prog = i/steps; let speed = time * speedMult * propSpeed; let w = (5 + Math.sin(prog * Math.PI * 3 + speed) * 5) * Math.sin(prog * Math.PI); let sway = Math.sin(prog * Math.PI * waveFreq - speed + b * 1.3) * wMax * Math.pow(prog, 0.8); let secondarySway = Math.sin(prog * Math.PI * waveFreq * 2.1 - speed * 1.4 + b * 2) * (wMax * 0.4) * prog; let px = sway + secondarySway; let py = -prog * hMax; pts.push({x: px, y: py, w: w}); }
-            ctx.beginPath(); ctx.moveTo(pts[0].x - pts[0].w, pts[0].y); for(let i=1; i<pts.length; i++) ctx.lineTo(pts[i].x - pts[i].w, pts[i].y); for(let i=pts.length-1; i>=0; i--) ctx.lineTo(pts[i].x + pts[i].w, pts[i].y); ctx.closePath();
-            let grad = ctx.createLinearGradient(0,0, 0,-hMax); grad.addColorStop(0, `rgba(255, 255, 255, 0)`); grad.addColorStop(0.5, `rgba(255, 255, 255, ${opacity})`); grad.addColorStop(1, `rgba(255, 255, 255, 0)`); ctx.fillStyle = grad; ctx.fill();
-            ctx.beginPath(); ctx.moveTo(pts[0].x - pts[0].w, pts[0].y); for(let i=1; i<pts.length; i++) ctx.lineTo(pts[i].x - pts[i].w, pts[i].y); ctx.strokeStyle = `rgba(255, 255, 255, ${Math.min(1, opacity * 1.8)})`; ctx.lineWidth = 2; ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(pts[0].x + pts[0].w, pts[0].y); for(let i=1; i<pts.length; i++) ctx.lineTo(pts[i].x + pts[i].w, pts[i].y); ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * 0.8})`; ctx.lineWidth = 1; ctx.stroke();
-        } ctx.restore();
+    class WeatherParticle {
+      constructor() { this.reset(true); }
+      reset(init = false) {
+        this.x = Math.random() * width; this.y = init ? (Math.random() * height) : -20;
+        this.speed = Math.random() * 2 + 1; this.size = Math.random() * 2 + 1; this.opacity = Math.random() * 0.5 + 0.3;
+        this.angle = Math.random() * Math.PI * 2; this.wobble = Math.random() * 0.05;
+        const layer = Math.random();
+        if (layer < 0.5) { this.layer = 'back'; this.layerSpeed = 0.5; this.size *= 0.5; } else if (layer < 0.85) { this.layer = 'mid'; this.layerSpeed = 1.0; } else { this.layer = 'front'; this.layerSpeed = 1.8; this.size *= 1.5; }
+      }
+      update() {
+        if (!['rain', 'snow', 'fireflies'].includes(config.type)) return;
+        let windAngle = config.fxAngle * Math.PI / 180; let speedMult = config.fxSpeed * this.layerSpeed;
+        if (config.type === 'rain') { this.y += this.speed * 10 * speedMult; this.x += Math.sin(windAngle) * (this.speed * 8); if (this.y > height) this.reset(); } 
+        else if (config.type === 'snow') { this.y += this.speed * 1.5 * speedMult; this.angle += this.wobble * config.fxSpeed; this.x += Math.sin(this.angle) * 1.5 + Math.sin(windAngle) * 3; if (this.y > height) this.reset(); } 
+        else if (config.type === 'fireflies') { this.y -= this.speed * 0.5 * speedMult; this.angle += this.wobble * config.fxSpeed; this.x += Math.cos(this.angle) * 2 + Math.sin(windAngle) * 1; this.opacity = Math.abs(Math.sin(time * 1.5 + this.x * 0.05)) * 0.8 + 0.2; if (this.y < -20) { this.reset(); this.y = height + 20; } }
+        if (this.x > width + 50) this.x = -50; else if (this.x < -50) this.x = width + 50;
+      }
+      draw() {
+        if (!['rain', 'snow', 'fireflies'].includes(config.type)) return;
+        ctx.save();
+        if (config.type === 'rain') { ctx.strokeStyle = `rgba(185, 222, 255, ${this.opacity * 0.6})`; ctx.lineWidth = this.layer === 'front' ? 3 : 1.5; ctx.beginPath(); ctx.moveTo(this.x, this.y); let windOffset = Math.sin(config.fxAngle * Math.PI / 180) * 15; ctx.lineTo(this.x - windOffset, this.y - this.speed * 10 * config.fxSpeed); ctx.stroke(); } 
+        else if (config.type === 'snow') { ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`; ctx.shadowBlur = this.layer === 'front' ? 8 : 0; ctx.shadowColor = '#fff'; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); } 
+        else if (config.type === 'fireflies') { ctx.fillStyle = `rgba(215, 255, 40, ${this.opacity})`; ctx.shadowBlur = this.size * 5; ctx.shadowColor = '#d7ff28'; ctx.beginPath(); ctx.arc(this.x, this.y, this.size * 1.2, 0, Math.PI * 2); ctx.fill(); }
+        ctx.restore();
+      }
     }
 
-    function drawCandle(x, y, style, scale, propSpeed) {
-        if(style === 'none') return; ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
-        let t = time * 2 * propSpeed; let flicker = 0; let sway = 0; let h = 65; let w = 16;
-        let baseColor = 'rgba(255, 140, 0, 0.8)'; let midColor = 'rgba(255, 210, 0, 0.9)'; let coreColor = 'rgba(255, 255, 255, 0.95)';
-        if(style === 'calm_flame') { flicker = Math.sin(t*3)*2; sway = Math.sin(t)*1; } else if(style === 'flicker_flame') { flicker = Math.sin(t*10)*4 + Math.random()*2; sway = Math.sin(t*5)*3; } else if(style === 'bright_glow') { flicker = Math.sin(t*4)*2; h = 75; w = 18; ctx.shadowBlur = 50 + flicker*5; ctx.shadowColor = '#ff9800'; } else if(style === 'blue_base') { flicker = Math.sin(t*5)*2; baseColor = 'rgba(0, 150, 255, 0.8)'; midColor = 'rgba(100, 200, 255, 0.9)'; } else if(style === 'wind_flame') { flicker = Math.random()*5; sway = 15 + Math.sin(t*8)*5; }
-        ctx.beginPath(); ctx.arc(0, -h*0.5, w*3, 0, Math.PI*2); let gradGlow = ctx.createRadialGradient(0,-h*0.5,0, 0,-h*0.5,w*4); gradGlow.addColorStop(0, 'rgba(255, 120, 0, 0.25)'); gradGlow.addColorStop(1, 'rgba(255, 120, 0, 0)'); ctx.fillStyle = gradGlow; ctx.fill();
-        ctx.beginPath(); ctx.moveTo(0, 5); ctx.lineTo(sway*0.05, -8); ctx.lineWidth = 3; ctx.strokeStyle = '#111'; ctx.stroke(); ctx.beginPath(); ctx.moveTo(sway*0.05, -8); ctx.lineTo(sway*0.1, -12); ctx.lineWidth = 2; ctx.strokeStyle = '#ff5722'; ctx.stroke();
-        function drawFlame(fw, fh, fsway, color) { ctx.beginPath(); ctx.moveTo(0, 2); ctx.bezierCurveTo(fw, 2, fw*0.9, -fh*0.4, fsway, -fh); ctx.bezierCurveTo(-fw*0.9, -fh*0.4, -fw, 2, 0, 2); ctx.fillStyle = color; ctx.fill(); }
-        drawFlame(w, h + flicker, sway, baseColor); drawFlame(w*0.7, (h + flicker)*0.75, sway*0.7, midColor); drawFlame(w*0.35, (h + flicker)*0.45, sway*0.3, coreColor); 
-        if(style !== 'blue_base') { ctx.beginPath(); ctx.moveTo(0, 4); ctx.bezierCurveTo(w*0.5, 4, w*0.4, -5, 0, -5); ctx.bezierCurveTo(-w*0.4, -5, -w*0.5, 4, 0, 4); let bg = ctx.createRadialGradient(0,0,0, 0,0,w*0.5); bg.addColorStop(0,'rgba(0,100,255,0.6)'); bg.addColorStop(1,'rgba(0,50,255,0)'); ctx.fillStyle = bg; ctx.fill(); } ctx.restore();
+    let particles = []; let weatherParticles = [];
+    for (let i = 0; i < 400; i++) { particles.push(new RealisticFilmJitter()); weatherParticles.push(new WeatherParticle()); }
+
+    function getSymmetricVal(index, totalItems, bufferLen) {
+      try {
+        if (!dataArray) return 0;
+        const center = totalItems / 2; const centerDist = Math.abs(index - center) / center;
+        const dataIdx = Math.floor(centerDist * (bufferLen * 0.6));
+        return dataArray[dataIdx] / 255;
+      } catch (e) { return 0; }
     }
 
     function drawVisualizer(bufferLen) {
-      const style = config.visType; ctx.save(); ctx.translate(visX, visY); ctx.globalAlpha = config.visOpacity; const cy = 0;
+      const style = config.visType;
+      ctx.save(); ctx.translate(visX, visY); ctx.globalAlpha = config.visOpacity; const cy = 0;
+      
       try {
-        if (style === 'vintage_bars') { let numBars = 48; let spacing = visW / numBars; let barW = spacing * 0.7; ctx.fillStyle = 'rgba(245, 245, 240, 0.9)'; for (let i = 0; i < numBars; i++) { let h = Math.max(5, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillRect(i * spacing, -h, barW, h); } }
-        else if (style === 'winamp_classic') { let numBars = 48; let spacing = visW / numBars; let barW = spacing * 0.7; for (let i = 0; i < numBars; i++) { let h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); if (h >= peakHeights[i]) peakHeights[i] = h; else { peakHeights[i] -= 2.0; if (peakHeights[i] < 0) peakHeights[i] = 0; } ctx.fillStyle = 'rgba(230, 235, 240, 0.7)'; ctx.fillRect(i * spacing, -h, barW, h); ctx.fillStyle = 'rgba(255, 60, 60, 1)'; ctx.fillRect(i * spacing, -peakHeights[i] - 5, barW, 4); } }
-        else if (style === 'classic_eq') { let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.7; for (let i = 0; i < numBars; i++) { let h = Math.max(4, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight); grad.addColorStop(0, '#00e676'); grad.addColorStop(0.6, '#ffeb3b'); grad.addColorStop(1, '#ff3d00'); ctx.fillStyle = grad; ctx.fillRect(i * spacing, -h, barW, h); } }
-        else if (style === 'step_eq') { let numBars = 32; let spacing = visW / numBars; let barW = spacing - 4; let stepH = 12; for (let i = 0; i < numBars; i++) { let h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let blocks = Math.floor(h / stepH); for (let j = 0; j < blocks; j++) { ctx.fillStyle = j > (config.visHeight/stepH)*0.7 ? '#ff5722' : '#ffc107'; ctx.fillRect(i * spacing, -(j * stepH) - stepH, barW, stepH - 2); } } }
-        else if (style === 'thin_eq') { let numBars = 64; let spacing = visW / numBars; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; for (let i = 0; i < numBars; i++) { let h = Math.max(2, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillRect(i * spacing, -h, 2, h); } }
-        else if (style === 'thick_bars') { let numBars = 24; let spacing = visW / numBars; let barW = spacing * 0.85; ctx.fillStyle = 'rgba(255, 255, 255, 0.95)'; for (let i = 0; i < numBars; i++) { let h = Math.max(8, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillRect(i * spacing, -h, barW, h); } }
-        else if (style === 'hollow_bars') { let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.7; ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)'; ctx.lineWidth = 1.5; for (let i = 0; i < numBars; i++) { let h = Math.max(5, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.strokeRect(i * spacing, -h, barW, h); } }
-        else if (style === 'rounded_bars') { let numBars = 36; let spacing = visW / numBars; let barW = spacing * 0.65; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; for (let i = 0; i < numBars; i++) { let h = Math.max(8, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.beginPath(); if(ctx.roundRect) ctx.roundRect(i * spacing, -h, barW, h, [barW/2, barW/2, 0, 0]); else ctx.rect(i * spacing, -h, barW, h); ctx.fill(); } }
-        else if (style === 'split_eq') { let numBars = 48; let spacing = visW / numBars; let barW = spacing * 0.6; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.fillRect(0, -1, visW, 2); for (let i = 0; i < numBars; i++) { let h = Math.max(2, getSymmetricVal(i, numBars, bufferLen) * (config.visHeight / 2)); ctx.fillRect(i * spacing, -h - 4, barW, h); ctx.fillRect(i * spacing, 4, barW, h); } }
-        else if (style === 'double_mirror') { let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.7; ctx.fillStyle = 'rgba(255, 255, 255, 0.85)'; for (let i = 0; i < numBars; i++) { let h = Math.max(3, getSymmetricVal(i, numBars, bufferLen) * (config.visHeight / 2)); ctx.fillRect(i * spacing, -h, barW, h); ctx.fillRect(i * spacing, 0, barW, h); } }
-        else if (style === 'dotted_eq') { let numBars = 48; let spacing = visW / numBars; ctx.fillStyle = 'rgba(200, 200, 200, 0.5)'; ctx.fillRect(0, 0, visW, 2); ctx.fillStyle = '#00bcd4'; for (let i = 0; i < numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let x = i * spacing + (spacing / 2); if (h > 5) { ctx.beginPath(); ctx.arc(x, -h, 4, 0, Math.PI*2); ctx.fill(); } } }
-        else if (style === 'led_matrix') { let cols = 40; let rows = 15; let spaceX = visW / cols; let spaceY = config.visHeight / rows; for(let c=0; c<cols; c++) { let val = getSymmetricVal(c, cols, bufferLen); let activeRows = Math.floor(val * rows); for(let r=0; r<rows; r++) { let x = c * spaceX + spaceX/2; let y = -r * spaceY - spaceY/2; ctx.beginPath(); if(r < activeRows) ctx.fillStyle = (r > rows*0.7) ? '#f44336' : '#8bc34a'; else ctx.fillStyle = 'rgba(255,255,255,0.05)'; ctx.arc(x, y, spaceX*0.35, 0, Math.PI*2); ctx.fill(); } } }
-        else if (style === 'analog_vu') { let valBass = dataArray ? dataArray[Math.floor(bufferLen * 0.05)] / 255 : 0; let valTreble = dataArray ? dataArray[Math.floor(bufferLen * 0.3)] / 255 : 0; let cx = visW/2; function drawNeedle(x, r, val, title) { ctx.save(); ctx.translate(x, 0); ctx.beginPath(); ctx.arc(0, 0, r, Math.PI, Math.PI*2); ctx.fillStyle = 'rgba(20, 20, 20, 0.8)'; ctx.fill(); ctx.strokeStyle = '#ffb300'; ctx.lineWidth = 2; ctx.stroke(); for(let i=0; i<=10; i++) { let a = Math.PI + (i/10)*Math.PI; let r1 = r - 10; let r2 = r - (i%5===0 ? 20 : 15); ctx.beginPath(); ctx.moveTo(Math.cos(a)*r1, Math.sin(a)*r1); ctx.lineTo(Math.cos(a)*r2, Math.sin(a)*r2); ctx.strokeStyle = i>7 ? '#ff4444' : '#ffb300'; ctx.stroke(); } ctx.rotate(Math.PI + (val * 0.8 + 0.1) * Math.PI); ctx.beginPath(); ctx.moveTo(0, 10); ctx.lineTo(0, -r+25); ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.stroke(); ctx.restore(); ctx.fillStyle = '#ffb300'; ctx.font = 'bold 16px monospace'; ctx.textAlign = 'center'; ctx.fillText(title, x, 25); } drawNeedle(cx - visW/4, config.visHeight*0.8, valBass, "L - BASS"); drawNeedle(cx + visW/4, config.visHeight*0.8, valTreble, "R - TREBLE"); }
-        else if (style === 'retro_oscilloscope') { ctx.beginPath(); ctx.moveTo(0, 0); let points = 100; for (let i = 0; i <= points; i++) { let x = (i / points) * visW; let h = getSymmetricVal(i, points, bufferLen) * config.visHeight; ctx.lineTo(x, -h); } ctx.strokeStyle = '#00ff41'; ctx.lineWidth = 3; ctx.shadowBlur = 10; ctx.shadowColor = '#00ff41'; ctx.stroke(); ctx.shadowBlur = 0; }
-        else if (style === 'peak_line') { let numBars = 48; let spacing = visW / numBars; let barW = spacing * 0.8; for (let i = 0; i < numBars; i++) { let h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); if (h >= peakHeights[i]) peakHeights[i] = h; else { peakHeights[i] -= 1.5; if (peakHeights[i] < 0) peakHeights[i] = 0; } ctx.fillStyle = '#fff'; ctx.fillRect(i * spacing, -peakHeights[i] - 3, barW, 3); } }
-        else if (style === 'peak_dots_only') { let numBars = 40; let spacing = visW / numBars; for (let i = 0; i < numBars; i++) { let h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); if (h >= peakHeights[i]) peakHeights[i] = h; else { peakHeights[i] -= 1.5; if (peakHeights[i] < 0) peakHeights[i] = 0; } ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(i * spacing + spacing/2, -peakHeights[i] - 5, 4, 0, Math.PI*2); ctx.fill(); } }
-        else if (style === 'dash_bars') { let numBars = 36; let spacing = visW / numBars; let barW = spacing * 0.7; let dashH = 4; let gapH = 4; for (let i = 0; i < numBars; i++) { let h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let dashes = Math.floor(h / (dashH + gapH)); ctx.fillStyle = 'rgba(255, 255, 255, 0.85)'; for (let j = 0; j < dashes; j++) { ctx.fillRect(i * spacing, -(j * (dashH + gapH)) - dashH, barW, dashH); } } }
-        else if (style === 'meter_blocks') { let numBars = 30; let spacing = visW / numBars; let barW = spacing * 0.75; let segH = 8; for (let i = 0; i < numBars; i++) { let h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let segs = Math.floor(h / (segH + 2)); for (let j = 0; j < segs; j++) { ctx.fillStyle = j > 8 ? '#f44336' : (j > 5 ? '#ffeb3b' : '#00e676'); ctx.fillRect(i * spacing, -(j * (segH + 2)) - segH, barW, segH); } } }
-        else if (style === 'soft_glow_bars') { let numBars = 32; let spacing = visW / numBars; let barW = spacing * 0.65; for (let i = 0; i < numBars; i++) { let h = Math.max(8, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillStyle = '#fff'; ctx.shadowBlur = 12; ctx.shadowColor = 'rgba(255, 255, 255, 0.7)'; ctx.fillRect(i * spacing, -h, barW, h); } ctx.shadowBlur = 0; }
-        else if (style === 'white_caps') { let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.7; for (let i = 0; i < numBars; i++) { let h = Math.max(5, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillStyle = 'rgba(200, 200, 200, 0.5)'; ctx.fillRect(i * spacing, -h, barW, h); ctx.fillStyle = '#fff'; ctx.fillRect(i * spacing, -h - 4, barW, 4); } }
-        else if (style === 'liquid_bar') { let numBars = 32; let spacing = visW / numBars; let barW = spacing * 0.6; for (let i = 0; i < numBars; i++) { let h = Math.max(10, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillStyle = '#00e5ff'; ctx.shadowBlur = 15; ctx.shadowColor = '#00e5ff'; ctx.beginPath(); if(ctx.roundRect) ctx.roundRect(i * spacing, cy - h, barW, h, barW/2); else ctx.rect(i * spacing, cy - h, barW, h); ctx.fill(); } ctx.shadowBlur = 0; }
-        else if (style === 'cyber_pulse') { let numBars = 48; let spacing = visW / numBars; let barW = spacing * 0.7; for (let i = 0; i < numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight); grad.addColorStop(0, '#f50057'); grad.addColorStop(1, '#ff4081'); ctx.fillStyle = grad; ctx.shadowBlur = 10; ctx.shadowColor = '#f50057'; ctx.fillRect(i * spacing, cy - h/2 - 2, barW, h/2); ctx.fillRect(i * spacing, cy + 2, barW, h/2); ctx.fillStyle = '#fff'; ctx.fillRect(i * spacing, cy - h/2 - 6, barW, 2); ctx.fillRect(i * spacing, cy + h/2 + 4, barW, 2); } ctx.shadowBlur = 0; }
-        else if (style === 'mirror_bars') { let numBars = 48; let spacing = visW / numBars; for (let i = 0; i < numBars; i++) { let val = Math.max(2, getSymmetricVal(i, numBars, bufferLen) * (config.visHeight/2)); ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.fillRect(i * spacing, cy - val, spacing * 0.6, val); ctx.fillStyle = 'rgba(255, 255, 255, 0.3)'; ctx.fillRect(i * spacing, cy, spacing * 0.6, val * 0.8); } }
-        else if (style === 'gradient_blocks') { let numBars = 40; let spacing = visW / numBars; for (let i = 0; i < numBars; i++) { let val = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight); grad.addColorStop(0, '#00c6ff'); grad.addColorStop(1, '#0072ff'); ctx.fillStyle = grad; ctx.fillRect(i * spacing, cy - val, spacing * 0.8, val); } }
-        else if (style === 'sunset_bars') { let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.75; for (let i = 0; i < numBars; i++) { let h = Math.max(6, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight); grad.addColorStop(0, '#ff3f34'); grad.addColorStop(0.5, '#ff7f50'); grad.addColorStop(1, '#fffa65'); ctx.fillStyle = grad; ctx.fillRect(i * spacing, -h, barW, h); } }
-        else if (style === 'emerald_bars') { let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.75; for (let i = 0; i < numBars; i++) { let h = Math.max(6, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight); grad.addColorStop(0, '#004d40'); grad.addColorStop(1, '#18ffff'); ctx.fillStyle = grad; ctx.fillRect(i * spacing, -h, barW, h); } }
-        else if (style === 'purple_haze') { let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.75; for (let i = 0; i < numBars; i++) { let h = Math.max(6, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight); grad.addColorStop(0, '#4a148c'); grad.addColorStop(1, '#ea80fc'); ctx.fillStyle = grad; ctx.fillRect(i * spacing, -h, barW, h); } }
-        else if (style === 'gold_classic') { let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.75; for (let i = 0; i < numBars; i++) { let h = Math.max(6, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight); grad.addColorStop(0, '#ff8f00'); grad.addColorStop(1, '#ffe082'); ctx.fillStyle = grad; ctx.fillRect(i * spacing, -h, barW, h); } }
-        else if (style === 'monochrome_fade') { let numBars = 44; let spacing = visW / numBars; let barW = spacing * 0.75; for (let i = 0; i < numBars; i++) { let h = Math.max(6, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight); grad.addColorStop(0, 'rgba(255,255,255,0.1)'); grad.addColorStop(1, 'rgba(255,255,255,0.95)'); ctx.fillStyle = grad; ctx.fillRect(i * spacing, -h, barW, h); } }
-        else if (style === 'dual_tone') { let numBars = 36; let spacing = visW / numBars; let barW = spacing * 0.7; for (let i = 0; i < numBars; i++) { let h = Math.max(4, getSymmetricVal(i, numBars, bufferLen) * (config.visHeight / 2)); ctx.fillStyle = '#00e5ff'; ctx.fillRect(i * spacing, -h, barW, h); ctx.fillStyle = '#ff4081'; ctx.fillRect(i * spacing, 0, barW, h); } }
-        else if (style === 'modern_wave') { ctx.beginPath(); ctx.moveTo(0, cy); let numPoints = 100; let spacing = visW / numPoints; for(let i=0; i<=numPoints; i++) { let val = getSymmetricVal(i, numPoints, bufferLen) * config.visHeight; let y = cy - val - (Math.sin(i*0.1 + time*5)*val*0.2); ctx.lineTo(i*spacing, y); } let grad = ctx.createLinearGradient(0, cy, visW, cy); grad.addColorStop(0, '#00d2ff'); grad.addColorStop(1, '#e040fb'); ctx.strokeStyle = grad; ctx.lineWidth = 3; ctx.stroke(); ctx.lineTo(visW, cy); ctx.lineTo(0, cy); ctx.fillStyle = 'rgba(0, 210, 255, 0.15)'; ctx.fill(); }
-        else if (style === 'filled_wave') { ctx.beginPath(); ctx.moveTo(0, cy); let points = 80; let spacing = visW / points; for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * config.visHeight; ctx.lineTo(i*spacing, -h); } ctx.lineTo(visW, cy); ctx.lineTo(0, cy); ctx.closePath(); ctx.fillStyle = 'rgba(255, 255, 255, 0.4)'; ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke(); }
-        else if (style === 'double_wave') { let points = 80; let spacing = visW / points; ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * config.visHeight; ctx.lineTo(i*spacing, -h); } ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)'; ctx.lineWidth = 2.5; ctx.stroke(); ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * (config.visHeight * 0.6); ctx.lineTo(i*spacing, -h); } ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)'; ctx.lineWidth = 2; ctx.stroke(); }
-        else if (style === 'thin_wave') { ctx.beginPath(); ctx.moveTo(0, cy); let points = 100; let spacing = visW / points; for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * config.visHeight; ctx.lineTo(i*spacing, -h); } ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke(); }
-        else if (style === 'shadow_wave') { ctx.beginPath(); ctx.moveTo(0, cy); let points = 80; let spacing = visW / points; for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * config.visHeight; ctx.lineTo(i*spacing, -h); } ctx.strokeStyle = '#fff'; ctx.lineWidth = 2.5; ctx.shadowBlur = 15; ctx.shadowColor = 'rgba(255, 255, 255, 0.8)'; ctx.stroke(); ctx.shadowBlur = 0; }
-        else if (style === 'stereo_lines') { let points = 80; let spacing = visW / points; ctx.beginPath(); ctx.moveTo(0, -10); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * (config.visHeight/2); ctx.lineTo(i*spacing, -10 - h); } ctx.strokeStyle = '#00bcd4'; ctx.lineWidth = 2; ctx.stroke(); ctx.beginPath(); ctx.moveTo(0, 10); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * (config.visHeight/2); ctx.lineTo(i*spacing, 10 + h); } ctx.strokeStyle = '#ff4081'; ctx.lineWidth = 2; ctx.stroke(); }
-        else if (style === 'smooth_curve') { let points = 60; let spacing = visW / points; ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * config.visHeight; let nextH = getSymmetricVal(i+1, points, bufferLen) * config.visHeight; let xc = (i*spacing + (i+1)*spacing)/2; let yc = (-h - nextH)/2; ctx.quadraticCurveTo(i*spacing, -h, xc, yc); } ctx.strokeStyle = '#fff'; ctx.lineWidth = 2.5; ctx.stroke(); }
-        else if (style === 'ribbon_wave') { let points = 80; let spacing = visW / points; for(let layer=0; layer<3; layer++) { ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * (config.visHeight * (1 - layer*0.2)); ctx.lineTo(i*spacing, -h - layer*6); } ctx.strokeStyle = `rgba(255, 255, 255, ${0.9 - layer*0.3})`; ctx.lineWidth = 2; ctx.stroke(); } }
-        else if (style === 'minimal_line') { let points = 100; let spacing = visW / points; ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * (config.visHeight * 0.7); ctx.lineTo(i*spacing, -h); } ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)'; ctx.lineWidth = 2; ctx.stroke(); ctx.fillStyle = 'rgba(255, 255, 255, 0.4)'; ctx.fillRect(0, cy, visW, 1); }
-        else if (style === 'calm_horizon') { let points = 80; let spacing = visW / points; ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * config.visHeight; ctx.lineTo(i*spacing, -h); } let grad = ctx.createLinearGradient(0, cy - config.visHeight, 0, cy); grad.addColorStop(0, '#fffa65'); grad.addColorStop(1, '#ff7f50'); ctx.strokeStyle = grad; ctx.lineWidth = 3; ctx.stroke(); ctx.fillStyle = 'rgba(255, 127, 80, 0.1)'; ctx.lineTo(visW, cy); ctx.lineTo(0, cy); ctx.fill(); }
-        else if (style === 'circle_bars') { let cx_c = visW / 2; let cy_c = -config.visHeight * 0.6; let radius = config.visHeight * 0.4; let bars = 60; for(let i=0; i<bars; i++) { let val = getSymmetricVal(i, bars, bufferLen) * (config.visHeight * 0.6); let angle = (i * Math.PI * 2) / bars; ctx.save(); ctx.translate(cx_c, cy_c); ctx.rotate(angle); ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.fillRect(-2, radius, 4, Math.max(2, val)); ctx.restore(); } }
-        else if (style === 'circle_ring') { let cx_c = visW / 2; let cy_c = -config.visHeight * 0.6; let radius = config.visHeight * 0.45; let points = 80; ctx.save(); ctx.translate(cx_c, cy_c); ctx.beginPath(); for(let i=0; i<=points; i++) { let val = getSymmetricVal(i, points, bufferLen) * (config.visHeight * 0.4); let angle = (i * Math.PI * 2) / points; let r = radius + val; let x = Math.cos(angle) * r; let y = Math.sin(angle) * r; if(i===0) ctx.moveTo(x, y); else ctx.lineTo(x, y); } ctx.closePath(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 2.5; ctx.stroke(); ctx.restore(); }
-        else if (style === 'circle_dashed') { let cx_c = visW / 2; let cy_c = -config.visHeight * 0.6; let radius = config.visHeight * 0.4; let bars = 48; let dashH = 4; let gapH = 3; for(let i=0; i<bars; i++) { let h = getSymmetricVal(i, bars, bufferLen) * (config.visHeight * 0.6); let angle = (i * Math.PI * 2) / bars; let dashes = Math.floor(h / (dashH + gapH)); ctx.save(); ctx.translate(cx_c, cy_c); ctx.rotate(angle); ctx.fillStyle = 'rgba(255, 255, 255, 0.85)'; for(let j=0; j<dashes; j++) { ctx.fillRect(-1.5, radius + (j * (dashH + gapH)), 3, dashH); } ctx.restore(); } }
-        else if (style === 'circle_mirror') { let cx_c = visW / 2; let cy_c = -config.visHeight * 0.6; let radius = config.visHeight * 0.45; let bars = 60; for(let i=0; i<bars; i++) { let val = Math.max(2, getSymmetricVal(i, bars, bufferLen) * (config.visHeight * 0.4)); let angle = (i * Math.PI * 2) / bars; ctx.save(); ctx.translate(cx_c, cy_c); ctx.rotate(angle); ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.fillRect(-1.5, radius, 3, val); ctx.fillStyle = 'rgba(255, 255, 255, 0.4)'; ctx.fillRect(-1.5, radius - val*0.7, 3, val*0.7); ctx.restore(); } }
-        else if (style === 'vinyl_record') { let cx_c = visW / 2; let cy_c = -config.visHeight * 0.6; let bass = getSymmetricVal(10, 20, bufferLen); ctx.save(); ctx.translate(cx_c, cy_c); ctx.rotate(time); ctx.beginPath(); ctx.arc(0,0, config.visHeight*0.5 + bass*15, 0, Math.PI*2); ctx.fillStyle = '#181818'; ctx.fill(); ctx.lineWidth = 1.5; for(let i=0; i<5; i++) { let val = getSymmetricVal(i*4, 20, bufferLen); ctx.beginPath(); ctx.arc(0,0, config.visHeight*0.12 + i*14, 0, Math.PI*2); ctx.strokeStyle = `rgba(255,255,255,${0.1 + val*0.4})`; ctx.stroke(); } ctx.beginPath(); ctx.arc(0,0, 22, 0, Math.PI*2); ctx.fillStyle = '#d32f2f'; ctx.fill(); ctx.beginPath(); ctx.arc(0,0, 4, 0, Math.PI*2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.restore(); }
-        else if (style === 'block_tower') { let numBars = 30; let spacing = visW/numBars; let barW = spacing*0.6; for(let i=0; i<numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let x = i*spacing; ctx.fillStyle = '#00bcd4'; ctx.fillRect(x, cy-h, barW, h); ctx.fillStyle = '#0097a7'; ctx.beginPath(); ctx.moveTo(x+barW, cy); ctx.lineTo(x+barW+5, cy-5); ctx.lineTo(x+barW+5, cy-h-5); ctx.lineTo(x+barW, cy-h); ctx.fill(); ctx.fillStyle = '#b2ebf2'; ctx.beginPath(); ctx.moveTo(x, cy-h); ctx.lineTo(x+5, cy-h-5); ctx.lineTo(x+barW+5, cy-h-5); ctx.lineTo(x+barW, cy-h); ctx.fill(); } }
-        else if (style === 'equalizer_3d') { let numBars = 32; let spacing = visW/numBars; let barW = spacing*0.7; for(let i=0; i<numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let grad = ctx.createLinearGradient(i*spacing, 0, i*spacing+barW, 0); grad.addColorStop(0, '#555'); grad.addColorStop(0.5, '#fff'); grad.addColorStop(1, '#555'); ctx.fillStyle = grad; ctx.fillRect(i*spacing, cy-h, barW, h); ctx.fillStyle = '#ddd'; ctx.beginPath(); ctx.ellipse(i*spacing+barW/2, cy-h, barW/2, 4, 0, 0, Math.PI*2); ctx.fill(); ctx.fillStyle = '#333'; ctx.beginPath(); ctx.ellipse(i*spacing+barW/2, cy, barW/2, 4, 0, 0, Math.PI*2); ctx.fill(); } }
-        else if (style === 'floating_blocks') { let numBars = 32; let spacing = visW / numBars; let barW = spacing * 0.7; for (let i = 0; i < numBars; i++) { let val = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.fillRect(i * spacing, cy - val, barW, 8); if(val > 10) { ctx.fillStyle = 'rgba(255, 255, 255, 0.35)'; ctx.fillRect(i * spacing, cy - val + 12, barW, val - 12); } } }
-        else if (style === 'center_pulse') { let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.7; let center = visW / 2; for (let i = 0; i < numBars; i++) { let h = Math.max(4, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let x = i * spacing; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.fillRect(x, cy - h/2 - config.visHeight/2, barW, h); } }
-        else if (style === 'classic_studio') { let numBars = 36; let spacing = visW / numBars; let barW = spacing * 0.75; let segH = 6; for (let i = 0; i < numBars; i++) { let h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let segs = Math.floor(h / (segH + 2)); for (let j = 0; j < segs; j++) { ctx.fillStyle = j > 12 ? '#f44336' : (j > 8 ? '#ffeb3b' : '#00e676'); ctx.fillRect(i * spacing, -(j * (segH + 2)) - segH, barW, segH); } } }
+        if (style === 'vintage_bars') {
+          let numBars = 48; let spacing = visW / numBars; let barW = spacing * 0.7; ctx.fillStyle = 'rgba(245, 245, 240, 0.9)'; 
+          for (let i = 0; i < numBars; i++) { let h = Math.max(5, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillRect(i * spacing, -h, barW, h); }
+        }
+        else if (style === 'winamp_classic') {
+          let numBars = 48; let spacing = visW / numBars; let barW = spacing * 0.7;
+          for (let i = 0; i < numBars; i++) {
+            let h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight);
+            if (h >= peakHeights[i]) peakHeights[i] = h; else { peakHeights[i] -= 2.0; if (peakHeights[i] < 0) peakHeights[i] = 0; }
+            ctx.fillStyle = 'rgba(230, 235, 240, 0.7)'; ctx.fillRect(i * spacing, -h, barW, h); ctx.fillStyle = 'rgba(255, 60, 60, 1)'; ctx.fillRect(i * spacing, -peakHeights[i] - 5, barW, 4);
+          }
+        }
+        else if (style === 'classic_eq') {
+          let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.7;
+          for (let i = 0; i < numBars; i++) {
+            let h = Math.max(4, getSymmetricVal(i, numBars, bufferLen) * config.visHeight);
+            let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight); grad.addColorStop(0, '#00e676'); grad.addColorStop(0.6, '#ffeb3b'); grad.addColorStop(1, '#ff3d00');
+            ctx.fillStyle = grad; ctx.fillRect(i * spacing, -h, barW, h);
+          }
+        }
+        else if (style === 'step_eq') {
+          let numBars = 32; let spacing = visW / numBars; let barW = spacing - 4; let stepH = 12;
+          for (let i = 0; i < numBars; i++) {
+            let h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let blocks = Math.floor(h / stepH);
+            for (let j = 0; j < blocks; j++) { ctx.fillStyle = j > (config.visHeight/stepH)*0.7 ? '#ff5722' : '#ffc107'; ctx.fillRect(i * spacing, -(j * stepH) - stepH, barW, stepH - 2); }
+          }
+        }
+        else if (style === 'thick_bars') {
+          let numBars = 24; let spacing = visW / numBars; let barW = spacing * 0.85; ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+          for (let i = 0; i < numBars; i++) { let h = Math.max(8, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillRect(i * spacing, -h, barW, h); }
+        }
+        else if (style === 'hollow_bars') {
+          let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.7; ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)'; ctx.lineWidth = 1.5;
+          for (let i = 0; i < numBars; i++) { let h = Math.max(5, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.strokeRect(i * spacing, -h, barW, h); }
+        }
+        else if (style === 'rounded_bars') {
+          let numBars = 36; let spacing = visW / numBars; let barW = spacing * 0.65; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+          for (let i = 0; i < numBars; i++) {
+            let h = Math.max(8, getSymmetricVal(i, numBars, bufferLen) * config.visHeight);
+            ctx.beginPath(); if(ctx.roundRect) ctx.roundRect(i * spacing, -h, barW, h, [barW/2, barW/2, 0, 0]); else ctx.rect(i * spacing, -h, barW, h); ctx.fill();
+          }
+        }
+        else if (style === 'split_eq') {
+          let numBars = 48; let spacing = visW / numBars; let barW = spacing * 0.6; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.fillRect(0, -1, visW, 2); 
+          for (let i = 0; i < numBars; i++) { let h = Math.max(2, getSymmetricVal(i, numBars, bufferLen) * (config.visHeight / 2)); ctx.fillRect(i * spacing, -h - 4, barW, h); ctx.fillRect(i * spacing, 4, barW, h); }
+        }
+        else if (style === 'double_mirror') {
+          let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.7; ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+          for (let i = 0; i < numBars; i++) { let h = Math.max(3, getSymmetricVal(i, numBars, bufferLen) * (config.visHeight / 2)); ctx.fillRect(i * spacing, -h, barW, h); ctx.fillRect(i * spacing, 0, barW, h); }
+        }
+        else if (style === 'elegant_piano') {
+          let numBars = 52; let spacing = visW / numBars; let barW = spacing * 0.85; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+          for (let i = 0; i < numBars; i++) { let h = Math.max(10, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillRect(i * spacing, cy, barW, -h); ctx.fillStyle = 'rgba(0,0,0,0.1)'; ctx.fillRect(i * spacing, cy, barW, -h); ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; }
+        }
+        else if (style === 'cinematic_streaks') {
+          let numBars = 40; let spacing = visW / numBars;
+          for (let i = 0; i < numBars; i++) {
+            let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight;
+            let grad = ctx.createLinearGradient(0, cy, 0, cy - h); grad.addColorStop(0, 'rgba(255,255,255,0.8)'); grad.addColorStop(1, 'rgba(255,255,255,0)');
+            ctx.fillStyle = grad; ctx.fillRect(i * spacing + spacing/2 - 1, cy - h, 2, h);
+          }
+        }
+        else if (style === 'ghost_ambient') {
+          let numBars = 20; let spacing = visW / numBars; let barW = spacing * 0.9;
+          for (let i = 0; i < numBars; i++) {
+            let h = Math.max(10, getSymmetricVal(i, numBars, bufferLen) * config.visHeight);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.15)'; ctx.shadowBlur = 20; ctx.shadowColor = '#fff';
+            ctx.fillRect(i * spacing, cy - h, barW, h);
+          } ctx.shadowBlur = 0;
+        }
+        else if (style === 'glitch_tech') {
+          let numBars = 36; let spacing = visW / numBars; let barW = spacing * 0.7; ctx.fillStyle = '#fff';
+          for (let i = 0; i < numBars; i++) {
+            let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight;
+            if(h > 15) { ctx.fillRect(i * spacing, cy - h, barW, h); ctx.clearRect(i * spacing - 1, cy - h + Math.random()*h, barW + 2, Math.random()*5+2); } else { ctx.fillRect(i * spacing, cy - 2, barW, 2); }
+          }
+        }
+        else if (style === 'diamond_eq') {
+          let numBars = 30; let spacing = visW / numBars; ctx.fillStyle = 'rgba(255,255,255,0.8)';
+          for (let i = 0; i < numBars; i++) {
+            let h = Math.max(5, getSymmetricVal(i, numBars, bufferLen) * (config.visHeight/2)); let cx = i * spacing + spacing/2;
+            ctx.beginPath(); ctx.moveTo(cx, cy - h); ctx.lineTo(cx + spacing*0.4, cy); ctx.lineTo(cx, cy + h); ctx.lineTo(cx - spacing*0.4, cy); ctx.fill();
+          }
+        }
+        else if (style === 'particle_fountain') {
+          let numBars = 45; let spacing = visW / numBars;
+          for (let i = 0; i < numBars; i++) {
+            let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight;
+            ctx.fillStyle = `rgba(255,255,255,${0.2 + h/config.visHeight})`;
+            ctx.beginPath(); ctx.arc(i * spacing + spacing/2, cy - h, Math.random()*2+1.5, 0, Math.PI*2); ctx.fill();
+            if(h > 20) { ctx.beginPath(); ctx.arc(i * spacing + spacing/2, cy - h + 15, Math.random()*1.5, 0, Math.PI*2); ctx.fill(); }
+          }
+        }
+        else if (style === 'digital_rain') {
+          let numBars = 50; let spacing = visW / numBars; ctx.fillStyle = '#00ff41';
+          for (let i = 0; i < numBars; i++) {
+            let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight;
+            if(h > 10) { ctx.fillRect(i * spacing, cy - h, 2, 8); ctx.fillStyle = 'rgba(0, 255, 65, 0.3)'; ctx.fillRect(i * spacing, cy - h + 10, 2, h/2); ctx.fillStyle = '#00ff41'; }
+          }
+        }
+        else if (style === 'depth_bars') {
+          let numBars = 32; let spacing = visW / numBars; let barW = spacing * 0.6;
+          for (let i = 0; i < numBars; i++) {
+            let h = Math.max(10, getSymmetricVal(i, numBars, bufferLen) * config.visHeight);
+            ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.fillRect(i * spacing + 5, cy - h + 5, barW, h);
+            ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.fillRect(i * spacing, cy - h, barW, h);
+          }
+        }
+        else if (style === 'glow_pulse') {
+          ctx.beginPath(); ctx.moveTo(0, cy); let numBars = 50; let spacing = visW / numBars;
+          for (let i = 0; i <= numBars; i++) {
+            let val = getSymmetricVal(i, numBars, bufferLen) * (config.visHeight * 0.4);
+            ctx.lineTo(i * spacing, cy - val);
+          }
+          ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.shadowBlur = 15; ctx.shadowColor = '#fff'; ctx.stroke(); ctx.shadowBlur = 0;
+        }
+        else if (style === 'acoustic_wave') {
+          ctx.beginPath(); ctx.moveTo(0, cy); let numBars = 40; let spacing = visW / numBars;
+          for (let i = 0; i < numBars - 1; i++) {
+            let h1 = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let h2 = getSymmetricVal(i+1, numBars, bufferLen) * config.visHeight;
+            let cx = (i * spacing + (i+1) * spacing) / 2; let cy_p = (cy - h1 + cy - h2) / 2;
+            ctx.quadraticCurveTo(i * spacing, cy - h1, cx, cy_p);
+          }
+          ctx.lineTo(visW, cy); ctx.strokeStyle = 'rgba(255,255,255,0.7)'; ctx.lineWidth = 2; ctx.stroke();
+          ctx.fillStyle = 'rgba(255,255,255,0.1)'; ctx.fill();
+        }
+        else if (style === 'liquid_bar') {
+          let numBars = 32; let spacing = visW / numBars; let barW = spacing * 0.6;
+          for (let i = 0; i < numBars; i++) { let h = Math.max(10, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillStyle = '#00e5ff'; ctx.shadowBlur = 15; ctx.shadowColor = '#00e5ff'; ctx.beginPath(); if(ctx.roundRect) ctx.roundRect(i * spacing, cy - h, barW, h, barW/2); else ctx.rect(i * spacing, cy - h, barW, h); ctx.fill(); } ctx.shadowBlur = 0;
+        }
+        else if (style === 'mirror_bars') {
+          let numBars = 48; let spacing = visW / numBars;
+          for (let i = 0; i < numBars; i++) { let val = Math.max(2, getSymmetricVal(i, numBars, bufferLen) * (config.visHeight/2)); ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.fillRect(i * spacing, cy - val, spacing * 0.6, val); ctx.fillStyle = 'rgba(255, 255, 255, 0.3)'; ctx.fillRect(i * spacing, cy, spacing * 0.6, val * 0.8); }
+        }
+        else if (style === 'gradient_blocks') {
+          let numBars = 40; let spacing = visW / numBars;
+          for (let i = 0; i < numBars; i++) { let val = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight); grad.addColorStop(0, '#00c6ff'); grad.addColorStop(1, '#0072ff'); ctx.fillStyle = grad; ctx.fillRect(i * spacing, cy - val, spacing * 0.8, val); }
+        }
+        else if (style === 'sunset_bars') {
+          let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.75;
+          for (let i = 0; i < numBars; i++) {
+            let h = Math.max(6, getSymmetricVal(i, numBars, bufferLen) * config.visHeight);
+            let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight); grad.addColorStop(0, '#ff3f34'); grad.addColorStop(0.5, '#ff7f50'); grad.addColorStop(1, '#fffa65');
+            ctx.fillStyle = grad; ctx.fillRect(i * spacing, -h, barW, h);
+          }
+        }
+        else if (style === 'emerald_bars') {
+          let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.75;
+          for (let i = 0; i < numBars; i++) {
+            let h = Math.max(6, getSymmetricVal(i, numBars, bufferLen) * config.visHeight);
+            let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight); grad.addColorStop(0, '#004d40'); grad.addColorStop(1, '#18ffff');
+            ctx.fillStyle = grad; ctx.fillRect(i * spacing, -h, barW, h);
+          }
+        }
+        else if (style === 'purple_haze') {
+          let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.75;
+          for (let i = 0; i < numBars; i++) {
+            let h = Math.max(6, getSymmetricVal(i, numBars, bufferLen) * config.visHeight);
+            let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight); grad.addColorStop(0, '#4a148c'); grad.addColorStop(1, '#ea80fc');
+            ctx.fillStyle = grad; ctx.fillRect(i * spacing, -h, barW, h);
+          }
+        }
+        else if (style === 'gold_classic') {
+          let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.75;
+          for (let i = 0; i < numBars; i++) {
+            let h = Math.max(6, getSymmetricVal(i, numBars, bufferLen) * config.visHeight);
+            let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight); grad.addColorStop(0, '#ff8f00'); grad.addColorStop(1, '#ffe082');
+            ctx.fillStyle = grad; ctx.fillRect(i * spacing, -h, barW, h);
+          }
+        }
+        else if (style === 'monochrome_fade') {
+          let numBars = 44; let spacing = visW / numBars; let barW = spacing * 0.75;
+          for (let i = 0; i < numBars; i++) {
+            let h = Math.max(6, getSymmetricVal(i, numBars, bufferLen) * config.visHeight);
+            let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight); grad.addColorStop(0, 'rgba(255,255,255,0.1)'); grad.addColorStop(1, 'rgba(255,255,255,0.95)');
+            ctx.fillStyle = grad; ctx.fillRect(i * spacing, -h, barW, h);
+          }
+        }
+        else if (style === 'dual_tone') {
+          let numBars = 36; let spacing = visW / numBars; let barW = spacing * 0.7;
+          for (let i = 0; i < numBars; i++) {
+            let h = Math.max(4, getSymmetricVal(i, numBars, bufferLen) * (config.visHeight / 2));
+            ctx.fillStyle = '#00e5ff'; ctx.fillRect(i * spacing, -h, barW, h);
+            ctx.fillStyle = '#ff4081'; ctx.fillRect(i * spacing, 0, barW, h);
+          }
+        }
+        else if (style === 'modern_wave') {
+          ctx.beginPath(); ctx.moveTo(0, cy); let numPoints = 100; let spacing = visW / numPoints;
+          for(let i=0; i<=numPoints; i++) { let val = getSymmetricVal(i, numPoints, bufferLen) * config.visHeight; let y = cy - val - (Math.sin(i*0.1 + time*5)*val*0.2); ctx.lineTo(i*spacing, y); }
+          let grad = ctx.createLinearGradient(0, cy, visW, cy); grad.addColorStop(0, '#00d2ff'); grad.addColorStop(1, '#e040fb'); ctx.strokeStyle = grad; ctx.lineWidth = 3; ctx.stroke(); ctx.lineTo(visW, cy); ctx.lineTo(0, cy); ctx.fillStyle = 'rgba(0, 210, 255, 0.15)'; ctx.fill();
+        }
+        else if (style === 'filled_wave') {
+          ctx.beginPath(); ctx.moveTo(0, cy); let points = 80; let spacing = visW / points;
+          for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * config.visHeight; ctx.lineTo(i*spacing, -h); }
+          ctx.lineTo(visW, cy); ctx.lineTo(0, cy); ctx.closePath();
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.4)'; ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+        }
+        else if (style === 'stereo_lines') {
+          let points = 80; let spacing = visW / points;
+          ctx.beginPath(); ctx.moveTo(0, -10); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * (config.visHeight/2); ctx.lineTo(i*spacing, -10 - h); }
+          ctx.strokeStyle = '#00bcd4'; ctx.lineWidth = 2; ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(0, 10); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * (config.visHeight/2); ctx.lineTo(i*spacing, 10 + h); }
+          ctx.strokeStyle = '#ff4081'; ctx.lineWidth = 2; ctx.stroke();
+        }
+        else if (style === 'calm_horizon') {
+          let points = 80; let spacing = visW / points;
+          ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * config.visHeight; ctx.lineTo(i*spacing, -h); }
+          let grad = ctx.createLinearGradient(0, cy - config.visHeight, 0, cy); grad.addColorStop(0, '#fffa65'); grad.addColorStop(1, '#ff7f50');
+          ctx.strokeStyle = grad; ctx.lineWidth = 3; ctx.stroke();
+          ctx.fillStyle = 'rgba(255, 127, 80, 0.1)'; ctx.lineTo(visW, cy); ctx.lineTo(0, cy); ctx.fill();
+        }
+        else if (style === 'neon_lines') {
+          let numBars = 24; let spacing = visW / numBars; let barW = 4;
+          for(let i=0; i<numBars; i++) { let val = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; ctx.fillStyle = '#00e5ff'; ctx.shadowBlur = 10; ctx.shadowColor = '#00e5ff'; ctx.fillRect(i*spacing + spacing/2, cy-val, barW, val); } ctx.shadowBlur = 0;
+        }
+        else if (style === 'ambient_glow') {
+          let numBars = 30; let spacing = visW / numBars;
+          for(let i=0; i<numBars; i++) { let val = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let grad = ctx.createRadialGradient(i*spacing, cy, 0, i*spacing, cy, val); grad.addColorStop(0, 'rgba(255,255,255,0.8)'); grad.addColorStop(1, 'rgba(255,255,255,0)'); ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(i*spacing, cy, val, Math.PI, Math.PI*2); ctx.fill(); }
+        }
+        else if (style === 'block_fade') {
+          let numBars = 24; let spacing = visW / numBars; let barW = spacing*0.8;
+          for(let i=0; i<numBars; i++) { let val = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; ctx.fillStyle = `rgba(255,255,255,${val/config.visHeight})`; ctx.fillRect(i*spacing, cy-val, barW, val); }
+        }
+        else if (style === 'split_glow') {
+          let numBars = 32; let spacing = visW / numBars; let barW = spacing*0.6;
+          for(let i=0; i<numBars; i++) { let val = getSymmetricVal(i, numBars, bufferLen) * (config.visHeight/2); ctx.fillStyle = '#e040fb'; ctx.shadowBlur = 10; ctx.shadowColor = '#e040fb'; ctx.fillRect(i*spacing, cy-val-5, barW, val); ctx.fillRect(i*spacing, cy+5, barW, val); } ctx.shadowBlur = 0;
+        }
+        else if (style === 'wave_points') {
+          let numBars = 40; let spacing = visW / numBars; ctx.beginPath(); ctx.moveTo(0, cy);
+          for(let i=0; i<numBars; i++) { let val = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; ctx.lineTo(i*spacing, cy-val); ctx.fillStyle = '#fff'; ctx.fillRect(i*spacing-2, cy-val-2, 4, 4); } ctx.strokeStyle = 'rgba(255,255,255,0.4)'; ctx.lineWidth = 1; ctx.stroke();
+        }
+        else if (style === 'block_tower') {
+          let numBars = 30; let spacing = visW/numBars; let barW = spacing*0.6;
+          for(let i=0; i<numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let x = i*spacing; ctx.fillStyle = '#00bcd4'; ctx.fillRect(x, cy-h, barW, h); ctx.fillStyle = '#0097a7'; ctx.beginPath(); ctx.moveTo(x+barW, cy); ctx.lineTo(x+barW+5, cy-5); ctx.lineTo(x+barW+5, cy-h-5); ctx.lineTo(x+barW, cy-h); ctx.fill(); ctx.fillStyle = '#b2ebf2'; ctx.beginPath(); ctx.moveTo(x, cy-h); ctx.lineTo(x+5, cy-h-5); ctx.lineTo(x+barW+5, cy-h-5); ctx.lineTo(x+barW, cy-h); ctx.fill(); }
+        }
+        else if (style === 'equalizer_3d') {
+          let numBars = 32; let spacing = visW/numBars; let barW = spacing*0.7;
+          for(let i=0; i<numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let grad = ctx.createLinearGradient(i*spacing, 0, i*spacing+barW, 0); grad.addColorStop(0, '#555'); grad.addColorStop(0.5, '#fff'); grad.addColorStop(1, '#555'); ctx.fillStyle = grad; ctx.fillRect(i*spacing, cy-h, barW, h); ctx.fillStyle = '#ddd'; ctx.beginPath(); ctx.ellipse(i*spacing+barW/2, cy-h, barW/2, 4, 0, 0, Math.PI*2); ctx.fill(); ctx.fillStyle = '#333'; ctx.beginPath(); ctx.ellipse(i*spacing+barW/2, cy, barW/2, 4, 0, 0, Math.PI*2); ctx.fill(); }
+        }
+        else if (style === 'floating_blocks') {
+          let numBars = 32; let spacing = visW / numBars; let barW = spacing * 0.7;
+          for (let i = 0; i < numBars; i++) { let val = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.fillRect(i * spacing, cy - val, barW, 8); if(val > 10) { ctx.fillStyle = 'rgba(255, 255, 255, 0.35)'; ctx.fillRect(i * spacing, cy - val + 12, barW, val - 12); } }
+        }
+        else if (style === 'center_pulse') {
+          let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.7;
+          for (let i = 0; i < numBars; i++) { let h = Math.max(4, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let x = i * spacing; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.fillRect(x, cy - h/2 - config.visHeight/2, barW, h); }
+        }
+        else if (style === 'classic_studio') {
+          let numBars = 36; let spacing = visW / numBars; let barW = spacing * 0.75; let segH = 6;
+          for (let i = 0; i < numBars; i++) {
+            let h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let segs = Math.floor(h / (segH + 2));
+            for (let j = 0; j < segs; j++) { ctx.fillStyle = j > 12 ? '#f44336' : (j > 8 ? '#ffeb3b' : '#00e676'); ctx.fillRect(i * spacing, -(j * (segH + 2)) - segH, barW, segH); }
+          }
+        }
+
       } catch (e) {}
       ctx.restore();
     }
 
+    function drawPureAnimatedVectorSmoke() {
+      let smokeScale = parseFloat(document.getElementById('smokeSize').value);
+      let smokeAng1 = parseFloat(document.getElementById('smokeAngle1').value) * Math.PI / 180;
+      let lenMult1 = config.smokeLen1;
+      
+      ctx.save(); ctx.translate(smokeX, smokeY); ctx.rotate(smokeAng1); ctx.scale(smokeScale, smokeScale);
+      function drawBranch(height, maxW, waveFreq, speedMult, xOffsetBase) {
+        let points = []; let steps = 50;
+        for (let i = 0; i <= steps; i++) {
+          let prog = i / steps; let w = Math.sin(prog * Math.PI) * maxW; if (prog > 0.6) w *= Math.pow(1 - prog + 0.05, 0.6);
+          let speed = time * speedMult; let envelope = Math.pow(prog, 0.8); let x = Math.sin(prog * Math.PI * waveFreq - speed) * 70 * envelope;
+          x += xOffsetBase * prog; let y = -prog * (height * lenMult1); points.push({ x, y, w });
+        }
+        function drawPolygon(widthMult, offsetX, color) {
+          ctx.beginPath();
+          for (let i = 0; i < points.length; i++) { let px = points[i].x + offsetX - (points[i].w * widthMult); if (i === 0) ctx.moveTo(px, points[i].y); else ctx.lineTo(px, points[i].y); }
+          for (let i = points.length - 1; i >= 0; i--) { let px = points[i].x + offsetX + (points[i].w * widthMult); ctx.lineTo(px, points[i].y); }
+          ctx.closePath(); ctx.fillStyle = color; ctx.fill();
+        }
+        drawPolygon(1.4, 0, 'rgba(180, 185, 190, 0.15)'); drawPolygon(1.0, 0, 'rgba(220, 225, 230, 0.25)'); drawPolygon(0.35, -maxW * 0.25, 'rgba(255, 255, 255, 0.3)');
+      }
+      drawBranch(550, 15, 2.0, 4.0, 0); drawBranch(380, 8, 2.5, 3.2, -30); drawBranch(300, 6, 3.0, 3.5, 35);
+      ctx.restore();
+    }
+
+    function drawNewAnimatedVectorSmoke() {
+      let smokeScale = parseFloat(document.getElementById('smokeSize').value);
+      let smokeAng2 = parseFloat(document.getElementById('smokeAngle2').value) * Math.PI / 180;
+      let lenMult2 = config.smokeLen2;
+      
+      ctx.save(); ctx.translate(smokeX2, smokeY2); ctx.rotate(smokeAng2); ctx.scale(smokeScale, smokeScale);
+      function drawBillow(height, maxW, waveFreq, speedMult, xOffsetBase) {
+        let points = []; let steps = 40;
+        for (let i = 0; i <= steps; i++) {
+          let prog = i / steps; let w = Math.sin(prog * Math.PI) * maxW * (1 + prog * 1.5); if (prog > 0.4) w *= Math.pow(1.2 - prog, 1.2);
+          let speed = time * speedMult; let turb = Math.sin(prog * 15 - speed * 2) * 15 * prog;
+          let x = Math.sin(prog * Math.PI * waveFreq - speed) * 60 * prog + turb; x += xOffsetBase * prog; let y = -prog * (height * lenMult2); points.push({ x, y, w });
+        }
+        function drawPolygon(widthMult, offsetX, color) {
+          ctx.beginPath();
+          for (let i = 0; i < points.length; i++) { let px = points[i].x + offsetX - (points[i].w * widthMult); if (i === 0) ctx.moveTo(px, points[i].y); else ctx.lineTo(px, points[i].y); }
+          for (let i = points.length - 1; i >= 0; i--) { let px = points[i].x + offsetX + (points[i].w * widthMult); ctx.lineTo(px, points[i].y); }
+          ctx.closePath(); ctx.fillStyle = color; ctx.fill();
+        }
+        drawPolygon(1.8, 0, 'rgba(100, 105, 110, 0.15)'); drawPolygon(1.2, 0, 'rgba(150, 155, 160, 0.2)'); drawPolygon(0.5, -maxW * 0.1, 'rgba(220, 220, 225, 0.25)');
+      }
+      drawBillow(500, 25, 1.5, 2.5, 20); drawBillow(400, 18, 2.0, 3.0, -35);
+      ctx.restore();
+    }
+
     function animate() {
-      ctx.fillStyle = "#000"; ctx.fillRect(0, 0, width, height); time += 0.05; 
+      ctx.fillStyle = "#000"; ctx.fillRect(0, 0, width, height); time += (0.05 * config.fxSpeed); 
       ctx.save();
-      if (isBgReady) { bgGlobalScale = Math.max(width / bgImageElement.width, height / bgImageElement.height); bgGlobalX = (width / 2) - (bgImageElement.width / 2) * bgGlobalScale; bgGlobalY = (height / 2) - (bgImageElement.height / 2) * bgGlobalScale; ctx.drawImage(bgImageElement, bgGlobalX, bgGlobalY, bgImageElement.width * bgGlobalScale, bgImageElement.height * bgGlobalScale); }
-      if (isAudioInit && currentObjectUrl) { if (!audioPlayer.paused) analyser.getByteFrequencyData(dataArray); else for (let i = 0; i < dataArray.length; i++) dataArray[i] = Math.max(0, dataArray[i] - 10); drawVisualizer(analyser.frequencyBinCount); }
-      drawSpeakers(isAudioInit ? analyser.frequencyBinCount : 128);
-      let propScale = parseFloat(document.getElementById('propSize').value); let propSpeed = parseFloat(document.getElementById('propSpeed').value);
-      drawCoffeeSteam(coffeeX, coffeeY, document.getElementById('coffeeStyle').value, propScale, propSpeed);
-      drawCandle(candle1X, candle1Y, document.getElementById('candleStyle').value, propScale, propSpeed);
-      drawCandle(candle2X, candle2Y, document.getElementById('candleStyle').value, propScale, propSpeed);
-      for (let i = 0; i < config.count; i++) { if (cinematicParticles[i]) { cinematicParticles[i].update(); cinematicParticles[i].draw(); } }
-      if (config.type !== 'none') { const grad = ctx.createRadialGradient(width/2, height/2, height*0.4, width/2, height/2, width*0.8); grad.addColorStop(0, 'rgba(0,0,0,0)'); grad.addColorStop(1, 'rgba(0,0,0,0.4)'); ctx.fillStyle = grad; ctx.fillRect(-10, -10, width+20, height+20); }
+      
+      if (['vintage', 'grain', 'scratch', 'sepia_dust', 'old_tv', 'flicker_8mm'].includes(config.type)) { const jitterX = (Math.random() - 0.5) * 1.5; const jitterY = (Math.random() - 0.5) * 1.5; ctx.translate(jitterX, jitterY); }
+      if (isBgReady) { const scale = Math.max(width / bgImageElement.width, height / bgImageElement.height); const x = (width / 2) - (bgImageElement.width / 2) * scale; const y = (height / 2) - (bgImageElement.height / 2) * scale; ctx.drawImage(bgImageElement, x, y, bgImageElement.width * scale, bgImageElement.height * scale); }
+      
+      if (config.type === 'sepia_dust') { ctx.fillStyle = 'rgba(112, 66, 20, 0.35)'; ctx.fillRect(-10, -10, width+20, height+20); } 
+      else if (config.type === 'old_tv') { ctx.fillStyle = 'rgba(0, 0, 0, 0.25)'; for (let i = 0; i < height; i += 4) { ctx.fillRect(0, i, width, 1.5); } ctx.fillStyle = 'rgba(0, 255, 0, 0.05)'; ctx.fillRect(-10, -10, width+20, height+20); } 
+      else if (config.type === 'flicker_8mm') { 
+        let flicker = (Math.sin(time * 5) * 0.08) + (Math.random() * 0.05);
+        if(flicker < 0) flicker = 0;
+        ctx.fillStyle = `rgba(0, 0, 0, ${flicker})`; 
+        ctx.fillRect(-10, -10, width+20, height+20); 
+      } 
+      else if (config.type !== 'none') { ctx.fillStyle = "rgba(10, 5, 0, 0.1)"; ctx.fillRect(-10, -10, width+20, height+20); }
+
+      if (isAudioInit && currentObjectUrl) {
+        if (!audioPlayer.paused) analyser.getByteFrequencyData(dataArray); else for (let i = 0; i < dataArray.length; i++) dataArray[i] = Math.max(0, dataArray[i] - 10);
+        drawVisualizer(analyser.frequencyBinCount);
+      }
+
+      drawPureAnimatedVectorSmoke(); drawNewAnimatedVectorSmoke();
+      
+      for (let i = 0; i < config.count; i++) { if (particles[i]) { particles[i].update(); particles[i].draw(); } if (weatherParticles[i]) { weatherParticles[i].update(); weatherParticles[i].draw(); } }
+
+      if (config.type !== 'none') { const grad = ctx.createRadialGradient(width/2, height/2, height*0.4, width/2, height/2, width*0.8); grad.addColorStop(0, 'rgba(0,0,0,0)'); grad.addColorStop(1, 'rgba(0,0,0,0.7)'); ctx.fillStyle = grad; ctx.fillRect(-10, -10, width+20, height+20); }
+
       ctx.restore(); requestAnimationFrame(animate);
     }
     animate();
 
     let mediaRecorder, chunks = []; let recordStartTime = 0;
-    
-    async function toggleKeepAwake(enable) {
-        if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.KeepAwake) {
-            try { 
-                if(enable) await window.Capacitor.Plugins.KeepAwake.keepAwake(); 
-                else await window.Capacitor.Plugins.KeepAwake.allowSleep(); 
-            } catch(e) { console.warn('KeepAwake Err:', e); }
-        }
-    }
-
     function startCountdownAndRecord() {
       if (!isAudioInit || !currentObjectUrl) { alert("Pilih dan siapkan musik dulu!"); return; }
       if (isCountingDown) { clearInterval(countdownTimer); isCountingDown = false; countdownOverlay.style.display = 'none'; recordBtn.innerText = "🔴 MULAI REKAM 720p"; return; }
@@ -379,27 +758,18 @@
 
     function executeRecording() {
       if (!audioCtx) initAudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume();
-      toggleKeepAwake(true);
+      if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.KeepAwake) { window.Capacitor.Plugins.KeepAwake.keepAwake(); }
       audioPlayer.play(); playBtn.innerText = "⏸ PAUSE"; stopOverlay.style.display = 'block'; statusBox.innerText = "🔴 Merekam Video 720p..."; recordBtn.innerText = "🔴 SEDANG MEREKAM";
       const stream = canvas.captureStream(30); const combined = new MediaStream([...stream.getVideoTracks(), mediaStreamDestination.stream.getAudioTracks()[0]]);
-      
-      // MESIN H.264 SAKTI: Nipu WebView biar hasilnya bisa di-copy-paste jadi MP4 di Termux
-      let options = { mimeType: 'video/webm;codecs=h264,opus' }; 
-      if (!MediaRecorder.isTypeSupported(options.mimeType)) { 
-          options = { mimeType: 'video/webm;codecs=h264' }; 
-          if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-              options = { mimeType: 'video/webm' }; 
-          }
-      }
-      
+      let options = { mimeType: 'video/webm;codecs=vp8,opus' }; if (!MediaRecorder.isTypeSupported(options.mimeType)) { options = { mimeType: 'video/webm' }; }
       try { mediaRecorder = new MediaRecorder(combined, options); } catch (e) { mediaRecorder = new MediaRecorder(combined); }
       mediaRecorder.ondataavailable = e => { if (e.data && e.data.size > 0) chunks.push(e.data); }; mediaRecorder.onstop = saveVideoWebM; chunks = []; recordStartTime = Date.now(); mediaRecorder.start();
     }
 
     function stopRecording() {
       if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
-      toggleKeepAwake(false);
-      audioPlayer.pause(); playBtn.innerText = "▶ PLAY MUSIK"; stopOverlay.style.display = 'none'; recordBtn.innerText = "🔴 MULAI REKAM 720p"; statusBox.innerText = "Menyiapkan file video..."; if (playTimeout) clearTimeout(playTimeout);
+      if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.KeepAwake) window.Capacitor.Plugins.KeepAwake.allowSleep();
+      audioPlayer.pause(); playBtn.innerText = "▶ PLAY"; stopOverlay.style.display = 'none'; recordBtn.innerText = "🔴 MULAI REKAM 720p"; statusBox.innerText = "Menyiapkan file video..."; if (playTimeout) clearTimeout(playTimeout);
     }
 
     function saveVideoWebM() {
@@ -409,62 +779,31 @@
 
     function triggerDownload(finalBlob) {
       statusBox.innerText = "⏳ Memproses pemotongan file video..."; const url = URL.createObjectURL(finalBlob);
-      
-      const oldBtn = document.getElementById('shareBtnDewa'); if(oldBtn) oldBtn.remove();
-      const oldLinkBtn = document.getElementById('manualLinkBtn'); if(oldLinkBtn) oldLinkBtn.remove();
-      
-      const saveBtn = document.createElement('button'); saveBtn.id = 'shareBtnDewa'; saveBtn.innerText = "📥 SIMPAN KE DOKUMEN (CAPACITOR)"; saveBtn.style.width = "100%"; saveBtn.style.padding = "15px"; saveBtn.style.marginTop = "10px"; saveBtn.style.background = "linear-gradient(135deg, #00ffaa, #00bcd4)"; saveBtn.style.color = "black"; saveBtn.style.border = "none"; saveBtn.style.borderRadius = "8px"; saveBtn.style.fontWeight = "bold"; saveBtn.style.fontSize = "14px"; saveBtn.style.cursor = "pointer";
-      
-      const fallbackBtn = document.createElement('a'); fallbackBtn.id = 'manualLinkBtn'; fallbackBtn.innerText = "⬇️ DOWNLOAD MANUAL (JIKA GAGAL)"; fallbackBtn.href = url; fallbackBtn.download = `test_mp4_720p_${Date.now()}.webm`;
-
+      const oldVid = document.getElementById('previewVid'); if(oldVid) oldVid.remove(); const oldBtn = document.getElementById('shareBtnDewa'); if(oldBtn) oldBtn.remove();
+      const vid = document.createElement('video'); vid.id = 'previewVid'; vid.src = url; vid.controls = true; vid.setAttribute('controlsList', 'nodownload'); vid.style.width = "100%"; vid.style.marginTop = "20px"; vid.style.border = "3px solid #00d2ff"; vid.style.borderRadius = "8px";
+      const saveBtn = document.createElement('button'); saveBtn.id = 'shareBtnDewa'; saveBtn.innerText = "📥 SIMPAN VIDEO KE HP / PC"; saveBtn.style.width = "100%"; saveBtn.style.padding = "15px"; saveBtn.style.marginTop = "10px"; saveBtn.style.background = "linear-gradient(135deg, #00ffaa, #00bcd4)"; saveBtn.style.color = "black"; saveBtn.style.border = "none"; saveBtn.style.borderRadius = "8px"; saveBtn.style.fontWeight = "bold"; saveBtn.style.fontSize = "14px"; saveBtn.style.cursor = "pointer";
       let isSaving = false;
       saveBtn.onclick = async () => {
-        if (isSaving) return; isSaving = true; saveBtn.innerText = "⏳ MEMINTA IZIN & MENYIMPAN...";
-        
-        const downloadBrowser = () => {
-            statusBox.innerText = "⏳ Mengunduh lewat Download Manager HP...";
-            fallbackBtn.click();
-            saveBtn.innerText = "✅ MENGGUNAKAN DOWNLOAD BAWAAN"; statusBox.innerText = `🎉 SUKSES! Periksa folder Download atau Galeri Anda.`;
-        };
-
+        if (isSaving) return; isSaving = true; saveBtn.innerText = "⏳ MEMULAI PROSES SIMPAN...";
         try {
           if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem) {
-            const FS = window.Capacitor.Plugins.Filesystem; 
-            
-            try { 
-                let perm = await FS.checkPermissions();
-                if (perm.publicStorage !== 'granted' && perm.publicStorage !== 'authorized') await FS.requestPermissions(); 
-            } catch(e) { console.warn("Capacitor Perm Check Err:", e); } 
-            
-            const fileName = `test_mp4_720p_${Date.now()}.webm`; 
-            
-            try {
-                await FS.writeFile({ path: fileName, data: "", directory: 'DOCUMENTS' });
-                const chunkSize = 1572864; const totalChunks = Math.ceil(finalBlob.size / chunkSize);
-                for (let i = 0; i < totalChunks; i++) {
-                  const start = i * chunkSize; const end = Math.min(start + chunkSize, finalBlob.size); const chunk = finalBlob.slice(start, end);
-                  const base64Chunk = await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result.split(',')[1]); reader.onerror = reject; reader.readAsDataURL(chunk); });
-                  await FS.appendFile({ path: fileName, data: base64Chunk, directory: 'DOCUMENTS' });
-                  const percent = Math.round(((i + 1) / totalChunks) * 100); statusBox.innerText = `⏳ Menulis ke memori HP... ${percent}%`; saveBtn.innerText = `⏳ MENYIMPAN... ${percent}%`;
-                }
-                saveBtn.innerText = "✅ TERSIMPAN DI FOLDER DOKUMEN!"; statusBox.innerText = `🎉 SUKSES! File H.264 WebM siap di-convert secepat kilat.`;
-            } catch(fsError) {
-                console.warn("Capacitor FS Error:", fsError);
-                downloadBrowser();
+            const FS = window.Capacitor.Plugins.Filesystem; const fileName = `Noir_v1_720p_${Date.now()}.webm`; await FS.writeFile({ path: fileName, data: "", directory: 'DOCUMENTS' });
+            const chunkSize = 1572864; const totalChunks = Math.ceil(finalBlob.size / chunkSize);
+            for (let i = 0; i < totalChunks; i++) {
+              const start = i * chunkSize; const end = Math.min(start + chunkSize, finalBlob.size); const chunk = finalBlob.slice(start, end);
+              const base64Chunk = await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result.split(',')[1]); reader.onerror = reject; reader.readAsDataURL(chunk); });
+              await FS.appendFile({ path: fileName, data: base64Chunk, directory: 'DOCUMENTS' });
+              const percent = Math.round(((i + 1) / totalChunks) * 100); statusBox.innerText = `⏳ Menulis ke memori HP... ${percent}%`; saveBtn.innerText = `⏳ MENYIMPAN... ${percent}%`;
             }
+            saveBtn.innerText = "✅ TERSIMPAN DI DOCUMENTS HP!"; statusBox.innerText = `🎉 SUKSES! Video 720p tersimpan di folder Documents!`;
           } else {
-            downloadBrowser();
+            statusBox.innerText = "⏳ Mengunduh lewat Browser..."; const a = document.createElement('a'); a.style.display = 'none'; a.href = url; a.download = `Noir_v1_720p_${Date.now()}.webm`; document.body.appendChild(a); a.click(); setTimeout(() => { document.body.removeChild(a); }, 100); saveBtn.innerText = "✅ VIDEO SUKSES DIUNDUH!"; statusBox.innerText = `🎉 SUKSES! Video berhasil diunduh ke perangkat Anda.`;
           }
-        } catch(e) { 
-            console.warn("Fatal Error:", e);
-            try { downloadBrowser(); } catch(err2) {
-                saveBtn.innerText = "❌ GAGAL MENYIMPAN"; statusBox.innerText = "Terjadi Error: " + e.message; isSaving = false; 
-            }
-        }
+        } catch(e) { saveBtn.innerText = "❌ GAGAL MENYIMPAN"; statusBox.innerText = "Terjadi Error: " + e.message; isSaving = false; }
       };
-      
-      const controlsDiv = document.getElementById('controls'); controlsDiv.appendChild(saveBtn); controlsDiv.appendChild(fallbackBtn); saveBtn.scrollIntoView({ behavior: 'smooth' }); setTimeout(() => { if(!isSaving && window.Capacitor) saveBtn.click(); }, 1500);
+      const controlsDiv = document.getElementById('controls'); controlsDiv.appendChild(vid); controlsDiv.appendChild(saveBtn); saveBtn.scrollIntoView({ behavior: 'smooth' }); setTimeout(() => { if(!isSaving) saveBtn.click(); }, 1500);
     }
   </script>
 </body>
+
 </html>
