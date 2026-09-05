@@ -1,6 +1,6 @@
 {
-  "appId": "com.lova.testmp4",
-  "appName": "test mp4",
+  "appId": "com.noir.app",
+  "appName": "Noir Ultimate",
   "webDir": "www",
   "bundledWebRuntime": false
 }
