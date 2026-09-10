@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mirror v1 (Bass Boss + Glass Reflection)</title>
+  <title>Mirror v1 (Decoupled Reflection)</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body { margin: 0; background-color: #111; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; }
@@ -11,7 +11,9 @@
     #canvas-wrapper:active { cursor: grabbing; }
     canvas { width: 100%; height: 100%; display: block; }
     #controls { width: 90%; max-width: 600px; background: #1a1a1a; padding: 20px; border-radius: 12px; margin-top: 20px; border: 1px solid #333; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); }
-    .btn-group, .play-group { display: flex; gap: 8px; }
+    .btn-group, .play-group, .grid-2 { display: flex; gap: 8px; }
+    .grid-2 { flex-wrap: wrap; }
+    .grid-2 .row { flex: 1 1 45%; }
     .file-label { flex: 1; background: #2b2b2b; color: #ccc; padding: 12px 5px; text-align: center; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; border: 1px solid #444; transition: 0.2s; white-space: nowrap; }
     .file-label:hover { background: #3b3b3b; color: white; }
     #playBtn { flex: 2; padding: 15px; background: #333; color: #888; border: 1px solid #222; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
@@ -25,17 +27,16 @@
     .btn-record { width: 100%; padding: 15px; background: linear-gradient(135deg, #ff4444, #d32f2f); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
     #stopOverlay { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(220, 20, 60, 0.95); color: white; padding: 15px 30px; border-radius: 50px; z-index: 100; font-weight: bold; border: 3px solid white; cursor: pointer; }
     #countdownOverlay { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 100px; font-weight: bold; color: white; text-shadow: 0 0 20px rgba(0, 0, 0, 0.8); z-index: 100; }
-    #statusBox { font-size: 12px; text-align: center; color: #d4af37; margin-bottom: 5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .row { display: flex; align-items: center; gap: 10px; }
-    label { font-size: 11px; width: 80px; color: #ccc; font-weight: 600; }
-    input[type="range"], select { flex: 1; height: 36px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px; }
+    #statusBox { font-size: 12px; text-align: center; color: #00d2ff; margin-bottom: 5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .row { display: flex; align-items: center; gap: 10px; width: 100%; }
+    label { font-size: 10px; width: 85px; color: #ccc; font-weight: 600; text-transform: uppercase; }
+    input[type="range"], select { flex: 1; height: 32px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px; font-size: 12px; }
     input[type="file"] { display: none; }
     optgroup { background: #111; color: #00e5ff; font-weight: bold; }
     .layout-grid { display: flex; gap: 15px; width: 100%; box-sizing: border-box; }
     .layout-col { flex: 1; background: #222; padding: 12px; border-radius: 8px; border: 1px solid #3c3c3c; display: flex; flex-direction: column; gap: 8px; box-sizing: border-box; }
     .layout-col label { width: 100%; text-align: left; font-size: 10px; margin-bottom: -4px; color: #aaa; font-weight: bold; }
     .layout-col select, .layout-col input[type="range"] { width: 100%; margin-bottom: 5px; }
-    #manualLinkBtn { display: block; width: 100%; box-sizing: border-box; text-align: center; padding: 15px; margin-top: 10px; background: #333; color: #fff; border: 1px solid #555; border-radius: 8px; font-weight: bold; font-size: 14px; text-decoration: none; cursor: pointer; transition: 0.3s; }
   </style>
 </head>
 
@@ -47,7 +48,7 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Mirror v1 (Kaca 3D + Kopi/Lilin).</div>
+    <div id="statusBox">Siap. Mirror v1 (Decoupled Reflection & ON/OFF).</div>
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
       <label for="audioInput" class="file-label" style="border-bottom: 3px solid #00bcd4">2. MUSIK (BANYAK)</label>
@@ -70,7 +71,7 @@
     <hr style="border: 0; border-top: 1px solid #333; width: 100%; margin: 5px 0;">
 
     <div class="layout-grid">
-      <!-- KOLOM KIRI (VISUALIZER - LIST BARU) -->
+      <!-- KOLOM KIRI (VISUALIZER) -->
       <div class="layout-col">
         <label style="color:#00d2ff; text-align:center; font-size:12px; margin-bottom:10px;">VISUALIZER</label>
         <select id="visType">
@@ -95,21 +96,44 @@
                 <option value="split_glow">⚡ 14. Split Center Glow Bars</option>
             </optgroup>
         </select>
-        <label>TINGGI VIS.</label><input type="range" id="visHeight" min="30" max="600" value="150">
-        <label>LEBAR VIS.</label><input type="range" id="visWidth" min="100" max="1100" value="400">
-        <label>OPASITAS VIS.</label><input type="range" id="visOpacity" min="0.1" max="1.0" step="0.05" value="1.0">
+        <div class="grid-2">
+            <div class="row"><label>TINGGI VIS.</label><input type="range" id="visHeight" min="30" max="600" value="150"></div>
+            <div class="row"><label>LEBAR VIS.</label><input type="range" id="visWidth" min="100" max="1100" value="400"></div>
+            <div class="row"><label>OPASITAS VIS.</label><input type="range" id="visOpacity" min="0.1" max="1.0" step="0.05" value="1.0"></div>
+        </div>
       </div>
 
-      <!-- KOLOM KANAN (SPEAKER TRANSPARAN) -->
+      <!-- KOLOM KANAN (SPEAKER) -->
       <div class="layout-col">
-        <label style="color:#ffb300; text-align:center; font-size:12px; margin-bottom:10px;">DAUN SPEAKER (TRANSPARAN)</label>
+        <label style="color:#ffb300; text-align:center; font-size:12px; margin-bottom:10px;">DAUN SPEAKER (ASLI)</label>
         <select id="speakerStyle">
-          <option value="active">🟢 Aktifkan Efek Bass</option>
-          <option value="none">🚫 Matikan Efek</option>
+          <option value="active">🟢 Aktifkan Speaker</option>
+          <option value="none">🚫 Matikan Speaker</option>
         </select>
         <label>UKURAN AREA</label><input type="range" id="speakerSize" min="0.2" max="5.0" step="0.1" value="1.5">
         <label style="color:#ff5252;">GETARAN (SHAKE)</label><input type="range" id="speakerShake" min="0" max="30" step="1" value="10">
         <label style="color:#ff5252;">DENTUMAN (PUMP)</label><input type="range" id="speakerPump" min="0" max="2.0" step="0.1" value="0.5">
+      </div>
+    </div>
+
+    <!-- PANEL BARU: KONTROL PANTULAN & KACA INDEPENDEN -->
+    <hr style="border: 0; border-top: 1px dashed #333; width: 100%; margin: 5px 0;">
+    <div class="layout-grid">
+      <div class="layout-col" style="border-color: #00bcd4;">
+        <label style="color:#00bcd4; text-align:center; font-size:12px; margin-bottom:10px;">KONTROL PANTULAN (ON/OFF & GESER)</label>
+        <div class="grid-2">
+            <!-- GARIS KACA -->
+            <div class="row"><label>GARIS KACA</label><select id="showGlassLine"><option value="yes">🟢 Nyala</option><option value="no">🚫 Mati</option></select></div>
+            <div class="row"><label>POSISI GARIS</label><input type="range" id="glassLineY" min="200" max="720" value="500"></div>
+            
+            <!-- PANTULAN VISUALIZER -->
+            <div class="row"><label>PANTULAN VIS.</label><select id="showVisReflect"><option value="yes">🟢 Nyala</option><option value="no">🚫 Mati</option></select></div>
+            <div class="row"><label>JARAK VIS.</label><input type="range" id="visReflectGap" min="-200" max="300" value="0"></div>
+
+            <!-- PANTULAN SPEAKER -->
+            <div class="row"><label>PANTULAN SPK.</label><select id="showSpkReflect"><option value="yes">🟢 Nyala</option><option value="no">🚫 Mati</option></select></div>
+            <div class="row"><label>JARAK SPK.</label><input type="range" id="spkReflectGap" min="-200" max="300" value="0"></div>
+        </div>
       </div>
     </div>
 
@@ -123,8 +147,6 @@
           <option value="soft_steam">☕ 1. Soft Warm Steam</option>
           <option value="swirl_vapor">🌪️ 2. Swirling Vapor</option>
           <option value="thin_wisp">🌬️ 3. Thin Elegant Wisp</option>
-          <option value="heavy_steam">☁️ 4. Heavy Morning Steam</option>
-          <option value="wind_steam">🍃 5. Breezy Coffee Steam</option>
         </select>
       </div>
       <div class="layout-col">
@@ -134,14 +156,14 @@
           <option value="calm_flame">🕯️ 1. Calm Warm Flame</option>
           <option value="flicker_flame">🕯️ 2. Flickering Flame</option>
           <option value="bright_glow">🌟 3. Bright Glowing Flame</option>
-          <option value="blue_base">🔵 4. Blue-Base Real Flame</option>
-          <option value="wind_flame">🌬️ 5. Wind-blown Flame</option>
         </select>
       </div>
     </div>
     
-    <div class="row" style="margin-top: 5px;"><label style="color:#fff;">UKURAN PROP</label><input type="range" id="propSize" min="0.2" max="5.0" step="0.1" value="1.0"></div>
-    <div class="row" style="margin-top: 5px;"><label style="color:#ff8a65;">KCPTN PROP</label><input type="range" id="propSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
+    <div class="grid-2" style="margin-top: 5px;">
+        <div class="row"><label style="color:#fff;">UKURAN PROP</label><input type="range" id="propSize" min="0.2" max="5.0" step="0.1" value="1.0"></div>
+        <div class="row"><label style="color:#ff8a65;">KCPTN PROP</label><input type="range" id="propSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
+    </div>
 
     <hr style="border: 0; border-top: 1px dashed #333; width: 100%; margin: 5px 0;">
 
@@ -154,11 +176,6 @@
         <option value="floating_embers">🔥 3. Bara Api Terbang</option>
         <option value="bokeh_orbs">🫧 4. Bokeh Orbs Sinematik</option>
         <option value="snow_dust">❄️ 5. Debu Salju Halus</option>
-        <option value="fairy_light">🧚 6. Cahaya Peri Berpendar</option>
-        <option value="ash_particles">🌪️ 7. Abu Hitam Melayang</option>
-        <option value="starlight_glint">🌟 8. Kilauan Bintang Halus</option>
-        <option value="deep_sea_motes">🌊 9. Partikel Air Laut</option>
-        <option value="golden_pollen">🌼 10. Serbuk Sari Emas</option>
       </select>
     </div>
 
@@ -264,14 +281,27 @@
     progressBar.addEventListener('input', () => { isDraggingProgress = true; if (audioPlayer.duration) { const seekTime = (progressBar.value / 100) * audioPlayer.duration; currTimeEl.innerText = formatTime(seekTime); audioPlayer.currentTime = seekTime; } });
     const releaseSeek = () => { isDraggingProgress = false; }; progressBar.addEventListener('change', releaseSeek); progressBar.addEventListener('touchend', releaseSeek); progressBar.addEventListener('mouseup', releaseSeek);
 
-    function togglePlay() { if (!isTrackLoaded) { alert("Pilih Musik Dulu!"); return; } if (!audioCtx) initAudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume(); if (audioPlayer.paused) { if (!audioPlayer.src || currentPlayIndex >= shuffledPlaylist.length) playRandomSong(true); else { audioPlayer.play(); playBtn.innerText = "⏸ PAUSE"; } } else { audioPlayer.pause(); playBtn.innerText = "▶ RESUME"; } }
+    function togglePlay() { if (!isTrackLoaded) { alert("Pilih Musik Dulu!"); return; } if (!audioCtx) initAudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume(); if (audioPlayer.paused) { if (!audioPlayer.src || currentPlayIndex >= shuffledPlaylist.length) playRandomSong(true); else { audioPlayer.play(); playBtn.innerText = "⏸ PAUSE"; } } else { audioPlayer.pause(); playBtn.innerText = "▶ RESUME"; statusBox.innerText = "⏸ Musik Dijeda."; } }
 
-    const config = { type: 'none', count: 100, visType: 'elegant_piano', visHeight: 150, visOpacity: 1.0, fxAngle: 0, fxSpeed: 1.0 };
+    const config = { type: 'none', count: 100, visType: 'elegant_piano', visHeight: 150, visOpacity: 1.0 };
     document.getElementById('visType').addEventListener('change', (e) => { config.visType = e.target.value; peakHeights.fill(0); });
     document.getElementById('visOpacity').addEventListener('input', (e) => config.visOpacity = parseFloat(e.target.value));
     document.getElementById('type').addEventListener('change', (e) => config.type = e.target.value);
     document.getElementById('visHeight').addEventListener('input', (e) => config.visHeight = parseInt(e.target.value));
     document.getElementById('visWidth').addEventListener('input', (e) => { visW = parseInt(e.target.value); visX = (width - visW) / 2; });
+
+    // CONFIG PANTULAN & KACA BARU (INDEPENDEN)
+    const mirrorConfig = {
+        showGlassLine: 'yes', glassLineY: 500,
+        showVisReflect: 'yes', visReflectGap: 0,
+        showSpkReflect: 'yes', spkReflectGap: 0
+    };
+    document.getElementById('showGlassLine').addEventListener('change', e => mirrorConfig.showGlassLine = e.target.value);
+    document.getElementById('glassLineY').addEventListener('input', e => mirrorConfig.glassLineY = parseInt(e.target.value));
+    document.getElementById('showVisReflect').addEventListener('change', e => mirrorConfig.showVisReflect = e.target.value);
+    document.getElementById('visReflectGap').addEventListener('input', e => mirrorConfig.visReflectGap = parseInt(e.target.value));
+    document.getElementById('showSpkReflect').addEventListener('change', e => mirrorConfig.showSpkReflect = e.target.value);
+    document.getElementById('spkReflectGap').addEventListener('input', e => mirrorConfig.spkReflectGap = parseInt(e.target.value));
 
     let time = 0; let globalSmoothedBass = 0;
 
@@ -286,7 +316,7 @@
         }
         update() {
             if(config.type === 'none') return;
-            let wind = 0; let sm = config.fxSpeed; this.life += this.wobbleSpeed;
+            let sm = 1.0; this.life += this.wobbleSpeed;
             if (['dust_motes', 'golden_pollen', 'magic_sparks', 'floating_embers'].includes(config.type)) { this.y -= this.speedY * sm * 0.5; this.x += Math.sin(this.life) * 1 * sm; } 
             else if (config.type === 'bokeh_orbs' || config.type === 'fairy_light') { this.y -= this.speedY * sm * 0.3; this.x += Math.sin(this.life) * 0.5 * sm; } 
             else { this.y += this.speedY * sm; this.x += Math.sin(this.life) * 1 * sm; }
@@ -301,10 +331,7 @@
             else if(config.type === 'bokeh_orbs') { c1=`rgba(255,255,255,${this.currentOpacity*0.5})`; }
             else if(config.type === 'snow_dust') { c1=`rgba(255,255,255,${this.currentOpacity})`; ctx.shadowBlur=this.size; ctx.shadowColor='#fff'; }
             else if(config.type === 'fairy_light') { c1=`rgba(255,200,255,${this.currentOpacity})`; ctx.shadowBlur=this.size*4; ctx.shadowColor='#e040fb'; }
-            else if(config.type === 'ash_particles') { c1=`rgba(50,50,50,${this.currentOpacity+0.4})`; }
             else if(config.type === 'starlight_glint') { c1=`rgba(255,255,255,${this.currentOpacity})`; ctx.translate(this.x, this.y); ctx.rotate(this.life); ctx.moveTo(-this.size, 0); ctx.lineTo(this.size, 0); ctx.moveTo(0, -this.size); ctx.lineTo(0, this.size); ctx.strokeStyle=c1; ctx.lineWidth=1; ctx.stroke(); ctx.restore(); return; }
-            else if(config.type === 'deep_sea_motes') { c1=`rgba(100,200,255,${this.currentOpacity*0.7})`; ctx.shadowBlur=this.size*2; ctx.shadowColor='#00bcd4'; }
-            else if(config.type === 'golden_pollen') { c1=`rgba(255,215,0,${this.currentOpacity})`; ctx.shadowBlur=this.size*2; ctx.shadowColor='#ffb300'; }
             ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fillStyle = c1; ctx.fill(); ctx.restore();
         }
     }
@@ -313,11 +340,20 @@
     function getSymmetricVal(index, totalItems, bufferLen) { try { if (!dataArray) return 0; const center = totalItems / 2; const centerDist = Math.abs(index - center) / center; const dataIdx = Math.floor(centerDist * (bufferLen * 0.6)); return dataArray[dataIdx] / 255; } catch (e) { return 0; } }
 
     // ==========================================
-    // VISUALIZER RENDERER DENGAN OPSI KACA CERMIN
+    // VISUALIZER RENDERER DENGAN PIVOT INDEPENDEN
     // ==========================================
     function drawVisualizer(bufferLen, isReflection) {
       const style = config.visType; ctx.save(); 
-      if (isReflection) { ctx.translate(0, visY); ctx.scale(1, -1); ctx.translate(0, -visY); ctx.globalAlpha = config.visOpacity * 0.45; } else { ctx.globalAlpha = config.visOpacity; }
+      if (isReflection) {
+          if (mirrorConfig.showVisReflect === 'no') { ctx.restore(); return; } // Fitur Toggle ON/OFF Pantulan
+          let pivotY = visY + mirrorConfig.visReflectGap; // Pivot dihitung bebas dari gap slider
+          ctx.translate(0, pivotY); 
+          ctx.scale(1, -1); 
+          ctx.translate(0, -pivotY); 
+          ctx.globalAlpha = config.visOpacity * 0.45; 
+      } else { 
+          ctx.globalAlpha = config.visOpacity; 
+      }
       ctx.translate(visX, visY); const cy = 0;
       try {
         if (style === 'elegant_piano') { let numBars = 52; let spacing = visW / numBars; let barW = spacing * 0.85; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; for (let i = 0; i < numBars; i++) { let h = Math.max(10, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillRect(i * spacing, cy, barW, -h); ctx.fillStyle = 'rgba(0,0,0,0.1)'; ctx.fillRect(i * spacing, cy, barW, -h); ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; } }
@@ -340,7 +376,7 @@
     }
 
     // =========================================================
-    // SPEAKER FULL TRANSPARAN DENGAN OPSI KACA CERMIN
+    // SPEAKER FULL TRANSPARAN DENGAN PIVOT INDEPENDEN
     // =========================================================
     function drawSpeakers(bufferLen, isReflection) {
       if (!isBgReady || document.getElementById('speakerStyle').value === 'none') return;
@@ -356,7 +392,14 @@
 
       function drawLiveBackgroundSpeaker(x, y) {
         ctx.save(); 
-        if(isReflection) { ctx.translate(0, visY); ctx.scale(1, -1); ctx.translate(0, -visY); ctx.globalAlpha = 0.45; }
+        if(isReflection) { 
+            if (mirrorConfig.showSpkReflect === 'no') { ctx.restore(); return; } // Fitur Toggle ON/OFF Pantulan Speaker
+            let pivotY = y + mirrorConfig.spkReflectGap; // Pivot bebas untuk speaker
+            ctx.translate(0, pivotY); 
+            ctx.scale(1, -1); 
+            ctx.translate(0, -pivotY); 
+            ctx.globalAlpha = 0.45; 
+        }
         ctx.translate(x + shakeX, y + shakeY); ctx.beginPath(); ctx.arc(0, 0, baseR, 0, Math.PI * 2); ctx.clip(); ctx.scale(pump, pump);
         ctx.drawImage(bgImageElement, bgGlobalX - x, bgGlobalY - y, bgImageElement.width * bgGlobalScale, bgImageElement.height * bgGlobalScale);
         ctx.restore();
@@ -373,8 +416,6 @@
         if(style === 'soft_steam') { branches=2; hMax=120; wMax=20; speedMult=1; waveFreq=1.5; opacity=0.7; }
         if(style === 'swirl_vapor') { branches=4; hMax=180; wMax=40; speedMult=1.8; waveFreq=2.5; opacity=0.85; }
         if(style === 'thin_wisp') { branches=2; hMax=140; wMax=15; speedMult=1.2; waveFreq=3; opacity=0.6; }
-        if(style === 'heavy_steam') { branches=5; hMax=200; wMax=45; speedMult=2; waveFreq=1.8; opacity=0.95; }
-        if(style === 'wind_steam') { branches=3; hMax=160; wMax=35; speedMult=2.5; waveFreq=2.0; opacity=0.75; ctx.rotate(20 * Math.PI/180); }
         ctx.globalCompositeOperation = 'screen'; ctx.filter = 'blur(4px)'; 
         for(let b=0; b<branches; b++) {
             let pts = []; let steps = 40; 
@@ -389,12 +430,12 @@
     function drawCandle(x, y, style, scale, propSpeed) {
         if(style === 'none') return; ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
         let t = time * 2 * propSpeed; let flicker = 0; let sway = 0; let h = 65; let w = 16; let baseColor = 'rgba(255, 140, 0, 0.8)'; let midColor = 'rgba(255, 210, 0, 0.9)'; let coreColor = 'rgba(255, 255, 255, 0.95)';
-        if(style === 'calm_flame') { flicker = Math.sin(t*3)*2; sway = Math.sin(t)*1; } else if(style === 'flicker_flame') { flicker = Math.sin(t*10)*4 + Math.random()*2; sway = Math.sin(t*5)*3; } else if(style === 'bright_glow') { flicker = Math.sin(t*4)*2; h = 75; w = 18; ctx.shadowBlur = 50 + flicker*5; ctx.shadowColor = '#ff9800'; } else if(style === 'blue_base') { flicker = Math.sin(t*5)*2; baseColor = 'rgba(0, 150, 255, 0.8)'; midColor = 'rgba(100, 200, 255, 0.9)'; } else if(style === 'wind_flame') { flicker = Math.random()*5; sway = 15 + Math.sin(t*8)*5; }
+        if(style === 'calm_flame') { flicker = Math.sin(t*3)*2; sway = Math.sin(t)*1; } else if(style === 'flicker_flame') { flicker = Math.sin(t*10)*4 + Math.random()*2; sway = Math.sin(t*5)*3; } else if(style === 'bright_glow') { flicker = Math.sin(t*4)*2; h = 75; w = 18; ctx.shadowBlur = 50 + flicker*5; ctx.shadowColor = '#ff9800'; }
         ctx.beginPath(); ctx.arc(0, -h*0.5, w*3, 0, Math.PI*2); let gradGlow = ctx.createRadialGradient(0,-h*0.5,0, 0,-h*0.5,w*4); gradGlow.addColorStop(0, 'rgba(255, 120, 0, 0.25)'); gradGlow.addColorStop(1, 'rgba(255, 120, 0, 0)'); ctx.fillStyle = gradGlow; ctx.fill();
         ctx.beginPath(); ctx.moveTo(0, 5); ctx.lineTo(sway*0.05, -8); ctx.lineWidth = 3; ctx.strokeStyle = '#111'; ctx.stroke(); ctx.beginPath(); ctx.moveTo(sway*0.05, -8); ctx.lineTo(sway*0.1, -12); ctx.lineWidth = 2; ctx.strokeStyle = '#ff5722'; ctx.stroke();
         function drawFlame(fw, fh, fsway, color) { ctx.beginPath(); ctx.moveTo(0, 2); ctx.bezierCurveTo(fw, 2, fw*0.9, -fh*0.4, fsway, -fh); ctx.bezierCurveTo(-fw*0.9, -fh*0.4, -fw, 2, 0, 2); ctx.fillStyle = color; ctx.fill(); }
         drawFlame(w, h + flicker, sway, baseColor); drawFlame(w*0.7, (h + flicker)*0.75, sway*0.7, midColor); drawFlame(w*0.35, (h + flicker)*0.45, sway*0.3, coreColor); 
-        if(style !== 'blue_base') { ctx.beginPath(); ctx.moveTo(0, 4); ctx.bezierCurveTo(w*0.5, 4, w*0.4, -5, 0, -5); ctx.bezierCurveTo(-w*0.4, -5, -w*0.5, 4, 0, 4); let bg = ctx.createRadialGradient(0,0,0, 0,0,w*0.5); bg.addColorStop(0,'rgba(0,100,255,0.6)'); bg.addColorStop(1,'rgba(0,50,255,0)'); ctx.fillStyle = bg; ctx.fill(); }
+        ctx.beginPath(); ctx.moveTo(0, 4); ctx.bezierCurveTo(w*0.5, 4, w*0.4, -5, 0, -5); ctx.bezierCurveTo(-w*0.4, -5, -w*0.5, 4, 0, 4); let bg = ctx.createRadialGradient(0,0,0, 0,0,w*0.5); bg.addColorStop(0,'rgba(0,100,255,0.6)'); bg.addColorStop(1,'rgba(0,50,255,0)'); ctx.fillStyle = bg; ctx.fill();
         ctx.restore();
     }
 
@@ -412,17 +453,21 @@
       if (isAudioInit && currentObjectUrl) drawVisualizer(analyser.frequencyBinCount, true);
       drawSpeakers(isAudioInit ? analyser.frequencyBinCount : 128, true);
 
-      // 3. EFEK MEJA KACA GELAP DI BAWAH
-      let mirrorGrad = ctx.createLinearGradient(0, visY, 0, height);
-      mirrorGrad.addColorStop(0, 'rgba(0,0,0,0.15)'); mirrorGrad.addColorStop(0.5, 'rgba(0,0,0,0.7)'); mirrorGrad.addColorStop(1, 'rgba(0,0,0,0.95)');
-      ctx.fillStyle = mirrorGrad; ctx.fillRect(0, visY, width, height - visY);
+      // 3. EFEK MEJA KACA GELAP DI BAWAH (Toggle ON/OFF bisa dikontrol user)
+      if (mirrorConfig.showGlassLine === 'yes' || mirrorConfig.showVisReflect === 'yes' || mirrorConfig.showSpkReflect === 'yes') {
+          let mirrorGrad = ctx.createLinearGradient(0, mirrorConfig.glassLineY, 0, height);
+          mirrorGrad.addColorStop(0, 'rgba(0,0,0,0.15)'); mirrorGrad.addColorStop(0.5, 'rgba(0,0,0,0.7)'); mirrorGrad.addColorStop(1, 'rgba(0,0,0,0.95)');
+          ctx.fillStyle = mirrorGrad; ctx.fillRect(0, mirrorConfig.glassLineY, width, height - mirrorConfig.glassLineY);
+      }
       
       // GARIS NEON PEMBATAS MEJA KACA
-      ctx.beginPath(); ctx.moveTo(0, visY); ctx.lineTo(width, visY);
-      let edgeGrad = ctx.createLinearGradient(0, 0, width, 0); edgeGrad.addColorStop(0, 'rgba(0,210,255,0)'); edgeGrad.addColorStop(0.5, 'rgba(0,210,255,0.4)'); edgeGrad.addColorStop(1, 'rgba(0,210,255,0)');
-      ctx.strokeStyle = edgeGrad; ctx.lineWidth = 2; ctx.stroke();
+      if (mirrorConfig.showGlassLine === 'yes') {
+          ctx.beginPath(); ctx.moveTo(0, mirrorConfig.glassLineY); ctx.lineTo(width, mirrorConfig.glassLineY);
+          let edgeGrad = ctx.createLinearGradient(0, 0, width, 0); edgeGrad.addColorStop(0, 'rgba(0,210,255,0)'); edgeGrad.addColorStop(0.5, 'rgba(0,210,255,0.4)'); edgeGrad.addColorStop(1, 'rgba(0,210,255,0)');
+          ctx.strokeStyle = edgeGrad; ctx.lineWidth = 2; ctx.stroke();
+      }
 
-      // 4. GAMBAR KOPI & LILIN (TETAP DI ATAS MEJA)
+      // 4. GAMBAR KOPI & LILIN
       let propScale = parseFloat(document.getElementById('propSize').value); let propSpeed = parseFloat(document.getElementById('propSpeed').value);
       drawCoffeeSteam(coffeeX, coffeeY, document.getElementById('coffeeStyle').value, propScale, propSpeed);
       drawCandle(candle1X, candle1Y, document.getElementById('candleStyle').value, propScale, propSpeed); drawCandle(candle2X, candle2Y, document.getElementById('candleStyle').value, propScale, propSpeed);
