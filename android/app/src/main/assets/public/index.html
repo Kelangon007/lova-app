@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mirror v1 (Decoupled Reflection)</title>
+  <title>Mirror v1 (Drag Shadow Edition)</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body { margin: 0; background-color: #111; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; }
@@ -48,7 +48,7 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Mirror v1 (Decoupled Reflection & ON/OFF).</div>
+    <div id="statusBox">Siap. Mirror v1 (Shadows now Draggable!).</div>
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
       <label for="audioInput" class="file-label" style="border-bottom: 3px solid #00bcd4">2. MUSIK (BANYAK)</label>
@@ -71,7 +71,7 @@
     <hr style="border: 0; border-top: 1px solid #333; width: 100%; margin: 5px 0;">
 
     <div class="layout-grid">
-      <!-- KOLOM KIRI (VISUALIZER) -->
+      <!-- VISUALIZER -->
       <div class="layout-col">
         <label style="color:#00d2ff; text-align:center; font-size:12px; margin-bottom:10px;">VISUALIZER</label>
         <select id="visType">
@@ -84,10 +84,10 @@
                 <option value="particle_fountain">✨ 6. Smooth Particle Fountain</option>
             </optgroup>
             <optgroup label="=== MODERN BARS ===">
-                <option value="vintage_bars">📊 7. Vintage Solid Bars (Off-White)</option>
-                <option value="liquid_bar">💧 8. Liquid Glowing Cyan Bars</option>
-                <option value="gradient_blocks">🎛️ 9. Cyan-Blue Gradient Blocks</option>
-                <option value="sunset_bars">🌅 10. Warm Sunset Gradient Bars</option>
+                <option value="vintage_bars">📊 7. Vintage Solid Bars</option>
+                <option value="liquid_bar">💧 8. Liquid Glowing Cyan</option>
+                <option value="gradient_blocks">🎛️ 9. Cyan-Blue Gradient</option>
+                <option value="sunset_bars">🌅 10. Warm Sunset</option>
             </optgroup>
             <optgroup label="=== STUDIO EFFECTS ===">
                 <option value="modern_wave">🌊 11. Modern Smooth Wave</option>
@@ -103,9 +103,9 @@
         </div>
       </div>
 
-      <!-- KOLOM KANAN (SPEAKER) -->
+      <!-- DAUN SPEAKER -->
       <div class="layout-col">
-        <label style="color:#ffb300; text-align:center; font-size:12px; margin-bottom:10px;">DAUN SPEAKER (ASLI)</label>
+        <label style="color:#ffb300; text-align:center; font-size:12px; margin-bottom:10px;">DAUN SPEAKER</label>
         <select id="speakerStyle">
           <option value="active">🟢 Aktifkan Speaker</option>
           <option value="none">🚫 Matikan Speaker</option>
@@ -116,23 +116,16 @@
       </div>
     </div>
 
-    <!-- PANEL BARU: KONTROL PANTULAN & KACA INDEPENDEN -->
+    <!-- PANEL PANTULAN (CUMA ON/OFF & GARIS MEJA) -->
     <hr style="border: 0; border-top: 1px dashed #333; width: 100%; margin: 5px 0;">
     <div class="layout-grid">
       <div class="layout-col" style="border-color: #00bcd4;">
-        <label style="color:#00bcd4; text-align:center; font-size:12px; margin-bottom:10px;">KONTROL PANTULAN (ON/OFF & GESER)</label>
+        <label style="color:#00bcd4; text-align:center; font-size:12px; margin-bottom:10px;">SAKLAR PANTULAN (BAYANGAN BISA DIGESER JARI!)</label>
         <div class="grid-2">
-            <!-- GARIS KACA -->
             <div class="row"><label>GARIS KACA</label><select id="showGlassLine"><option value="yes">🟢 Nyala</option><option value="no">🚫 Mati</option></select></div>
-            <div class="row"><label>POSISI GARIS</label><input type="range" id="glassLineY" min="200" max="720" value="500"></div>
-            
-            <!-- PANTULAN VISUALIZER -->
+            <div class="row"><label>POSISI KACA</label><input type="range" id="glassLineY" min="200" max="720" value="500"></div>
             <div class="row"><label>PANTULAN VIS.</label><select id="showVisReflect"><option value="yes">🟢 Nyala</option><option value="no">🚫 Mati</option></select></div>
-            <div class="row"><label>JARAK VIS.</label><input type="range" id="visReflectGap" min="-200" max="300" value="0"></div>
-
-            <!-- PANTULAN SPEAKER -->
             <div class="row"><label>PANTULAN SPK.</label><select id="showSpkReflect"><option value="yes">🟢 Nyala</option><option value="no">🚫 Mati</option></select></div>
-            <div class="row"><label>JARAK SPK.</label><input type="range" id="spkReflectGap" min="-200" max="300" value="0"></div>
         </div>
       </div>
     </div>
@@ -168,7 +161,7 @@
     <hr style="border: 0; border-top: 1px dashed #333; width: 100%; margin: 5px 0;">
 
     <div class="row">
-      <label style="color:#00e5ff;">PARTIKEL SINEMATIK</label>
+      <label style="color:#00e5ff;">PARTIKEL</label>
       <select id="type">
         <option value="none">🚫 Tanpa Partikel</option>
         <option value="dust_motes">✨ 1. Butiran Debu Emas</option>
@@ -232,18 +225,53 @@
       if (mediaRecorder && mediaRecorder.state === 'recording') { setTimeout(() => { stopRecording(); }, 500); }
     }
 
-    // POSISI ELEMEN (DIANGKAT DIKIT BIAR KACANYA KELIHATAN MEWAH)
-    let visW = 400; let visX = (width - visW) / 2; let visY = height - 220;
-    let spk1X = 250; let spk1Y = height - 320; let spk2X = width - 250; let spk2Y = height - 320;
+    const config = { type: 'none', count: 100, visType: 'elegant_piano', visHeight: 150, visOpacity: 1.0 };
+    document.getElementById('visType').addEventListener('change', (e) => { config.visType = e.target.value; peakHeights.fill(0); });
+    document.getElementById('visOpacity').addEventListener('input', (e) => config.visOpacity = parseFloat(e.target.value));
+    document.getElementById('type').addEventListener('change', (e) => config.type = e.target.value);
+    document.getElementById('visHeight').addEventListener('input', (e) => config.visHeight = parseInt(e.target.value));
+    document.getElementById('visWidth').addEventListener('input', (e) => { visW = parseInt(e.target.value); visX = (width - visW) / 2; });
+
+    const mirrorConfig = {
+        showGlassLine: 'yes', glassLineY: 500,
+        showVisReflect: 'yes', showSpkReflect: 'yes'
+    };
+    document.getElementById('showGlassLine').addEventListener('change', e => mirrorConfig.showGlassLine = e.target.value);
+    document.getElementById('glassLineY').addEventListener('input', e => mirrorConfig.glassLineY = parseInt(e.target.value));
+    document.getElementById('showVisReflect').addEventListener('change', e => mirrorConfig.showVisReflect = e.target.value);
+    document.getElementById('showSpkReflect').addEventListener('change', e => mirrorConfig.showSpkReflect = e.target.value);
+
+    // ===============================================
+    // VARIABEL POSISI (ASLI DAN BAYANGAN KINI TERPISAH)
+    // ===============================================
+    let visW = 400; let visX = (width - visW) / 2; let visY = height - 250;
+    let visRefY = height - 100; // Posisi Y untuk BAYANGAN Visualizer
+    
+    let spk1X = 250; let spk1Y = height - 350; let spk2X = width - 250; let spk2Y = height - 350;
+    let spk1RefY = height - 150; // Posisi Y untuk BAYANGAN Speaker 1
+    let spk2RefY = height - 150; // Posisi Y untuk BAYANGAN Speaker 2
+    
     let coffeeX = 350; let coffeeY = height - 240; let candle1X = 150; let candle1Y = height - 250; let candle2X = width - 150; let candle2Y = height - 250;
     
+    // Status Drag
     let isDraggingSpk1 = false; let isDraggingSpk2 = false; let isDraggingVis = false;
-    let isDraggingCoffee = false; let isDraggingCandle1 = false; let isDraggingCandle2 = false; let dragOffsetX = 0; let dragOffsetY = 0;
+    let isDraggingSpk1Ref = false; let isDraggingSpk2Ref = false; let isDraggingVisRef = false;
+    let isDraggingCoffee = false; let isDraggingCandle1 = false; let isDraggingCandle2 = false; 
+    let dragOffsetX = 0; let dragOffsetY = 0;
 
     function getMousePos(e) { const rect = canvas.getBoundingClientRect(); const scaleX = canvas.width / rect.width; const scaleY = canvas.height / rect.height; let clientX = e.clientX; let clientY = e.clientY; if (e.touches && e.touches.length > 0) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; } return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY }; }
 
     function startDrag(e) {
       const pos = getMousePos(e); const spkScale = parseFloat(document.getElementById('speakerSize').value); const clickRadius = 60 * spkScale;
+      
+      // 1. Cek Drag untuk BAYANGAN DULU (Biar bisa ditarik walau numpuk)
+      if (mirrorConfig.showSpkReflect === 'yes' && document.getElementById('speakerStyle').value !== 'none') {
+          if (Math.hypot(pos.x - spk1X, pos.y - spk1RefY) <= clickRadius) { isDraggingSpk1Ref = true; dragOffsetY = pos.y - spk1RefY; if (e.cancelable) e.preventDefault(); return; }
+          if (Math.hypot(pos.x - spk2X, pos.y - spk2RefY) <= clickRadius) { isDraggingSpk2Ref = true; dragOffsetY = pos.y - spk2RefY; if (e.cancelable) e.preventDefault(); return; }
+      }
+      if (mirrorConfig.showVisReflect === 'yes' && pos.x >= visX && pos.x <= visX + visW && pos.y >= visRefY && pos.y <= visRefY + 150) { isDraggingVisRef = true; dragOffsetY = pos.y - visRefY; if (e.cancelable) e.preventDefault(); return; }
+
+      // 2. Cek Drag ELEMEN ASLI
       if (Math.hypot(pos.x - spk1X, pos.y - spk1Y) <= Math.max(40, clickRadius) && document.getElementById('speakerStyle').value !== 'none') { isDraggingSpk1 = true; dragOffsetX = pos.x - spk1X; dragOffsetY = pos.y - spk1Y; if (e.cancelable) e.preventDefault(); return; }
       if (Math.hypot(pos.x - spk2X, pos.y - spk2Y) <= Math.max(40, clickRadius) && document.getElementById('speakerStyle').value !== 'none') { isDraggingSpk2 = true; dragOffsetX = pos.x - spk2X; dragOffsetY = pos.y - spk2Y; if (e.cancelable) e.preventDefault(); return; }
       if (document.getElementById('coffeeStyle').value !== 'none' && Math.hypot(pos.x - coffeeX, pos.y - coffeeY) <= 50) { isDraggingCoffee = true; dragOffsetX = pos.x - coffeeX; dragOffsetY = pos.y - coffeeY; if (e.cancelable) e.preventDefault(); return; }
@@ -255,8 +283,15 @@
     }
 
     function drag(e) {
-      if (!isDraggingVis && !isDraggingSpk1 && !isDraggingSpk2 && !isDraggingCoffee && !isDraggingCandle1 && !isDraggingCandle2) return;
+      if (!isDraggingVis && !isDraggingSpk1 && !isDraggingSpk2 && !isDraggingCoffee && !isDraggingCandle1 && !isDraggingCandle2 && !isDraggingVisRef && !isDraggingSpk1Ref && !isDraggingSpk2Ref) return;
       const pos = getMousePos(e);
+      
+      // Dragging Bayangan (Hanya ngubah tinggi Y supaya tetep simetris lurus sama aslinya)
+      if (isDraggingSpk1Ref) { spk1RefY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
+      if (isDraggingSpk2Ref) { spk2RefY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
+      if (isDraggingVisRef)  { visRefY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
+
+      // Dragging Asli
       if (isDraggingSpk1) { spk1X = pos.x - dragOffsetX; spk1Y = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingSpk2) { spk2X = pos.x - dragOffsetX; spk2Y = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingCoffee) { coffeeX = pos.x - dragOffsetX; coffeeY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
@@ -265,7 +300,7 @@
       if (isDraggingVis) { visX = pos.x - dragOffsetX; visY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); }
     }
 
-    function endDrag() { isDraggingVis = false; isDraggingSpk1 = false; isDraggingSpk2 = false; isDraggingCoffee = false; isDraggingCandle1 = false; isDraggingCandle2 = false; }
+    function endDrag() { isDraggingVis = false; isDraggingSpk1 = false; isDraggingSpk2 = false; isDraggingCoffee = false; isDraggingCandle1 = false; isDraggingCandle2 = false; isDraggingVisRef = false; isDraggingSpk1Ref = false; isDraggingSpk2Ref = false; }
     canvas.addEventListener('mousedown', startDrag); canvas.addEventListener('mousemove', drag); window.addEventListener('mouseup', endDrag);
     canvas.addEventListener('touchstart', startDrag, { passive: false }); canvas.addEventListener('touchmove', drag, { passive: false }); window.addEventListener('touchend', endDrag);
 
@@ -282,26 +317,6 @@
     const releaseSeek = () => { isDraggingProgress = false; }; progressBar.addEventListener('change', releaseSeek); progressBar.addEventListener('touchend', releaseSeek); progressBar.addEventListener('mouseup', releaseSeek);
 
     function togglePlay() { if (!isTrackLoaded) { alert("Pilih Musik Dulu!"); return; } if (!audioCtx) initAudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume(); if (audioPlayer.paused) { if (!audioPlayer.src || currentPlayIndex >= shuffledPlaylist.length) playRandomSong(true); else { audioPlayer.play(); playBtn.innerText = "⏸ PAUSE"; } } else { audioPlayer.pause(); playBtn.innerText = "▶ RESUME"; statusBox.innerText = "⏸ Musik Dijeda."; } }
-
-    const config = { type: 'none', count: 100, visType: 'elegant_piano', visHeight: 150, visOpacity: 1.0 };
-    document.getElementById('visType').addEventListener('change', (e) => { config.visType = e.target.value; peakHeights.fill(0); });
-    document.getElementById('visOpacity').addEventListener('input', (e) => config.visOpacity = parseFloat(e.target.value));
-    document.getElementById('type').addEventListener('change', (e) => config.type = e.target.value);
-    document.getElementById('visHeight').addEventListener('input', (e) => config.visHeight = parseInt(e.target.value));
-    document.getElementById('visWidth').addEventListener('input', (e) => { visW = parseInt(e.target.value); visX = (width - visW) / 2; });
-
-    // CONFIG PANTULAN & KACA BARU (INDEPENDEN)
-    const mirrorConfig = {
-        showGlassLine: 'yes', glassLineY: 500,
-        showVisReflect: 'yes', visReflectGap: 0,
-        showSpkReflect: 'yes', spkReflectGap: 0
-    };
-    document.getElementById('showGlassLine').addEventListener('change', e => mirrorConfig.showGlassLine = e.target.value);
-    document.getElementById('glassLineY').addEventListener('input', e => mirrorConfig.glassLineY = parseInt(e.target.value));
-    document.getElementById('showVisReflect').addEventListener('change', e => mirrorConfig.showVisReflect = e.target.value);
-    document.getElementById('visReflectGap').addEventListener('input', e => mirrorConfig.visReflectGap = parseInt(e.target.value));
-    document.getElementById('showSpkReflect').addEventListener('change', e => mirrorConfig.showSpkReflect = e.target.value);
-    document.getElementById('spkReflectGap').addEventListener('input', e => mirrorConfig.spkReflectGap = parseInt(e.target.value));
 
     let time = 0; let globalSmoothedBass = 0;
 
@@ -331,6 +346,7 @@
             else if(config.type === 'bokeh_orbs') { c1=`rgba(255,255,255,${this.currentOpacity*0.5})`; }
             else if(config.type === 'snow_dust') { c1=`rgba(255,255,255,${this.currentOpacity})`; ctx.shadowBlur=this.size; ctx.shadowColor='#fff'; }
             else if(config.type === 'fairy_light') { c1=`rgba(255,200,255,${this.currentOpacity})`; ctx.shadowBlur=this.size*4; ctx.shadowColor='#e040fb'; }
+            else if(config.type === 'ash_particles') { c1=`rgba(50,50,50,${this.currentOpacity+0.4})`; }
             else if(config.type === 'starlight_glint') { c1=`rgba(255,255,255,${this.currentOpacity})`; ctx.translate(this.x, this.y); ctx.rotate(this.life); ctx.moveTo(-this.size, 0); ctx.lineTo(this.size, 0); ctx.moveTo(0, -this.size); ctx.lineTo(0, this.size); ctx.strokeStyle=c1; ctx.lineWidth=1; ctx.stroke(); ctx.restore(); return; }
             ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fillStyle = c1; ctx.fill(); ctx.restore();
         }
@@ -339,22 +355,18 @@
     let cinematicParticles = []; for(let i=0; i<300; i++) cinematicParticles.push(new CinematicParticle());
     function getSymmetricVal(index, totalItems, bufferLen) { try { if (!dataArray) return 0; const center = totalItems / 2; const centerDist = Math.abs(index - center) / center; const dataIdx = Math.floor(centerDist * (bufferLen * 0.6)); return dataArray[dataIdx] / 255; } catch (e) { return 0; } }
 
-    // ==========================================
-    // VISUALIZER RENDERER DENGAN PIVOT INDEPENDEN
-    // ==========================================
     function drawVisualizer(bufferLen, isReflection) {
       const style = config.visType; ctx.save(); 
       if (isReflection) {
-          if (mirrorConfig.showVisReflect === 'no') { ctx.restore(); return; } // Fitur Toggle ON/OFF Pantulan
-          let pivotY = visY + mirrorConfig.visReflectGap; // Pivot dihitung bebas dari gap slider
-          ctx.translate(0, pivotY); 
+          if (mirrorConfig.showVisReflect === 'no') { ctx.restore(); return; } 
+          ctx.translate(visX, visRefY); // Pivot pakai koordinat bayangan yang lu geser pake jari!
           ctx.scale(1, -1); 
-          ctx.translate(0, -pivotY); 
           ctx.globalAlpha = config.visOpacity * 0.45; 
       } else { 
+          ctx.translate(visX, visY); 
           ctx.globalAlpha = config.visOpacity; 
       }
-      ctx.translate(visX, visY); const cy = 0;
+      const cy = 0;
       try {
         if (style === 'elegant_piano') { let numBars = 52; let spacing = visW / numBars; let barW = spacing * 0.85; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; for (let i = 0; i < numBars; i++) { let h = Math.max(10, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillRect(i * spacing, cy, barW, -h); ctx.fillStyle = 'rgba(0,0,0,0.1)'; ctx.fillRect(i * spacing, cy, barW, -h); ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; } }
         else if (style === 'cinematic_streaks') { let numBars = 40; let spacing = visW / numBars; for (let i = 0; i < numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let grad = ctx.createLinearGradient(0, cy, 0, cy - h); grad.addColorStop(0, 'rgba(255,255,255,0.8)'); grad.addColorStop(1, 'rgba(255,255,255,0)'); ctx.fillStyle = grad; ctx.fillRect(i * spacing + spacing/2 - 1, cy - h, 2, h); } }
@@ -375,9 +387,6 @@
       ctx.restore();
     }
 
-    // =========================================================
-    // SPEAKER FULL TRANSPARAN DENGAN PIVOT INDEPENDEN
-    // =========================================================
     function drawSpeakers(bufferLen, isReflection) {
       if (!isBgReady || document.getElementById('speakerStyle').value === 'none') return;
       let scale = parseFloat(document.getElementById('speakerSize').value);
@@ -390,26 +399,25 @@
       let shakeX = (Math.random() - 0.5) * finalBass * shakeIntensity; let shakeY = (Math.random() - 0.5) * finalBass * shakeIntensity;
       let pump = 1.0 + (finalBass * pumpIntensity);
 
-      function drawLiveBackgroundSpeaker(x, y) {
+      function drawLiveBackgroundSpeaker(x, y, refY) {
         ctx.save(); 
         if(isReflection) { 
-            if (mirrorConfig.showSpkReflect === 'no') { ctx.restore(); return; } // Fitur Toggle ON/OFF Pantulan Speaker
-            let pivotY = y + mirrorConfig.spkReflectGap; // Pivot bebas untuk speaker
-            ctx.translate(0, pivotY); 
+            if (mirrorConfig.showSpkReflect === 'no') { ctx.restore(); return; }
+            ctx.translate(x + shakeX, refY + shakeY); // Geser pakai titik bayangan dari jari lu!
             ctx.scale(1, -1); 
-            ctx.translate(0, -pivotY); 
             ctx.globalAlpha = 0.45; 
+        } else {
+            ctx.translate(x + shakeX, y + shakeY); 
         }
-        ctx.translate(x + shakeX, y + shakeY); ctx.beginPath(); ctx.arc(0, 0, baseR, 0, Math.PI * 2); ctx.clip(); ctx.scale(pump, pump);
+        ctx.beginPath(); ctx.arc(0, 0, baseR, 0, Math.PI * 2); ctx.clip(); ctx.scale(pump, pump);
+        
+        // Tetep sedot gambar dari Y asli biar motif kayunya/besinya sama persis, cuma diputer balik
         ctx.drawImage(bgImageElement, bgGlobalX - x, bgGlobalY - y, bgImageElement.width * bgGlobalScale, bgImageElement.height * bgGlobalScale);
         ctx.restore();
       }
-      drawLiveBackgroundSpeaker(spk1X, spk1Y); drawLiveBackgroundSpeaker(spk2X, spk2Y);
+      drawLiveBackgroundSpeaker(spk1X, spk1Y, spk1RefY); drawLiveBackgroundSpeaker(spk2X, spk2Y, spk2RefY);
     }
 
-    // =========================================================
-    // PROP KOPI & LILIN (TETAP AMAN)
-    // =========================================================
     function drawCoffeeSteam(x, y, style, scale, propSpeed) {
         if(style === 'none') return; ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
         let branches = 3; let hMax = 150; let wMax = 30; let speedMult = 1.5; let waveFreq = 2.0; let opacity = 0.8;
@@ -445,34 +453,33 @@
       if (isBgReady) { bgGlobalScale = Math.max(width / bgImageElement.width, height / bgImageElement.height); bgGlobalX = (width / 2) - (bgImageElement.width / 2) * bgGlobalScale; bgGlobalY = (height / 2) - (bgImageElement.height / 2) * bgGlobalScale; ctx.drawImage(bgImageElement, bgGlobalX, bgGlobalY, bgImageElement.width * bgGlobalScale, bgImageElement.height * bgGlobalScale); }
       if (isAudioInit && currentObjectUrl) { if (!audioPlayer.paused) analyser.getByteFrequencyData(dataArray); else for (let i = 0; i < dataArray.length; i++) dataArray[i] = Math.max(0, dataArray[i] - 10); }
 
-      // 1. ELEMEN ASLI DI ATAS
+      // 1. GAMBAR NORMAL (DI ATAS KACA)
       if (isAudioInit && currentObjectUrl) drawVisualizer(analyser.frequencyBinCount, false);
       drawSpeakers(isAudioInit ? analyser.frequencyBinCount : 128, false);
 
-      // 2. ELEMEN PANTULAN DI BAWAH KACA
+      // 2. GAMBAR PANTULAN (DI BAWAH KACA - BISA DITARIK BEBAS)
       if (isAudioInit && currentObjectUrl) drawVisualizer(analyser.frequencyBinCount, true);
       drawSpeakers(isAudioInit ? analyser.frequencyBinCount : 128, true);
 
-      // 3. EFEK MEJA KACA GELAP DI BAWAH (Toggle ON/OFF bisa dikontrol user)
+      // 3. EFEK MEJA KACA GELAP DI BAWAH
       if (mirrorConfig.showGlassLine === 'yes' || mirrorConfig.showVisReflect === 'yes' || mirrorConfig.showSpkReflect === 'yes') {
           let mirrorGrad = ctx.createLinearGradient(0, mirrorConfig.glassLineY, 0, height);
           mirrorGrad.addColorStop(0, 'rgba(0,0,0,0.15)'); mirrorGrad.addColorStop(0.5, 'rgba(0,0,0,0.7)'); mirrorGrad.addColorStop(1, 'rgba(0,0,0,0.95)');
           ctx.fillStyle = mirrorGrad; ctx.fillRect(0, mirrorConfig.glassLineY, width, height - mirrorConfig.glassLineY);
       }
       
-      // GARIS NEON PEMBATAS MEJA KACA
+      // GARIS NEON MEJA KACA
       if (mirrorConfig.showGlassLine === 'yes') {
           ctx.beginPath(); ctx.moveTo(0, mirrorConfig.glassLineY); ctx.lineTo(width, mirrorConfig.glassLineY);
           let edgeGrad = ctx.createLinearGradient(0, 0, width, 0); edgeGrad.addColorStop(0, 'rgba(0,210,255,0)'); edgeGrad.addColorStop(0.5, 'rgba(0,210,255,0.4)'); edgeGrad.addColorStop(1, 'rgba(0,210,255,0)');
           ctx.strokeStyle = edgeGrad; ctx.lineWidth = 2; ctx.stroke();
       }
 
-      // 4. GAMBAR KOPI & LILIN
+      // 4. GAMBAR PROP KOPI & LILIN
       let propScale = parseFloat(document.getElementById('propSize').value); let propSpeed = parseFloat(document.getElementById('propSpeed').value);
       drawCoffeeSteam(coffeeX, coffeeY, document.getElementById('coffeeStyle').value, propScale, propSpeed);
       drawCandle(candle1X, candle1Y, document.getElementById('candleStyle').value, propScale, propSpeed); drawCandle(candle2X, candle2Y, document.getElementById('candleStyle').value, propScale, propSpeed);
 
-      // 5. PARTIKEL SINEMATIK
       for (let i = 0; i < config.count; i++) { if (cinematicParticles[i]) { cinematicParticles[i].update(); cinematicParticles[i].draw(); } }
 
       ctx.restore(); requestAnimationFrame(animate);
@@ -486,14 +493,13 @@
     function saveVideoWebM() { const blob = new Blob(chunks, { type: 'video/webm' }); const recordDuration = Date.now() - recordStartTime; statusBox.innerText = "⏳ Menjahit durasi (Biar bisa di-skip)..."; if (typeof ysFixWebmDuration === 'function') { try { ysFixWebmDuration(blob, recordDuration, function(fixedBlob) { triggerDownload(fixedBlob); }, {logger: false}); } catch (error) { triggerDownload(blob); } } else { triggerDownload(blob); } }
     function triggerDownload(finalBlob) {
       statusBox.innerText = "⏳ Memproses pemotongan file video..."; const url = URL.createObjectURL(finalBlob);
-      const oldVid = document.getElementById('previewVid'); if(oldVid) oldVid.remove(); const oldBtn = document.getElementById('shareBtnDewa'); if(oldBtn) oldBtn.remove(); const oldLinkBtn = document.getElementById('manualLinkBtn'); if(oldLinkBtn) oldLinkBtn.remove();
+      const oldVid = document.getElementById('previewVid'); if(oldVid) oldVid.remove(); const oldBtn = document.getElementById('shareBtnDewa'); if(oldBtn) oldBtn.remove();
       const vid = document.createElement('video'); vid.id = 'previewVid'; vid.src = url; vid.controls = true; vid.setAttribute('controlsList', 'nodownload'); vid.style.width = "100%"; vid.style.marginTop = "20px"; vid.style.border = "3px solid #00d2ff"; vid.style.borderRadius = "8px";
       const saveBtn = document.createElement('button'); saveBtn.id = 'shareBtnDewa'; saveBtn.innerText = "📥 SIMPAN KE DOKUMEN (CAPACITOR)"; saveBtn.style.width = "100%"; saveBtn.style.padding = "15px"; saveBtn.style.marginTop = "10px"; saveBtn.style.background = "linear-gradient(135deg, #00ffaa, #00bcd4)"; saveBtn.style.color = "black"; saveBtn.style.border = "none"; saveBtn.style.borderRadius = "8px"; saveBtn.style.fontWeight = "bold"; saveBtn.style.fontSize = "14px"; saveBtn.style.cursor = "pointer";
-      const fallbackBtn = document.createElement('a'); fallbackBtn.id = 'manualLinkBtn'; fallbackBtn.innerText = "⬇️ DOWNLOAD MANUAL (JIKA GAGAL)"; fallbackBtn.href = url; fallbackBtn.download = `MirrorV1_720p_${Date.now()}.webm`;
       let isSaving = false;
       saveBtn.onclick = async () => {
         if (isSaving) return; isSaving = true; saveBtn.innerText = "⏳ MEMINTA IZIN & MENYIMPAN...";
-        const downloadBrowser = () => { statusBox.innerText = "⏳ Mengunduh lewat Download Manager HP..."; fallbackBtn.click(); saveBtn.innerText = "✅ MENGGUNAKAN DOWNLOAD BAWAAN"; statusBox.innerText = `🎉 SUKSES! Periksa folder Download atau Galeri Anda.`; };
+        const downloadBrowser = () => { statusBox.innerText = "⏳ Mengunduh lewat Download Manager HP..."; const a = document.createElement('a'); a.style.display = 'none'; a.href = url; a.download = `MirrorV1_720p_${Date.now()}.webm`; document.body.appendChild(a); a.click(); setTimeout(() => { document.body.removeChild(a); }, 100); saveBtn.innerText = "✅ VIDEO SUKSES DIUNDUH!"; statusBox.innerText = `🎉 SUKSES! Video berhasil diunduh ke perangkat Anda.`; };
         try {
           if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem) {
             const FS = window.Capacitor.Plugins.Filesystem; 
@@ -513,7 +519,7 @@
           } else { downloadBrowser(); }
         } catch(e) { try { downloadBrowser(); } catch(err2) { saveBtn.innerText = "❌ GAGAL MENYIMPAN"; statusBox.innerText = "Terjadi Error: " + e.message; isSaving = false; } }
       };
-      const controlsDiv = document.getElementById('controls'); controlsDiv.appendChild(vid); controlsDiv.appendChild(saveBtn); controlsDiv.appendChild(fallbackBtn); saveBtn.scrollIntoView({ behavior: 'smooth' }); setTimeout(() => { if(!isSaving && window.Capacitor) saveBtn.click(); }, 1500);
+      const controlsDiv = document.getElementById('controls'); controlsDiv.appendChild(vid); controlsDiv.appendChild(saveBtn); saveBtn.scrollIntoView({ behavior: 'smooth' }); setTimeout(() => { if(!isSaving && window.Capacitor) saveBtn.click(); }, 1500);
     }
   </script>
 </body>
