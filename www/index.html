@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mirror v1 (Cinematic Reflection)</title>
+  <title>Mirror v1 (Bass Boss + Glass Reflection)</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body { margin: 0; background-color: #111; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; }
@@ -11,28 +11,31 @@
     #canvas-wrapper:active { cursor: grabbing; }
     canvas { width: 100%; height: 100%; display: block; }
     #controls { width: 90%; max-width: 600px; background: #1a1a1a; padding: 20px; border-radius: 12px; margin-top: 20px; border: 1px solid #333; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); }
-    .btn-group, .play-group, .grid-2 { display: flex; gap: 8px; }
-    .grid-2 { flex-wrap: wrap; }
-    .grid-2 .row { flex: 1 1 45%; }
-    .file-label { flex: 1; background: #2a2a2a; color: #ccc; padding: 12px 5px; text-align: center; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; border: 1px solid #444; transition: 0.2s; white-space: nowrap; }
-    .file-label:hover { background: #444; color: white; }
-    #playBtn { flex: 2; padding: 15px; background: #333; color: #888; border: 2px solid #222; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-    #playBtn.ready { background: linear-gradient(135deg, #00d2ff, #e040fb); color: white; border: none; }
-    #nextBtn { flex: 1; padding: 15px; background: #444; color: #aaa; border: 2px solid #333; border-radius: 8px; font-weight: bold; cursor: not-allowed; transition: 0.3s; }
-    #nextBtn.ready { background: #2a2a2a; color: white; border: 2px solid #555; cursor: pointer; }
+    .btn-group, .play-group { display: flex; gap: 8px; }
+    .file-label { flex: 1; background: #2b2b2b; color: #ccc; padding: 12px 5px; text-align: center; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; border: 1px solid #444; transition: 0.2s; white-space: nowrap; }
+    .file-label:hover { background: #3b3b3b; color: white; }
+    #playBtn { flex: 2; padding: 15px; background: #333; color: #888; border: 1px solid #222; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+    #playBtn.ready { background: linear-gradient(135deg, #d4af37, #00e5ff); color: #111; border: none; }
+    #nextBtn { flex: 1; padding: 15px; background: #444; color: #aaa; border: 1px solid #333; border-radius: 8px; font-weight: bold; cursor: not-allowed; transition: 0.3s; }
+    #nextBtn.ready { background: #2a2a2a; color: white; border: 1px solid #555; cursor: pointer; }
     .progress-container { display: flex; align-items: center; gap: 10px; background: #222; padding: 8px; border-radius: 6px; border: 1px solid #333; }
-    .time-text { font-size: 11px; font-family: monospace; color: #00d2ff; min-width: 40px; text-align: center; }
+    .time-text { font-size: 11px; font-family: monospace; color: #d4af37; min-width: 40px; text-align: center; }
     #progressBar { flex: 1; height: 5px; -webkit-appearance: none; background: #444; border-radius: 5px; cursor: pointer; }
-    #progressBar::-webkit-slider-thumb { -webkit-appearance: none; width: 15px; height: 15px; background: #e040fb; border-radius: 50%; cursor: pointer; }
-    .btn-record { width: 100%; padding: 15px; background: linear-gradient(135deg, #ff4444, #d32f2f); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top:10px; }
+    #progressBar::-webkit-slider-thumb { -webkit-appearance: none; width: 15px; height: 15px; background: #00e5ff; border-radius: 50%; cursor: pointer; }
+    .btn-record { width: 100%; padding: 15px; background: linear-gradient(135deg, #ff4444, #d32f2f); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
     #stopOverlay { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(220, 20, 60, 0.95); color: white; padding: 15px 30px; border-radius: 50px; z-index: 100; font-weight: bold; border: 3px solid white; cursor: pointer; }
     #countdownOverlay { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 100px; font-weight: bold; color: white; text-shadow: 0 0 20px rgba(0, 0, 0, 0.8); z-index: 100; }
-    #statusBox { font-size: 12px; text-align: center; color: #00d2ff; margin-bottom: 5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .row { display: flex; align-items: center; gap: 10px; width: 100%; }
-    label { font-size: 10px; width: 85px; color: #aaa; font-weight: 600; text-transform: uppercase; }
-    input[type="range"], select { flex: 1; height: 32px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px; font-size:12px; }
+    #statusBox { font-size: 12px; text-align: center; color: #d4af37; margin-bottom: 5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .row { display: flex; align-items: center; gap: 10px; }
+    label { font-size: 11px; width: 80px; color: #ccc; font-weight: 600; }
+    input[type="range"], select { flex: 1; height: 36px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px; }
     input[type="file"] { display: none; }
-    optgroup { background: #111; color: #00d2ff; font-weight: bold; }
+    optgroup { background: #111; color: #00e5ff; font-weight: bold; }
+    .layout-grid { display: flex; gap: 15px; width: 100%; box-sizing: border-box; }
+    .layout-col { flex: 1; background: #222; padding: 12px; border-radius: 8px; border: 1px solid #3c3c3c; display: flex; flex-direction: column; gap: 8px; box-sizing: border-box; }
+    .layout-col label { width: 100%; text-align: left; font-size: 10px; margin-bottom: -4px; color: #aaa; font-weight: bold; }
+    .layout-col select, .layout-col input[type="range"] { width: 100%; margin-bottom: 5px; }
+    #manualLinkBtn { display: block; width: 100%; box-sizing: border-box; text-align: center; padding: 15px; margin-top: 10px; background: #333; color: #fff; border: 1px solid #555; border-radius: 8px; font-weight: bold; font-size: 14px; text-decoration: none; cursor: pointer; transition: 0.3s; }
   </style>
 </head>
 
@@ -44,10 +47,10 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Mirror v1 (Cinematic 3D Glass Edition).</div>
+    <div id="statusBox">Siap. Mirror v1 (Kaca 3D + Kopi/Lilin).</div>
     <div class="btn-group">
-      <label for="bgInput" class="file-label" style="border-bottom: 3px solid #00bcd4">1. FOTO LATAR</label>
-      <label for="audioInput" class="file-label" style="border-bottom: 3px solid #e040fb">2. MUSIK (BANYAK)</label>
+      <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
+      <label for="audioInput" class="file-label" style="border-bottom: 3px solid #00bcd4">2. MUSIK (BANYAK)</label>
     </div>
 
     <div class="play-group">
@@ -66,67 +69,100 @@
 
     <hr style="border: 0; border-top: 1px solid #333; width: 100%; margin: 5px 0;">
 
-    <div class="row">
-      <label style="color:#00d2ff;">VISUALIZER</label>
-      <select id="visType">
-        <optgroup label="=== CINEMATIC & MINIMALIST ===">
-            <option value="elegant_piano">🎹 1. Elegant Piano Keys</option>
-            <option value="cinematic_streaks">🌠 2. Cinematic Light Streaks</option>
-            <option value="ghost_ambient">🌫️ 3. Ghostly Ambient Bars</option>
-            <option value="glitch_tech">📟 4. Glitch Tech Blocks</option>
-            <option value="diamond_eq">♦️ 5. Symmetric Diamond EQ</option>
-            <option value="particle_fountain">✨ 6. Smooth Particle Fountain</option>
-        </optgroup>
-        <optgroup label="=== MODERN BARS ===">
-            <option value="vintage_bars">📊 7. Vintage Solid Bars (Off-White)</option>
-            <option value="liquid_bar">💧 8. Liquid Glowing Cyan Bars</option>
-            <option value="gradient_blocks">🎛️ 9. Cyan-Blue Gradient Blocks</option>
-            <option value="sunset_bars">🌅 10. Warm Sunset Gradient Bars</option>
-        </optgroup>
-        <optgroup label="=== STUDIO EFFECTS ===">
-            <option value="modern_wave">🌊 11. Modern Smooth Wave</option>
-            <option value="neon_lines">🚥 12. Vertical Neon Lines</option>
-            <option value="ambient_glow">🌟 13. Bottom Ambient Glow</option>
-            <option value="split_glow">⚡ 14. Split Center Glow Bars</option>
-        </optgroup>
-      </select>
-    </div>
-
-    <div class="grid-2">
-      <div class="row"><label>TINGGI VIS.</label><input type="range" id="visHeight" min="30" max="600" value="150"></div>
-      <div class="row"><label>LEBAR VIS.</label><input type="range" id="visWidth" min="100" max="1100" value="400"></div>
-    </div>
-
-    <hr style="border: 0; border-top: 1px dashed #333; width: 100%; margin: 5px 0;">
-
-    <div class="row">
-        <label style="color:#ffb300; width:100px;">DAUN SPEAKER</label>
-        <select id="speakerStyle">
-            <option value="active">🟢 Aktif (Berdenyut)</option>
-            <option value="none">🚫 Matikan Speaker</option>
+    <div class="layout-grid">
+      <!-- KOLOM KIRI (VISUALIZER - LIST BARU) -->
+      <div class="layout-col">
+        <label style="color:#00d2ff; text-align:center; font-size:12px; margin-bottom:10px;">VISUALIZER</label>
+        <select id="visType">
+            <optgroup label="=== CINEMATIC & MINIMALIST ===">
+                <option value="elegant_piano">🎹 1. Elegant Piano Keys</option>
+                <option value="cinematic_streaks">🌠 2. Cinematic Light Streaks</option>
+                <option value="ghost_ambient">🌫️ 3. Ghostly Ambient Bars</option>
+                <option value="glitch_tech">📟 4. Glitch Tech Blocks</option>
+                <option value="diamond_eq">♦️ 5. Symmetric Diamond EQ</option>
+                <option value="particle_fountain">✨ 6. Smooth Particle Fountain</option>
+            </optgroup>
+            <optgroup label="=== MODERN BARS ===">
+                <option value="vintage_bars">📊 7. Vintage Solid Bars (Off-White)</option>
+                <option value="liquid_bar">💧 8. Liquid Glowing Cyan Bars</option>
+                <option value="gradient_blocks">🎛️ 9. Cyan-Blue Gradient Blocks</option>
+                <option value="sunset_bars">🌅 10. Warm Sunset Gradient Bars</option>
+            </optgroup>
+            <optgroup label="=== STUDIO EFFECTS ===">
+                <option value="modern_wave">🌊 11. Modern Smooth Wave</option>
+                <option value="neon_lines">🚥 12. Vertical Neon Lines</option>
+                <option value="ambient_glow">🌟 13. Bottom Ambient Glow</option>
+                <option value="split_glow">⚡ 14. Split Center Glow Bars</option>
+            </optgroup>
         </select>
-    </div>
-    <div class="grid-2">
-        <div class="row"><label>UKURAN</label><input type="range" id="speakerSize" min="0.2" max="5.0" step="0.1" value="1.5"></div>
-        <div class="row"><label>DENTUMAN</label><input type="range" id="speakerPump" min="0" max="2.0" step="0.1" value="0.5"></div>
-        <div class="row"><label>GETARAN</label><input type="range" id="speakerShake" min="0" max="30" step="1" value="10"></div>
+        <label>TINGGI VIS.</label><input type="range" id="visHeight" min="30" max="600" value="150">
+        <label>LEBAR VIS.</label><input type="range" id="visWidth" min="100" max="1100" value="400">
+        <label>OPASITAS VIS.</label><input type="range" id="visOpacity" min="0.1" max="1.0" step="0.05" value="1.0">
+      </div>
+
+      <!-- KOLOM KANAN (SPEAKER TRANSPARAN) -->
+      <div class="layout-col">
+        <label style="color:#ffb300; text-align:center; font-size:12px; margin-bottom:10px;">DAUN SPEAKER (TRANSPARAN)</label>
+        <select id="speakerStyle">
+          <option value="active">🟢 Aktifkan Efek Bass</option>
+          <option value="none">🚫 Matikan Efek</option>
+        </select>
+        <label>UKURAN AREA</label><input type="range" id="speakerSize" min="0.2" max="5.0" step="0.1" value="1.5">
+        <label style="color:#ff5252;">GETARAN (SHAKE)</label><input type="range" id="speakerShake" min="0" max="30" step="1" value="10">
+        <label style="color:#ff5252;">DENTUMAN (PUMP)</label><input type="range" id="speakerPump" min="0" max="2.0" step="0.1" value="0.5">
+      </div>
     </div>
 
     <hr style="border: 0; border-top: 1px dashed #333; width: 100%; margin: 5px 0;">
 
+    <div class="layout-grid">
+      <div class="layout-col">
+        <label style="color:#d7ccc8; text-align:center; font-size:12px; margin-bottom:5px;">ASAP KOPI</label>
+        <select id="coffeeStyle">
+          <option value="none">🚫 Tanpa Asap Kopi</option>
+          <option value="soft_steam">☕ 1. Soft Warm Steam</option>
+          <option value="swirl_vapor">🌪️ 2. Swirling Vapor</option>
+          <option value="thin_wisp">🌬️ 3. Thin Elegant Wisp</option>
+          <option value="heavy_steam">☁️ 4. Heavy Morning Steam</option>
+          <option value="wind_steam">🍃 5. Breezy Coffee Steam</option>
+        </select>
+      </div>
+      <div class="layout-col">
+        <label style="color:#ff8a65; text-align:center; font-size:12px; margin-bottom:5px;">API LILIN</label>
+        <select id="candleStyle">
+          <option value="none">🚫 Tanpa Api Lilin</option>
+          <option value="calm_flame">🕯️ 1. Calm Warm Flame</option>
+          <option value="flicker_flame">🕯️ 2. Flickering Flame</option>
+          <option value="bright_glow">🌟 3. Bright Glowing Flame</option>
+          <option value="blue_base">🔵 4. Blue-Base Real Flame</option>
+          <option value="wind_flame">🌬️ 5. Wind-blown Flame</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="row" style="margin-top: 5px;"><label style="color:#fff;">UKURAN PROP</label><input type="range" id="propSize" min="0.2" max="5.0" step="0.1" value="1.0"></div>
+    <div class="row" style="margin-top: 5px;"><label style="color:#ff8a65;">KCPTN PROP</label><input type="range" id="propSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
+
+    <hr style="border: 0; border-top: 1px dashed #333; width: 100%; margin: 5px 0;">
+
     <div class="row">
-      <label>EFEK FILM</label>
+      <label style="color:#00e5ff;">PARTIKEL SINEMATIK</label>
       <select id="type">
-        <option value="none">🚫 Tanpa Efek</option>
-        <option value="vintage">🎞️ Vintage HD (Kotor, Debu)</option>
-        <option value="grain">🎬 Grains (Bintik Saja)</option>
-        <option value="flicker_8mm">🎞️ 8mm Flicker Halus</option>
-        <option value="rain">🌧️ Hujan Realistis</option>
-        <option value="fireflies">✨ Kunang-Kunang</option>
+        <option value="none">🚫 Tanpa Partikel</option>
+        <option value="dust_motes">✨ 1. Butiran Debu Emas</option>
+        <option value="magic_sparks">💫 2. Percikan Sihir Biru</option>
+        <option value="floating_embers">🔥 3. Bara Api Terbang</option>
+        <option value="bokeh_orbs">🫧 4. Bokeh Orbs Sinematik</option>
+        <option value="snow_dust">❄️ 5. Debu Salju Halus</option>
+        <option value="fairy_light">🧚 6. Cahaya Peri Berpendar</option>
+        <option value="ash_particles">🌪️ 7. Abu Hitam Melayang</option>
+        <option value="starlight_glint">🌟 8. Kilauan Bintang Halus</option>
+        <option value="deep_sea_motes">🌊 9. Partikel Air Laut</option>
+        <option value="golden_pollen">🌼 10. Serbuk Sari Emas</option>
       </select>
     </div>
 
-    <button class="btn-record" id="recordBtn" onclick="startCountdownAndRecord()">🔴 MULAI REKAM 720p</button>
+    <button class="btn-record" id="recordBtn" onclick="startCountdownAndRecord()" style="margin-top: 10px;">🔴 MULAI REKAM 720p</button>
   </div>
 
   <audio id="audioPlayer" crossorigin="anonymous"></audio>
@@ -141,33 +177,37 @@
     let audioFiles = []; let currentObjectUrl = null; let currentSongName = ""; let playTimeout = null;
     let isTrackLoaded = false; let shuffledPlaylist = []; let currentPlayIndex = 0; let isCountingDown = false; let countdownTimer = null;
 
+    let bgGlobalScale = 1; let bgGlobalX = 0; let bgGlobalY = 0;
+
     function shuffle(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array; }
 
     document.getElementById('audioInput').addEventListener('change', function(e) {
       if (this.files.length > 0) {
-        audioFiles = Array.from(this.files); isTrackLoaded = true; shuffledPlaylist = shuffle(Array.from({ length: audioFiles.length }, (v, k) => k)); currentPlayIndex = 0;
-        playBtn.innerHTML = "▶ PLAY MUSIK"; playBtn.classList.add('ready'); nextBtn.classList.add('ready');
+        audioFiles = Array.from(this.files); isTrackLoaded = true; shuffledPlaylist = shuffle(Array.from({ length: audioFiles.length }, (v, k) => k));
+        currentPlayIndex = 0; playBtn.innerHTML = "▶ PLAY MUSIK"; playBtn.classList.add('ready'); nextBtn.classList.add('ready');
         statusBox.innerText = `${audioFiles.length} Lagu dimuat. Siap diputar!`; progressBar.value = 0; currTimeEl.innerText = "00:00"; durTimeEl.innerText = "00:00";
-        audioPlayer.pause(); if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl); currentObjectUrl = null;
+        audioPlayer.pause(); if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl); currentObjectUrl = null; currentSongName = "Musik Diunggah";
       }
     });
 
     function playRandomSong(isInstant = false) {
       if (audioFiles.length === 0) return; if (playTimeout) clearTimeout(playTimeout);
       if (currentPlayIndex >= shuffledPlaylist.length) { currentPlayIndex = 0; stopEverything(); return; }
+      if (currentObjectUrl && isInstant) { URL.revokeObjectURL(currentObjectUrl); currentObjectUrl = null; }
       const delayAmount = isInstant ? 0 : 3500;
       if (!isInstant) { audioPlayer.pause(); playBtn.innerText = "⏳ TUNGGU..."; statusBox.innerText = "⏳ Jeda pergantian lagu..."; progressBar.value = 0; }
       playTimeout = setTimeout(() => {
         if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl);
-        const selectedFile = audioFiles[shuffledPlaylist[currentPlayIndex]];
+        const actualFileIndex = shuffledPlaylist[currentPlayIndex]; const selectedFile = audioFiles[actualFileIndex];
         currentSongName = selectedFile.name.replace(/\.[^/.]+$/, ""); currentObjectUrl = URL.createObjectURL(selectedFile);
         audioPlayer.src = currentObjectUrl; audioPlayer.load();
         if (!audioCtx) initAudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume();
-        audioPlayer.play().then(() => { playBtn.innerText = "⏸ PAUSE"; statusBox.innerText = `🎵 ${currentPlayIndex + 1}/${audioFiles.length}: ${currentSongName}`; currentPlayIndex++; }).catch(e => { playBtn.innerText = "❌ ERROR"; });
+        audioPlayer.play().then(() => { playBtn.innerText = "⏸ PAUSE"; statusBox.innerText = `🎵 Lagu ${currentPlayIndex + 1}/${audioFiles.length}: ${currentSongName}`; currentPlayIndex++; }).catch(err => { playBtn.innerText = "❌ ERROR"; });
       }, delayAmount);
     }
 
     audioPlayer.addEventListener('ended', () => { playRandomSong(false); });
+
     function stopEverything() {
       audioPlayer.pause(); if (playTimeout) clearTimeout(playTimeout); if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl); currentObjectUrl = null;
       if (dataArray) dataArray.fill(0); shuffledPlaylist = shuffle(Array.from({ length: audioFiles.length }, (v, k) => k));
@@ -175,25 +215,40 @@
       if (mediaRecorder && mediaRecorder.state === 'recording') { setTimeout(() => { stopRecording(); }, 500); }
     }
 
-    // VARIABEL POSISI
-    let visW = 400; let visX = (width - visW) / 2; let visY = height - 220; // Diangkat dikit biar muat kaca
+    // POSISI ELEMEN (DIANGKAT DIKIT BIAR KACANYA KELIHATAN MEWAH)
+    let visW = 400; let visX = (width - visW) / 2; let visY = height - 220;
     let spk1X = 250; let spk1Y = height - 320; let spk2X = width - 250; let spk2Y = height - 320;
-    let isDraggingSpk1 = false; let isDraggingSpk2 = false; let isDraggingVis = false; let dragOffsetX = 0; let dragOffsetY = 0;
+    let coffeeX = 350; let coffeeY = height - 240; let candle1X = 150; let candle1Y = height - 250; let candle2X = width - 150; let candle2Y = height - 250;
+    
+    let isDraggingSpk1 = false; let isDraggingSpk2 = false; let isDraggingVis = false;
+    let isDraggingCoffee = false; let isDraggingCandle1 = false; let isDraggingCandle2 = false; let dragOffsetX = 0; let dragOffsetY = 0;
 
     function getMousePos(e) { const rect = canvas.getBoundingClientRect(); const scaleX = canvas.width / rect.width; const scaleY = canvas.height / rect.height; let clientX = e.clientX; let clientY = e.clientY; if (e.touches && e.touches.length > 0) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; } return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY }; }
+
     function startDrag(e) {
-      const pos = getMousePos(e); const spkScale = parseFloat(document.getElementById('speakerSize').value); const clickR = 60 * spkScale;
-      if (Math.hypot(pos.x - spk1X, pos.y - spk1Y) <= clickR && document.getElementById('speakerStyle').value !== 'none') { isDraggingSpk1 = true; dragOffsetX = pos.x - spk1X; dragOffsetY = pos.y - spk1Y; if (e.cancelable) e.preventDefault(); return; }
-      if (Math.hypot(pos.x - spk2X, pos.y - spk2Y) <= clickR && document.getElementById('speakerStyle').value !== 'none') { isDraggingSpk2 = true; dragOffsetX = pos.x - spk2X; dragOffsetY = pos.y - spk2Y; if (e.cancelable) e.preventDefault(); return; }
+      const pos = getMousePos(e); const spkScale = parseFloat(document.getElementById('speakerSize').value); const clickRadius = 60 * spkScale;
+      if (Math.hypot(pos.x - spk1X, pos.y - spk1Y) <= Math.max(40, clickRadius) && document.getElementById('speakerStyle').value !== 'none') { isDraggingSpk1 = true; dragOffsetX = pos.x - spk1X; dragOffsetY = pos.y - spk1Y; if (e.cancelable) e.preventDefault(); return; }
+      if (Math.hypot(pos.x - spk2X, pos.y - spk2Y) <= Math.max(40, clickRadius) && document.getElementById('speakerStyle').value !== 'none') { isDraggingSpk2 = true; dragOffsetX = pos.x - spk2X; dragOffsetY = pos.y - spk2Y; if (e.cancelable) e.preventDefault(); return; }
+      if (document.getElementById('coffeeStyle').value !== 'none' && Math.hypot(pos.x - coffeeX, pos.y - coffeeY) <= 50) { isDraggingCoffee = true; dragOffsetX = pos.x - coffeeX; dragOffsetY = pos.y - coffeeY; if (e.cancelable) e.preventDefault(); return; }
+      if (document.getElementById('candleStyle').value !== 'none') {
+        if (Math.hypot(pos.x - candle1X, pos.y - candle1Y) <= 40) { isDraggingCandle1 = true; dragOffsetX = pos.x - candle1X; dragOffsetY = pos.y - candle1Y; if (e.cancelable) e.preventDefault(); return; }
+        if (Math.hypot(pos.x - candle2X, pos.y - candle2Y) <= 40) { isDraggingCandle2 = true; dragOffsetX = pos.x - candle2X; dragOffsetY = pos.y - candle2Y; if (e.cancelable) e.preventDefault(); return; }
+      }
       if (pos.x >= visX && pos.x <= visX + visW && pos.y >= visY - 150 && pos.y <= visY + 150) { isDraggingVis = true; dragOffsetX = pos.x - visX; dragOffsetY = pos.y - visY; if (e.cancelable) e.preventDefault(); }
     }
+
     function drag(e) {
-      if (!isDraggingVis && !isDraggingSpk1 && !isDraggingSpk2) return; const pos = getMousePos(e);
+      if (!isDraggingVis && !isDraggingSpk1 && !isDraggingSpk2 && !isDraggingCoffee && !isDraggingCandle1 && !isDraggingCandle2) return;
+      const pos = getMousePos(e);
       if (isDraggingSpk1) { spk1X = pos.x - dragOffsetX; spk1Y = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingSpk2) { spk2X = pos.x - dragOffsetX; spk2Y = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
+      if (isDraggingCoffee) { coffeeX = pos.x - dragOffsetX; coffeeY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
+      if (isDraggingCandle1) { candle1X = pos.x - dragOffsetX; candle1Y = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
+      if (isDraggingCandle2) { candle2X = pos.x - dragOffsetX; candle2Y = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingVis) { visX = pos.x - dragOffsetX; visY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); }
     }
-    function endDrag() { isDraggingVis = false; isDraggingSpk1 = false; isDraggingSpk2 = false; }
+
+    function endDrag() { isDraggingVis = false; isDraggingSpk1 = false; isDraggingSpk2 = false; isDraggingCoffee = false; isDraggingCandle1 = false; isDraggingCandle2 = false; }
     canvas.addEventListener('mousedown', startDrag); canvas.addEventListener('mousemove', drag); window.addEventListener('mouseup', endDrag);
     canvas.addEventListener('touchstart', startDrag, { passive: false }); canvas.addEventListener('touchmove', drag, { passive: false }); window.addEventListener('touchend', endDrag);
 
@@ -201,17 +256,17 @@
     function formatTime(seconds) { if (isNaN(seconds) || !isFinite(seconds)) return "00:00"; const m = Math.floor(seconds / 60); const s = Math.floor(seconds % 60); return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; }
     function initAudioContext() { const AudioContext = window.AudioContext || window.webkitAudioContext; audioCtx = new AudioContext(); analyser = audioCtx.createAnalyser(); analyser.fftSize = 256; analyser.smoothingTimeConstant = 0.8; source = audioCtx.createMediaElementSource(audioPlayer); mediaStreamDestination = audioCtx.createMediaStreamDestination(); source.connect(analyser); analyser.connect(audioCtx.destination); analyser.connect(mediaStreamDestination); dataArray = new Uint8Array(analyser.frequencyBinCount); isAudioInit = true; }
 
-    let isBgReady = false; let bgImageElement = new Image(); let bgGlobalScale = 1; let bgGlobalX = 0; let bgGlobalY = 0;
-    document.getElementById('bgInput').addEventListener('change', function(e) { if (this.files[0]) { bgImageElement.src = URL.createObjectURL(this.files[0]); bgImageElement.onload = () => { isBgReady = true; statusBox.innerText = "✅ Foto Latar Oke."; }; } });
+    let isBgReady = false; let bgImageElement = new Image();
+    document.getElementById('bgInput').addEventListener('change', function(e) { if (this.files[0]) { const fileURL = URL.createObjectURL(this.files[0]); bgImageElement.src = fileURL; bgImageElement.onload = () => { isBgReady = true; statusBox.innerText = "✅ Foto Latar Oke."; }; } });
 
     audioPlayer.addEventListener('loadedmetadata', () => { if (isFinite(audioPlayer.duration)) { durTimeEl.innerText = formatTime(audioPlayer.duration); progressBar.max = 100; } });
-    audioPlayer.addEventListener('timeupdate', () => { if (!isDraggingProgress && isFinite(audioPlayer.duration)) { progressBar.value = (audioPlayer.currentTime / audioPlayer.duration) * 100; currTimeEl.innerText = formatTime(audioPlayer.currentTime); } });
-    progressBar.addEventListener('input', () => { isDraggingProgress = true; if (audioPlayer.duration) { const t = (progressBar.value / 100) * audioPlayer.duration; currTimeEl.innerText = formatTime(t); audioPlayer.currentTime = t; } });
+    audioPlayer.addEventListener('timeupdate', () => { if (isFinite(audioPlayer.duration) && durTimeEl.innerText === "00:00") durTimeEl.innerText = formatTime(audioPlayer.duration); if (!isDraggingProgress) { const percent = (audioPlayer.currentTime / audioPlayer.duration) * 100; progressBar.value = isNaN(percent) ? 0 : percent; currTimeEl.innerText = formatTime(audioPlayer.currentTime); } });
+    progressBar.addEventListener('input', () => { isDraggingProgress = true; if (audioPlayer.duration) { const seekTime = (progressBar.value / 100) * audioPlayer.duration; currTimeEl.innerText = formatTime(seekTime); audioPlayer.currentTime = seekTime; } });
     const releaseSeek = () => { isDraggingProgress = false; }; progressBar.addEventListener('change', releaseSeek); progressBar.addEventListener('touchend', releaseSeek); progressBar.addEventListener('mouseup', releaseSeek);
 
-    function togglePlay() { if (!isTrackLoaded) { alert("Pilih Musik Dulu!"); return; } if (!audioCtx) initAudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume(); if (audioPlayer.paused) { if (!audioPlayer.src) playRandomSong(true); else { audioPlayer.play(); playBtn.innerText = "⏸ PAUSE"; } } else { audioPlayer.pause(); playBtn.innerText = "▶ RESUME"; } }
+    function togglePlay() { if (!isTrackLoaded) { alert("Pilih Musik Dulu!"); return; } if (!audioCtx) initAudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume(); if (audioPlayer.paused) { if (!audioPlayer.src || currentPlayIndex >= shuffledPlaylist.length) playRandomSong(true); else { audioPlayer.play(); playBtn.innerText = "⏸ PAUSE"; } } else { audioPlayer.pause(); playBtn.innerText = "▶ RESUME"; } }
 
-    const config = { type: 'none', visType: 'elegant_piano', visHeight: 150, visOpacity: 1.0 };
+    const config = { type: 'none', count: 100, visType: 'elegant_piano', visHeight: 150, visOpacity: 1.0, fxAngle: 0, fxSpeed: 1.0 };
     document.getElementById('visType').addEventListener('change', (e) => { config.visType = e.target.value; peakHeights.fill(0); });
     document.getElementById('visOpacity').addEventListener('input', (e) => config.visOpacity = parseFloat(e.target.value));
     document.getElementById('type').addEventListener('change', (e) => config.type = e.target.value);
@@ -219,27 +274,51 @@
     document.getElementById('visWidth').addEventListener('input', (e) => { visW = parseInt(e.target.value); visX = (width - visW) / 2; });
 
     let time = 0; let globalSmoothedBass = 0;
+
+    class CinematicParticle {
+        constructor() { this.reset(true); }
+        reset(init = false) {
+            this.x = Math.random() * width; this.y = init ? (Math.random() * height) : -20 - Math.random()*50;
+            this.size = Math.random() * 3 + 1; this.speedY = Math.random() * 1.5 + 0.5; this.opacity = Math.random() * 0.6 + 0.2;
+            this.life = Math.random() * 100; this.wobbleSpeed = Math.random() * 0.05 + 0.01;
+            if(config.type === 'bokeh_orbs') { this.size = Math.random() * 15 + 5; this.opacity = Math.random()*0.3+0.1; }
+            if(config.type === 'snow_dust' || config.type === 'ash_particles') { this.speedY = Math.random() * 2 + 1; }
+        }
+        update() {
+            if(config.type === 'none') return;
+            let wind = 0; let sm = config.fxSpeed; this.life += this.wobbleSpeed;
+            if (['dust_motes', 'golden_pollen', 'magic_sparks', 'floating_embers'].includes(config.type)) { this.y -= this.speedY * sm * 0.5; this.x += Math.sin(this.life) * 1 * sm; } 
+            else if (config.type === 'bokeh_orbs' || config.type === 'fairy_light') { this.y -= this.speedY * sm * 0.3; this.x += Math.sin(this.life) * 0.5 * sm; } 
+            else { this.y += this.speedY * sm; this.x += Math.sin(this.life) * 1 * sm; }
+            this.currentOpacity = this.opacity * (0.5 + 0.5*Math.sin(this.life*2));
+            if(this.y > height + 50 || this.y < -50 || this.x > width+50 || this.x < -50) this.reset();
+        }
+        draw() {
+            if(config.type === 'none') return; ctx.save(); ctx.beginPath(); let c1;
+            if(config.type === 'dust_motes') { c1=`rgba(255,230,150,${this.currentOpacity})`; ctx.shadowBlur=this.size*2; ctx.shadowColor='#ffeb3b'; }
+            else if(config.type === 'magic_sparks') { c1=`rgba(200,255,255,${this.currentOpacity})`; ctx.shadowBlur=this.size*3; ctx.shadowColor='#00e5ff'; }
+            else if(config.type === 'floating_embers') { c1=`rgba(255,100,0,${this.currentOpacity})`; ctx.shadowBlur=this.size*3; ctx.shadowColor='#ff3d00'; }
+            else if(config.type === 'bokeh_orbs') { c1=`rgba(255,255,255,${this.currentOpacity*0.5})`; }
+            else if(config.type === 'snow_dust') { c1=`rgba(255,255,255,${this.currentOpacity})`; ctx.shadowBlur=this.size; ctx.shadowColor='#fff'; }
+            else if(config.type === 'fairy_light') { c1=`rgba(255,200,255,${this.currentOpacity})`; ctx.shadowBlur=this.size*4; ctx.shadowColor='#e040fb'; }
+            else if(config.type === 'ash_particles') { c1=`rgba(50,50,50,${this.currentOpacity+0.4})`; }
+            else if(config.type === 'starlight_glint') { c1=`rgba(255,255,255,${this.currentOpacity})`; ctx.translate(this.x, this.y); ctx.rotate(this.life); ctx.moveTo(-this.size, 0); ctx.lineTo(this.size, 0); ctx.moveTo(0, -this.size); ctx.lineTo(0, this.size); ctx.strokeStyle=c1; ctx.lineWidth=1; ctx.stroke(); ctx.restore(); return; }
+            else if(config.type === 'deep_sea_motes') { c1=`rgba(100,200,255,${this.currentOpacity*0.7})`; ctx.shadowBlur=this.size*2; ctx.shadowColor='#00bcd4'; }
+            else if(config.type === 'golden_pollen') { c1=`rgba(255,215,0,${this.currentOpacity})`; ctx.shadowBlur=this.size*2; ctx.shadowColor='#ffb300'; }
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fillStyle = c1; ctx.fill(); ctx.restore();
+        }
+    }
+
+    let cinematicParticles = []; for(let i=0; i<300; i++) cinematicParticles.push(new CinematicParticle());
     function getSymmetricVal(index, totalItems, bufferLen) { try { if (!dataArray) return 0; const center = totalItems / 2; const centerDist = Math.abs(index - center) / center; const dataIdx = Math.floor(centerDist * (bufferLen * 0.6)); return dataArray[dataIdx] / 255; } catch (e) { return 0; } }
 
     // ==========================================
-    // RENDER VISUALIZER
+    // VISUALIZER RENDERER DENGAN OPSI KACA CERMIN
     // ==========================================
     function drawVisualizer(bufferLen, isReflection) {
-      const style = config.visType;
-      ctx.save(); 
-      
-      // LOGIKA KACA CERMIN: Kalau ini mode pantulan, balik kanvasnya!
-      if (isReflection) {
-          ctx.translate(0, visY);
-          ctx.scale(1, -1);
-          ctx.translate(0, -visY);
-          ctx.globalAlpha = config.visOpacity * 0.45; // Kaca agak buram
-      } else {
-          ctx.globalAlpha = config.visOpacity;
-      }
-      
+      const style = config.visType; ctx.save(); 
+      if (isReflection) { ctx.translate(0, visY); ctx.scale(1, -1); ctx.translate(0, -visY); ctx.globalAlpha = config.visOpacity * 0.45; } else { ctx.globalAlpha = config.visOpacity; }
       ctx.translate(visX, visY); const cy = 0;
-      
       try {
         if (style === 'elegant_piano') { let numBars = 52; let spacing = visW / numBars; let barW = spacing * 0.85; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; for (let i = 0; i < numBars; i++) { let h = Math.max(10, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillRect(i * spacing, cy, barW, -h); ctx.fillStyle = 'rgba(0,0,0,0.1)'; ctx.fillRect(i * spacing, cy, barW, -h); ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; } }
         else if (style === 'cinematic_streaks') { let numBars = 40; let spacing = visW / numBars; for (let i = 0; i < numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let grad = ctx.createLinearGradient(0, cy, 0, cy - h); grad.addColorStop(0, 'rgba(255,255,255,0.8)'); grad.addColorStop(1, 'rgba(255,255,255,0)'); ctx.fillStyle = grad; ctx.fillRect(i * spacing + spacing/2 - 1, cy - h, 2, h); } }
@@ -260,159 +339,136 @@
       ctx.restore();
     }
 
-    // ==========================================
-    // RENDER SPEAKER TRANSPARAN (GAK ADA BULAT HITAM)
-    // ==========================================
+    // =========================================================
+    // SPEAKER FULL TRANSPARAN DENGAN OPSI KACA CERMIN
+    // =========================================================
     function drawSpeakers(bufferLen, isReflection) {
       if (!isBgReady || document.getElementById('speakerStyle').value === 'none') return;
       let scale = parseFloat(document.getElementById('speakerSize').value);
-      let bassSum = 0; let bassCount = 8;
-      if(dataArray) { for(let i = 1; i <= bassCount; i++) { bassSum += dataArray[i]; } }
-      let rawBass = (bassSum / bassCount) / 255; if(isNaN(rawBass)) rawBass = 0; let punchyBass = Math.pow(rawBass, 2.0);
+      let bass = 0; if(dataArray) { bass = (dataArray[1] + dataArray[2] + dataArray[3]) / (255 * 3); } if(isNaN(bass)) bass = 0;
+      let punchyBass = Math.pow(bass, 2.0);
+      if(!isReflection) { if (punchyBass > globalSmoothedBass) { globalSmoothedBass += (punchyBass - globalSmoothedBass) * 0.8; } else { globalSmoothedBass += (punchyBass - globalSmoothedBass) * 0.15; } }
       
-      // Update getaran bass cuma 1x (pas render aslinya aja, pantulan gak usah dihitung ulang biar sinkron)
-      if(!isReflection) {
-          if (punchyBass > globalSmoothedBass) { globalSmoothedBass += (punchyBass - globalSmoothedBass) * 0.8; } 
-          else { globalSmoothedBass += (punchyBass - globalSmoothedBass) * 0.15; }
-      }
-      
-      let bass = globalSmoothedBass; let baseR = 50 * scale; 
-      let shakeIntensity = parseFloat(document.getElementById('speakerShake').value); 
-      let pumpIntensity = parseFloat(document.getElementById('speakerPump').value);
-      let shakeX = (Math.random() - 0.5) * bass * shakeIntensity; let shakeY = (Math.random() - 0.5) * bass * shakeIntensity; 
-      let pump = 1.0 + (bass * pumpIntensity);
+      let finalBass = globalSmoothedBass; let baseR = 50 * scale; 
+      let shakeIntensity = parseFloat(document.getElementById('speakerShake').value); let pumpIntensity = parseFloat(document.getElementById('speakerPump').value);
+      let shakeX = (Math.random() - 0.5) * finalBass * shakeIntensity; let shakeY = (Math.random() - 0.5) * finalBass * shakeIntensity;
+      let pump = 1.0 + (finalBass * pumpIntensity);
 
       function drawLiveBackgroundSpeaker(x, y) {
-        ctx.save();
-        if (isReflection) {
-            ctx.translate(0, visY); ctx.scale(1, -1); ctx.translate(0, -visY); ctx.globalAlpha = 0.45; // Kaca memantulkan speaker
-        }
+        ctx.save(); 
+        if(isReflection) { ctx.translate(0, visY); ctx.scale(1, -1); ctx.translate(0, -visY); ctx.globalAlpha = 0.45; }
         ctx.translate(x + shakeX, y + shakeY); ctx.beginPath(); ctx.arc(0, 0, baseR, 0, Math.PI * 2); ctx.clip(); ctx.scale(pump, pump);
         ctx.drawImage(bgImageElement, bgGlobalX - x, bgGlobalY - y, bgImageElement.width * bgGlobalScale, bgImageElement.height * bgGlobalScale);
-        // FIX: Cincin hitam sepenuhnya dihapus dari sini. Full transparan clipping!
         ctx.restore();
       }
       drawLiveBackgroundSpeaker(spk1X, spk1Y); drawLiveBackgroundSpeaker(spk2X, spk2Y);
     }
 
-    // ==========================================
-    // EFEK FILM LAMA
-    // ==========================================
-    class SimpleFilmFX {
-      constructor() { this.reset(); }
-      reset() { this.x = Math.random() * width; this.y = Math.random() * height; this.life = Math.random() * 5 + 2; this.alpha = Math.random() * 0.5 + 0.1; }
-      update() { this.life -= 1.0; if (this.life <= 0) this.reset(); }
-      draw() {
-        if (config.type === 'none') return;
-        ctx.save(); ctx.translate(this.x, this.y);
-        ctx.fillStyle = `rgba(255,255,255,${this.alpha*0.5})`; ctx.fillRect(0,0,2,2);
-        ctx.restore();
-      }
+    // =========================================================
+    // PROP KOPI & LILIN (TETAP AMAN)
+    // =========================================================
+    function drawCoffeeSteam(x, y, style, scale, propSpeed) {
+        if(style === 'none') return; ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
+        let branches = 3; let hMax = 150; let wMax = 30; let speedMult = 1.5; let waveFreq = 2.0; let opacity = 0.8;
+        if(style === 'soft_steam') { branches=2; hMax=120; wMax=20; speedMult=1; waveFreq=1.5; opacity=0.7; }
+        if(style === 'swirl_vapor') { branches=4; hMax=180; wMax=40; speedMult=1.8; waveFreq=2.5; opacity=0.85; }
+        if(style === 'thin_wisp') { branches=2; hMax=140; wMax=15; speedMult=1.2; waveFreq=3; opacity=0.6; }
+        if(style === 'heavy_steam') { branches=5; hMax=200; wMax=45; speedMult=2; waveFreq=1.8; opacity=0.95; }
+        if(style === 'wind_steam') { branches=3; hMax=160; wMax=35; speedMult=2.5; waveFreq=2.0; opacity=0.75; ctx.rotate(20 * Math.PI/180); }
+        ctx.globalCompositeOperation = 'screen'; ctx.filter = 'blur(4px)'; 
+        for(let b=0; b<branches; b++) {
+            let pts = []; let steps = 40; 
+            for(let i=0; i<=steps; i++) { let prog = i/steps; let speed = time * speedMult * propSpeed; let w = (5 + Math.sin(prog * Math.PI * 3 + speed) * 5) * Math.sin(prog * Math.PI); let sway = Math.sin(prog * Math.PI * waveFreq - speed + b * 1.3) * wMax * Math.pow(prog, 0.8); let secondarySway = Math.sin(prog * Math.PI * waveFreq * 2.1 - speed * 1.4 + b * 2) * (wMax * 0.4) * prog; let px = sway + secondarySway; let py = -prog * hMax; pts.push({x: px, y: py, w: w}); }
+            ctx.beginPath(); ctx.moveTo(pts[0].x - pts[0].w, pts[0].y); for(let i=1; i<pts.length; i++) ctx.lineTo(pts[i].x - pts[i].w, pts[i].y); for(let i=pts.length-1; i>=0; i--) ctx.lineTo(pts[i].x + pts[i].w, pts[i].y); ctx.closePath();
+            let grad = ctx.createLinearGradient(0,0, 0,-hMax); grad.addColorStop(0, `rgba(255, 255, 255, 0)`); grad.addColorStop(0.5, `rgba(255, 255, 255, ${opacity})`); grad.addColorStop(1, `rgba(255, 255, 255, 0)`); ctx.fillStyle = grad; ctx.fill();
+            ctx.beginPath(); ctx.moveTo(pts[0].x - pts[0].w, pts[0].y); for(let i=1; i<pts.length; i++) ctx.lineTo(pts[i].x - pts[i].w, pts[i].y); ctx.strokeStyle = `rgba(255, 255, 255, ${Math.min(1, opacity * 1.8)})`; ctx.lineWidth = 2; ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(pts[0].x + pts[0].w, pts[0].y); for(let i=1; i<pts.length; i++) ctx.lineTo(pts[i].x + pts[i].w, pts[i].y); ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * 0.8})`; ctx.lineWidth = 1; ctx.stroke();
+        } ctx.restore();
     }
-    let particles = []; for (let i = 0; i < 150; i++) { particles.push(new SimpleFilmFX()); }
+
+    function drawCandle(x, y, style, scale, propSpeed) {
+        if(style === 'none') return; ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
+        let t = time * 2 * propSpeed; let flicker = 0; let sway = 0; let h = 65; let w = 16; let baseColor = 'rgba(255, 140, 0, 0.8)'; let midColor = 'rgba(255, 210, 0, 0.9)'; let coreColor = 'rgba(255, 255, 255, 0.95)';
+        if(style === 'calm_flame') { flicker = Math.sin(t*3)*2; sway = Math.sin(t)*1; } else if(style === 'flicker_flame') { flicker = Math.sin(t*10)*4 + Math.random()*2; sway = Math.sin(t*5)*3; } else if(style === 'bright_glow') { flicker = Math.sin(t*4)*2; h = 75; w = 18; ctx.shadowBlur = 50 + flicker*5; ctx.shadowColor = '#ff9800'; } else if(style === 'blue_base') { flicker = Math.sin(t*5)*2; baseColor = 'rgba(0, 150, 255, 0.8)'; midColor = 'rgba(100, 200, 255, 0.9)'; } else if(style === 'wind_flame') { flicker = Math.random()*5; sway = 15 + Math.sin(t*8)*5; }
+        ctx.beginPath(); ctx.arc(0, -h*0.5, w*3, 0, Math.PI*2); let gradGlow = ctx.createRadialGradient(0,-h*0.5,0, 0,-h*0.5,w*4); gradGlow.addColorStop(0, 'rgba(255, 120, 0, 0.25)'); gradGlow.addColorStop(1, 'rgba(255, 120, 0, 0)'); ctx.fillStyle = gradGlow; ctx.fill();
+        ctx.beginPath(); ctx.moveTo(0, 5); ctx.lineTo(sway*0.05, -8); ctx.lineWidth = 3; ctx.strokeStyle = '#111'; ctx.stroke(); ctx.beginPath(); ctx.moveTo(sway*0.05, -8); ctx.lineTo(sway*0.1, -12); ctx.lineWidth = 2; ctx.strokeStyle = '#ff5722'; ctx.stroke();
+        function drawFlame(fw, fh, fsway, color) { ctx.beginPath(); ctx.moveTo(0, 2); ctx.bezierCurveTo(fw, 2, fw*0.9, -fh*0.4, fsway, -fh); ctx.bezierCurveTo(-fw*0.9, -fh*0.4, -fw, 2, 0, 2); ctx.fillStyle = color; ctx.fill(); }
+        drawFlame(w, h + flicker, sway, baseColor); drawFlame(w*0.7, (h + flicker)*0.75, sway*0.7, midColor); drawFlame(w*0.35, (h + flicker)*0.45, sway*0.3, coreColor); 
+        if(style !== 'blue_base') { ctx.beginPath(); ctx.moveTo(0, 4); ctx.bezierCurveTo(w*0.5, 4, w*0.4, -5, 0, -5); ctx.bezierCurveTo(-w*0.4, -5, -w*0.5, 4, 0, 4); let bg = ctx.createRadialGradient(0,0,0, 0,0,w*0.5); bg.addColorStop(0,'rgba(0,100,255,0.6)'); bg.addColorStop(1,'rgba(0,50,255,0)'); ctx.fillStyle = bg; ctx.fill(); }
+        ctx.restore();
+    }
 
     function animate() {
-      ctx.fillStyle = "#000"; ctx.fillRect(0, 0, width, height); time += 0.05; 
-      ctx.save();
+      ctx.fillStyle = "#000"; ctx.fillRect(0, 0, width, height); time += 0.05; ctx.save();
       
-      // 1. GAMBAR BACKGROUND ASLI
-      if (isBgReady) { 
-        bgGlobalScale = Math.max(width / bgImageElement.width, height / bgImageElement.height); 
-        bgGlobalX = (width / 2) - (bgImageElement.width / 2) * bgGlobalScale; 
-        bgGlobalY = (height / 2) - (bgImageElement.height / 2) * bgGlobalScale; 
-        ctx.drawImage(bgImageElement, bgGlobalX, bgGlobalY, bgImageElement.width * bgGlobalScale, bgImageElement.height * bgGlobalScale); 
-      }
-      
-      // Update Audio Analyser
-      if (isAudioInit && currentObjectUrl) {
-        if (!audioPlayer.paused) analyser.getByteFrequencyData(dataArray); else for (let i = 0; i < dataArray.length; i++) dataArray[i] = Math.max(0, dataArray[i] - 10);
-      }
+      if (isBgReady) { bgGlobalScale = Math.max(width / bgImageElement.width, height / bgImageElement.height); bgGlobalX = (width / 2) - (bgImageElement.width / 2) * bgGlobalScale; bgGlobalY = (height / 2) - (bgImageElement.height / 2) * bgGlobalScale; ctx.drawImage(bgImageElement, bgGlobalX, bgGlobalY, bgImageElement.width * bgGlobalScale, bgImageElement.height * bgGlobalScale); }
+      if (isAudioInit && currentObjectUrl) { if (!audioPlayer.paused) analyser.getByteFrequencyData(dataArray); else for (let i = 0; i < dataArray.length; i++) dataArray[i] = Math.max(0, dataArray[i] - 10); }
 
-      // 2. GAMBAR ELEMEN NORMAL (DI ATAS KACA)
+      // 1. ELEMEN ASLI DI ATAS
       if (isAudioInit && currentObjectUrl) drawVisualizer(analyser.frequencyBinCount, false);
-      drawSpeakers(128, false);
+      drawSpeakers(isAudioInit ? analyser.frequencyBinCount : 128, false);
 
-      // 3. GAMBAR ELEMEN REFLEKSI (PANTULAN KACA DI BAWAH)
+      // 2. ELEMEN PANTULAN DI BAWAH KACA
       if (isAudioInit && currentObjectUrl) drawVisualizer(analyser.frequencyBinCount, true);
-      drawSpeakers(128, true);
+      drawSpeakers(isAudioInit ? analyser.frequencyBinCount : 128, true);
 
-      // 4. BIKIN EFEK MEJA KACA GELAP DI BAWAHNYA (FADE TO BLACK)
+      // 3. EFEK MEJA KACA GELAP DI BAWAH
       let mirrorGrad = ctx.createLinearGradient(0, visY, 0, height);
-      mirrorGrad.addColorStop(0, 'rgba(0,0,0,0.15)'); // Agak terang pas nempel visualizer
-      mirrorGrad.addColorStop(0.5, 'rgba(0,0,0,0.7)'); // Mulai gelap
-      mirrorGrad.addColorStop(1, 'rgba(0,0,0,0.95)'); // Item pekat di ujung layar
-      ctx.fillStyle = mirrorGrad;
-      ctx.fillRect(0, visY, width, height - visY);
+      mirrorGrad.addColorStop(0, 'rgba(0,0,0,0.15)'); mirrorGrad.addColorStop(0.5, 'rgba(0,0,0,0.7)'); mirrorGrad.addColorStop(1, 'rgba(0,0,0,0.95)');
+      ctx.fillStyle = mirrorGrad; ctx.fillRect(0, visY, width, height - visY);
       
-      // Tambah Garis Neon Tipis pembatas Meja Kaca
+      // GARIS NEON PEMBATAS MEJA KACA
       ctx.beginPath(); ctx.moveTo(0, visY); ctx.lineTo(width, visY);
       let edgeGrad = ctx.createLinearGradient(0, 0, width, 0); edgeGrad.addColorStop(0, 'rgba(0,210,255,0)'); edgeGrad.addColorStop(0.5, 'rgba(0,210,255,0.4)'); edgeGrad.addColorStop(1, 'rgba(0,210,255,0)');
       ctx.strokeStyle = edgeGrad; ctx.lineWidth = 2; ctx.stroke();
 
-      // 5. EFEK FILM KLASIK OVERLAY
-      if (config.type === 'sepia_dust') { ctx.fillStyle = 'rgba(112, 66, 20, 0.2)'; ctx.fillRect(0, 0, width, height); } 
-      else if (config.type === 'flicker_8mm') { let flicker = (Math.sin(time * 5) * 0.08) + (Math.random() * 0.05); if(flicker < 0) flicker = 0; ctx.fillStyle = `rgba(0, 0, 0, ${flicker})`; ctx.fillRect(0, 0, width, height); } 
-      
-      for (let i = 0; i < 150; i++) { particles[i].update(); particles[i].draw(); }
+      // 4. GAMBAR KOPI & LILIN (TETAP DI ATAS MEJA)
+      let propScale = parseFloat(document.getElementById('propSize').value); let propSpeed = parseFloat(document.getElementById('propSpeed').value);
+      drawCoffeeSteam(coffeeX, coffeeY, document.getElementById('coffeeStyle').value, propScale, propSpeed);
+      drawCandle(candle1X, candle1Y, document.getElementById('candleStyle').value, propScale, propSpeed); drawCandle(candle2X, candle2Y, document.getElementById('candleStyle').value, propScale, propSpeed);
+
+      // 5. PARTIKEL SINEMATIK
+      for (let i = 0; i < config.count; i++) { if (cinematicParticles[i]) { cinematicParticles[i].update(); cinematicParticles[i].draw(); } }
 
       ctx.restore(); requestAnimationFrame(animate);
     }
     animate();
 
     let mediaRecorder, chunks = []; let recordStartTime = 0;
-    function startCountdownAndRecord() {
-      if (!isAudioInit || !currentObjectUrl) { alert("Pilih dan siapkan musik dulu!"); return; }
-      if (isCountingDown) { clearInterval(countdownTimer); isCountingDown = false; countdownOverlay.style.display = 'none'; recordBtn.innerText = "🔴 MULAI REKAM 720p"; return; }
-      isCountingDown = true; let counter = 3; countdownOverlay.innerText = counter; countdownOverlay.style.display = 'block'; recordBtn.innerText = "❌ BATALKAN REKAM (" + counter + ")";
-      countdownTimer = setInterval(() => { counter--; if (counter > 0) { countdownOverlay.innerText = counter; recordBtn.innerText = "❌ BATALKAN REKAM (" + counter + ")"; } else { clearInterval(countdownTimer); isCountingDown = false; countdownOverlay.style.display = 'none'; executeRecording(); } }, 1000);
-    }
-
-    function executeRecording() {
-      if (!audioCtx) initAudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume();
-      if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.KeepAwake) { window.Capacitor.Plugins.KeepAwake.keepAwake(); }
-      audioPlayer.play(); playBtn.innerText = "⏸ PAUSE"; stopOverlay.style.display = 'block'; statusBox.innerText = "🔴 Merekam Video 720p..."; recordBtn.innerText = "🔴 SEDANG MEREKAM";
-      const stream = canvas.captureStream(30); const combined = new MediaStream([...stream.getVideoTracks(), mediaStreamDestination.stream.getAudioTracks()[0]]);
-      let options = { mimeType: 'video/webm;codecs=vp8,opus' }; if (!MediaRecorder.isTypeSupported(options.mimeType)) { options = { mimeType: 'video/webm' }; }
-      try { mediaRecorder = new MediaRecorder(combined, options); } catch (e) { mediaRecorder = new MediaRecorder(combined); }
-      mediaRecorder.ondataavailable = e => { if (e.data && e.data.size > 0) chunks.push(e.data); }; mediaRecorder.onstop = saveVideoWebM; chunks = []; recordStartTime = Date.now(); mediaRecorder.start();
-    }
-
-    function stopRecording() {
-      if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
-      if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.KeepAwake) window.Capacitor.Plugins.KeepAwake.allowSleep();
-      audioPlayer.pause(); playBtn.innerText = "▶ PLAY"; stopOverlay.style.display = 'none'; recordBtn.innerText = "🔴 MULAI REKAM 720p"; statusBox.innerText = "Menyiapkan file video..."; if (playTimeout) clearTimeout(playTimeout);
-    }
-
-    function saveVideoWebM() {
-      const blob = new Blob(chunks, { type: 'video/webm' }); const recordDuration = Date.now() - recordStartTime; statusBox.innerText = "⏳ Menjahit durasi (Biar bisa di-skip)...";
-      if (typeof ysFixWebmDuration === 'function') { try { ysFixWebmDuration(blob, recordDuration, function(fixedBlob) { triggerDownload(fixedBlob); }, {logger: false}); } catch (error) { triggerDownload(blob); } } else { triggerDownload(blob); }
-    }
-
+    function startCountdownAndRecord() { if (!isAudioInit || !currentObjectUrl) { alert("Pilih dan siapkan musik dulu!"); return; } if (isCountingDown) { clearInterval(countdownTimer); isCountingDown = false; countdownOverlay.style.display = 'none'; recordBtn.innerText = "🔴 MULAI REKAM 720p"; return; } isCountingDown = true; let counter = 3; countdownOverlay.innerText = counter; countdownOverlay.style.display = 'block'; recordBtn.innerText = "❌ BATALKAN REKAM (" + counter + ")"; countdownTimer = setInterval(() => { counter--; if (counter > 0) { countdownOverlay.innerText = counter; recordBtn.innerText = "❌ BATALKAN REKAM (" + counter + ")"; } else { clearInterval(countdownTimer); isCountingDown = false; countdownOverlay.style.display = 'none'; executeRecording(); } }, 1000); }
+    function executeRecording() { if (!audioCtx) initAudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume(); if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.KeepAwake) { window.Capacitor.Plugins.KeepAwake.keepAwake(); } audioPlayer.play(); playBtn.innerText = "⏸ PAUSE"; stopOverlay.style.display = 'block'; statusBox.innerText = "🔴 Merekam Video 720p..."; recordBtn.innerText = "🔴 SEDANG MEREKAM"; const stream = canvas.captureStream(30); const combined = new MediaStream([...stream.getVideoTracks(), mediaStreamDestination.stream.getAudioTracks()[0]]); let options = { mimeType: 'video/webm;codecs=vp8,opus' }; if (!MediaRecorder.isTypeSupported(options.mimeType)) { options = { mimeType: 'video/webm' }; } try { mediaRecorder = new MediaRecorder(combined, options); } catch (e) { mediaRecorder = new MediaRecorder(combined); } mediaRecorder.ondataavailable = e => { if (e.data && e.data.size > 0) chunks.push(e.data); }; mediaRecorder.onstop = saveVideoWebM; chunks = []; recordStartTime = Date.now(); mediaRecorder.start(); }
+    function stopRecording() { if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop(); if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.KeepAwake) window.Capacitor.Plugins.KeepAwake.allowSleep(); audioPlayer.pause(); playBtn.innerText = "▶ PLAY"; stopOverlay.style.display = 'none'; recordBtn.innerText = "🔴 MULAI REKAM 720p"; statusBox.innerText = "Menyiapkan file video..."; if (playTimeout) clearTimeout(playTimeout); }
+    function saveVideoWebM() { const blob = new Blob(chunks, { type: 'video/webm' }); const recordDuration = Date.now() - recordStartTime; statusBox.innerText = "⏳ Menjahit durasi (Biar bisa di-skip)..."; if (typeof ysFixWebmDuration === 'function') { try { ysFixWebmDuration(blob, recordDuration, function(fixedBlob) { triggerDownload(fixedBlob); }, {logger: false}); } catch (error) { triggerDownload(blob); } } else { triggerDownload(blob); } }
     function triggerDownload(finalBlob) {
       statusBox.innerText = "⏳ Memproses pemotongan file video..."; const url = URL.createObjectURL(finalBlob);
-      const oldVid = document.getElementById('previewVid'); if(oldVid) oldVid.remove(); const oldBtn = document.getElementById('shareBtnDewa'); if(oldBtn) oldBtn.remove();
+      const oldVid = document.getElementById('previewVid'); if(oldVid) oldVid.remove(); const oldBtn = document.getElementById('shareBtnDewa'); if(oldBtn) oldBtn.remove(); const oldLinkBtn = document.getElementById('manualLinkBtn'); if(oldLinkBtn) oldLinkBtn.remove();
       const vid = document.createElement('video'); vid.id = 'previewVid'; vid.src = url; vid.controls = true; vid.setAttribute('controlsList', 'nodownload'); vid.style.width = "100%"; vid.style.marginTop = "20px"; vid.style.border = "3px solid #00d2ff"; vid.style.borderRadius = "8px";
-      const saveBtn = document.createElement('button'); saveBtn.id = 'shareBtnDewa'; saveBtn.innerText = "📥 SIMPAN VIDEO KE HP / PC"; saveBtn.style.width = "100%"; saveBtn.style.padding = "15px"; saveBtn.style.marginTop = "10px"; saveBtn.style.background = "linear-gradient(135deg, #00ffaa, #00bcd4)"; saveBtn.style.color = "black"; saveBtn.style.border = "none"; saveBtn.style.borderRadius = "8px"; saveBtn.style.fontWeight = "bold"; saveBtn.style.fontSize = "14px"; saveBtn.style.cursor = "pointer";
+      const saveBtn = document.createElement('button'); saveBtn.id = 'shareBtnDewa'; saveBtn.innerText = "📥 SIMPAN KE DOKUMEN (CAPACITOR)"; saveBtn.style.width = "100%"; saveBtn.style.padding = "15px"; saveBtn.style.marginTop = "10px"; saveBtn.style.background = "linear-gradient(135deg, #00ffaa, #00bcd4)"; saveBtn.style.color = "black"; saveBtn.style.border = "none"; saveBtn.style.borderRadius = "8px"; saveBtn.style.fontWeight = "bold"; saveBtn.style.fontSize = "14px"; saveBtn.style.cursor = "pointer";
+      const fallbackBtn = document.createElement('a'); fallbackBtn.id = 'manualLinkBtn'; fallbackBtn.innerText = "⬇️ DOWNLOAD MANUAL (JIKA GAGAL)"; fallbackBtn.href = url; fallbackBtn.download = `MirrorV1_720p_${Date.now()}.webm`;
       let isSaving = false;
       saveBtn.onclick = async () => {
-        if (isSaving) return; isSaving = true; saveBtn.innerText = "⏳ MEMULAI PROSES SIMPAN...";
+        if (isSaving) return; isSaving = true; saveBtn.innerText = "⏳ MEMINTA IZIN & MENYIMPAN...";
+        const downloadBrowser = () => { statusBox.innerText = "⏳ Mengunduh lewat Download Manager HP..."; fallbackBtn.click(); saveBtn.innerText = "✅ MENGGUNAKAN DOWNLOAD BAWAAN"; statusBox.innerText = `🎉 SUKSES! Periksa folder Download atau Galeri Anda.`; };
         try {
           if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem) {
-            const FS = window.Capacitor.Plugins.Filesystem; const fileName = `Mirror_v1_720p_${Date.now()}.webm`; await FS.writeFile({ path: fileName, data: "", directory: 'DOCUMENTS' });
-            const chunkSize = 1572864; const totalChunks = Math.ceil(finalBlob.size / chunkSize);
-            for (let i = 0; i < totalChunks; i++) {
-              const start = i * chunkSize; const end = Math.min(start + chunkSize, finalBlob.size); const chunk = finalBlob.slice(start, end);
-              const base64Chunk = await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result.split(',')[1]); reader.onerror = reject; reader.readAsDataURL(chunk); });
-              await FS.appendFile({ path: fileName, data: base64Chunk, directory: 'DOCUMENTS' });
-              const percent = Math.round(((i + 1) / totalChunks) * 100); statusBox.innerText = `⏳ Menulis ke memori HP... ${percent}%`; saveBtn.innerText = `⏳ MENYIMPAN... ${percent}%`;
-            }
-            saveBtn.innerText = "✅ TERSIMPAN DI DOCUMENTS HP!"; statusBox.innerText = `🎉 SUKSES! Video 720p tersimpan di folder Documents!`;
-          } else {
-            statusBox.innerText = "⏳ Mengunduh lewat Browser..."; const a = document.createElement('a'); a.style.display = 'none'; a.href = url; a.download = `Mirror_v1_720p_${Date.now()}.webm`; document.body.appendChild(a); a.click(); setTimeout(() => { document.body.removeChild(a); }, 100); saveBtn.innerText = "✅ VIDEO SUKSES DIUNDUH!"; statusBox.innerText = `🎉 SUKSES! Video berhasil diunduh ke perangkat Anda.`;
-          }
-        } catch(e) { saveBtn.innerText = "❌ GAGAL MENYIMPAN"; statusBox.innerText = "Terjadi Error: " + e.message; isSaving = false; }
+            const FS = window.Capacitor.Plugins.Filesystem; 
+            try { let perm = await FS.checkPermissions(); if (perm.publicStorage !== 'granted' && perm.publicStorage !== 'authorized') await FS.requestPermissions(); } catch(e) {} 
+            const fileName = `MirrorV1_720p_${Date.now()}.webm`; 
+            try {
+                await FS.writeFile({ path: fileName, data: "", directory: 'DOCUMENTS' });
+                const chunkSize = 1572864; const totalChunks = Math.ceil(finalBlob.size / chunkSize);
+                for (let i = 0; i < totalChunks; i++) {
+                  const start = i * chunkSize; const end = Math.min(start + chunkSize, finalBlob.size); const chunk = finalBlob.slice(start, end);
+                  const base64Chunk = await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result.split(',')[1]); reader.onerror = reject; reader.readAsDataURL(chunk); });
+                  await FS.appendFile({ path: fileName, data: base64Chunk, directory: 'DOCUMENTS' });
+                  const percent = Math.round(((i + 1) / totalChunks) * 100); statusBox.innerText = `⏳ Menulis ke memori HP... ${percent}%`; saveBtn.innerText = `⏳ MENYIMPAN... ${percent}%`;
+                }
+                saveBtn.innerText = "✅ TERSIMPAN DI FOLDER DOKUMEN!"; statusBox.innerText = `🎉 SUKSES! Video 720p tersimpan di folder Documents!`;
+            } catch(fsError) { downloadBrowser(); }
+          } else { downloadBrowser(); }
+        } catch(e) { try { downloadBrowser(); } catch(err2) { saveBtn.innerText = "❌ GAGAL MENYIMPAN"; statusBox.innerText = "Terjadi Error: " + e.message; isSaving = false; } }
       };
-      const controlsDiv = document.getElementById('controls'); controlsDiv.appendChild(vid); controlsDiv.appendChild(saveBtn); saveBtn.scrollIntoView({ behavior: 'smooth' }); setTimeout(() => { if(!isSaving) saveBtn.click(); }, 1500);
+      const controlsDiv = document.getElementById('controls'); controlsDiv.appendChild(vid); controlsDiv.appendChild(saveBtn); controlsDiv.appendChild(fallbackBtn); saveBtn.scrollIntoView({ behavior: 'smooth' }); setTimeout(() => { if(!isSaving && window.Capacitor) saveBtn.click(); }, 1500);
     }
   </script>
 </body>
