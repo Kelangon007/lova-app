@@ -1,6 +1,6 @@
 {
-  "appId": "com.noir.app",
-  "appName": "Noir Ultimate",
+  "appId": "com.mirror.v1",
+  "appName": "Mirror v1",
   "webDir": "www",
   "bundledWebRuntime": false
 }
