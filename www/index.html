@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mirror v1 (Shadow Crop Feature)</title>
+  <title>Mirror v1 (Shadow Crop Fixed)</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body { margin: 0; background-color: #111; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; }
@@ -48,7 +48,7 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Mirror v1 (Shadow Crop Mode).</div>
+    <div id="statusBox">Siap. Mirror v1 (Shadow Crop Fixed).</div>
     
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
@@ -165,13 +165,13 @@
         <div class="row"><label style="color:#ff5252;">DENTUMAN</label><input type="range" id="speakerPump" min="0" max="2.0" step="0.1" value="0.5"></div>
       </div>
 
-      <!-- SAKLAR PANTULAN KACA (DENGAN FITUR POTONG) -->
+      <!-- SAKLAR PANTULAN KACA -->
       <div class="layout-col" style="border-color: #00bcd4;">
         <label style="color:#00bcd4;">KONTROL KACA (GARIS BISA DIGESER JARI!)</label>
         <div class="row"><label>GARIS KACA</label><select id="showGlassLine"><option value="yes">🟢 Nyala</option><option value="no">🚫 Mati</option></select></div>
         <div class="row"><label>PANT. VIS.</label><select id="showVisReflect"><option value="yes">🟢 Nyala</option><option value="no">🚫 Mati</option></select></div>
         <div class="row"><label>PANT. SPK.</label><select id="showSpkReflect"><option value="yes">🟢 Nyala</option><option value="no">🚫 Mati</option></select></div>
-        <!-- FITUR BARU: POTONG BAYANGAN SPEAKER -->
+        <!-- FITUR POTONG BAYANGAN SPEAKER -->
         <div class="row"><label style="color:#00e5ff;">POTONG SPK.</label><input type="range" id="spkReflectCrop" min="10" max="100" value="100"></div>
       </div>
 
@@ -525,18 +525,17 @@
         
         ctx.beginPath(); ctx.arc(0, 0, baseR, 0, Math.PI * 2); ctx.clip(); 
         
-        // PISAU PEMOTONG BAYANGAN SPEAKER (CROP)
+        // PISAU PEMOTONG BAYANGAN SPEAKER (CROP FIXED)
         if (isReflection) {
             let cropH = (mirrorConfig.spkReflectCrop / 100) * (baseR * 2);
-            ctx.beginPath(); ctx.rect(-baseR, -baseR, baseR * 2, cropH); ctx.clip();
+            ctx.beginPath(); ctx.rect(-baseR, baseR - cropH, baseR * 2, cropH); ctx.clip();
         }
         
         ctx.scale(pump, pump);
         ctx.drawImage(bgImageElement, bgGlobalX - x, bgGlobalY - y, bgImageElement.width * bgGlobalScale, bgImageElement.height * bgGlobalScale);
         
-        // TITIK TENGAH (Bisa dimatikan)
         if (mirrorConfig.showSpkDot === 'yes') {
-            ctx.scale(1/pump, 1/pump); // Reset scale biar ukuran titik stabil
+            ctx.scale(1/pump, 1/pump);
             ctx.beginPath(); ctx.arc(0, 0, 4, 0, Math.PI*2);
             ctx.fillStyle = isReflection ? 'rgba(255, 0, 85, 0.5)' : '#ff0055'; 
             ctx.fill();
@@ -594,7 +593,7 @@
       if (isAudioInit && currentObjectUrl) drawVisualizer(analyser.frequencyBinCount, true);
       drawSpeakers(isAudioInit ? analyser.frequencyBinCount : 128, true);
 
-      // 3. MEJA KACA GELAP (Garis Neon Dihapus Murni Transparan)
+      // 3. MEJA KACA GELAP
       if (mirrorConfig.showGlassLine === 'yes' || mirrorConfig.showVisReflect === 'yes' || mirrorConfig.showSpkReflect === 'yes') {
           let mirrorGrad = ctx.createLinearGradient(0, mirrorY, 0, height);
           mirrorGrad.addColorStop(0, 'rgba(0,0,0,0.15)'); mirrorGrad.addColorStop(0.5, 'rgba(0,0,0,0.7)'); mirrorGrad.addColorStop(1, 'rgba(0,0,0,0.95)');
