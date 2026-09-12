@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Mirror v1</string>
-    <string name="title_activity_main">Mirror v1</string>
+    <string name="app_name">Mirror 1080p</string>
+    <string name="title_activity_main">Mirror 1080p</string>
     <string name="package_name">com.lova.testmp4</string>
     <string name="custom_url_scheme">com.lova.testmp4</string>
 </resources>
