@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mirror 1080p (Ultimate Shadow Controls)</title>
+  <title>Mirror 720p (Ultimate Shadow Controls)</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body { margin: 0; background-color: #111; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; }
@@ -42,13 +42,14 @@
 
 <body>
   <div id="canvas-wrapper">
-    <canvas id="canvas" width="1920" height="1080"></canvas>
+    <!-- RESOLUSI KEMBALI 720P BIAR MULUS DI HP LAIN -->
+    <canvas id="canvas" width="1280" height="720"></canvas>
     <div id="countdownOverlay">3</div>
     <div id="stopOverlay" onclick="stopRecording()">⏹ STOP & SIMPAN</div>
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Mirror 1080p (Ultimate Shadow Engine).</div>
+    <div id="statusBox">Siap. Mirror 720p (Ultimate Shadow Engine).</div>
     
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
@@ -139,8 +140,8 @@
                 </optgroup>
             </select>
         </div>
-        <div class="row"><label>TINGGI VIS.</label><input type="range" id="visHeight" min="30" max="900" value="225"></div>
-        <div class="row"><label>LEBAR VIS.</label><input type="range" id="visWidth" min="100" max="1920" value="600"></div>
+        <div class="row"><label>TINGGI VIS.</label><input type="range" id="visHeight" min="30" max="600" value="150"></div>
+        <div class="row"><label>LEBAR VIS.</label><input type="range" id="visWidth" min="100" max="1100" value="400"></div>
         <div class="row"><label>OPASITAS</label><input type="range" id="visOpacity" min="0.1" max="1.0" step="0.05" value="1.0"></div>
       </div>
 
@@ -165,16 +166,16 @@
         <div class="row"><label style="color:#ff5252;">DENTUMAN</label><input type="range" id="speakerPump" min="0" max="2.0" step="0.1" value="0.5"></div>
       </div>
 
-      <!-- SAKLAR PANTULAN KACA (DENGAN FITUR BARU) -->
+      <!-- SAKLAR PANTULAN KACA & FITUR BARU -->
       <div class="layout-col" style="border-color: #00bcd4;">
-        <label style="color:#00bcd4;">KONTROL KACA (GARIS BISA DIGESER JARI!)</label>
+        <label style="color:#00bcd4;">KONTROL PANTULAN MEJA</label>
         <div class="row"><label>GARIS KACA</label><select id="showGlassLine"><option value="yes">🟢 Nyala</option><option value="no">🚫 Mati</option></select></div>
         <div class="row"><label>PANT. VIS.</label><select id="showVisReflect"><option value="yes">🟢 Nyala</option><option value="no">🚫 Mati</option></select></div>
         <div class="row"><label>PANT. SPK.</label><select id="showSpkReflect"><option value="yes">🟢 Nyala</option><option value="no">🚫 Mati</option></select></div>
         <div class="row"><label>PANT. LILIN</label><select id="showCandleReflect"><option value="yes">🟢 Nyala</option><option value="no">🚫 Mati</option></select></div>
         <div class="row"><label style="color:#00e5ff;">POTONG SPK.</label><input type="range" id="spkReflectCrop" min="10" max="100" value="100"></div>
-        <div class="row"><label style="color:#00e5ff;">OPAS. SPK.</label><input type="range" id="spkReflectOpacity" min="0.1" max="1.0" step="0.05" value="0.45"></div>
-        <div class="row"><label style="color:#00e5ff;">UKURAN P.SPK</label><input type="range" id="spkReflectSize" min="0.1" max="2.0" step="0.1" value="1.0"></div>
+        <div class="row"><label style="color:#00e5ff;">OPAS. PANTUL</label><input type="range" id="spkReflectOpacity" min="0.1" max="1.0" step="0.05" value="0.45"></div>
+        <div class="row"><label style="color:#00e5ff;">UKURAN PANT.</label><input type="range" id="spkReflectSize" min="0.1" max="2.0" step="0.1" value="1.0"></div>
       </div>
 
       <!-- PROPERTI TAMBAHAN -->
@@ -238,7 +239,7 @@
       </div>
     </div>
 
-    <button class="btn-record" id="recordBtn" onclick="startCountdownAndRecord()" style="margin-top: 15px;">🔴 MULAI REKAM 1080p</button>
+    <button class="btn-record" id="recordBtn" onclick="startCountdownAndRecord()" style="margin-top: 15px;">🔴 MULAI REKAM 720p</button>
   </div>
 
   <audio id="audioPlayer" crossorigin="anonymous"></audio>
@@ -250,8 +251,8 @@
     const progressBar = document.getElementById('progressBar'); const currTimeEl = document.getElementById('currTime'); const durTimeEl = document.getElementById('durTime');
     
     let isDraggingProgress = false; 
-    const width = 1920; 
-    const height = 1080;
+    const width = 1280; 
+    const height = 720;
     
     let audioFiles = []; let currentObjectUrl = null; let currentSongName = ""; let playTimeout = null;
     let isTrackLoaded = false; let shuffledPlaylist = []; let currentPlayIndex = 0; let isCountingDown = false; let countdownTimer = null;
@@ -294,7 +295,7 @@
       if (mediaRecorder && mediaRecorder.state === 'recording') { setTimeout(() => { stopRecording(); }, 500); }
     }
 
-    const config = { type: 'none', count: 100, visType: 'vintage_bars', visHeight: 225, visOpacity: 1.0, fxAngle: 0, fxSpeed: 1.0 };
+    const config = { type: 'none', count: 100, visType: 'vintage_bars', visHeight: 150, visOpacity: 1.0, fxAngle: 0, fxSpeed: 1.0 };
     document.getElementById('visType').addEventListener('change', (e) => { config.visType = e.target.value; peakHeights.fill(0); });
     document.getElementById('visOpacity').addEventListener('input', (e) => config.visOpacity = parseFloat(e.target.value));
     document.getElementById('type').addEventListener('change', (e) => config.type = e.target.value);
@@ -315,20 +316,20 @@
     document.getElementById('spkReflectSize').addEventListener('input', e => mirrorConfig.spkReflectSize = parseFloat(e.target.value));
 
     // ===============================================
-    // VARIABEL POSISI
+    // VARIABEL POSISI 720p
     // ===============================================
-    let visW = 600; let visX = (width - visW) / 2; let visY = height - 375;
-    let visRefY = height - 150;
+    let visW = 400; let visX = (width - visW) / 2; let visY = height - 250;
+    let visRefY = height - 100;
     
-    let spk1X = 375; let spk1Y = height - 525; let spk2X = width - 375; let spk2Y = height - 525;
-    let spk1RefY = height - 225; let spk2RefY = height - 225;
+    let spk1X = 250; let spk1Y = height - 350; let spk2X = width - 250; let spk2Y = height - 350;
+    let spk1RefY = height - 150; let spk2RefY = height - 150;
     
-    let coffeeX = 525; let coffeeY = height - 360; 
+    let coffeeX = 350; let coffeeY = height - 240; 
     
-    let candle1X = 225; let candle1Y = height - 375; let candle2X = width - 225; let candle2Y = height - 375;
-    let candle1RefY = height - 375; let candle2RefY = height - 375;
+    let candle1X = 150; let candle1Y = height - 250; let candle2X = width - 150; let candle2Y = height - 250;
+    let candle1RefY = height - 100; let candle2RefY = height - 100;
     
-    let mirrorY = 750;
+    let mirrorY = 500;
 
     let isDraggingSpk1 = false; let isDraggingSpk2 = false; let isDraggingVis = false;
     let isDraggingSpk1Ref = false; let isDraggingSpk2Ref = false; let isDraggingVisRef = false;
@@ -340,31 +341,29 @@
     function getMousePos(e) { const rect = canvas.getBoundingClientRect(); const scaleX = canvas.width / rect.width; const scaleY = canvas.height / rect.height; let clientX = e.clientX; let clientY = e.clientY; if (e.touches && e.touches.length > 0) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; } return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY }; }
 
     function startDrag(e) {
-      const pos = getMousePos(e); const spkScale = parseFloat(document.getElementById('speakerSize').value); const clickRadius = 60 * spkScale * 1.5;
+      const pos = getMousePos(e); const spkScale = parseFloat(document.getElementById('speakerSize').value); const clickRadius = 60 * spkScale;
       
-      if (mirrorConfig.showGlassLine === 'yes' && Math.abs(pos.y - mirrorY) <= 45) { isDraggingMirrorLine = true; dragOffsetY = pos.y - mirrorY; if (e.cancelable) e.preventDefault(); return; }
+      if (mirrorConfig.showGlassLine === 'yes' && Math.abs(pos.y - mirrorY) <= 30) { isDraggingMirrorLine = true; dragOffsetY = pos.y - mirrorY; if (e.cancelable) e.preventDefault(); return; }
       
-      // Drag Bayangan
       if (mirrorConfig.showSpkReflect === 'yes' && document.getElementById('speakerStyle').value !== 'none') {
           if (Math.hypot(pos.x - spk1X, pos.y - spk1RefY) <= clickRadius) { isDraggingSpk1Ref = true; dragOffsetY = pos.y - spk1RefY; if (e.cancelable) e.preventDefault(); return; }
           if (Math.hypot(pos.x - spk2X, pos.y - spk2RefY) <= clickRadius) { isDraggingSpk2Ref = true; dragOffsetY = pos.y - spk2RefY; if (e.cancelable) e.preventDefault(); return; }
       }
-      if (mirrorConfig.showVisReflect === 'yes' && pos.x >= visX && pos.x <= visX + visW && pos.y >= visRefY - 150 && pos.y <= visRefY + 225) { isDraggingVisRef = true; dragOffsetY = pos.y - visRefY; if (e.cancelable) e.preventDefault(); return; }
+      if (mirrorConfig.showVisReflect === 'yes' && pos.x >= visX && pos.x <= visX + visW && pos.y >= visRefY - 100 && pos.y <= visRefY + 150) { isDraggingVisRef = true; dragOffsetY = pos.y - visRefY; if (e.cancelable) e.preventDefault(); return; }
       
       if (mirrorConfig.showCandleReflect === 'yes' && document.getElementById('candleStyle').value !== 'none') {
-        if (Math.hypot(pos.x - candle1X, pos.y - candle1RefY) <= 60) { isDraggingCandle1Ref = true; dragOffsetY = pos.y - candle1RefY; if (e.cancelable) e.preventDefault(); return; }
-        if (Math.hypot(pos.x - candle2X, pos.y - candle2RefY) <= 60) { isDraggingCandle2Ref = true; dragOffsetY = pos.y - candle2RefY; if (e.cancelable) e.preventDefault(); return; }
+        if (Math.hypot(pos.x - candle1X, pos.y - candle1RefY) <= 40) { isDraggingCandle1Ref = true; dragOffsetY = pos.y - candle1RefY; if (e.cancelable) e.preventDefault(); return; }
+        if (Math.hypot(pos.x - candle2X, pos.y - candle2RefY) <= 40) { isDraggingCandle2Ref = true; dragOffsetY = pos.y - candle2RefY; if (e.cancelable) e.preventDefault(); return; }
       }
 
-      // Drag Asli
-      if (Math.hypot(pos.x - spk1X, pos.y - spk1Y) <= Math.max(60, clickRadius) && document.getElementById('speakerStyle').value !== 'none') { isDraggingSpk1 = true; dragOffsetX = pos.x - spk1X; dragOffsetY = pos.y - spk1Y; if (e.cancelable) e.preventDefault(); return; }
-      if (Math.hypot(pos.x - spk2X, pos.y - spk2Y) <= Math.max(60, clickRadius) && document.getElementById('speakerStyle').value !== 'none') { isDraggingSpk2 = true; dragOffsetX = pos.x - spk2X; dragOffsetY = pos.y - spk2Y; if (e.cancelable) e.preventDefault(); return; }
-      if (document.getElementById('coffeeStyle').value !== 'none' && Math.hypot(pos.x - coffeeX, pos.y - coffeeY) <= 75) { isDraggingCoffee = true; dragOffsetX = pos.x - coffeeX; dragOffsetY = pos.y - coffeeY; if (e.cancelable) e.preventDefault(); return; }
+      if (Math.hypot(pos.x - spk1X, pos.y - spk1Y) <= Math.max(40, clickRadius) && document.getElementById('speakerStyle').value !== 'none') { isDraggingSpk1 = true; dragOffsetX = pos.x - spk1X; dragOffsetY = pos.y - spk1Y; if (e.cancelable) e.preventDefault(); return; }
+      if (Math.hypot(pos.x - spk2X, pos.y - spk2Y) <= Math.max(40, clickRadius) && document.getElementById('speakerStyle').value !== 'none') { isDraggingSpk2 = true; dragOffsetX = pos.x - spk2X; dragOffsetY = pos.y - spk2Y; if (e.cancelable) e.preventDefault(); return; }
+      if (document.getElementById('coffeeStyle').value !== 'none' && Math.hypot(pos.x - coffeeX, pos.y - coffeeY) <= 50) { isDraggingCoffee = true; dragOffsetX = pos.x - coffeeX; dragOffsetY = pos.y - coffeeY; if (e.cancelable) e.preventDefault(); return; }
       if (document.getElementById('candleStyle').value !== 'none') {
-        if (Math.hypot(pos.x - candle1X, pos.y - candle1Y) <= 60) { isDraggingCandle1 = true; dragOffsetX = pos.x - candle1X; dragOffsetY = pos.y - candle1Y; if (e.cancelable) e.preventDefault(); return; }
-        if (Math.hypot(pos.x - candle2X, pos.y - candle2Y) <= 60) { isDraggingCandle2 = true; dragOffsetX = pos.x - candle2X; dragOffsetY = pos.y - candle2Y; if (e.cancelable) e.preventDefault(); return; }
+        if (Math.hypot(pos.x - candle1X, pos.y - candle1Y) <= 40) { isDraggingCandle1 = true; dragOffsetX = pos.x - candle1X; dragOffsetY = pos.y - candle1Y; if (e.cancelable) e.preventDefault(); return; }
+        if (Math.hypot(pos.x - candle2X, pos.y - candle2Y) <= 40) { isDraggingCandle2 = true; dragOffsetX = pos.x - candle2X; dragOffsetY = pos.y - candle2Y; if (e.cancelable) e.preventDefault(); return; }
       }
-      if (pos.x >= visX && pos.x <= visX + visW && pos.y >= visY - 225 && pos.y <= visY + 225) { isDraggingVis = true; dragOffsetX = pos.x - visX; dragOffsetY = pos.y - visY; if (e.cancelable) e.preventDefault(); }
+      if (pos.x >= visX && pos.x <= visX + visW && pos.y >= visY - 150 && pos.y <= visY + 150) { isDraggingVis = true; dragOffsetX = pos.x - visX; dragOffsetY = pos.y - visY; if (e.cancelable) e.preventDefault(); }
     }
 
     function drag(e) {
@@ -410,32 +409,28 @@
         constructor() { this.reset(true); }
         reset(init = false) {
             this.x = Math.random() * width;
-            this.size = Math.random() * 3 * 1.5 + 1; 
-            this.speedY = Math.random() * 1.5 * 1.5 + 0.5;
+            this.size = Math.random() * 3 + 1;
+            this.speedY = Math.random() * 1.5 + 0.5;
             this.opacity = Math.random() * 0.6 + 0.2;
             this.life = Math.random() * 100;
             this.wobbleSpeed = Math.random() * 0.05 + 0.01;
-            
-            if(config.type === 'bokeh_orbs') { this.size = Math.random() * 15 * 1.5 + 5; this.opacity = Math.random()*0.3+0.1; }
-            if(config.type === 'snow_dust' || config.type === 'ash_particles') { this.speedY = Math.random() * 2 * 1.5 + 1; }
-
+            if(config.type === 'bokeh_orbs') { this.size = Math.random() * 15 + 5; this.opacity = Math.random()*0.3+0.1; }
+            if(config.type === 'snow_dust' || config.type === 'ash_particles') { this.speedY = Math.random() * 2 + 1; }
             let movesUp = ['dust_motes', 'golden_pollen', 'magic_sparks', 'floating_embers', 'bokeh_orbs', 'fairy_light', 'deep_sea_motes'].includes(config.type);
-            if (init) { this.y = Math.random() * height; } else { this.y = movesUp ? height + 75 + Math.random()*75 : -75 - Math.random()*75; }
+            if (init) { this.y = Math.random() * height; } else { this.y = movesUp ? height + 50 + Math.random()*50 : -50 - Math.random()*50; }
         }
         update() {
             if(config.type === 'none') return;
             let wind = config.fxAngle * Math.PI / 180;
             let sm = config.fxSpeed;
             this.life += this.wobbleSpeed;
-            
             let movesUp = ['dust_motes', 'golden_pollen', 'magic_sparks', 'floating_embers', 'bokeh_orbs', 'fairy_light', 'deep_sea_motes'].includes(config.type);
             if (movesUp) { this.y -= this.speedY * sm * 0.5; } else { this.y += this.speedY * sm; }
-            this.x += Math.sin(this.life) * 1.5 * sm + Math.sin(wind)*4.5;
+            this.x += Math.sin(this.life) * 1 * sm + Math.sin(wind)*3;
             this.currentOpacity = this.opacity * (0.5 + 0.5*Math.sin(this.life*2));
-            
-            if(this.x > width + 75) this.x = -75;
-            if(this.x < -75) this.x = width + 75;
-            if((movesUp && this.y < -75) || (!movesUp && this.y > height + 75)) { this.reset(); }
+            if(this.x > width + 50) this.x = -50;
+            if(this.x < -50) this.x = width + 50;
+            if((movesUp && this.y < -50) || (!movesUp && this.y > height + 50)) { this.reset(); }
         }
         draw() {
             if(config.type === 'none') return; ctx.save(); ctx.beginPath(); let c1;
@@ -539,7 +534,7 @@
       let punchyBass = Math.pow(bass, 2.0);
       if(!isReflection) { if (punchyBass > globalSmoothedBass) { globalSmoothedBass += (punchyBass - globalSmoothedBass) * 0.8; } else { globalSmoothedBass += (punchyBass - globalSmoothedBass) * 0.15; } }
       
-      let finalBass = globalSmoothedBass; let baseR = 50 * scale * 1.5; 
+      let finalBass = globalSmoothedBass; let baseR = 50 * scale; 
       let shakeIntensity = parseFloat(document.getElementById('speakerShake').value); let pumpIntensity = parseFloat(document.getElementById('speakerPump').value);
       let shakeX = (Math.random() - 0.5) * finalBass * shakeIntensity; let shakeY = (Math.random() - 0.5) * finalBass * shakeIntensity;
       let pump = 1.0 + (finalBass * pumpIntensity);
@@ -550,7 +545,7 @@
             if (mirrorConfig.showSpkReflect === 'no') { ctx.restore(); return; }
             ctx.translate(x + shakeX, refY + shakeY);
             ctx.scale(1, -1); 
-            // FITUR BARU: SKALA DAN OPASITAS BAYANGAN SPEAKER
+            // Skala & Opasitas Bayangan
             let rScale = mirrorConfig.spkReflectSize;
             ctx.scale(rScale, rScale);
             ctx.globalAlpha = mirrorConfig.spkReflectOpacity; 
@@ -560,6 +555,7 @@
         
         ctx.beginPath(); ctx.arc(0, 0, baseR, 0, Math.PI * 2); ctx.clip(); 
         
+        // PISAU PEMOTONG BAYANGAN SPEAKER DARI BAWAH
         if (isReflection) {
             let cropH = (mirrorConfig.spkReflectCrop / 100) * (baseR * 2);
             ctx.beginPath(); ctx.rect(-baseR, baseR - cropH, baseR * 2, cropH); ctx.clip();
@@ -570,10 +566,10 @@
         
         if (mirrorConfig.showSpkDot === 'yes') {
             ctx.scale(1/pump, 1/pump);
-            ctx.beginPath(); ctx.arc(0, 0, 6, 0, Math.PI*2);
+            ctx.beginPath(); ctx.arc(0, 0, 4, 0, Math.PI*2);
             ctx.fillStyle = isReflection ? 'rgba(255, 0, 85, 0.5)' : '#ff0055'; 
             ctx.fill();
-            ctx.lineWidth = 1.5; ctx.strokeStyle = isReflection ? 'rgba(255, 255, 255, 0.5)' : '#ffffff'; 
+            ctx.lineWidth = 1; ctx.strokeStyle = isReflection ? 'rgba(255, 255, 255, 0.5)' : '#ffffff'; 
             ctx.stroke();
         }
 
@@ -583,7 +579,7 @@
     }
 
     function drawCoffeeSteam(x, y, style, scale, propSpeed) {
-        if(style === 'none') return; ctx.save(); ctx.translate(x, y); ctx.scale(scale * 1.5, scale * 1.5);
+        if(style === 'none') return; ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
         let branches = 3; let hMax = 150; let wMax = 30; let speedMult = 1.5; let waveFreq = 2.0; let opacity = 0.8;
         if(style === 'soft_steam') { branches=2; hMax=120; wMax=20; speedMult=1; waveFreq=1.5; opacity=0.7; }
         if(style === 'swirl_vapor') { branches=4; hMax=180; wMax=40; speedMult=1.8; waveFreq=2.5; opacity=0.85; }
@@ -594,17 +590,15 @@
         for(let b=0; b<branches; b++) {
             let pts = []; let steps = 40; 
             for(let i=0; i<=steps; i++) { let prog = i/steps; let speed = time * speedMult * propSpeed; let w = (5 + Math.sin(prog * Math.PI * 3 + speed) * 5) * Math.sin(prog * Math.PI); let sway = Math.sin(prog * Math.PI * waveFreq - speed + b * 1.3) * wMax * Math.pow(prog, 0.8); let secondarySway = Math.sin(prog * Math.PI * waveFreq * 2.1 - speed * 1.4 + b * 2) * (wMax * 0.4) * prog; let px = sway + secondarySway; let py = -prog * hMax; pts.push({x: px, y: py, w: w}); }
-            ctx.beginPath(); ctx.moveTo(pts[0].x - pts[0].w, pts[0].y); for(let i=1; i<pts.length; i++) ctx.lineTo(pts[i].x - pts[i].w, pts[i].y); for(let i=pts.length-1; i>=0; i--) ctx.lineTo(pts[i].x + pts[i].w, pts[i].y); ctx.closePath();
+            ctx.beginPath(); ctx.moveTo(pts[0].x - pts[0].w, pts[0].y); for(let i=1; i<pts.length; i++) ctx.lineTo(pts[i].x - pts[i].w, ctx[i].y); for(let i=pts.length-1; i>=0; i--) ctx.lineTo(pts[i].x + pts[i].w, pts[i].y); ctx.closePath();
             let grad = ctx.createLinearGradient(0,0, 0,-hMax); grad.addColorStop(0, `rgba(255, 255, 255, 0)`); grad.addColorStop(0.5, `rgba(255, 255, 255, ${opacity})`); grad.addColorStop(1, `rgba(255, 255, 255, 0)`); ctx.fillStyle = grad; ctx.fill();
             ctx.beginPath(); ctx.moveTo(pts[0].x - pts[0].w, pts[0].y); for(let i=1; i<pts.length; i++) ctx.lineTo(pts[i].x - pts[i].w, pts[i].y); ctx.strokeStyle = `rgba(255, 255, 255, ${Math.min(1, opacity * 1.8)})`; ctx.lineWidth = 2; ctx.stroke();
             ctx.beginPath(); ctx.moveTo(pts[0].x + pts[0].w, pts[0].y); for(let i=1; i<pts.length; i++) ctx.lineTo(pts[i].x + pts[i].w, pts[i].y); ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * 0.8})`; ctx.lineWidth = 1; ctx.stroke();
         } ctx.restore();
     }
 
-    // FITUR BARU: PANTULAN LILIN
     function drawCandle(x, y, refY, style, scale, propSpeed, isReflection) {
         if(style === 'none') return; ctx.save(); 
-        
         if (isReflection) {
             if (mirrorConfig.showCandleReflect === 'no') { ctx.restore(); return; }
             ctx.translate(x, refY);
@@ -613,8 +607,7 @@
         } else {
             ctx.translate(x, y); 
         }
-        
-        ctx.scale(scale * 1.5, scale * 1.5);
+        ctx.scale(scale, scale);
         let t = time * 2 * propSpeed; let flicker = 0; let sway = 0; let h = 65; let w = 16; let baseColor = 'rgba(255, 140, 0, 0.8)'; let midColor = 'rgba(255, 210, 0, 0.9)'; let coreColor = 'rgba(255, 255, 255, 0.95)';
         if(style === 'calm_flame') { flicker = Math.sin(t*3)*2; sway = Math.sin(t)*1; } else if(style === 'flicker_flame') { flicker = Math.sin(t*10)*4 + Math.random()*2; sway = Math.sin(t*5)*3; } else if(style === 'bright_glow') { flicker = Math.sin(t*4)*2; h = 75; w = 18; ctx.shadowBlur = 50 + flicker*5; ctx.shadowColor = '#ff9800'; } else if(style === 'blue_base') { flicker = Math.sin(t*5)*2; baseColor = 'rgba(0, 150, 255, 0.8)'; midColor = 'rgba(100, 200, 255, 0.9)'; } else if(style === 'wind_flame') { flicker = Math.random()*5; sway = 15 + Math.sin(t*8)*5; }
         ctx.beginPath(); ctx.arc(0, -h*0.5, w*3, 0, Math.PI*2); let gradGlow = ctx.createRadialGradient(0,-h*0.5,0, 0,-h*0.5,w*4); gradGlow.addColorStop(0, 'rgba(255, 120, 0, 0.25)'); gradGlow.addColorStop(1, 'rgba(255, 120, 0, 0)'); ctx.fillStyle = gradGlow; ctx.fill();
@@ -633,25 +626,24 @@
 
       let propScale = parseFloat(document.getElementById('propSize').value); let propSpeed = parseFloat(document.getElementById('propSpeed').value);
 
-      // 1. ELEMEN ASLI (NORMAL)
+      // 1. ELEMEN ASLI
       if (isAudioInit && currentObjectUrl) drawVisualizer(analyser.frequencyBinCount, false);
       drawSpeakers(isAudioInit ? analyser.frequencyBinCount : 128, false);
 
-      // 2. ELEMEN PANTULAN (KACA)
+      // 2. ELEMEN PANTULAN
       if (isAudioInit && currentObjectUrl) drawVisualizer(analyser.frequencyBinCount, true);
       drawSpeakers(isAudioInit ? analyser.frequencyBinCount : 128, true);
-      // Pantulan Lilin (Digambar di bawah meja kaca)
       drawCandle(candle1X, candle1Y, candle1RefY, document.getElementById('candleStyle').value, propScale, propSpeed, true); 
       drawCandle(candle2X, candle2Y, candle2RefY, document.getElementById('candleStyle').value, propScale, propSpeed, true);
 
-      // 3. MEJA KACA GELAP
+      // 3. MEJA KACA GELAP MURNI (TANPA GARIS BIRU)
       if (mirrorConfig.showGlassLine === 'yes' || mirrorConfig.showVisReflect === 'yes' || mirrorConfig.showSpkReflect === 'yes' || mirrorConfig.showCandleReflect === 'yes') {
           let mirrorGrad = ctx.createLinearGradient(0, mirrorY, 0, height);
           mirrorGrad.addColorStop(0, 'rgba(0,0,0,0.15)'); mirrorGrad.addColorStop(0.5, 'rgba(0,0,0,0.7)'); mirrorGrad.addColorStop(1, 'rgba(0,0,0,0.95)');
           ctx.fillStyle = mirrorGrad; ctx.fillRect(0, mirrorY, width, height - mirrorY);
       }
 
-      // 4. PROP & PARTIKEL ASLI (DI ATAS KACA)
+      // 4. PROP & PARTIKEL ASLI
       drawCoffeeSteam(coffeeX, coffeeY, document.getElementById('coffeeStyle').value, propScale, propSpeed);
       drawCandle(candle1X, candle1Y, candle1RefY, document.getElementById('candleStyle').value, propScale, propSpeed, false); 
       drawCandle(candle2X, candle2Y, candle2RefY, document.getElementById('candleStyle').value, propScale, propSpeed, false);
@@ -663,9 +655,9 @@
     animate();
 
     let mediaRecorder, chunks = []; let recordStartTime = 0;
-    function startCountdownAndRecord() { if (!isAudioInit || !currentObjectUrl) { alert("Pilih dan siapkan musik dulu!"); return; } if (isCountingDown) { clearInterval(countdownTimer); isCountingDown = false; countdownOverlay.style.display = 'none'; recordBtn.innerText = "🔴 MULAI REKAM 1080p"; return; } isCountingDown = true; let counter = 3; countdownOverlay.innerText = counter; countdownOverlay.style.display = 'block'; recordBtn.innerText = "❌ BATALKAN REKAM (" + counter + ")"; countdownTimer = setInterval(() => { counter--; if (counter > 0) { countdownOverlay.innerText = counter; recordBtn.innerText = "❌ BATALKAN REKAM (" + counter + ")"; } else { clearInterval(countdownTimer); isCountingDown = false; countdownOverlay.style.display = 'none'; executeRecording(); } }, 1000); }
-    function executeRecording() { if (!audioCtx) initAudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume(); if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.KeepAwake) { window.Capacitor.Plugins.KeepAwake.keepAwake(); } audioPlayer.play(); playBtn.innerText = "⏸ PAUSE"; stopOverlay.style.display = 'block'; statusBox.innerText = "🔴 Merekam Video 1080p..."; recordBtn.innerText = "🔴 SEDANG MEREKAM"; const stream = canvas.captureStream(30); const combined = new MediaStream([...stream.getVideoTracks(), mediaStreamDestination.stream.getAudioTracks()[0]]); let options = { mimeType: 'video/webm;codecs=vp8,opus' }; if (!MediaRecorder.isTypeSupported(options.mimeType)) { options = { mimeType: 'video/webm' }; } try { mediaRecorder = new MediaRecorder(combined, options); } catch (e) { mediaRecorder = new MediaRecorder(combined); } mediaRecorder.ondataavailable = e => { if (e.data && e.data.size > 0) chunks.push(e.data); }; mediaRecorder.onstop = saveVideoWebM; chunks = []; recordStartTime = Date.now(); mediaRecorder.start(); }
-    function stopRecording() { if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop(); if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.KeepAwake) window.Capacitor.Plugins.KeepAwake.allowSleep(); audioPlayer.pause(); playBtn.innerText = "▶ PLAY"; stopOverlay.style.display = 'none'; recordBtn.innerText = "🔴 MULAI REKAM 1080p"; statusBox.innerText = "Menyiapkan file video..."; if (playTimeout) clearTimeout(playTimeout); }
+    function startCountdownAndRecord() { if (!isAudioInit || !currentObjectUrl) { alert("Pilih dan siapkan musik dulu!"); return; } if (isCountingDown) { clearInterval(countdownTimer); isCountingDown = false; countdownOverlay.style.display = 'none'; recordBtn.innerText = "🔴 MULAI REKAM 720p"; return; } isCountingDown = true; let counter = 3; countdownOverlay.innerText = counter; countdownOverlay.style.display = 'block'; recordBtn.innerText = "❌ BATALKAN REKAM (" + counter + ")"; countdownTimer = setInterval(() => { counter--; if (counter > 0) { countdownOverlay.innerText = counter; recordBtn.innerText = "❌ BATALKAN REKAM (" + counter + ")"; } else { clearInterval(countdownTimer); isCountingDown = false; countdownOverlay.style.display = 'none'; executeRecording(); } }, 1000); }
+    function executeRecording() { if (!audioCtx) initAudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume(); if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.KeepAwake) { window.Capacitor.Plugins.KeepAwake.keepAwake(); } audioPlayer.play(); playBtn.innerText = "⏸ PAUSE"; stopOverlay.style.display = 'block'; statusBox.innerText = "🔴 Merekam Video 720p..."; recordBtn.innerText = "🔴 SEDANG MEREKAM"; const stream = canvas.captureStream(30); const combined = new MediaStream([...stream.getVideoTracks(), mediaStreamDestination.stream.getAudioTracks()[0]]); let options = { mimeType: 'video/webm;codecs=vp8,opus' }; if (!MediaRecorder.isTypeSupported(options.mimeType)) { options = { mimeType: 'video/webm' }; } try { mediaRecorder = new MediaRecorder(combined, options); } catch (e) { mediaRecorder = new MediaRecorder(combined); } mediaRecorder.ondataavailable = e => { if (e.data && e.data.size > 0) chunks.push(e.data); }; mediaRecorder.onstop = saveVideoWebM; chunks = []; recordStartTime = Date.now(); mediaRecorder.start(); }
+    function stopRecording() { if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop(); if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.KeepAwake) window.Capacitor.Plugins.KeepAwake.allowSleep(); audioPlayer.pause(); playBtn.innerText = "▶ PLAY"; stopOverlay.style.display = 'none'; recordBtn.innerText = "🔴 MULAI REKAM 720p"; statusBox.innerText = "Menyiapkan file video..."; if (playTimeout) clearTimeout(playTimeout); }
     function saveVideoWebM() { const blob = new Blob(chunks, { type: 'video/webm' }); const recordDuration = Date.now() - recordStartTime; statusBox.innerText = "⏳ Menjahit durasi (Biar bisa di-skip)..."; if (typeof ysFixWebmDuration === 'function') { try { ysFixWebmDuration(blob, recordDuration, function(fixedBlob) { triggerDownload(fixedBlob); }, {logger: false}); } catch (error) { triggerDownload(blob); } } else { triggerDownload(blob); } }
     function triggerDownload(finalBlob) {
       statusBox.innerText = "⏳ Memproses pemotongan file video..."; const url = URL.createObjectURL(finalBlob);
@@ -675,12 +667,12 @@
       let isSaving = false;
       saveBtn.onclick = async () => {
         if (isSaving) return; isSaving = true; saveBtn.innerText = "⏳ MEMINTA IZIN & MENYIMPAN...";
-        const downloadBrowser = () => { statusBox.innerText = "⏳ Mengunduh lewat Download Manager HP..."; const a = document.createElement('a'); a.style.display = 'none'; a.href = url; a.download = `Mirror1080p_${Date.now()}.webm`; document.body.appendChild(a); a.click(); setTimeout(() => { document.body.removeChild(a); }, 100); saveBtn.innerText = "✅ VIDEO SUKSES DIUNDUH!"; statusBox.innerText = `🎉 SUKSES! Video 1080p berhasil diunduh ke perangkat Anda.`; };
+        const downloadBrowser = () => { statusBox.innerText = "⏳ Mengunduh lewat Download Manager HP..."; const a = document.createElement('a'); a.style.display = 'none'; a.href = url; a.download = `Mirror720p_${Date.now()}.webm`; document.body.appendChild(a); a.click(); setTimeout(() => { document.body.removeChild(a); }, 100); saveBtn.innerText = "✅ VIDEO SUKSES DIUNDUH!"; statusBox.innerText = `🎉 SUKSES! Video 720p berhasil diunduh ke perangkat Anda.`; };
         try {
           if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem) {
             const FS = window.Capacitor.Plugins.Filesystem; 
             try { let perm = await FS.checkPermissions(); if (perm.publicStorage !== 'granted' && perm.publicStorage !== 'authorized') await FS.requestPermissions(); } catch(e) {} 
-            const fileName = `Mirror1080p_${Date.now()}.webm`; 
+            const fileName = `Mirror720p_${Date.now()}.webm`; 
             try {
                 await FS.writeFile({ path: fileName, data: "", directory: 'DOCUMENTS' });
                 const chunkSize = 1572864; const totalChunks = Math.ceil(finalBlob.size / chunkSize);
@@ -690,7 +682,7 @@
                   await FS.appendFile({ path: fileName, data: base64Chunk, directory: 'DOCUMENTS' });
                   const percent = Math.round(((i + 1) / totalChunks) * 100); statusBox.innerText = `⏳ Menulis ke memori HP... ${percent}%`; saveBtn.innerText = `⏳ MENYIMPAN... ${percent}%`;
                 }
-                saveBtn.innerText = "✅ TERSIMPAN DI FOLDER DOKUMEN!"; statusBox.innerText = `🎉 SUKSES! Video 1080p tersimpan di folder Documents!`;
+                saveBtn.innerText = "✅ TERSIMPAN DI FOLDER DOKUMEN!"; statusBox.innerText = `🎉 SUKSES! Video 720p tersimpan di folder Documents!`;
             } catch(fsError) { downloadBrowser(); }
           } else { downloadBrowser(); }
         } catch(e) { try { downloadBrowser(); } catch(err2) { saveBtn.innerText = "❌ GAGAL MENYIMPAN"; statusBox.innerText = "Terjadi Error: " + e.message; isSaving = false; } }

@@ -1,6 +1,6 @@
 {
-  "appId": "com.mirror.p1080",
-  "appName": "Mirror 1080p",
+  "appId": "com.mirror.p720",
+  "appName": "Mirror 720p",
   "webDir": "www",
   "bundledWebRuntime": false
 }
