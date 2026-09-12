@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mirror 1080p (Shadow Crop Fixed)</title>
+  <title>Mirror 1080p (Ultimate Shadow Controls)</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body { margin: 0; background-color: #111; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; }
@@ -48,7 +48,7 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Mirror 1080p (Shadow Crop Fixed).</div>
+    <div id="statusBox">Siap. Mirror 1080p (Ultimate Shadow Engine).</div>
     
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
@@ -165,14 +165,16 @@
         <div class="row"><label style="color:#ff5252;">DENTUMAN</label><input type="range" id="speakerPump" min="0" max="2.0" step="0.1" value="0.5"></div>
       </div>
 
-      <!-- SAKLAR PANTULAN KACA -->
+      <!-- SAKLAR PANTULAN KACA (DENGAN FITUR BARU) -->
       <div class="layout-col" style="border-color: #00bcd4;">
         <label style="color:#00bcd4;">KONTROL KACA (GARIS BISA DIGESER JARI!)</label>
         <div class="row"><label>GARIS KACA</label><select id="showGlassLine"><option value="yes">🟢 Nyala</option><option value="no">🚫 Mati</option></select></div>
         <div class="row"><label>PANT. VIS.</label><select id="showVisReflect"><option value="yes">🟢 Nyala</option><option value="no">🚫 Mati</option></select></div>
         <div class="row"><label>PANT. SPK.</label><select id="showSpkReflect"><option value="yes">🟢 Nyala</option><option value="no">🚫 Mati</option></select></div>
-        <!-- FITUR BARU: POTONG BAYANGAN SPEAKER -->
+        <div class="row"><label>PANT. LILIN</label><select id="showCandleReflect"><option value="yes">🟢 Nyala</option><option value="no">🚫 Mati</option></select></div>
         <div class="row"><label style="color:#00e5ff;">POTONG SPK.</label><input type="range" id="spkReflectCrop" min="10" max="100" value="100"></div>
+        <div class="row"><label style="color:#00e5ff;">OPAS. SPK.</label><input type="range" id="spkReflectOpacity" min="0.1" max="1.0" step="0.05" value="0.45"></div>
+        <div class="row"><label style="color:#00e5ff;">UKURAN P.SPK</label><input type="range" id="spkReflectSize" min="0.1" max="2.0" step="0.1" value="1.0"></div>
       </div>
 
       <!-- PROPERTI TAMBAHAN -->
@@ -302,24 +304,36 @@
     document.getElementById('visHeight').addEventListener('input', (e) => config.visHeight = parseInt(e.target.value));
     document.getElementById('visWidth').addEventListener('input', (e) => { visW = parseInt(e.target.value); visX = (width - visW) / 2; });
 
-    const mirrorConfig = { showGlassLine: 'yes', showVisReflect: 'yes', showSpkReflect: 'yes', showSpkDot: 'yes', spkReflectCrop: 100 };
+    const mirrorConfig = { showGlassLine: 'yes', showVisReflect: 'yes', showSpkReflect: 'yes', showSpkDot: 'yes', spkReflectCrop: 100, showCandleReflect: 'yes', spkReflectOpacity: 0.45, spkReflectSize: 1.0 };
     document.getElementById('showGlassLine').addEventListener('change', e => mirrorConfig.showGlassLine = e.target.value);
     document.getElementById('showVisReflect').addEventListener('change', e => mirrorConfig.showVisReflect = e.target.value);
     document.getElementById('showSpkReflect').addEventListener('change', e => mirrorConfig.showSpkReflect = e.target.value);
     document.getElementById('showSpkDot').addEventListener('change', e => mirrorConfig.showSpkDot = e.target.value);
     document.getElementById('spkReflectCrop').addEventListener('input', e => mirrorConfig.spkReflectCrop = parseInt(e.target.value));
+    document.getElementById('showCandleReflect').addEventListener('change', e => mirrorConfig.showCandleReflect = e.target.value);
+    document.getElementById('spkReflectOpacity').addEventListener('input', e => mirrorConfig.spkReflectOpacity = parseFloat(e.target.value));
+    document.getElementById('spkReflectSize').addEventListener('input', e => mirrorConfig.spkReflectSize = parseFloat(e.target.value));
 
-    // Skala Posisi 1.5x lebih besar untuk 1080p
+    // ===============================================
+    // VARIABEL POSISI
+    // ===============================================
     let visW = 600; let visX = (width - visW) / 2; let visY = height - 375;
     let visRefY = height - 150;
+    
     let spk1X = 375; let spk1Y = height - 525; let spk2X = width - 375; let spk2Y = height - 525;
     let spk1RefY = height - 225; let spk2RefY = height - 225;
-    let coffeeX = 525; let coffeeY = height - 360; let candle1X = 225; let candle1Y = height - 375; let candle2X = width - 225; let candle2Y = height - 375;
+    
+    let coffeeX = 525; let coffeeY = height - 360; 
+    
+    let candle1X = 225; let candle1Y = height - 375; let candle2X = width - 225; let candle2Y = height - 375;
+    let candle1RefY = height - 375; let candle2RefY = height - 375;
+    
     let mirrorY = 750;
 
     let isDraggingSpk1 = false; let isDraggingSpk2 = false; let isDraggingVis = false;
     let isDraggingSpk1Ref = false; let isDraggingSpk2Ref = false; let isDraggingVisRef = false;
     let isDraggingCoffee = false; let isDraggingCandle1 = false; let isDraggingCandle2 = false; 
+    let isDraggingCandle1Ref = false; let isDraggingCandle2Ref = false;
     let isDraggingMirrorLine = false; 
     let dragOffsetX = 0; let dragOffsetY = 0;
 
@@ -327,12 +341,22 @@
 
     function startDrag(e) {
       const pos = getMousePos(e); const spkScale = parseFloat(document.getElementById('speakerSize').value); const clickRadius = 60 * spkScale * 1.5;
+      
       if (mirrorConfig.showGlassLine === 'yes' && Math.abs(pos.y - mirrorY) <= 45) { isDraggingMirrorLine = true; dragOffsetY = pos.y - mirrorY; if (e.cancelable) e.preventDefault(); return; }
+      
+      // Drag Bayangan
       if (mirrorConfig.showSpkReflect === 'yes' && document.getElementById('speakerStyle').value !== 'none') {
           if (Math.hypot(pos.x - spk1X, pos.y - spk1RefY) <= clickRadius) { isDraggingSpk1Ref = true; dragOffsetY = pos.y - spk1RefY; if (e.cancelable) e.preventDefault(); return; }
           if (Math.hypot(pos.x - spk2X, pos.y - spk2RefY) <= clickRadius) { isDraggingSpk2Ref = true; dragOffsetY = pos.y - spk2RefY; if (e.cancelable) e.preventDefault(); return; }
       }
       if (mirrorConfig.showVisReflect === 'yes' && pos.x >= visX && pos.x <= visX + visW && pos.y >= visRefY - 150 && pos.y <= visRefY + 225) { isDraggingVisRef = true; dragOffsetY = pos.y - visRefY; if (e.cancelable) e.preventDefault(); return; }
+      
+      if (mirrorConfig.showCandleReflect === 'yes' && document.getElementById('candleStyle').value !== 'none') {
+        if (Math.hypot(pos.x - candle1X, pos.y - candle1RefY) <= 60) { isDraggingCandle1Ref = true; dragOffsetY = pos.y - candle1RefY; if (e.cancelable) e.preventDefault(); return; }
+        if (Math.hypot(pos.x - candle2X, pos.y - candle2RefY) <= 60) { isDraggingCandle2Ref = true; dragOffsetY = pos.y - candle2RefY; if (e.cancelable) e.preventDefault(); return; }
+      }
+
+      // Drag Asli
       if (Math.hypot(pos.x - spk1X, pos.y - spk1Y) <= Math.max(60, clickRadius) && document.getElementById('speakerStyle').value !== 'none') { isDraggingSpk1 = true; dragOffsetX = pos.x - spk1X; dragOffsetY = pos.y - spk1Y; if (e.cancelable) e.preventDefault(); return; }
       if (Math.hypot(pos.x - spk2X, pos.y - spk2Y) <= Math.max(60, clickRadius) && document.getElementById('speakerStyle').value !== 'none') { isDraggingSpk2 = true; dragOffsetX = pos.x - spk2X; dragOffsetY = pos.y - spk2Y; if (e.cancelable) e.preventDefault(); return; }
       if (document.getElementById('coffeeStyle').value !== 'none' && Math.hypot(pos.x - coffeeX, pos.y - coffeeY) <= 75) { isDraggingCoffee = true; dragOffsetX = pos.x - coffeeX; dragOffsetY = pos.y - coffeeY; if (e.cancelable) e.preventDefault(); return; }
@@ -344,12 +368,16 @@
     }
 
     function drag(e) {
-      if (!isDraggingVis && !isDraggingSpk1 && !isDraggingSpk2 && !isDraggingCoffee && !isDraggingCandle1 && !isDraggingCandle2 && !isDraggingVisRef && !isDraggingSpk1Ref && !isDraggingSpk2Ref && !isDraggingMirrorLine) return;
+      if (!isDraggingVis && !isDraggingSpk1 && !isDraggingSpk2 && !isDraggingCoffee && !isDraggingCandle1 && !isDraggingCandle2 && !isDraggingVisRef && !isDraggingSpk1Ref && !isDraggingSpk2Ref && !isDraggingMirrorLine && !isDraggingCandle1Ref && !isDraggingCandle2Ref) return;
       const pos = getMousePos(e);
       if (isDraggingMirrorLine) { mirrorY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
+      
       if (isDraggingSpk1Ref) { spk1RefY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingSpk2Ref) { spk2RefY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingVisRef)  { visRefY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
+      if (isDraggingCandle1Ref) { candle1RefY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
+      if (isDraggingCandle2Ref) { candle2RefY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
+
       if (isDraggingSpk1) { spk1X = pos.x - dragOffsetX; spk1Y = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingSpk2) { spk2X = pos.x - dragOffsetX; spk2Y = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingCoffee) { coffeeX = pos.x - dragOffsetX; coffeeY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
@@ -358,7 +386,7 @@
       if (isDraggingVis) { visX = pos.x - dragOffsetX; visY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); }
     }
 
-    function endDrag() { isDraggingVis = false; isDraggingSpk1 = false; isDraggingSpk2 = false; isDraggingCoffee = false; isDraggingCandle1 = false; isDraggingCandle2 = false; isDraggingVisRef = false; isDraggingSpk1Ref = false; isDraggingSpk2Ref = false; isDraggingMirrorLine = false; }
+    function endDrag() { isDraggingVis = false; isDraggingSpk1 = false; isDraggingSpk2 = false; isDraggingCoffee = false; isDraggingCandle1 = false; isDraggingCandle2 = false; isDraggingVisRef = false; isDraggingSpk1Ref = false; isDraggingSpk2Ref = false; isDraggingMirrorLine = false; isDraggingCandle1Ref = false; isDraggingCandle2Ref = false; }
     canvas.addEventListener('mousedown', startDrag); canvas.addEventListener('mousemove', drag); window.addEventListener('mouseup', endDrag);
     canvas.addEventListener('touchstart', startDrag, { passive: false }); canvas.addEventListener('touchmove', drag, { passive: false }); window.addEventListener('touchend', endDrag);
 
@@ -382,7 +410,7 @@
         constructor() { this.reset(true); }
         reset(init = false) {
             this.x = Math.random() * width;
-            this.size = Math.random() * 3 * 1.5 + 1; // Scaled up
+            this.size = Math.random() * 3 * 1.5 + 1; 
             this.speedY = Math.random() * 1.5 * 1.5 + 0.5;
             this.opacity = Math.random() * 0.6 + 0.2;
             this.life = Math.random() * 100;
@@ -522,7 +550,10 @@
             if (mirrorConfig.showSpkReflect === 'no') { ctx.restore(); return; }
             ctx.translate(x + shakeX, refY + shakeY);
             ctx.scale(1, -1); 
-            ctx.globalAlpha = 0.45; 
+            // FITUR BARU: SKALA DAN OPASITAS BAYANGAN SPEAKER
+            let rScale = mirrorConfig.spkReflectSize;
+            ctx.scale(rScale, rScale);
+            ctx.globalAlpha = mirrorConfig.spkReflectOpacity; 
         } else {
             ctx.translate(x + shakeX, y + shakeY); 
         }
@@ -570,8 +601,20 @@
         } ctx.restore();
     }
 
-    function drawCandle(x, y, style, scale, propSpeed) {
-        if(style === 'none') return; ctx.save(); ctx.translate(x, y); ctx.scale(scale * 1.5, scale * 1.5);
+    // FITUR BARU: PANTULAN LILIN
+    function drawCandle(x, y, refY, style, scale, propSpeed, isReflection) {
+        if(style === 'none') return; ctx.save(); 
+        
+        if (isReflection) {
+            if (mirrorConfig.showCandleReflect === 'no') { ctx.restore(); return; }
+            ctx.translate(x, refY);
+            ctx.scale(1, -1);
+            ctx.globalAlpha = 0.45;
+        } else {
+            ctx.translate(x, y); 
+        }
+        
+        ctx.scale(scale * 1.5, scale * 1.5);
         let t = time * 2 * propSpeed; let flicker = 0; let sway = 0; let h = 65; let w = 16; let baseColor = 'rgba(255, 140, 0, 0.8)'; let midColor = 'rgba(255, 210, 0, 0.9)'; let coreColor = 'rgba(255, 255, 255, 0.95)';
         if(style === 'calm_flame') { flicker = Math.sin(t*3)*2; sway = Math.sin(t)*1; } else if(style === 'flicker_flame') { flicker = Math.sin(t*10)*4 + Math.random()*2; sway = Math.sin(t*5)*3; } else if(style === 'bright_glow') { flicker = Math.sin(t*4)*2; h = 75; w = 18; ctx.shadowBlur = 50 + flicker*5; ctx.shadowColor = '#ff9800'; } else if(style === 'blue_base') { flicker = Math.sin(t*5)*2; baseColor = 'rgba(0, 150, 255, 0.8)'; midColor = 'rgba(100, 200, 255, 0.9)'; } else if(style === 'wind_flame') { flicker = Math.random()*5; sway = 15 + Math.sin(t*8)*5; }
         ctx.beginPath(); ctx.arc(0, -h*0.5, w*3, 0, Math.PI*2); let gradGlow = ctx.createRadialGradient(0,-h*0.5,0, 0,-h*0.5,w*4); gradGlow.addColorStop(0, 'rgba(255, 120, 0, 0.25)'); gradGlow.addColorStop(1, 'rgba(255, 120, 0, 0)'); ctx.fillStyle = gradGlow; ctx.fill();
@@ -588,25 +631,30 @@
       if (isBgReady) { bgGlobalScale = Math.max(width / bgImageElement.width, height / bgImageElement.height); bgGlobalX = (width / 2) - (bgImageElement.width / 2) * bgGlobalScale; bgGlobalY = (height / 2) - (bgImageElement.height / 2) * bgGlobalScale; ctx.drawImage(bgImageElement, bgGlobalX, bgGlobalY, bgImageElement.width * bgGlobalScale, bgImageElement.height * bgGlobalScale); }
       if (isAudioInit && currentObjectUrl) { if (!audioPlayer.paused) analyser.getByteFrequencyData(dataArray); else for (let i = 0; i < dataArray.length; i++) dataArray[i] = Math.max(0, dataArray[i] - 10); }
 
-      // 1. ELEMEN ASLI
+      let propScale = parseFloat(document.getElementById('propSize').value); let propSpeed = parseFloat(document.getElementById('propSpeed').value);
+
+      // 1. ELEMEN ASLI (NORMAL)
       if (isAudioInit && currentObjectUrl) drawVisualizer(analyser.frequencyBinCount, false);
       drawSpeakers(isAudioInit ? analyser.frequencyBinCount : 128, false);
 
-      // 2. ELEMEN PANTULAN
+      // 2. ELEMEN PANTULAN (KACA)
       if (isAudioInit && currentObjectUrl) drawVisualizer(analyser.frequencyBinCount, true);
       drawSpeakers(isAudioInit ? analyser.frequencyBinCount : 128, true);
+      // Pantulan Lilin (Digambar di bawah meja kaca)
+      drawCandle(candle1X, candle1Y, candle1RefY, document.getElementById('candleStyle').value, propScale, propSpeed, true); 
+      drawCandle(candle2X, candle2Y, candle2RefY, document.getElementById('candleStyle').value, propScale, propSpeed, true);
 
-      // 3. MEJA KACA GELAP (Garis Neon Dihapus Murni Transparan)
-      if (mirrorConfig.showGlassLine === 'yes' || mirrorConfig.showVisReflect === 'yes' || mirrorConfig.showSpkReflect === 'yes') {
+      // 3. MEJA KACA GELAP
+      if (mirrorConfig.showGlassLine === 'yes' || mirrorConfig.showVisReflect === 'yes' || mirrorConfig.showSpkReflect === 'yes' || mirrorConfig.showCandleReflect === 'yes') {
           let mirrorGrad = ctx.createLinearGradient(0, mirrorY, 0, height);
           mirrorGrad.addColorStop(0, 'rgba(0,0,0,0.15)'); mirrorGrad.addColorStop(0.5, 'rgba(0,0,0,0.7)'); mirrorGrad.addColorStop(1, 'rgba(0,0,0,0.95)');
           ctx.fillStyle = mirrorGrad; ctx.fillRect(0, mirrorY, width, height - mirrorY);
       }
 
-      // 4. PROP & PARTIKEL
-      let propScale = parseFloat(document.getElementById('propSize').value); let propSpeed = parseFloat(document.getElementById('propSpeed').value);
+      // 4. PROP & PARTIKEL ASLI (DI ATAS KACA)
       drawCoffeeSteam(coffeeX, coffeeY, document.getElementById('coffeeStyle').value, propScale, propSpeed);
-      drawCandle(candle1X, candle1Y, document.getElementById('candleStyle').value, propScale, propSpeed); drawCandle(candle2X, candle2Y, document.getElementById('candleStyle').value, propScale, propSpeed);
+      drawCandle(candle1X, candle1Y, candle1RefY, document.getElementById('candleStyle').value, propScale, propSpeed, false); 
+      drawCandle(candle2X, candle2Y, candle2RefY, document.getElementById('candleStyle').value, propScale, propSpeed, false);
 
       for (let i = 0; i < config.count; i++) { if (cinematicParticles[i]) { cinematicParticles[i].update(); cinematicParticles[i].draw(); } }
 
