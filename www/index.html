@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mirror 720p (Speaker Perspective Engine - FIX DRAG)</title>
+  <title>Mirror 720p (Ultimate + Retro Additions)</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body { margin: 0; background-color: #111; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; }
@@ -48,7 +48,7 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Mirror 720p (Perspective Engine).</div>
+    <div id="statusBox">Siap. Mirror 720p (Retro & Classic Added!).</div>
     
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
@@ -125,7 +125,7 @@
                     <option value="minimal_line">➖ 39. Minimalist Baseline</option>
                     <option value="calm_horizon">🌅 40. Calm Horizon Glow</option>
                 </optgroup>
-                <optgroup label="=== MODERN & UNIQUE (NEW) ===">
+                <optgroup label="=== MODERN & UNIQUE ===">
                     <option value="hologram_grid">🧊 41. Hologram 3D Grid</option>
                     <option value="digital_dna">🧬 42. Digital DNA Wave</option>
                     <option value="matrix_rain">🌧️ 43. Matrix Digital Rain</option>
@@ -136,6 +136,13 @@
                     <option value="equalizer_3d">🛠️ 48. Cylinder Studio EQ</option>
                     <option value="floating_blocks">🧊 49. Floating Blocks</option>
                     <option value="classic_studio">🎙️ 50. Pro Studio Rack</option>
+                </optgroup>
+                <optgroup label="=== RETRO & CLASSIC (NEW) ===">
+                    <option value="classic_spectrum">🌈 51. Classic Spectrum Analyzer</option>
+                    <option value="cassette_tape">📼 52. Spinning Cassette Tape</option>
+                    <option value="vintage_vu_meter">🎛️ 53. Warm Vintage VU Meter</option>
+                    <option value="classic_vinyl">💿 54. Classic Vinyl Record</option>
+                    <option value="retro_boombox_eq">📻 55. Retro Boombox LED EQ</option>
                 </optgroup>
             </select>
         </div>
@@ -162,7 +169,6 @@
         </div>
         <div class="row"><label>UKURAN DASAR</label><input type="range" id="speakerSize" min="0.2" max="5.0" step="0.1" value="1.5"></div>
         
-        <!-- FITUR BARU: PERSPEKTIF OVAL & MIRING -->
         <hr style="border: 0; border-top: 1px dashed #444; width: 100%; margin: 0;">
         <label style="color:#00bcd4; font-size:10px;">PERSPEKTIF SUDUT (3D FAKE)</label>
         <div class="row"><label>OVAL (LEBAR)</label><input type="range" id="spkOvalX" min="0.1" max="2.0" step="0.05" value="1.0"></div>
@@ -325,14 +331,11 @@
 
     let visW = 400; let visX = (width - visW) / 2; let visY = height - 250;
     let visRefY = height - 100;
-    
     let spk1X = 250; let spk1Y = height - 350; let spk2X = width - 250; let spk2Y = height - 350;
     let spk1RefY = height - 150; let spk2RefY = height - 150;
-    
     let coffeeX = 350; let coffeeY = height - 240; 
     let candle1X = 150; let candle1Y = height - 250; let candle2X = width - 150; let candle2Y = height - 250;
     let candle1RefY = height - 100; let candle2RefY = height - 100;
-    
     let mirrorY = 500;
 
     let isDraggingSpk1 = false; let isDraggingSpk2 = false; let isDraggingVis = false;
@@ -342,25 +345,20 @@
     let isDraggingMirrorLine = false; 
     let dragOffsetX = 0; let dragOffsetY = 0;
 
-    // FIX: Typo 'top' diubah kembali ke 'rect.top' biar fungsi kursor aktif lagi.
     function getMousePos(e) { const rect = canvas.getBoundingClientRect(); const scaleX = canvas.width / rect.width; const scaleY = canvas.height / rect.height; let clientX = e.clientX; let clientY = e.clientY; if (e.touches && e.touches.length > 0) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; } return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY }; }
 
     function startDrag(e) {
       const pos = getMousePos(e); const spkScale = parseFloat(document.getElementById('speakerSize').value); const clickRadius = 60 * spkScale;
-      
       if (mirrorConfig.showGlassLine === 'yes' && Math.abs(pos.y - mirrorY) <= 30) { isDraggingMirrorLine = true; dragOffsetY = pos.y - mirrorY; if (e.cancelable) e.preventDefault(); return; }
-      
       if (mirrorConfig.showSpkReflect === 'yes' && document.getElementById('speakerStyle').value !== 'none') {
           if (Math.hypot(pos.x - spk1X, pos.y - spk1RefY) <= clickRadius) { isDraggingSpk1Ref = true; dragOffsetY = pos.y - spk1RefY; if (e.cancelable) e.preventDefault(); return; }
           if (Math.hypot(pos.x - spk2X, pos.y - spk2RefY) <= clickRadius) { isDraggingSpk2Ref = true; dragOffsetY = pos.y - spk2RefY; if (e.cancelable) e.preventDefault(); return; }
       }
       if (mirrorConfig.showVisReflect === 'yes' && pos.x >= visX && pos.x <= visX + visW && pos.y >= visRefY - 100 && pos.y <= visRefY + 150) { isDraggingVisRef = true; dragOffsetY = pos.y - visRefY; if (e.cancelable) e.preventDefault(); return; }
-      
       if (mirrorConfig.showCandleReflect === 'yes' && document.getElementById('candleStyle').value !== 'none') {
         if (Math.hypot(pos.x - candle1X, pos.y - candle1RefY) <= 40) { isDraggingCandle1Ref = true; dragOffsetY = pos.y - candle1RefY; if (e.cancelable) e.preventDefault(); return; }
         if (Math.hypot(pos.x - candle2X, pos.y - candle2RefY) <= 40) { isDraggingCandle2Ref = true; dragOffsetY = pos.y - candle2RefY; if (e.cancelable) e.preventDefault(); return; }
       }
-
       if (Math.hypot(pos.x - spk1X, pos.y - spk1Y) <= Math.max(40, clickRadius) && document.getElementById('speakerStyle').value !== 'none') { isDraggingSpk1 = true; dragOffsetX = pos.x - spk1X; dragOffsetY = pos.y - spk1Y; if (e.cancelable) e.preventDefault(); return; }
       if (Math.hypot(pos.x - spk2X, pos.y - spk2Y) <= Math.max(40, clickRadius) && document.getElementById('speakerStyle').value !== 'none') { isDraggingSpk2 = true; dragOffsetX = pos.x - spk2X; dragOffsetY = pos.y - spk2Y; if (e.cancelable) e.preventDefault(); return; }
       if (document.getElementById('coffeeStyle').value !== 'none' && Math.hypot(pos.x - coffeeX, pos.y - coffeeY) <= 50) { isDraggingCoffee = true; dragOffsetX = pos.x - coffeeX; dragOffsetY = pos.y - coffeeY; if (e.cancelable) e.preventDefault(); return; }
@@ -375,13 +373,11 @@
       if (!isDraggingVis && !isDraggingSpk1 && !isDraggingSpk2 && !isDraggingCoffee && !isDraggingCandle1 && !isDraggingCandle2 && !isDraggingVisRef && !isDraggingSpk1Ref && !isDraggingSpk2Ref && !isDraggingMirrorLine && !isDraggingCandle1Ref && !isDraggingCandle2Ref) return;
       const pos = getMousePos(e);
       if (isDraggingMirrorLine) { mirrorY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
-      
       if (isDraggingSpk1Ref) { spk1RefY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingSpk2Ref) { spk2RefY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingVisRef)  { visRefY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingCandle1Ref) { candle1RefY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingCandle2Ref) { candle2RefY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
-
       if (isDraggingSpk1) { spk1X = pos.x - dragOffsetX; spk1Y = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingSpk2) { spk2X = pos.x - dragOffsetX; spk2Y = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingCoffee) { coffeeX = pos.x - dragOffsetX; coffeeY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
@@ -419,10 +415,8 @@
             this.opacity = Math.random() * 0.6 + 0.2;
             this.life = Math.random() * 100;
             this.wobbleSpeed = Math.random() * 0.05 + 0.01;
-            
             if(config.type === 'bokeh_orbs') { this.size = Math.random() * 15 + 5; this.opacity = Math.random()*0.3+0.1; }
             if(config.type === 'snow_dust' || config.type === 'ash_particles') { this.speedY = Math.random() * 2 + 1; }
-
             let movesUp = ['dust_motes', 'golden_pollen', 'magic_sparks', 'floating_embers', 'bokeh_orbs', 'fairy_light', 'deep_sea_motes'].includes(config.type);
             if (init) { this.y = Math.random() * height; } else { this.y = movesUp ? height + 50 + Math.random()*50 : -50 - Math.random()*50; }
         }
@@ -431,12 +425,10 @@
             let wind = config.fxAngle * Math.PI / 180;
             let sm = config.fxSpeed;
             this.life += this.wobbleSpeed;
-            
             let movesUp = ['dust_motes', 'golden_pollen', 'magic_sparks', 'floating_embers', 'bokeh_orbs', 'fairy_light', 'deep_sea_motes'].includes(config.type);
             if (movesUp) { this.y -= this.speedY * sm * 0.5; } else { this.y += this.speedY * sm; }
             this.x += Math.sin(this.life) * 1 * sm + Math.sin(wind)*3;
             this.currentOpacity = this.opacity * (0.5 + 0.5*Math.sin(this.life*2));
-            
             if(this.x > width + 50) this.x = -50;
             if(this.x < -50) this.x = width + 50;
             if((movesUp && this.y < -50) || (!movesUp && this.y > height + 50)) { this.reset(); }
@@ -513,13 +505,6 @@
         else if (style === 'ribbon_wave') { let points = 80; let spacing = visW / points; for(let layer=0; layer<3; layer++) { ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * (config.visHeight * (1 - layer*0.2)); ctx.lineTo(i*spacing, -h - layer*6); } ctx.strokeStyle = `rgba(255, 255, 255, ${0.9 - layer*0.3})`; ctx.lineWidth = 2; ctx.stroke(); } }
         else if (style === 'minimal_line') { let points = 100; let spacing = visW / points; ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * (config.visHeight * 0.7); ctx.lineTo(i*spacing, -h); } ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)'; ctx.lineWidth = 2; ctx.stroke(); ctx.fillStyle = 'rgba(255, 255, 255, 0.4)'; ctx.fillRect(0, cy, visW, 1); }
         else if (style === 'calm_horizon') { let points = 80; let spacing = visW / points; ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * config.visHeight; ctx.lineTo(i*spacing, -h); } let grad = ctx.createLinearGradient(0, cy - config.visHeight, 0, cy); grad.addColorStop(0, '#fffa65'); grad.addColorStop(1, '#ff7f50'); ctx.strokeStyle = grad; ctx.lineWidth = 3; ctx.stroke(); ctx.fillStyle = 'rgba(255, 127, 80, 0.1)'; ctx.lineTo(visW, cy); ctx.lineTo(0, cy); ctx.fill(); }
-        
-        else if (style === 'elegant_piano') { let numBars = 52; let spacing = visW / numBars; let barW = spacing * 0.85; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; for (let i = 0; i < numBars; i++) { let h = Math.max(10, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillRect(i * spacing, cy, barW, -h); ctx.fillStyle = 'rgba(0,0,0,0.1)'; ctx.fillRect(i * spacing, cy, barW, -h); ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; } }
-        else if (style === 'cinematic_streaks') { let numBars = 40; let spacing = visW / numBars; for (let i = 0; i < numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let grad = ctx.createLinearGradient(0, cy, 0, cy - h); grad.addColorStop(0, 'rgba(255,255,255,0.8)'); grad.addColorStop(1, 'rgba(255,255,255,0)'); ctx.fillStyle = grad; ctx.fillRect(i * spacing + spacing/2 - 1, cy - h, 2, h); } }
-        else if (style === 'ghost_ambient') { let numBars = 20; let spacing = visW / numBars; let barW = spacing * 0.9; for (let i = 0; i < numBars; i++) { let h = Math.max(10, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillStyle = 'rgba(255, 255, 255, 0.15)'; ctx.shadowBlur = 20; ctx.shadowColor = '#fff'; ctx.fillRect(i * spacing, cy - h, barW, h); } ctx.shadowBlur = 0; }
-        else if (style === 'glitch_tech') { let numBars = 36; let spacing = visW / numBars; let barW = spacing * 0.7; ctx.fillStyle = '#fff'; for (let i = 0; i < numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; if(h > 15) { ctx.fillRect(i * spacing, cy - h, barW, h); ctx.clearRect(i * spacing - 1, cy - h + Math.random()*h, barW + 2, Math.random()*5+2); } else { ctx.fillRect(i * spacing, cy - 2, barW, 2); } } }
-        else if (style === 'diamond_eq') { let numBars = 30; let spacing = visW / numBars; ctx.fillStyle = 'rgba(255,255,255,0.8)'; for (let i = 0; i < numBars; i++) { let h = Math.max(5, getSymmetricVal(i, numBars, bufferLen) * (config.visHeight/2)); let cx = i * spacing + spacing/2; ctx.beginPath(); ctx.moveTo(cx, cy - h); ctx.lineTo(cx + spacing*0.4, cy); ctx.lineTo(cx, cy + h); ctx.lineTo(cx - spacing*0.4, cy); ctx.fill(); } }
-        else if (style === 'particle_fountain') { let numBars = 45; let spacing = visW / numBars; for (let i = 0; i < numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; ctx.fillStyle = `rgba(255,255,255,${0.2 + h/config.visHeight})`; ctx.beginPath(); ctx.arc(i * spacing + spacing/2, cy - h, Math.random()*2+1.5, 0, Math.PI*2); ctx.fill(); if(h > 20) { ctx.beginPath(); ctx.arc(i * spacing + spacing/2, cy - h + 15, Math.random()*1.5, 0, Math.PI*2); ctx.fill(); } } }
         else if (style === 'hologram_grid') { let numBars = 32; let spacing = visW/numBars; ctx.strokeStyle = 'rgba(0, 255, 200, 0.6)'; ctx.lineWidth = 1.5; for(let i=0; i<numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; ctx.beginPath(); ctx.moveTo(i*spacing, cy); ctx.lineTo(i*spacing + 20, cy - h); ctx.stroke(); ctx.beginPath(); ctx.moveTo(i*spacing, cy - h); ctx.lineTo(i*spacing + spacing, cy - h); ctx.stroke(); } }
         else if (style === 'digital_dna') { let numBars = 40; let spacing = visW/numBars; for(let i=0; i<numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight * 0.5; let offset = Math.sin(time*2 + i*0.2) * 20; ctx.fillStyle = '#00e5ff'; ctx.fillRect(i*spacing, cy - h + offset, 4, 4); ctx.fillStyle = '#e040fb'; ctx.fillRect(i*spacing, cy - h - offset, 4, 4); ctx.strokeStyle = 'rgba(255,255,255,0.2)'; ctx.beginPath(); ctx.moveTo(i*spacing+2, cy - h + offset); ctx.lineTo(i*spacing+2, cy - h - offset); ctx.stroke(); } }
         else if (style === 'matrix_rain') { let numBars = 48; let spacing = visW/numBars; for(let i=0; i<numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let drops = Math.floor(h/10); for(let j=0; j<drops; j++) { ctx.fillStyle = j === drops-1 ? '#fff' : '#00ff41'; ctx.fillRect(i*spacing, cy - j*10 - ((time*50 + i*15)%10), spacing*0.6, 6); } } }
@@ -530,9 +515,14 @@
         else if (style === 'equalizer_3d') { let numBars = 32; let spacing = visW/numBars; let barW = spacing*0.7; for(let i=0; i<numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let grad = ctx.createLinearGradient(i*spacing, 0, i*spacing+barW, 0); grad.addColorStop(0, '#555'); grad.addColorStop(0.5, '#fff'); grad.addColorStop(1, '#555'); ctx.fillStyle = grad; ctx.fillRect(i*spacing, cy-h, barW, h); ctx.fillStyle = '#ddd'; ctx.beginPath(); ctx.ellipse(i*spacing+barW/2, cy-h, barW/2, 4, 0, 0, Math.PI*2); ctx.fill(); ctx.fillStyle = '#333'; ctx.beginPath(); ctx.ellipse(i*spacing+barW/2, cy, barW/2, 4, 0, 0, Math.PI*2); ctx.fill(); } }
         else if (style === 'floating_blocks') { let numBars = 32; let spacing = visW / numBars; let barW = spacing * 0.7; for (let i = 0; i < numBars; i++) { let val = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.fillRect(i * spacing, cy - val, barW, 8); if(val > 10) { ctx.fillStyle = 'rgba(255, 255, 255, 0.35)'; ctx.fillRect(i * spacing, cy - val + 12, barW, val - 12); } } }
         else if (style === 'classic_studio') { let numBars = 36; let spacing = visW / numBars; let barW = spacing * 0.75; let segH = 6; for (let i = 0; i < numBars; i++) { let h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let segs = Math.floor(h / (segH + 2)); for (let j = 0; j < segs; j++) { ctx.fillStyle = j > 12 ? '#f44336' : (j > 8 ? '#ffeb3b' : '#00e676'); ctx.fillRect(i * spacing, -(j * (segH + 2)) - segH, barW, segH); } } }
-        else if (style === 'neon_lines') { let numBars = 24; let spacing = visW / numBars; let barW = 4; for(let i=0; i<numBars; i++) { let val = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; ctx.fillStyle = '#00e5ff'; ctx.shadowBlur = 10; ctx.shadowColor = '#00e5ff'; ctx.fillRect(i*spacing + spacing/2, cy-val, barW, val); } ctx.shadowBlur = 0; }
-        else if (style === 'ambient_glow') { let numBars = 30; let spacing = visW / numBars; for(let i=0; i<numBars; i++) { let val = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let grad = ctx.createRadialGradient(i*spacing, cy, 0, i*spacing, cy, val); grad.addColorStop(0, 'rgba(255,255,255,0.8)'); grad.addColorStop(1, 'rgba(255,255,255,0)'); ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(i*spacing, cy, val, Math.PI, Math.PI*2); ctx.fill(); } }
-        else if (style === 'split_glow') { let numBars = 32; let spacing = visW / numBars; let barW = spacing*0.6; for(let i=0; i<numBars; i++) { let val = getSymmetricVal(i, numBars, bufferLen) * (config.visHeight/2); ctx.fillStyle = '#e040fb'; ctx.shadowBlur = 10; ctx.shadowColor = '#e040fb'; ctx.fillRect(i*spacing, cy-val-5, barW, val); ctx.fillRect(i*spacing, cy+5, barW, val); } ctx.shadowBlur = 0; }
+        
+        // FITUR BARU: RETRO & CLASSIC
+        else if (style === 'classic_spectrum') { let numBars = 64; let spacing = visW / numBars; let barW = spacing * 0.8; for(let i=0; i<numBars; i++) { let h = Math.max(2, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let grad = ctx.createLinearGradient(0, 0, 0, -config.visHeight); grad.addColorStop(0, '#00ff00'); grad.addColorStop(0.6, '#ffff00'); grad.addColorStop(1, '#ff0000'); ctx.fillStyle = grad; ctx.fillRect(i * spacing, -h, barW, h); } }
+        else if (style === 'cassette_tape') { let bass = getSymmetricVal(10, 20, bufferLen); ctx.save(); ctx.translate(visW/2, -config.visHeight/2); ctx.fillStyle = '#222'; if(ctx.roundRect) ctx.roundRect(-150, -100, 300, 200, 10); else ctx.rect(-150, -100, 300, 200); ctx.fill(); ctx.fillStyle = '#eee'; ctx.fillRect(-130, -80, 260, 110); let rot = time * (1 + bass*2); ctx.save(); ctx.translate(-60, -25); ctx.rotate(rot); ctx.beginPath(); ctx.arc(0,0, 30, 0, Math.PI*2); ctx.fillStyle = '#111'; ctx.fill(); ctx.beginPath(); ctx.arc(0,0, 10, 0, Math.PI*2); ctx.fillStyle = '#eee'; ctx.fill(); for(let i=0; i<6; i++){ ctx.rotate(Math.PI/3); ctx.fillRect(10, -2, 20, 4); } ctx.restore(); ctx.save(); ctx.translate(60, -25); ctx.rotate(rot); ctx.beginPath(); ctx.arc(0,0, 30, 0, Math.PI*2); ctx.fillStyle = '#111'; ctx.fill(); ctx.beginPath(); ctx.arc(0,0, 10, 0, Math.PI*2); ctx.fillStyle = '#eee'; ctx.fill(); for(let i=0; i<6; i++){ ctx.rotate(Math.PI/3); ctx.fillRect(10, -2, 20, 4); } ctx.restore(); ctx.fillStyle = '#000'; ctx.fillRect(-80, -50, 160, 50); ctx.strokeStyle = '#333'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(-60,-25); ctx.lineTo(60,-25); ctx.stroke(); ctx.fillStyle = '#333'; ctx.beginPath(); ctx.moveTo(-100, 40); ctx.lineTo(100, 40); ctx.lineTo(120, 100); ctx.lineTo(-120, 100); ctx.fill(); ctx.restore(); }
+        else if (style === 'vintage_vu_meter') { let valBass = dataArray ? dataArray[Math.floor(bufferLen * 0.05)] / 255 : 0; let valTreble = dataArray ? dataArray[Math.floor(bufferLen * 0.3)] / 255 : 0; let cx = visW/2; function drawVintageNeedle(x, r, val, title) { ctx.save(); ctx.translate(x, 0); ctx.beginPath(); ctx.arc(0, 0, r, Math.PI, Math.PI*2); ctx.fillStyle = '#ffecb3'; ctx.fill(); ctx.strokeStyle = '#4e342e'; ctx.lineWidth = 4; ctx.stroke(); for(let i=0; i<=20; i++) { let a = Math.PI + (i/20)*Math.PI; let r1 = r - 5; let r2 = r - (i%5===0 ? 15 : 10); ctx.beginPath(); ctx.moveTo(Math.cos(a)*r1, Math.sin(a)*r1); ctx.lineTo(Math.cos(a)*r2, Math.sin(a)*r2); ctx.strokeStyle = i>14 ? '#d32f2f' : '#4e342e'; ctx.lineWidth=2; ctx.stroke(); } ctx.rotate(Math.PI + (val * 0.8 + 0.1) * Math.PI); ctx.beginPath(); ctx.moveTo(0, 5); ctx.lineTo(0, -r+15); ctx.strokeStyle = '#111'; ctx.lineWidth = 3; ctx.stroke(); ctx.beginPath(); ctx.arc(0,0,8,0,Math.PI*2); ctx.fillStyle='#111'; ctx.fill(); ctx.restore(); ctx.fillStyle = '#4e342e'; ctx.font = 'bold 14px sans-serif'; ctx.textAlign = 'center'; ctx.fillText(title, x, -20); } drawVintageNeedle(cx - visW/4, config.visHeight*0.8, valBass, "VU LEFT"); drawVintageNeedle(cx + visW/4, config.visHeight*0.8, valTreble, "VU RIGHT"); }
+        else if (style === 'classic_vinyl') { let cx_c = visW / 2; let cy_c = -config.visHeight / 2; let bass = getSymmetricVal(10, 20, bufferLen); ctx.save(); ctx.translate(cx_c, cy_c); ctx.rotate(time); ctx.beginPath(); ctx.arc(0,0, config.visHeight/2 + bass*10, 0, Math.PI*2); ctx.fillStyle = '#111'; ctx.fill(); ctx.lineWidth = 1.5; for(let i=1; i<=6; i++) { ctx.beginPath(); ctx.arc(0,0, config.visHeight/2 - i*10, 0, Math.PI*2); ctx.strokeStyle = `rgba(255,255,255,${0.05 + bass*0.2})`; ctx.stroke(); } ctx.beginPath(); ctx.arc(0,0, 35, 0, Math.PI*2); ctx.fillStyle = '#ff9800'; ctx.fill(); ctx.beginPath(); ctx.arc(0,0, 5, 0, Math.PI*2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.restore(); }
+        else if (style === 'retro_boombox_eq') { let numBars = 16; let spacing = visW / numBars; let barW = spacing * 0.7; let stepH = 8; for(let i=0; i<numBars; i++) { let h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let blocks = Math.floor(h / stepH); for(let j=0; j<blocks; j++) { ctx.fillStyle = j > 15 ? '#ff0000' : (j > 10 ? '#ffff00' : '#00ff00'); ctx.fillRect(i * spacing, -(j * stepH) - stepH + 1, barW, stepH - 2); } } }
+
       } catch (e) {}
       ctx.restore();
     }
