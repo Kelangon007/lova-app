@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mirror 720p (Ultimate Shadow Controls)</title>
+  <title>Mirror 720p (Speaker Perspective Engine)</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body { margin: 0; background-color: #111; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; }
@@ -42,14 +42,13 @@
 
 <body>
   <div id="canvas-wrapper">
-    <!-- RESOLUSI KEMBALI 720P BIAR MULUS DI HP LAIN -->
     <canvas id="canvas" width="1280" height="720"></canvas>
     <div id="countdownOverlay">3</div>
     <div id="stopOverlay" onclick="stopRecording()">⏹ STOP & SIMPAN</div>
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Mirror 720p (Ultimate Shadow Engine).</div>
+    <div id="statusBox">Siap. Mirror 720p (Speaker Perspective Engine).</div>
     
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
@@ -161,12 +160,21 @@
                 <option value="no">🚫 Mati</option>
             </select>
         </div>
-        <div class="row"><label>UKURAN</label><input type="range" id="speakerSize" min="0.2" max="5.0" step="0.1" value="1.5"></div>
+        <div class="row"><label>UKURAN DASAR</label><input type="range" id="speakerSize" min="0.2" max="5.0" step="0.1" value="1.5"></div>
+        
+        <!-- FITUR BARU: PERSPEKTIF OVAL & MIRING -->
+        <hr style="border: 0; border-top: 1px dashed #444; width: 100%; margin: 0;">
+        <label style="color:#00bcd4; font-size:10px;">PERSPEKTIF SUDUT (3D FAKE)</label>
+        <div class="row"><label>OVAL (LEBAR)</label><input type="range" id="spkOvalX" min="0.1" max="2.0" step="0.05" value="1.0"></div>
+        <div class="row"><label>OVAL (TINGGI)</label><input type="range" id="spkOvalY" min="0.1" max="2.0" step="0.05" value="1.0"></div>
+        <div class="row"><label>KEMIRINGAN</label><input type="range" id="spkRot" min="-90" max="90" step="1" value="0"></div>
+        <hr style="border: 0; border-top: 1px dashed #444; width: 100%; margin: 0;">
+
         <div class="row"><label style="color:#ff5252;">GETARAN</label><input type="range" id="speakerShake" min="0" max="30" step="1" value="10"></div>
         <div class="row"><label style="color:#ff5252;">DENTUMAN</label><input type="range" id="speakerPump" min="0" max="2.0" step="0.1" value="0.5"></div>
       </div>
 
-      <!-- SAKLAR PANTULAN KACA & FITUR BARU -->
+      <!-- SAKLAR PANTULAN KACA -->
       <div class="layout-col" style="border-color: #00bcd4;">
         <label style="color:#00bcd4;">KONTROL PANTULAN MEJA</label>
         <div class="row"><label>GARIS KACA</label><select id="showGlassLine"><option value="yes">🟢 Nyala</option><option value="no">🚫 Mati</option></select></div>
@@ -338,7 +346,7 @@
     let isDraggingMirrorLine = false; 
     let dragOffsetX = 0; let dragOffsetY = 0;
 
-    function getMousePos(e) { const rect = canvas.getBoundingClientRect(); const scaleX = canvas.width / rect.width; const scaleY = canvas.height / rect.height; let clientX = e.clientX; let clientY = e.clientY; if (e.touches && e.touches.length > 0) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; } return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY }; }
+    function getMousePos(e) { const rect = canvas.getBoundingClientRect(); const scaleX = canvas.width / rect.width; const scaleY = canvas.height / rect.height; let clientX = e.clientX; let clientY = e.clientY; if (e.touches && e.touches.length > 0) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; } return { x: (clientX - rect.left) * scaleX, y: (clientY - top) * scaleY }; }
 
     function startDrag(e) {
       const pos = getMousePos(e); const spkScale = parseFloat(document.getElementById('speakerSize').value); const clickRadius = 60 * spkScale;
@@ -414,8 +422,10 @@
             this.opacity = Math.random() * 0.6 + 0.2;
             this.life = Math.random() * 100;
             this.wobbleSpeed = Math.random() * 0.05 + 0.01;
+            
             if(config.type === 'bokeh_orbs') { this.size = Math.random() * 15 + 5; this.opacity = Math.random()*0.3+0.1; }
             if(config.type === 'snow_dust' || config.type === 'ash_particles') { this.speedY = Math.random() * 2 + 1; }
+
             let movesUp = ['dust_motes', 'golden_pollen', 'magic_sparks', 'floating_embers', 'bokeh_orbs', 'fairy_light', 'deep_sea_motes'].includes(config.type);
             if (init) { this.y = Math.random() * height; } else { this.y = movesUp ? height + 50 + Math.random()*50 : -50 - Math.random()*50; }
         }
@@ -424,10 +434,12 @@
             let wind = config.fxAngle * Math.PI / 180;
             let sm = config.fxSpeed;
             this.life += this.wobbleSpeed;
+            
             let movesUp = ['dust_motes', 'golden_pollen', 'magic_sparks', 'floating_embers', 'bokeh_orbs', 'fairy_light', 'deep_sea_motes'].includes(config.type);
             if (movesUp) { this.y -= this.speedY * sm * 0.5; } else { this.y += this.speedY * sm; }
             this.x += Math.sin(this.life) * 1 * sm + Math.sin(wind)*3;
             this.currentOpacity = this.opacity * (0.5 + 0.5*Math.sin(this.life*2));
+            
             if(this.x > width + 50) this.x = -50;
             if(this.x < -50) this.x = width + 50;
             if((movesUp && this.y < -50) || (!movesUp && this.y > height + 50)) { this.reset(); }
@@ -504,6 +516,7 @@
         else if (style === 'ribbon_wave') { let points = 80; let spacing = visW / points; for(let layer=0; layer<3; layer++) { ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * (config.visHeight * (1 - layer*0.2)); ctx.lineTo(i*spacing, -h - layer*6); } ctx.strokeStyle = `rgba(255, 255, 255, ${0.9 - layer*0.3})`; ctx.lineWidth = 2; ctx.stroke(); } }
         else if (style === 'minimal_line') { let points = 100; let spacing = visW / points; ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * (config.visHeight * 0.7); ctx.lineTo(i*spacing, -h); } ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)'; ctx.lineWidth = 2; ctx.stroke(); ctx.fillStyle = 'rgba(255, 255, 255, 0.4)'; ctx.fillRect(0, cy, visW, 1); }
         else if (style === 'calm_horizon') { let points = 80; let spacing = visW / points; ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * config.visHeight; ctx.lineTo(i*spacing, -h); } let grad = ctx.createLinearGradient(0, cy - config.visHeight, 0, cy); grad.addColorStop(0, '#fffa65'); grad.addColorStop(1, '#ff7f50'); ctx.strokeStyle = grad; ctx.lineWidth = 3; ctx.stroke(); ctx.fillStyle = 'rgba(255, 127, 80, 0.1)'; ctx.lineTo(visW, cy); ctx.lineTo(0, cy); ctx.fill(); }
+        
         else if (style === 'elegant_piano') { let numBars = 52; let spacing = visW / numBars; let barW = spacing * 0.85; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; for (let i = 0; i < numBars; i++) { let h = Math.max(10, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillRect(i * spacing, cy, barW, -h); ctx.fillStyle = 'rgba(0,0,0,0.1)'; ctx.fillRect(i * spacing, cy, barW, -h); ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; } }
         else if (style === 'cinematic_streaks') { let numBars = 40; let spacing = visW / numBars; for (let i = 0; i < numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let grad = ctx.createLinearGradient(0, cy, 0, cy - h); grad.addColorStop(0, 'rgba(255,255,255,0.8)'); grad.addColorStop(1, 'rgba(255,255,255,0)'); ctx.fillStyle = grad; ctx.fillRect(i * spacing + spacing/2 - 1, cy - h, 2, h); } }
         else if (style === 'ghost_ambient') { let numBars = 20; let spacing = visW / numBars; let barW = spacing * 0.9; for (let i = 0; i < numBars; i++) { let h = Math.max(10, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillStyle = 'rgba(255, 255, 255, 0.15)'; ctx.shadowBlur = 20; ctx.shadowColor = '#fff'; ctx.fillRect(i * spacing, cy - h, barW, h); } ctx.shadowBlur = 0; }
@@ -539,13 +552,17 @@
       let shakeX = (Math.random() - 0.5) * finalBass * shakeIntensity; let shakeY = (Math.random() - 0.5) * finalBass * shakeIntensity;
       let pump = 1.0 + (finalBass * pumpIntensity);
 
+      // FITUR BARU: BACA SLIDER PERSPEKTIF
+      let spkScaleX = parseFloat(document.getElementById('spkOvalX').value);
+      let spkScaleY = parseFloat(document.getElementById('spkOvalY').value);
+      let spkRot = parseFloat(document.getElementById('spkRot').value) * Math.PI / 180;
+
       function drawLiveBackgroundSpeaker(x, y, refY) {
         ctx.save(); 
         if(isReflection) { 
             if (mirrorConfig.showSpkReflect === 'no') { ctx.restore(); return; }
             ctx.translate(x + shakeX, refY + shakeY);
             ctx.scale(1, -1); 
-            // Skala & Opasitas Bayangan
             let rScale = mirrorConfig.spkReflectSize;
             ctx.scale(rScale, rScale);
             ctx.globalAlpha = mirrorConfig.spkReflectOpacity; 
@@ -553,12 +570,19 @@
             ctx.translate(x + shakeX, y + shakeY); 
         }
         
-        ctx.beginPath(); ctx.arc(0, 0, baseR, 0, Math.PI * 2); ctx.clip(); 
+        ctx.beginPath(); 
+        // PISAU OVAL & MIRING (PERSPEKTIF)
+        if (ctx.ellipse) {
+            ctx.ellipse(0, 0, baseR * spkScaleX, baseR * spkScaleY, spkRot, 0, Math.PI * 2);
+        } else {
+            ctx.arc(0, 0, baseR, 0, Math.PI * 2); 
+        }
+        ctx.clip(); 
         
-        // PISAU PEMOTONG BAYANGAN SPEAKER DARI BAWAH
         if (isReflection) {
-            let cropH = (mirrorConfig.spkReflectCrop / 100) * (baseR * 2);
-            ctx.beginPath(); ctx.rect(-baseR, baseR - cropH, baseR * 2, cropH); ctx.clip();
+            let maxR = baseR * Math.max(spkScaleX, spkScaleY);
+            let cropH = (mirrorConfig.spkReflectCrop / 100) * (maxR * 2);
+            ctx.beginPath(); ctx.rect(-maxR*2, maxR - cropH, maxR * 4, cropH); ctx.clip();
         }
         
         ctx.scale(pump, pump);
@@ -636,7 +660,7 @@
       drawCandle(candle1X, candle1Y, candle1RefY, document.getElementById('candleStyle').value, propScale, propSpeed, true); 
       drawCandle(candle2X, candle2Y, candle2RefY, document.getElementById('candleStyle').value, propScale, propSpeed, true);
 
-      // 3. MEJA KACA GELAP MURNI (TANPA GARIS BIRU)
+      // 3. MEJA KACA GELAP
       if (mirrorConfig.showGlassLine === 'yes' || mirrorConfig.showVisReflect === 'yes' || mirrorConfig.showSpkReflect === 'yes' || mirrorConfig.showCandleReflect === 'yes') {
           let mirrorGrad = ctx.createLinearGradient(0, mirrorY, 0, height);
           mirrorGrad.addColorStop(0, 'rgba(0,0,0,0.15)'); mirrorGrad.addColorStop(0.5, 'rgba(0,0,0,0.7)'); mirrorGrad.addColorStop(1, 'rgba(0,0,0,0.95)');
