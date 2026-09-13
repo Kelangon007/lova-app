@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mirror 720p (Speaker Perspective Engine)</title>
+  <title>Mirror 720p (Speaker Perspective Engine - FIX DRAG)</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body { margin: 0; background-color: #111; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; }
@@ -48,7 +48,7 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Mirror 720p (Speaker Perspective Engine).</div>
+    <div id="statusBox">Siap. Mirror 720p (Perspective Engine).</div>
     
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
@@ -323,9 +323,6 @@
     document.getElementById('spkReflectOpacity').addEventListener('input', e => mirrorConfig.spkReflectOpacity = parseFloat(e.target.value));
     document.getElementById('spkReflectSize').addEventListener('input', e => mirrorConfig.spkReflectSize = parseFloat(e.target.value));
 
-    // ===============================================
-    // VARIABEL POSISI 720p
-    // ===============================================
     let visW = 400; let visX = (width - visW) / 2; let visY = height - 250;
     let visRefY = height - 100;
     
@@ -333,7 +330,6 @@
     let spk1RefY = height - 150; let spk2RefY = height - 150;
     
     let coffeeX = 350; let coffeeY = height - 240; 
-    
     let candle1X = 150; let candle1Y = height - 250; let candle2X = width - 150; let candle2Y = height - 250;
     let candle1RefY = height - 100; let candle2RefY = height - 100;
     
@@ -346,7 +342,8 @@
     let isDraggingMirrorLine = false; 
     let dragOffsetX = 0; let dragOffsetY = 0;
 
-    function getMousePos(e) { const rect = canvas.getBoundingClientRect(); const scaleX = canvas.width / rect.width; const scaleY = canvas.height / rect.height; let clientX = e.clientX; let clientY = e.clientY; if (e.touches && e.touches.length > 0) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; } return { x: (clientX - rect.left) * scaleX, y: (clientY - top) * scaleY }; }
+    // FIX: Typo 'top' diubah kembali ke 'rect.top' biar fungsi kursor aktif lagi.
+    function getMousePos(e) { const rect = canvas.getBoundingClientRect(); const scaleX = canvas.width / rect.width; const scaleY = canvas.height / rect.height; let clientX = e.clientX; let clientY = e.clientY; if (e.touches && e.touches.length > 0) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; } return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY }; }
 
     function startDrag(e) {
       const pos = getMousePos(e); const spkScale = parseFloat(document.getElementById('speakerSize').value); const clickRadius = 60 * spkScale;
@@ -552,7 +549,6 @@
       let shakeX = (Math.random() - 0.5) * finalBass * shakeIntensity; let shakeY = (Math.random() - 0.5) * finalBass * shakeIntensity;
       let pump = 1.0 + (finalBass * pumpIntensity);
 
-      // FITUR BARU: BACA SLIDER PERSPEKTIF
       let spkScaleX = parseFloat(document.getElementById('spkOvalX').value);
       let spkScaleY = parseFloat(document.getElementById('spkOvalY').value);
       let spkRot = parseFloat(document.getElementById('spkRot').value) * Math.PI / 180;
@@ -571,7 +567,6 @@
         }
         
         ctx.beginPath(); 
-        // PISAU OVAL & MIRING (PERSPEKTIF)
         if (ctx.ellipse) {
             ctx.ellipse(0, 0, baseR * spkScaleX, baseR * spkScaleY, spkRot, 0, Math.PI * 2);
         } else {
@@ -660,7 +655,7 @@
       drawCandle(candle1X, candle1Y, candle1RefY, document.getElementById('candleStyle').value, propScale, propSpeed, true); 
       drawCandle(candle2X, candle2Y, candle2RefY, document.getElementById('candleStyle').value, propScale, propSpeed, true);
 
-      // 3. MEJA KACA GELAP
+      // 3. MEJA KACA GELAP MURNI
       if (mirrorConfig.showGlassLine === 'yes' || mirrorConfig.showVisReflect === 'yes' || mirrorConfig.showSpkReflect === 'yes' || mirrorConfig.showCandleReflect === 'yes') {
           let mirrorGrad = ctx.createLinearGradient(0, mirrorY, 0, height);
           mirrorGrad.addColorStop(0, 'rgba(0,0,0,0.15)'); mirrorGrad.addColorStop(0.5, 'rgba(0,0,0,0.7)'); mirrorGrad.addColorStop(1, 'rgba(0,0,0,0.95)');
