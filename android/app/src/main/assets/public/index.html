@@ -6,7 +6,6 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  
   <title>Mirror 720p V2</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
@@ -14,9 +13,7 @@
     #canvas-wrapper { position: relative; width: 100%; max-width: 800px; aspect-ratio: 16/9; margin-top: 20px; border: 1px solid rgba(255, 255, 255, 0.2); background: #000; box-shadow: 0 15px 50px rgba(0, 0, 0, 0.9); cursor: grab; overflow: hidden; }
     #canvas-wrapper:active { cursor: grabbing; }
     canvas { width: 100%; height: 100%; display: block; }
-    
     #controls { width: 96%; max-width: 800px; background: #1a1a1a; padding: 12px; border-radius: 12px; margin-top: 15px; border: 1px solid #333; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); box-sizing: border-box; }
-    
     .btn-group, .play-group { display: flex; gap: 8px; width: 100%; }
     .file-label { flex: 1; background: #2b2b2b; color: #ccc; padding: 10px 5px; text-align: center; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; border: 1px solid #444; transition: 0.2s; white-space: nowrap; }
     .file-label:hover { background: #3b3b3b; color: white; }
@@ -24,85 +21,54 @@
     #playBtn.ready { background: linear-gradient(135deg, #d4af37, #00e5ff); color: #111; border: none; }
     #nextBtn { flex: 1; padding: 12px; background: #444; color: #aaa; border: 1px solid #333; border-radius: 8px; font-weight: bold; cursor: not-allowed; transition: 0.3s; }
     #nextBtn.ready { background: #2a2a2a; color: white; border: 1px solid #555; cursor: pointer; }
-    
     .progress-container { display: flex; align-items: center; gap: 8px; background: #222; padding: 8px; border-radius: 8px; border: 1px solid #333; }
     .time-text { font-size: 10px; font-family: monospace; color: #d4af37; min-width: 35px; text-align: center; }
     #progressBar { flex: 1; height: 5px; -webkit-appearance: none; background: #444; border-radius: 5px; cursor: pointer; }
     #progressBar::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; background: #00e5ff; border-radius: 50%; cursor: pointer; }
     .btn-record { width: 100%; padding: 15px; background: linear-gradient(135deg, #ff4444, #d32f2f); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; margin-top: 10px; }
-    
     #stopOverlay { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(220, 20, 60, 0.95); color: white; padding: 15px 30px; border-radius: 50px; z-index: 100; font-weight: bold; border: 3px solid white; cursor: pointer; }
     #countdownOverlay { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 100px; font-weight: bold; color: white; text-shadow: 0 0 20px rgba(0, 0, 0, 0.8); z-index: 100; }
     #statusBox { font-size: 12px; text-align: center; color: #00ffaa; margin-bottom: 2px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 5px; background: #111; border-radius: 6px; border: 1px solid #00ffaa; }
-    
-    /* GRID 2 KOLOM YANG BENERAN RESPONSIVE */
     .grid-2col { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 100%; box-sizing: border-box; }
     .full-width { grid-column: span 2; }
-    
     .layout-col { background: #222; padding: 10px 8px; border-radius: 8px; border: 1px solid #3c3c3c; display: flex; flex-direction: column; gap: 10px; box-sizing: border-box; overflow: hidden; }
     .layout-col > label { width: 100%; text-align: center; font-size: 11px; margin-bottom: 2px; font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase; }
-    
     .row { display: flex; align-items: center; justify-content: space-between; gap: 5px; width: 100%; box-sizing: border-box; }
     .row label { font-size: 9px; width: 40%; color: #ccc; font-weight: 600; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    
-    input[type="range"] { 
-        width: 60%; height: 32px; background: transparent; 
-        -webkit-appearance: none; appearance: none;
-    }
-    input[type="range"]::-webkit-slider-runnable-track {
-        width: 100%; height: 6px; background: #444; border-radius: 3px; border: 1px solid #222;
-    }
-    input[type="range"]::-webkit-slider-thumb {
-        height: 18px; width: 18px; border-radius: 50%; background: #007bff; cursor: pointer;
-        -webkit-appearance: none; margin-top: -6px; box-shadow: 0 0 5px rgba(0,0,0,0.5);
-    }
-    
-    select { 
-        width: 60%; height: 32px; background: #2a2a2a; color: white; border: 1px solid #444; 
-        border-radius: 6px; font-size: 10px; padding: 0 5px; box-sizing: border-box; cursor: pointer;
-        -webkit-appearance: none; -moz-appearance: none; appearance: none;
-        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="white" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>');
-        background-repeat: no-repeat; background-position: right 8px center; padding-right: 20px;
-    }
+    input[type="range"] { width: 60%; height: 32px; background: transparent; -webkit-appearance: none; appearance: none; }
+    input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 6px; background: #444; border-radius: 3px; border: 1px solid #222; }
+    input[type="range"]::-webkit-slider-thumb { height: 18px; width: 18px; border-radius: 50%; background: #007bff; cursor: pointer; -webkit-appearance: none; margin-top: -6px; box-shadow: 0 0 5px rgba(0,0,0,0.5); }
+    select { width: 60%; height: 32px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px; font-size: 10px; padding: 0 5px; box-sizing: border-box; cursor: pointer; -webkit-appearance: none; appearance: none; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="white" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>'); background-repeat: no-repeat; background-position: right 8px center; padding-right: 20px; }
     select.full-select { width: 100%; margin-bottom: 5px; font-size: 11px; }
     input[type="file"] { display: none; }
     optgroup { background: #111; color: #00e5ff; font-weight: bold; }
     hr.thin-line { border: 0; border-top: 1px solid #333; width: 100%; margin: 0; }
   </style>
 </head>
-
 <body>
   <div id="canvas-wrapper">
     <canvas id="canvas" width="1280" height="720"></canvas>
     <div id="countdownOverlay">3</div>
     <div id="stopOverlay" onclick="stopRecording()">⏹ STOP & SIMPAN</div>
   </div>
-
   <div id="controls">
     <div id="statusBox">Siap. Mirror 720p V2 (Grid UI Sukses!).</div>
-    
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
       <label for="audioInput" class="file-label" style="border-bottom: 3px solid #00bcd4">2. MUSIK</label>
     </div>
-
     <div class="play-group">
       <button id="playBtn" onclick="togglePlay()">⚠ PUTAR MUSIK</button>
       <button id="nextBtn" onclick="playRandomSong(false)">⏭ NEXT</button>
     </div>
-
     <div class="progress-container">
       <span id="currTime" class="time-text">00:00</span>
       <input type="range" id="progressBar" value="0" min="0" step="0.1">
       <span id="durTime" class="time-text">00:00</span>
     </div>
-
     <input type="file" id="bgInput" accept="image/*">
     <input type="file" id="audioInput" accept="audio/*" multiple>
-
     <hr class="thin-line">
-
-    <!-- GRID 1: VISUALIZER & SPEAKER ASLI -->
     <div class="grid-2col">
       <div class="layout-col">
         <label style="color:#00d2ff;">VISUALIZER</label>
@@ -179,7 +145,6 @@
         <div class="row"><label>LEBAR</label><input type="range" id="visWidth" min="100" max="1100" value="400"></div>
         <div class="row"><label>OPASITAS</label><input type="range" id="visOpacity" min="0.1" max="1.0" step="0.05" value="1.0"></div>
       </div>
-
       <div class="layout-col">
         <label style="color:#ffb300;">DAUN SPEAKER</label>
         <div class="row">
@@ -195,8 +160,6 @@
         <div class="row"><label style="color:#ff5252;">DENTUMAN</label><input type="range" id="speakerPump" min="0" max="2.0" step="0.1" value="0.5"></div>
       </div>
     </div>
-
-    <!-- GRID 2: PERSPEKTIF -->
     <div class="grid-2col">
       <div class="layout-col">
         <label style="color:#00bcd4;">PERSPEK. KIRI</label>
@@ -211,8 +174,6 @@
         <div class="row"><label>SUDUT</label><input type="range" id="spkRot2" min="-90" max="90" step="1" value="0"></div>
       </div>
     </div>
-
-    <!-- GRID 3: PANTULAN -->
     <div class="grid-2col">
       <div class="layout-col" style="border-color: #00bcd4;">
         <label style="color:#00bcd4;">SAKLAR KACA</label>
@@ -228,8 +189,6 @@
         <div class="row"><label>UKURAN</label><input type="range" id="spkReflectSize" min="0.1" max="2.0" step="0.1" value="1.0"></div>
       </div>
     </div>
-
-    <!-- GRID 4: ASAP & LILIN -->
     <div class="grid-2col">
       <div class="layout-col">
         <label style="color:#d7ccc8;">ASAP KOPI</label>
@@ -256,8 +215,6 @@
         <div class="row"><label>KCPTN</label><input type="range" id="propSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
       </div>
     </div>
-
-    <!-- EFEK PARTIKEL LINGKUNGAN -->
     <div class="layout-col full-width" style="padding: 12px;">
         <label style="color:#00e5ff; text-align:left; margin-bottom:8px;">EFEK PARTIKEL LINGKUNGAN</label>
         <div class="grid-2col">
@@ -287,10 +244,8 @@
             <div class="row"><label>JUMLAH</label><input type="range" id="count" min="0" max="400" value="100"></div>
         </div>
     </div>
-
     <button class="btn-record" id="recordBtn" onclick="startCountdownAndRecord()" style="margin-top: 15px;">🔴 MULAI REKAM 720p</button>
   </div>
-
   <audio id="audioPlayer" crossorigin="anonymous"></audio>
 
   <script>
@@ -298,18 +253,11 @@
     const audioPlayer = document.getElementById('audioPlayer'); const playBtn = document.getElementById('playBtn'); const nextBtn = document.getElementById('nextBtn');
     const stopOverlay = document.getElementById('stopOverlay'); const countdownOverlay = document.getElementById('countdownOverlay'); const recordBtn = document.getElementById('recordBtn');
     const progressBar = document.getElementById('progressBar'); const currTimeEl = document.getElementById('currTime'); const durTimeEl = document.getElementById('durTime');
-    
-    let isDraggingProgress = false; 
-    const width = 1280; 
-    const height = 720;
-    
+    let isDraggingProgress = false; const width = 1280; const height = 720;
     let audioFiles = []; let currentObjectUrl = null; let currentSongName = ""; let playTimeout = null;
     let isTrackLoaded = false; let shuffledPlaylist = []; let currentPlayIndex = 0; let isCountingDown = false; let countdownTimer = null;
-
     let bgGlobalScale = 1; let bgGlobalX = 0; let bgGlobalY = 0;
-
     function shuffle(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array; }
-
     document.getElementById('audioInput').addEventListener('change', function(e) {
       if (this.files.length > 0) {
         audioFiles = Array.from(this.files); isTrackLoaded = true; shuffledPlaylist = shuffle(Array.from({ length: audioFiles.length }, (v, k) => k));
@@ -318,7 +266,6 @@
         audioPlayer.pause(); if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl); currentObjectUrl = null; currentSongName = "Musik Diunggah";
       }
     });
-
     function playRandomSong(isInstant = false) {
       if (audioFiles.length === 0) return; if (playTimeout) clearTimeout(playTimeout);
       if (currentPlayIndex >= shuffledPlaylist.length) { currentPlayIndex = 0; stopEverything(); return; }
@@ -334,16 +281,13 @@
         audioPlayer.play().then(() => { playBtn.innerText = "⏸ PAUSE"; statusBox.innerText = `🎵 Lagu ${currentPlayIndex + 1}/${audioFiles.length}: ${currentSongName}`; currentPlayIndex++; }).catch(err => { playBtn.innerText = "❌ ERROR"; });
       }, delayAmount);
     }
-
     audioPlayer.addEventListener('ended', () => { playRandomSong(false); });
-
     function stopEverything() {
       audioPlayer.pause(); if (playTimeout) clearTimeout(playTimeout); if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl); currentObjectUrl = null;
       if (dataArray) dataArray.fill(0); shuffledPlaylist = shuffle(Array.from({ length: audioFiles.length }, (v, k) => k));
       statusBox.innerText = `✅ Semua lagu selesai.`; playBtn.innerText = "▶ PLAY ACAK";
       if (mediaRecorder && mediaRecorder.state === 'recording') { setTimeout(() => { stopRecording(); }, 500); }
     }
-
     const config = { type: 'none', count: 100, visType: 'vintage_vu_meter', visHeight: 150, visOpacity: 1.0, fxAngle: 0, fxSpeed: 1.0 };
     document.getElementById('visType').addEventListener('change', (e) => { config.visType = e.target.value; peakHeights.fill(0); });
     document.getElementById('visOpacity').addEventListener('input', (e) => config.visOpacity = parseFloat(e.target.value));
@@ -364,21 +308,18 @@
     document.getElementById('spkReflectOpacity').addEventListener('input', e => mirrorConfig.spkReflectOpacity = parseFloat(e.target.value));
     document.getElementById('spkReflectSize').addEventListener('input', e => mirrorConfig.spkReflectSize = parseFloat(e.target.value));
 
-    let visW = 400; let visX = (width - visW) / 2; let visY = height - 250;
-    let visRefY = height - 100;
+    let visW = 400; let visX = (width - visW) / 2; let visY = height - 250; let visRefY = height - 100;
     let spk1X = 250; let spk1Y = height - 350; let spk2X = width - 250; let spk2Y = height - 350;
     let spk1RefY = height - 150; let spk2RefY = height - 150;
     let coffeeX = 350; let coffeeY = height - 240; 
     let candle1X = 150; let candle1Y = height - 250; let candle2X = width - 150; let candle2Y = height - 250;
     let candle1RefY = height - 100; let candle2RefY = height - 100;
     let mirrorY = 500;
-
-    let isDraggingSpk1 = false; let isDraggingSpk2 = false; let isDraggingVis = false;
-    let isDraggingSpk1Ref = false; let isDraggingSpk2Ref = false; let isDraggingVisRef = false;
-    let isDraggingCoffee = false; let isDraggingCandle1 = false; let isDraggingCandle2 = false; 
-    let isDraggingCandle1Ref = false; let isDraggingCandle2Ref = false;
-    let isDraggingMirrorLine = false; 
-    let dragOffsetX = 0; let dragOffsetY = 0;
+    let isDraggingSpk1 = false, isDraggingSpk2 = false, isDraggingVis = false;
+    let isDraggingSpk1Ref = false, isDraggingSpk2Ref = false, isDraggingVisRef = false;
+    let isDraggingCoffee = false, isDraggingCandle1 = false, isDraggingCandle2 = false; 
+    let isDraggingCandle1Ref = false, isDraggingCandle2Ref = false, isDraggingMirrorLine = false; 
+    let dragOffsetX = 0, dragOffsetY = 0;
 
     function getMousePos(e) { const rect = canvas.getBoundingClientRect(); const scaleX = canvas.width / rect.width; const scaleY = canvas.height / rect.height; let clientX = e.clientX; let clientY = e.clientY; if (e.touches && e.touches.length > 0) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; } return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY }; }
 
@@ -386,22 +327,17 @@
       const pos = getMousePos(e); 
       const spk1Scale = parseFloat(document.getElementById('speakerSize1').value); 
       const spk2Scale = parseFloat(document.getElementById('speakerSize2').value); 
-      const r1 = 60 * spk1Scale;
-      const r2 = 60 * spk2Scale;
-      
+      const r1 = 60 * spk1Scale; const r2 = 60 * spk2Scale;
       if (mirrorConfig.showGlassLine === 'yes' && Math.abs(pos.y - mirrorY) <= 30) { isDraggingMirrorLine = true; dragOffsetY = pos.y - mirrorY; if (e.cancelable) e.preventDefault(); return; }
-      
       if (mirrorConfig.showSpkReflect === 'yes' && document.getElementById('speakerStyle').value !== 'none') {
           if (Math.hypot(pos.x - spk1X, pos.y - spk1RefY) <= r1) { isDraggingSpk1Ref = true; dragOffsetY = pos.y - spk1RefY; if (e.cancelable) e.preventDefault(); return; }
           if (Math.hypot(pos.x - spk2X, pos.y - spk2RefY) <= r2) { isDraggingSpk2Ref = true; dragOffsetY = pos.y - spk2RefY; if (e.cancelable) e.preventDefault(); return; }
       }
       if (mirrorConfig.showVisReflect === 'yes' && pos.x >= visX && pos.x <= visX + visW && pos.y >= visRefY - 100 && pos.y <= visRefY + 150) { isDraggingVisRef = true; dragOffsetY = pos.y - visRefY; if (e.cancelable) e.preventDefault(); return; }
-      
       if (mirrorConfig.showCandleReflect === 'yes' && document.getElementById('candleStyle').value !== 'none') {
         if (Math.hypot(pos.x - candle1X, pos.y - candle1RefY) <= 40) { isDraggingCandle1Ref = true; dragOffsetY = pos.y - candle1RefY; if (e.cancelable) e.preventDefault(); return; }
         if (Math.hypot(pos.x - candle2X, pos.y - candle2RefY) <= 40) { isDraggingCandle2Ref = true; dragOffsetY = pos.y - candle2RefY; if (e.cancelable) e.preventDefault(); return; }
       }
-
       if (Math.hypot(pos.x - spk1X, pos.y - spk1Y) <= Math.max(40, r1) && document.getElementById('speakerStyle').value !== 'none') { isDraggingSpk1 = true; dragOffsetX = pos.x - spk1X; dragOffsetY = pos.y - spk1Y; if (e.cancelable) e.preventDefault(); return; }
       if (Math.hypot(pos.x - spk2X, pos.y - spk2Y) <= Math.max(40, r2) && document.getElementById('speakerStyle').value !== 'none') { isDraggingSpk2 = true; dragOffsetX = pos.x - spk2X; dragOffsetY = pos.y - spk2Y; if (e.cancelable) e.preventDefault(); return; }
       if (document.getElementById('coffeeStyle').value !== 'none' && Math.hypot(pos.x - coffeeX, pos.y - coffeeY) <= 50) { isDraggingCoffee = true; dragOffsetX = pos.x - coffeeX; dragOffsetY = pos.y - coffeeY; if (e.cancelable) e.preventDefault(); return; }
@@ -411,18 +347,15 @@
       }
       if (pos.x >= visX && pos.x <= visX + visW && pos.y >= visY - 150 && pos.y <= visY + 150) { isDraggingVis = true; dragOffsetX = pos.x - visX; dragOffsetY = pos.y - visY; if (e.cancelable) e.preventDefault(); }
     }
-
     function drag(e) {
       if (!isDraggingVis && !isDraggingSpk1 && !isDraggingSpk2 && !isDraggingCoffee && !isDraggingCandle1 && !isDraggingCandle2 && !isDraggingVisRef && !isDraggingSpk1Ref && !isDraggingSpk2Ref && !isDraggingMirrorLine && !isDraggingCandle1Ref && !isDraggingCandle2Ref) return;
       const pos = getMousePos(e);
       if (isDraggingMirrorLine) { mirrorY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
-      
       if (isDraggingSpk1Ref) { spk1RefY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingSpk2Ref) { spk2RefY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingVisRef)  { visRefY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingCandle1Ref) { candle1RefY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingCandle2Ref) { candle2RefY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
-
       if (isDraggingSpk1) { spk1X = pos.x - dragOffsetX; spk1Y = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingSpk2) { spk2X = pos.x - dragOffsetX; spk2Y = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingCoffee) { coffeeX = pos.x - dragOffsetX; coffeeY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
@@ -430,7 +363,6 @@
       if (isDraggingCandle2) { candle2X = pos.x - dragOffsetX; candle2Y = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingVis) { visX = pos.x - dragOffsetX; visY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); }
     }
-
     function endDrag() { isDraggingVis = false; isDraggingSpk1 = false; isDraggingSpk2 = false; isDraggingCoffee = false; isDraggingCandle1 = false; isDraggingCandle2 = false; isDraggingVisRef = false; isDraggingSpk1Ref = false; isDraggingSpk2Ref = false; isDraggingMirrorLine = false; isDraggingCandle1Ref = false; isDraggingCandle2Ref = false; }
     canvas.addEventListener('mousedown', startDrag); canvas.addEventListener('mousemove', drag); window.addEventListener('mouseup', endDrag);
     canvas.addEventListener('touchstart', startDrag, { passive: false }); canvas.addEventListener('touchmove', drag, { passive: false }); window.addEventListener('touchend', endDrag);
@@ -438,7 +370,6 @@
     let audioCtx, source, mediaStreamDestination, analyser, dataArray; let isAudioInit = false; let peakHeights = new Array(120).fill(0);
     function formatTime(seconds) { if (isNaN(seconds) || !isFinite(seconds)) return "00:00"; const m = Math.floor(seconds / 60); const s = Math.floor(seconds % 60); return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; }
     function initAudioContext() { const AudioContext = window.AudioContext || window.webkitAudioContext; audioCtx = new AudioContext(); analyser = audioCtx.createAnalyser(); analyser.fftSize = 256; analyser.smoothingTimeConstant = 0.8; source = audioCtx.createMediaElementSource(audioPlayer); mediaStreamDestination = audioCtx.createMediaStreamDestination(); source.connect(analyser); analyser.connect(audioCtx.destination); analyser.connect(mediaStreamDestination); dataArray = new Uint8Array(analyser.frequencyBinCount); isAudioInit = true; }
-
     let isBgReady = false; let bgImageElement = new Image();
     document.getElementById('bgInput').addEventListener('change', function(e) { if (this.files[0]) { const fileURL = URL.createObjectURL(this.files[0]); bgImageElement.src = fileURL; bgImageElement.onload = () => { isBgReady = true; statusBox.innerText = "✅ Foto Latar Oke."; }; } });
 
@@ -450,16 +381,10 @@
     function togglePlay() { if (!isTrackLoaded) { alert("Pilih Musik Dulu!"); return; } if (!audioCtx) initAudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume(); if (audioPlayer.paused) { if (!audioPlayer.src || currentPlayIndex >= shuffledPlaylist.length) playRandomSong(true); else { audioPlayer.play(); playBtn.innerText = "⏸ PAUSE"; } } else { audioPlayer.pause(); playBtn.innerText = "▶ RESUME"; statusBox.innerText = "⏸ Musik Dijeda."; } }
 
     let time = 0; let globalSmoothedBass = 0;
-
     class CinematicParticle {
         constructor() { this.reset(true); }
         reset(init = false) {
-            this.x = Math.random() * width;
-            this.size = Math.random() * 3 + 1;
-            this.speedY = Math.random() * 1.5 + 0.5;
-            this.opacity = Math.random() * 0.6 + 0.2;
-            this.life = Math.random() * 100;
-            this.wobbleSpeed = Math.random() * 0.05 + 0.01;
+            this.x = Math.random() * width; this.size = Math.random() * 3 + 1; this.speedY = Math.random() * 1.5 + 0.5; this.opacity = Math.random() * 0.6 + 0.2; this.life = Math.random() * 100; this.wobbleSpeed = Math.random() * 0.05 + 0.01;
             if(config.type === 'bokeh_orbs') { this.size = Math.random() * 15 + 5; this.opacity = Math.random()*0.3+0.1; }
             if(config.type === 'snow_dust' || config.type === 'ash_particles') { this.speedY = Math.random() * 2 + 1; }
             let movesUp = ['dust_motes', 'golden_pollen', 'magic_sparks', 'floating_embers', 'bokeh_orbs', 'fairy_light', 'deep_sea_motes'].includes(config.type);
@@ -467,15 +392,11 @@
         }
         update() {
             if(config.type === 'none') return;
-            let wind = config.fxAngle * Math.PI / 180;
-            let sm = config.fxSpeed;
-            this.life += this.wobbleSpeed;
+            let wind = config.fxAngle * Math.PI / 180; let sm = config.fxSpeed; this.life += this.wobbleSpeed;
             let movesUp = ['dust_motes', 'golden_pollen', 'magic_sparks', 'floating_embers', 'bokeh_orbs', 'fairy_light', 'deep_sea_motes'].includes(config.type);
             if (movesUp) { this.y -= this.speedY * sm * 0.5; } else { this.y += this.speedY * sm; }
-            this.x += Math.sin(this.life) * 1 * sm + Math.sin(wind)*3;
-            this.currentOpacity = this.opacity * (0.5 + 0.5*Math.sin(this.life*2));
-            if(this.x > width + 50) this.x = -50;
-            if(this.x < -50) this.x = width + 50;
+            this.x += Math.sin(this.life) * 1 * sm + Math.sin(wind)*3; this.currentOpacity = this.opacity * (0.5 + 0.5*Math.sin(this.life*2));
+            if(this.x > width + 50) this.x = -50; if(this.x < -50) this.x = width + 50;
             if((movesUp && this.y < -50) || (!movesUp && this.y > height + 50)) { this.reset(); }
         }
         draw() {
@@ -493,7 +414,6 @@
             ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fillStyle = c1; ctx.fill(); ctx.restore();
         }
     }
-
     let cinematicParticles = []; for(let i=0; i<300; i++) cinematicParticles.push(new CinematicParticle());
     function getSymmetricVal(index, totalItems, bufferLen) { try { if (!dataArray) return 0; const center = totalItems / 2; const centerDist = Math.abs(index - center) / center; const dataIdx = Math.floor(centerDist * (bufferLen * 0.6)); return dataArray[dataIdx] / 255; } catch (e) { return 0; } }
 
@@ -501,12 +421,9 @@
       const style = config.visType; ctx.save(); 
       if (isReflection) {
           if (mirrorConfig.showVisReflect === 'no') { ctx.restore(); return; } 
-          ctx.translate(visX, visRefY); 
-          ctx.scale(1, -1); 
-          ctx.globalAlpha = config.visOpacity * 0.45; 
+          ctx.translate(visX, visRefY); ctx.scale(1, -1); ctx.globalAlpha = config.visOpacity * 0.45; 
       } else { 
-          ctx.translate(visX, visY); 
-          ctx.globalAlpha = config.visOpacity; 
+          ctx.translate(visX, visY); ctx.globalAlpha = config.visOpacity; 
       }
       const cy = 0;
       try {
@@ -550,38 +467,28 @@
         else if (style === 'ribbon_wave') { let points = 80; let spacing = visW / points; for(let layer=0; layer<3; layer++) { ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * (config.visHeight * (1 - layer*0.2)); ctx.lineTo(i*spacing, -h - layer*6); } ctx.strokeStyle = `rgba(255, 255, 255, ${0.9 - layer*0.3})`; ctx.lineWidth = 2; ctx.stroke(); } }
         else if (style === 'minimal_line') { let points = 100; let spacing = visW / points; ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * (config.visHeight * 0.7); ctx.lineTo(i*spacing, -h); } ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)'; ctx.lineWidth = 2; ctx.stroke(); ctx.fillStyle = 'rgba(255, 255, 255, 0.4)'; ctx.fillRect(0, cy, visW, 1); }
         else if (style === 'calm_horizon') { let points = 80; let spacing = visW / points; ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * config.visHeight; ctx.lineTo(i*spacing, -h); } let grad = ctx.createLinearGradient(0, cy - config.visHeight, 0, cy); grad.addColorStop(0, '#fffa65'); grad.addColorStop(1, '#ff7f50'); ctx.strokeStyle = grad; ctx.lineWidth = 3; ctx.stroke(); ctx.fillStyle = 'rgba(255, 127, 80, 0.1)'; ctx.lineTo(visW, cy); ctx.lineTo(0, cy); ctx.fill(); }
-        
         else if (style === 'hologram_grid') { let numBars = 32; let spacing = visW/numBars; ctx.strokeStyle = 'rgba(0, 255, 200, 0.6)'; ctx.lineWidth = 1.5; for(let i=0; i<numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; ctx.beginPath(); ctx.moveTo(i*spacing, cy); ctx.lineTo(i*spacing + 20, cy - h); ctx.stroke(); ctx.beginPath(); ctx.moveTo(i*spacing, cy - h); ctx.lineTo(i*spacing + spacing, cy - h); ctx.stroke(); } }
         else if (style === 'digital_dna') { let numBars = 40; let spacing = visW/numBars; for(let i=0; i<numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight * 0.5; let offset = Math.sin(time*2 + i*0.2) * 20; ctx.fillStyle = '#00e5ff'; ctx.fillRect(i*spacing, cy - h + offset, 4, 4); ctx.fillStyle = '#e040fb'; ctx.fillRect(i*spacing, cy - h - offset, 4, 4); ctx.strokeStyle = 'rgba(255,255,255,0.2)'; ctx.beginPath(); ctx.moveTo(i*spacing+2, cy - h + offset); ctx.lineTo(i*spacing+2, cy - h - offset); ctx.stroke(); } }
         else if (style === 'matrix_rain') { let numBars = 48; let spacing = visW/numBars; for(let i=0; i<numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let drops = Math.floor(h/10); for(let j=0; j<drops; j++) { ctx.fillStyle = j === drops-1 ? '#fff' : '#00ff41'; ctx.fillRect(i*spacing, cy - j*10 - ((time*50 + i*15)%10), spacing*0.6, 6); } } }
         else if (style === 'cyber_laser') { let numBars = 20; let spacing = visW/numBars; for(let i=0; i<numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; if(h > 10) { ctx.fillStyle = '#f50057'; ctx.shadowBlur = 10; ctx.shadowColor = '#f50057'; ctx.fillRect(visW/2 - h, cy - i*15, h*2, 3); } } ctx.shadowBlur = 0; }
         else if (style === 'neon_ripple') { let bass = getSymmetricVal(10, 20, bufferLen) * config.visHeight; ctx.strokeStyle = '#00e5ff'; ctx.lineWidth = 2; for(let i=0; i<4; i++) { let r = bass * (1 - i*0.2) + (time*20)%20; ctx.strokeRect(visW/2 - r, cy - r*0.5, r*2, r); } }
         else if (style === 'aurora_borealis') { let numBars = 50; let spacing = visW/numBars; ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let ctrlY = cy - h - Math.sin(time + i*0.1)*30; ctx.quadraticCurveTo(i*spacing, ctrlY, (i+1)*spacing, cy); } let grad = ctx.createLinearGradient(0, cy - config.visHeight, 0, cy); grad.addColorStop(0, 'rgba(0, 255, 200, 0.8)'); grad.addColorStop(1, 'rgba(100, 0, 255, 0.1)'); ctx.fillStyle = grad; ctx.fill(); }
-        else if (style === 'block_tower') { let numBars = 30; let spacing = visW/numBars; let barW = spacing*0.6; for(let i=0; i<numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let x = i*spacing; ctx.fillStyle = '#00bcd4'; ctx.fillRect(x, cy-h, barW, h); ctx.fillStyle = '#0097a7'; ctx.beginPath(); ctx.moveTo(x+barW, cy); ctx.lineTo(x+barW+5, cy-5); ctx.lineTo(x+barW+5, cy-h-5); ctx.lineTo(x+barW, cy-h); ctx.fill(); ctx.fillStyle = '#b2ebf2'; ctx.beginPath(); ctx.moveTo(x, cy-h); ctx.lineTo(x+5, cy-h-5); ctx.lineTo(x+barW+5, cy-h-5); ctx.lineTo(x+barW, cy-h); ctx.fill(); } }
-        else if (style === 'equalizer_3d') { let numBars = 32; let spacing = visW/numBars; let barW = spacing*0.7; for(let i=0; i<numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let grad = ctx.createLinearGradient(i*spacing, 0, i*spacing+barW, 0); grad.addColorStop(0, '#555'); grad.addColorStop(0.5, '#fff'); grad.addColorStop(1, '#555'); ctx.fillStyle = grad; ctx.fillRect(i*spacing, cy-h, barW, h); ctx.fillStyle = '#ddd'; ctx.beginPath(); ctx.ellipse(i*spacing+barW/2, cy-h, barW/2, 4, 0, 0, Math.PI*2); ctx.fill(); ctx.fillStyle = '#333'; ctx.beginPath(); ctx.ellipse(i*spacing+barW/2, cy, barW/2, 4, 0, 0, Math.PI*2); ctx.fill(); } }
-        else if (style === 'floating_blocks') { let numBars = 32; let spacing = visW / numBars; let barW = spacing * 0.7; for (let i = 0; i < numBars; i++) { let val = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.fillRect(i * spacing, cy - val, barW, 8); if(val > 10) { ctx.fillStyle = 'rgba(255, 255, 255, 0.35)'; ctx.fillRect(i * spacing, cy - val + 12, barW, val - 12); } } }
-        else if (style === 'classic_studio') { let numBars = 36; let spacing = visW / numBars; let barW = spacing * 0.75; let segH = 6; for (let i = 0; i < numBars; i++) { let h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let segs = Math.floor(h / (segH + 2)); for (let j = 0; j < segs; j++) { ctx.fillStyle = j > 12 ? '#f44336' : (j > 8 ? '#ffeb3b' : '#00e676'); ctx.fillRect(i * spacing, -(j * (segH + 2)) - segH, barW, segH); } } }
-        
         else if (style === 'classic_spectrum') { let numBars = 64; let spacing = visW / numBars; let barW = spacing * 0.8; for(let i=0; i<numBars; i++) { let h = Math.max(2, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let grad = ctx.createLinearGradient(0, 0, 0, -config.visHeight); grad.addColorStop(0, '#00ff00'); grad.addColorStop(0.6, '#ffff00'); grad.addColorStop(1, '#ff0000'); ctx.fillStyle = grad; ctx.fillRect(i * spacing, -h, barW, h); } }
         else if (style === 'cassette_tape') { let scaleX = visW / 300; let scaleY = config.visHeight / 200; let s = Math.min(scaleX, scaleY); ctx.save(); ctx.translate(visW/2, cy - config.visHeight/2); ctx.scale(s, s); ctx.fillStyle = '#222'; if(ctx.roundRect) ctx.roundRect(-150, -100, 300, 200, 10); else ctx.rect(-150, -100, 300, 200); ctx.fill(); ctx.fillStyle = '#eee'; ctx.fillRect(-130, -80, 260, 110); let rot = time * 2; ctx.save(); ctx.translate(-60, -25); ctx.rotate(rot); ctx.beginPath(); ctx.arc(0,0, 30, 0, Math.PI*2); ctx.fillStyle = '#111'; ctx.fill(); ctx.beginPath(); ctx.arc(0,0, 10, 0, Math.PI*2); ctx.fillStyle = '#eee'; ctx.fill(); for(let i=0; i<6; i++){ ctx.rotate(Math.PI/3); ctx.fillRect(10, -2, 20, 4); } ctx.restore(); ctx.save(); ctx.translate(60, -25); ctx.rotate(rot); ctx.beginPath(); ctx.arc(0,0, 30, 0, Math.PI*2); ctx.fillStyle = '#111'; ctx.fill(); ctx.beginPath(); ctx.arc(0,0, 10, 0, Math.PI*2); ctx.fillStyle = '#eee'; ctx.fill(); for(let i=0; i<6; i++){ ctx.rotate(Math.PI/3); ctx.fillRect(10, -2, 20, 4); } ctx.restore(); ctx.fillStyle = '#000'; ctx.fillRect(-80, -50, 160, 50); ctx.strokeStyle = '#333'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(-60,-25); ctx.lineTo(60,-25); ctx.stroke(); ctx.fillStyle = '#333'; ctx.beginPath(); ctx.moveTo(-100, 40); ctx.lineTo(100, 40); ctx.lineTo(120, 100); ctx.lineTo(-120, 100); ctx.fill(); ctx.restore(); }
         else if (style === 'vintage_vu_meter') { let valBass = dataArray ? dataArray[Math.floor(bufferLen * 0.05)] / 255 : 0; let valTreble = dataArray ? dataArray[Math.floor(bufferLen * 0.3)] / 255 : 0; let boxW = (visW / 2) - 10; let boxH = config.visHeight; function drawVU(x, y, w, h, val) { ctx.save(); ctx.translate(x, y); ctx.fillStyle = '#1e1e1e'; ctx.fillRect(0, 0, w, h); let pad = 8; let sw = w - pad*2; let sh = h - pad*2; let grad = ctx.createLinearGradient(0, pad, 0, pad+sh); grad.addColorStop(0, '#f5b041'); grad.addColorStop(1, '#ffb300'); ctx.fillStyle = grad; ctx.fillRect(pad, pad, sw, sh); ctx.strokeStyle = 'rgba(0,0,0,0.6)'; ctx.lineWidth = 3; ctx.strokeRect(pad, pad, sw, sh); ctx.strokeStyle = 'rgba(255,255,255,0.2)'; ctx.lineWidth = 1; ctx.strokeRect(pad+1, pad+1, sw-2, sh-2); let pivotX = w/2; let pivotY = h - pad - 10; let r = Math.min(sw, sh) * 0.8; ctx.beginPath(); ctx.arc(pivotX, pivotY, r, Math.PI*1.15, Math.PI*1.85); ctx.strokeStyle = '#3e2723'; ctx.lineWidth = 1.5; ctx.stroke(); for(let i=0; i<=20; i++) { let a = Math.PI*1.15 + (i/20)*(Math.PI*0.7); let t = (i%5===0) ? 8 : 4; let c = (i > 14) ? '#d32f2f' : '#3e2723'; ctx.beginPath(); ctx.moveTo(pivotX + Math.cos(a)*r, pivotY + Math.sin(a)*r); ctx.lineTo(pivotX + Math.cos(a)*(r-t), pivotY + Math.sin(a)*(r-t)); ctx.strokeStyle = c; ctx.lineWidth = (i%5===0) ? 1.5 : 1; ctx.stroke(); } ctx.fillStyle = '#3e2723'; ctx.font = 'bold ' + (sh*0.15) + 'px sans-serif'; ctx.textAlign = 'center'; ctx.fillText("VU", pivotX, pivotY - r*0.4); let ang = Math.PI*1.15 + (val * 0.7 * Math.PI); ctx.beginPath(); ctx.moveTo(pivotX+2, pivotY+2); ctx.lineTo(pivotX+2 + Math.cos(ang)*(r+5), pivotY+2 + Math.sin(ang)*(r+5)); ctx.strokeStyle = 'rgba(0,0,0,0.3)'; ctx.lineWidth = 2; ctx.stroke(); ctx.beginPath(); ctx.moveTo(pivotX, pivotY); ctx.lineTo(pivotX + Math.cos(ang)*(r+5), pivotY + Math.sin(ang)*(r+5)); ctx.strokeStyle = '#111'; ctx.lineWidth = 1.5; ctx.stroke(); ctx.beginPath(); ctx.arc(pivotX, pivotY, 4, 0, Math.PI*2); ctx.fillStyle = '#111'; ctx.fill(); ctx.restore(); } drawVU(0, cy - boxH, boxW, boxH, valBass); drawVU(visW - boxW, cy - boxH, boxW, boxH, valTreble); }
         else if (style === 'classic_vinyl') { let cx_c = visW / 2; let cy_c = -config.visHeight / 2; let bass = getSymmetricVal(10, 20, bufferLen); ctx.save(); ctx.translate(cx_c, cy_c); ctx.rotate(time); ctx.beginPath(); ctx.arc(0,0, config.visHeight/2 + bass*10, 0, Math.PI*2); ctx.fillStyle = '#111'; ctx.fill(); ctx.lineWidth = 1.5; for(let i=1; i<=6; i++) { ctx.beginPath(); ctx.arc(0,0, config.visHeight/2 - i*10, 0, Math.PI*2); ctx.strokeStyle = `rgba(255,255,255,${0.05 + bass*0.2})`; ctx.stroke(); } ctx.beginPath(); ctx.arc(0,0, 35, 0, Math.PI*2); ctx.fillStyle = '#ff9800'; ctx.fill(); ctx.beginPath(); ctx.arc(0,0, 5, 0, Math.PI*2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.restore(); }
         else if (style === 'retro_boombox_eq') { let numBars = 16; let spacing = visW / numBars; let barW = spacing * 0.7; let stepH = 8; for(let i=0; i<numBars; i++) { let h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let blocks = Math.floor(h / stepH); for(let j=0; j<blocks; j++) { ctx.fillStyle = j > 15 ? '#ff0000' : (j > 10 ? '#ffff00' : '#00ff00'); ctx.fillRect(i * spacing, -(j * stepH) - stepH + 1, barW, stepH - 2); } } }
-
       } catch (e) {}
       ctx.restore();
     }
 
     function drawSpeakers(bufferLen, isReflection) {
       if (!isBgReady || document.getElementById('speakerStyle').value === 'none') return;
-      
       let scale1 = parseFloat(document.getElementById('speakerSize1').value);
       let scale2 = parseFloat(document.getElementById('speakerSize2').value);
-      
       let bass = 0; if(dataArray) { bass = (dataArray[1] + dataArray[2] + dataArray[3]) / (255 * 3); } if(isNaN(bass)) bass = 0;
       let punchyBass = Math.pow(bass, 2.0);
       if(!isReflection) { if (punchyBass > globalSmoothedBass) { globalSmoothedBass += (punchyBass - globalSmoothedBass) * 0.8; } else { globalSmoothedBass += (punchyBass - globalSmoothedBass) * 0.15; } }
-      
       let finalBass = globalSmoothedBass; 
       let shakeIntensity = parseFloat(document.getElementById('speakerShake').value); let pumpIntensity = parseFloat(document.getElementById('speakerPump').value);
       let shakeX = (Math.random() - 0.5) * finalBass * shakeIntensity; let shakeY = (Math.random() - 0.5) * finalBass * shakeIntensity;
@@ -590,7 +497,6 @@
       let spkScaleX1 = parseFloat(document.getElementById('spkOvalX1').value);
       let spkScaleY1 = parseFloat(document.getElementById('spkOvalY1').value);
       let spkRot1 = parseFloat(document.getElementById('spkRot1').value) * Math.PI / 180;
-
       let spkScaleX2 = parseFloat(document.getElementById('spkOvalX2').value);
       let spkScaleY2 = parseFloat(document.getElementById('spkOvalY2').value);
       let spkRot2 = parseFloat(document.getElementById('spkRot2').value) * Math.PI / 180;
@@ -608,36 +514,25 @@
         } else {
             ctx.translate(x + shakeX, y + shakeY); 
         }
-        
         ctx.beginPath(); 
-        if (ctx.ellipse) {
-            ctx.ellipse(0, 0, baseR * scaleX, baseR * scaleY, rot, 0, Math.PI * 2);
-        } else {
-            ctx.arc(0, 0, baseR, 0, Math.PI * 2); 
-        }
+        if (ctx.ellipse) { ctx.ellipse(0, 0, baseR * scaleX, baseR * scaleY, rot, 0, Math.PI * 2); } else { ctx.arc(0, 0, baseR, 0, Math.PI * 2); }
         ctx.clip(); 
-        
         if (isReflection) {
             let maxR = baseR * Math.max(scaleX, scaleY);
             let cropH = (mirrorConfig.spkReflectCrop / 100) * (maxR * 2);
             ctx.beginPath(); ctx.rect(-maxR*2, maxR - cropH, maxR * 4, cropH); ctx.clip();
         }
-        
         ctx.scale(pump, pump);
         ctx.drawImage(bgImageElement, bgGlobalX - x, bgGlobalY - y, bgImageElement.width * bgGlobalScale, bgImageElement.height * bgGlobalScale);
-        
         if (mirrorConfig.showSpkDot === 'yes') {
             ctx.scale(1/pump, 1/pump);
             ctx.beginPath(); ctx.arc(0, 0, 4, 0, Math.PI*2);
             ctx.fillStyle = isReflection ? 'rgba(255, 0, 85, 0.5)' : '#ff0055'; 
-            ctx.fill();
-            ctx.lineWidth = 1; ctx.strokeStyle = isReflection ? 'rgba(255, 255, 255, 0.5)' : '#ffffff'; 
+            ctx.fill(); ctx.lineWidth = 1; ctx.strokeStyle = isReflection ? 'rgba(255, 255, 255, 0.5)' : '#ffffff'; 
             ctx.stroke();
         }
-
         ctx.restore();
       }
-      
       drawLiveBackgroundSpeaker(spk1X, spk1Y, spk1RefY, scale1, spkScaleX1, spkScaleY1, spkRot1); 
       drawLiveBackgroundSpeaker(spk2X, spk2Y, spk2RefY, scale2, spkScaleX2, spkScaleY2, spkRot2);
     }
@@ -677,9 +572,7 @@
         if(style === 'none') return; ctx.save(); 
         if (isReflection) {
             if (mirrorConfig.showCandleReflect === 'no') { ctx.restore(); return; }
-            ctx.translate(x, refY);
-            ctx.scale(1, -1);
-            ctx.globalAlpha = 0.45;
+            ctx.translate(x, refY); ctx.scale(1, -1); ctx.globalAlpha = 0.45;
         } else {
             ctx.translate(x, y); 
         }
@@ -696,36 +589,29 @@
 
     function animate() {
       ctx.fillStyle = "#000"; ctx.fillRect(0, 0, width, height); time += 0.05; ctx.save();
-      
       if (isBgReady) { bgGlobalScale = Math.max(width / bgImageElement.width, height / bgImageElement.height); bgGlobalX = (width / 2) - (bgImageElement.width / 2) * bgGlobalScale; bgGlobalY = (height / 2) - (bgImageElement.height / 2) * bgGlobalScale; ctx.drawImage(bgImageElement, bgGlobalX, bgGlobalY, bgImageElement.width * bgGlobalScale, bgImageElement.height * bgGlobalScale); }
       if (isAudioInit && currentObjectUrl) { if (!audioPlayer.paused) analyser.getByteFrequencyData(dataArray); else for (let i = 0; i < dataArray.length; i++) dataArray[i] = Math.max(0, dataArray[i] - 10); }
 
       let propScale = parseFloat(document.getElementById('propSize').value); let propSpeed = parseFloat(document.getElementById('propSpeed').value);
-
-      // 1. ELEMEN ASLI
       if (isAudioInit && currentObjectUrl) drawVisualizer(analyser.frequencyBinCount, false);
       drawSpeakers(isAudioInit ? analyser.frequencyBinCount : 128, false);
 
-      // 2. ELEMEN PANTULAN
       if (isAudioInit && currentObjectUrl) drawVisualizer(analyser.frequencyBinCount, true);
       drawSpeakers(isAudioInit ? analyser.frequencyBinCount : 128, true);
       drawCandle(candle1X, candle1Y, candle1RefY, document.getElementById('candleStyle').value, propScale, propSpeed, true); 
       drawCandle(candle2X, candle2Y, candle2RefY, document.getElementById('candleStyle').value, propScale, propSpeed, true);
 
-      // 3. MEJA KACA GELAP MURNI
       if (mirrorConfig.showGlassLine === 'yes' || mirrorConfig.showVisReflect === 'yes' || mirrorConfig.showSpkReflect === 'yes' || mirrorConfig.showCandleReflect === 'yes') {
           let mirrorGrad = ctx.createLinearGradient(0, mirrorY, 0, height);
           mirrorGrad.addColorStop(0, 'rgba(0,0,0,0.15)'); mirrorGrad.addColorStop(0.5, 'rgba(0,0,0,0.7)'); mirrorGrad.addColorStop(1, 'rgba(0,0,0,0.95)');
           ctx.fillStyle = mirrorGrad; ctx.fillRect(0, mirrorY, width, height - mirrorY);
       }
 
-      // 4. PROP & PARTIKEL ASLI
       drawCoffeeSteam(coffeeX, coffeeY, document.getElementById('coffeeStyle').value, propScale, propSpeed);
       drawCandle(candle1X, candle1Y, candle1RefY, document.getElementById('candleStyle').value, propScale, propSpeed, false); 
       drawCandle(candle2X, candle2Y, candle2RefY, document.getElementById('candleStyle').value, propScale, propSpeed, false);
 
       for (let i = 0; i < config.count; i++) { if (cinematicParticles[i]) { cinematicParticles[i].update(); cinematicParticles[i].draw(); } }
-
       ctx.restore(); requestAnimationFrame(animate);
     }
     animate();
