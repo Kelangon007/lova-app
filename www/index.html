@@ -2,49 +2,52 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mirror 720p (Compact 2-Column UI)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Mirror 720p (Responsive Native App UI)</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
-    body { margin: 0; background-color: #111; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; }
+    body { margin: 0; background-color: #111; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; overflow-x: hidden; }
     #canvas-wrapper { position: relative; width: 100%; max-width: 800px; aspect-ratio: 16/9; margin-top: 20px; border: 1px solid rgba(255, 255, 255, 0.2); background: #000; box-shadow: 0 15px 50px rgba(0, 0, 0, 0.9); cursor: grab; overflow: hidden; }
     #canvas-wrapper:active { cursor: grabbing; }
     canvas { width: 100%; height: 100%; display: block; }
     
-    #controls { width: 95%; max-width: 800px; background: #1a1a1a; padding: 15px; border-radius: 12px; margin-top: 20px; border: 1px solid #333; display: flex; flex-direction: column; gap: 15px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); box-sizing: border-box; }
+    #controls { width: 96%; max-width: 800px; background: #1a1a1a; padding: 12px; border-radius: 12px; margin-top: 15px; border: 1px solid #333; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); box-sizing: border-box; }
     
     .btn-group, .play-group { display: flex; gap: 8px; width: 100%; }
-    .file-label { flex: 1; background: #2b2b2b; color: #ccc; padding: 12px 5px; text-align: center; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; border: 1px solid #444; transition: 0.2s; white-space: nowrap; }
+    .file-label { flex: 1; background: #2b2b2b; color: #ccc; padding: 10px 5px; text-align: center; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; border: 1px solid #444; transition: 0.2s; white-space: nowrap; }
     .file-label:hover { background: #3b3b3b; color: white; }
-    #playBtn { flex: 2; padding: 15px; background: #333; color: #888; border: 1px solid #222; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+    #playBtn { flex: 2; padding: 12px; background: #333; color: #888; border: 1px solid #222; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
     #playBtn.ready { background: linear-gradient(135deg, #d4af37, #00e5ff); color: #111; border: none; }
-    #nextBtn { flex: 1; padding: 15px; background: #444; color: #aaa; border: 1px solid #333; border-radius: 8px; font-weight: bold; cursor: not-allowed; transition: 0.3s; }
+    #nextBtn { flex: 1; padding: 12px; background: #444; color: #aaa; border: 1px solid #333; border-radius: 8px; font-weight: bold; cursor: not-allowed; transition: 0.3s; }
     #nextBtn.ready { background: #2a2a2a; color: white; border: 1px solid #555; cursor: pointer; }
     
-    .progress-container { display: flex; align-items: center; gap: 10px; background: #222; padding: 10px; border-radius: 8px; border: 1px solid #333; }
-    .time-text { font-size: 11px; font-family: monospace; color: #d4af37; min-width: 40px; text-align: center; }
-    #progressBar { flex: 1; height: 6px; -webkit-appearance: none; background: #444; border-radius: 5px; cursor: pointer; }
-    #progressBar::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; background: #00e5ff; border-radius: 50%; cursor: pointer; }
-    .btn-record { width: 100%; padding: 15px; background: linear-gradient(135deg, #ff4444, #d32f2f); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; }
+    .progress-container { display: flex; align-items: center; gap: 8px; background: #222; padding: 8px; border-radius: 8px; border: 1px solid #333; }
+    .time-text { font-size: 10px; font-family: monospace; color: #d4af37; min-width: 35px; text-align: center; }
+    #progressBar { flex: 1; height: 5px; -webkit-appearance: none; background: #444; border-radius: 5px; cursor: pointer; }
+    #progressBar::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; background: #00e5ff; border-radius: 50%; cursor: pointer; }
+    .btn-record { width: 100%; padding: 15px; background: linear-gradient(135deg, #ff4444, #d32f2f); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; margin-top: 10px; }
     
     #stopOverlay { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(220, 20, 60, 0.95); color: white; padding: 15px 30px; border-radius: 50px; z-index: 100; font-weight: bold; border: 3px solid white; cursor: pointer; }
     #countdownOverlay { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 100px; font-weight: bold; color: white; text-shadow: 0 0 20px rgba(0, 0, 0, 0.8); z-index: 100; }
-    #statusBox { font-size: 13px; text-align: center; color: #00d2ff; margin-bottom: 5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 5px; background: #111; border-radius: 6px; }
+    #statusBox { font-size: 12px; text-align: center; color: #00d2ff; margin-bottom: 2px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 5px; background: #111; border-radius: 6px; }
     
-    /* CSS GRID 2 KOLOM */
-    .grid-2col { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; width: 100%; box-sizing: border-box; }
+    /* FIX: GRID 2 KOLOM 100% PERSENTASE (ANTI-OVERFLOW) */
+    .grid-2col { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 100%; box-sizing: border-box; }
     .full-width { grid-column: span 2; }
     
-    .layout-col { background: #222; padding: 12px 10px; border-radius: 8px; border: 1px solid #3c3c3c; display: flex; flex-direction: column; gap: 10px; box-sizing: border-box; }
+    .layout-col { background: #222; padding: 10px 8px; border-radius: 8px; border: 1px solid #3c3c3c; display: flex; flex-direction: column; gap: 10px; box-sizing: border-box; overflow: hidden; }
     .layout-col > label { width: 100%; text-align: center; font-size: 11px; margin-bottom: 2px; font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase; }
     
     .row { display: flex; align-items: center; justify-content: space-between; gap: 5px; width: 100%; box-sizing: border-box; }
-    .row label { font-size: 9px; min-width: 65px; color: #ccc; font-weight: 600; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .row label { font-size: 9px; width: 40%; color: #ccc; font-weight: 600; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
-    input[type="range"], select { flex: 1; min-width: 50px; height: 32px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px; font-size: 11px; padding: 0 5px; box-sizing: border-box; cursor: pointer; }
-    select.full-select { width: 100%; margin-bottom: 5px; }
+    input[type="range"], select { width: 60%; height: 32px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px; font-size: 10px; padding: 0 5px; box-sizing: border-box; cursor: pointer; }
+    select.full-select { width: 100%; margin-bottom: 5px; font-size: 11px; }
     input[type="file"] { display: none; }
     optgroup { background: #111; color: #00e5ff; font-weight: bold; }
+
+    /* Garis pemisah tipis */
+    hr.thin-line { border: 0; border-top: 1px solid #333; width: 100%; margin: 0; }
   </style>
 </head>
 
@@ -56,11 +59,11 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Mirror 720p (Compact Grid UI).</div>
+    <div id="statusBox">Siap. Mirror 720p (Native App UI Fixed).</div>
     
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
-      <label for="audioInput" class="file-label" style="border-bottom: 3px solid #00bcd4">2. MUSIK (BANYAK)</label>
+      <label for="audioInput" class="file-label" style="border-bottom: 3px solid #00bcd4">2. MUSIK</label>
     </div>
 
     <div class="play-group">
@@ -77,7 +80,7 @@
     <input type="file" id="bgInput" accept="image/*">
     <input type="file" id="audioInput" accept="audio/*" multiple>
 
-    <hr style="border: 0; border-top: 1px solid #333; width: 100%;">
+    <hr class="thin-line">
 
     <!-- GRID 1: VISUALIZER & SPEAKER ASLI -->
     <div class="grid-2col">
@@ -165,13 +168,7 @@
               <option value="none">🚫 Mati</option>
             </select>
         </div>
-        <div class="row">
-            <label>TITIK TENGAH</label>
-            <select id="showSpkDot">
-                <option value="yes">🟢 Nyala</option>
-                <option value="no">🚫 Mati</option>
-            </select>
-        </div>
+        <div class="row"><label>TITIK TGH</label><select id="showSpkDot"><option value="yes">Nyala</option><option value="no">Mati</option></select></div>
         <div class="row"><label>UK. KIRI</label><input type="range" id="speakerSize1" min="0.2" max="5.0" step="0.1" value="1.5"></div>
         <div class="row"><label>UK. KANAN</label><input type="range" id="speakerSize2" min="0.2" max="5.0" step="0.1" value="1.5"></div>
         <div class="row"><label style="color:#ff5252;">GETARAN</label><input type="range" id="speakerShake" min="0" max="30" step="1" value="10"></div>
@@ -182,13 +179,13 @@
     <!-- GRID 2: PERSPEKTIF -->
     <div class="grid-2col">
       <div class="layout-col">
-        <label style="color:#00bcd4;">PERSPEKTIF KIRI</label>
+        <label style="color:#00bcd4;">PERSPEK. KIRI</label>
         <div class="row"><label>OVAL X</label><input type="range" id="spkOvalX1" min="0.1" max="2.0" step="0.05" value="1.0"></div>
         <div class="row"><label>OVAL Y</label><input type="range" id="spkOvalY1" min="0.1" max="2.0" step="0.05" value="1.0"></div>
         <div class="row"><label>SUDUT</label><input type="range" id="spkRot1" min="-90" max="90" step="1" value="0"></div>
       </div>
       <div class="layout-col">
-        <label style="color:#00bcd4;">PERSPEKTIF KANAN</label>
+        <label style="color:#00bcd4;">PERSPEK. KANAN</label>
         <div class="row"><label>OVAL X</label><input type="range" id="spkOvalX2" min="0.1" max="2.0" step="0.05" value="1.0"></div>
         <div class="row"><label>OVAL Y</label><input type="range" id="spkOvalY2" min="0.1" max="2.0" step="0.05" value="1.0"></div>
         <div class="row"><label>SUDUT</label><input type="range" id="spkRot2" min="-90" max="90" step="1" value="0"></div>
@@ -198,14 +195,14 @@
     <!-- GRID 3: PANTULAN -->
     <div class="grid-2col">
       <div class="layout-col" style="border-color: #00bcd4;">
-        <label style="color:#00bcd4;">SAKLAR PANTULAN</label>
-        <div class="row"><label>GARIS MEJA</label><select id="showGlassLine"><option value="yes">🟢 Nyala</option><option value="no">🚫 Mati</option></select></div>
-        <div class="row"><label>VISUALIZER</label><select id="showVisReflect"><option value="yes">🟢 Nyala</option><option value="no">🚫 Mati</option></select></div>
-        <div class="row"><label>SPEAKER</label><select id="showSpkReflect"><option value="yes">🟢 Nyala</option><option value="no">🚫 Mati</option></select></div>
-        <div class="row"><label>API LILIN</label><select id="showCandleReflect"><option value="yes">🟢 Nyala</option><option value="no">🚫 Mati</option></select></div>
+        <label style="color:#00bcd4;">SAKLAR KACA</label>
+        <div class="row"><label>GRS MEJA</label><select id="showGlassLine"><option value="yes">Nyala</option><option value="no">Mati</option></select></div>
+        <div class="row"><label>PANT. VIS</label><select id="showVisReflect"><option value="yes">Nyala</option><option value="no">Mati</option></select></div>
+        <div class="row"><label>PANT. SPK</label><select id="showSpkReflect"><option value="yes">Nyala</option><option value="no">Mati</option></select></div>
+        <div class="row"><label>PANT. LILIN</label><select id="showCandleReflect"><option value="yes">Nyala</option><option value="no">Mati</option></select></div>
       </div>
       <div class="layout-col" style="border-color: #00bcd4;">
-        <label style="color:#00e5ff;">SETTING PANTULAN</label>
+        <label style="color:#00e5ff;">SETTING KACA</label>
         <div class="row"><label>POTONG SPK</label><input type="range" id="spkReflectCrop" min="10" max="100" value="100"></div>
         <div class="row"><label>OPASITAS</label><input type="range" id="spkReflectOpacity" min="0.1" max="1.0" step="0.05" value="0.45"></div>
         <div class="row"><label>UKURAN</label><input type="range" id="spkReflectSize" min="0.1" max="2.0" step="0.1" value="1.0"></div>
@@ -220,32 +217,29 @@
           <option value="none">🚫 Tanpa Asap</option>
           <option value="soft_steam">☕ 1. Soft Warm Steam</option>
           <option value="swirl_vapor">🌪️ 2. Swirling Vapor</option>
-          <option value="thin_wisp">🌬️ 3. Thin Elegant Wisp</option>
-          <option value="heavy_steam">☁️ 4. Heavy Morning Steam</option>
-          <option value="wind_steam">🍃 5. Breezy Coffee Steam</option>
+          <option value="thin_wisp">🌬️ 3. Thin Elegant</option>
+          <option value="heavy_steam">☁️ 4. Heavy Morning</option>
+          <option value="wind_steam">🍃 5. Breezy Coffee</option>
         </select>
+        <div class="row"><label>UKURAN</label><input type="range" id="propSize" min="0.2" max="5.0" step="0.1" value="1.0"></div>
       </div>
       <div class="layout-col">
         <label style="color:#ff8a65;">API LILIN</label>
         <select id="candleStyle" class="full-select">
           <option value="none">🚫 Tanpa Lilin</option>
-          <option value="calm_flame">🕯️ 1. Calm Warm Flame</option>
-          <option value="flicker_flame">🕯️ 2. Flickering Flame</option>
+          <option value="calm_flame">🕯️ 1. Calm Warm</option>
+          <option value="flicker_flame">🕯️ 2. Flickering</option>
           <option value="bright_glow">🌟 3. Bright Glowing</option>
-          <option value="blue_base">🔵 4. Blue-Base Real Flame</option>
-          <option value="wind_flame">🌬️ 5. Wind-blown Flame</option>
+          <option value="blue_base">🔵 4. Blue-Base Flame</option>
+          <option value="wind_flame">🌬️ 5. Wind-blown</option>
         </select>
+        <div class="row"><label>KCPTN</label><input type="range" id="propSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
       </div>
     </div>
 
-    <!-- PENGATURAN GLOBAL PROP & PARTIKEL -->
-    <div class="layout-col full-width" style="padding: 12px;">
-        <div class="row"><label style="min-width: 80px;">UKURAN PROP</label><input type="range" id="propSize" min="0.2" max="5.0" step="0.1" value="1.0"></div>
-        <div class="row"><label style="min-width: 80px;">KCPTN PROP</label><input type="range" id="propSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
-    </div>
-
-    <div class="layout-col full-width" style="padding: 12px;">
-        <label style="color:#00e5ff; text-align:left; margin-bottom:8px;">EFEK PARTIKEL LINGKUNGAN</label>
+    <!-- EFEK PARTIKEL LINGKUNGAN -->
+    <div class="layout-col full-width">
+        <label style="color:#00e5ff; text-align:left;">EFEK PARTIKEL LINGKUNGAN</label>
         <div class="grid-2col">
             <select id="type" class="full-select">
               <option value="none">🚫 Tanpa Partikel</option>
@@ -268,11 +262,13 @@
               <option value="-30">Miring Kiri 30°</option>
             </select>
         </div>
-        <div class="row" style="margin-top:5px;"><label style="min-width: 80px;">KECEPATAN FX</label><input type="range" id="fxSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
-        <div class="row"><label style="min-width: 80px;">JUMLAH FX</label><input type="range" id="count" min="0" max="400" value="100"></div>
+        <div class="grid-2col">
+            <div class="row"><label>KECEPATAN</label><input type="range" id="fxSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
+            <div class="row"><label>JUMLAH</label><input type="range" id="count" min="0" max="400" value="100"></div>
+        </div>
     </div>
 
-    <button class="btn-record" id="recordBtn" onclick="startCountdownAndRecord()" style="margin-top: 15px;">🔴 MULAI REKAM 720p</button>
+    <button class="btn-record" id="recordBtn" onclick="startCountdownAndRecord()">🔴 MULAI REKAM 720p</button>
   </div>
 
   <audio id="audioPlayer" crossorigin="anonymous"></audio>
@@ -535,22 +531,12 @@
         else if (style === 'minimal_line') { let points = 100; let spacing = visW / points; ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * (config.visHeight * 0.7); ctx.lineTo(i*spacing, -h); } ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)'; ctx.lineWidth = 2; ctx.stroke(); ctx.fillStyle = 'rgba(255, 255, 255, 0.4)'; ctx.fillRect(0, cy, visW, 1); }
         else if (style === 'calm_horizon') { let points = 80; let spacing = visW / points; ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * config.visHeight; ctx.lineTo(i*spacing, -h); } let grad = ctx.createLinearGradient(0, cy - config.visHeight, 0, cy); grad.addColorStop(0, '#fffa65'); grad.addColorStop(1, '#ff7f50'); ctx.strokeStyle = grad; ctx.lineWidth = 3; ctx.stroke(); ctx.fillStyle = 'rgba(255, 127, 80, 0.1)'; ctx.lineTo(visW, cy); ctx.lineTo(0, cy); ctx.fill(); }
         
-        else if (style === 'elegant_piano') { let numBars = 52; let spacing = visW / numBars; let barW = spacing * 0.85; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; for (let i = 0; i < numBars; i++) { let h = Math.max(10, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillRect(i * spacing, cy, barW, -h); ctx.fillStyle = 'rgba(0,0,0,0.1)'; ctx.fillRect(i * spacing, cy, barW, -h); ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; } }
-        else if (style === 'cinematic_streaks') { let numBars = 40; let spacing = visW / numBars; for (let i = 0; i < numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let grad = ctx.createLinearGradient(0, cy, 0, cy - h); grad.addColorStop(0, 'rgba(255,255,255,0.8)'); grad.addColorStop(1, 'rgba(255,255,255,0)'); ctx.fillStyle = grad; ctx.fillRect(i * spacing + spacing/2 - 1, cy - h, 2, h); } }
-        else if (style === 'ghost_ambient') { let numBars = 20; let spacing = visW / numBars; let barW = spacing * 0.9; for (let i = 0; i < numBars; i++) { let h = Math.max(10, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillStyle = 'rgba(255, 255, 255, 0.15)'; ctx.shadowBlur = 20; ctx.shadowColor = '#fff'; ctx.fillRect(i * spacing, cy - h, barW, h); } ctx.shadowBlur = 0; }
-        else if (style === 'glitch_tech') { let numBars = 36; let spacing = visW / numBars; let barW = spacing * 0.7; ctx.fillStyle = '#fff'; for (let i = 0; i < numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; if(h > 15) { ctx.fillRect(i * spacing, cy - h, barW, h); ctx.clearRect(i * spacing - 1, cy - h + Math.random()*h, barW + 2, Math.random()*5+2); } else { ctx.fillRect(i * spacing, cy - 2, barW, 2); } } }
-        else if (style === 'diamond_eq') { let numBars = 30; let spacing = visW / numBars; ctx.fillStyle = 'rgba(255,255,255,0.8)'; for (let i = 0; i < numBars; i++) { let h = Math.max(5, getSymmetricVal(i, numBars, bufferLen) * (config.visHeight/2)); let cx = i * spacing + spacing/2; ctx.beginPath(); ctx.moveTo(cx, cy - h); ctx.lineTo(cx + spacing*0.4, cy); ctx.lineTo(cx, cy + h); ctx.lineTo(cx - spacing*0.4, cy); ctx.fill(); } }
-        else if (style === 'particle_fountain') { let numBars = 45; let spacing = visW / numBars; for (let i = 0; i < numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; ctx.fillStyle = `rgba(255,255,255,${0.2 + h/config.visHeight})`; ctx.beginPath(); ctx.arc(i * spacing + spacing/2, cy - h, Math.random()*2+1.5, 0, Math.PI*2); ctx.fill(); if(h > 20) { ctx.beginPath(); ctx.arc(i * spacing + spacing/2, cy - h + 15, Math.random()*1.5, 0, Math.PI*2); ctx.fill(); } } }
         else if (style === 'hologram_grid') { let numBars = 32; let spacing = visW/numBars; ctx.strokeStyle = 'rgba(0, 255, 200, 0.6)'; ctx.lineWidth = 1.5; for(let i=0; i<numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; ctx.beginPath(); ctx.moveTo(i*spacing, cy); ctx.lineTo(i*spacing + 20, cy - h); ctx.stroke(); ctx.beginPath(); ctx.moveTo(i*spacing, cy - h); ctx.lineTo(i*spacing + spacing, cy - h); ctx.stroke(); } }
         else if (style === 'digital_dna') { let numBars = 40; let spacing = visW/numBars; for(let i=0; i<numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight * 0.5; let offset = Math.sin(time*2 + i*0.2) * 20; ctx.fillStyle = '#00e5ff'; ctx.fillRect(i*spacing, cy - h + offset, 4, 4); ctx.fillStyle = '#e040fb'; ctx.fillRect(i*spacing, cy - h - offset, 4, 4); ctx.strokeStyle = 'rgba(255,255,255,0.2)'; ctx.beginPath(); ctx.moveTo(i*spacing+2, cy - h + offset); ctx.lineTo(i*spacing+2, cy - h - offset); ctx.stroke(); } }
         else if (style === 'matrix_rain') { let numBars = 48; let spacing = visW/numBars; for(let i=0; i<numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let drops = Math.floor(h/10); for(let j=0; j<drops; j++) { ctx.fillStyle = j === drops-1 ? '#fff' : '#00ff41'; ctx.fillRect(i*spacing, cy - j*10 - ((time*50 + i*15)%10), spacing*0.6, 6); } } }
         else if (style === 'cyber_laser') { let numBars = 20; let spacing = visW/numBars; for(let i=0; i<numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; if(h > 10) { ctx.fillStyle = '#f50057'; ctx.shadowBlur = 10; ctx.shadowColor = '#f50057'; ctx.fillRect(visW/2 - h, cy - i*15, h*2, 3); } } ctx.shadowBlur = 0; }
         else if (style === 'neon_ripple') { let bass = getSymmetricVal(10, 20, bufferLen) * config.visHeight; ctx.strokeStyle = '#00e5ff'; ctx.lineWidth = 2; for(let i=0; i<4; i++) { let r = bass * (1 - i*0.2) + (time*20)%20; ctx.strokeRect(visW/2 - r, cy - r*0.5, r*2, r); } }
         else if (style === 'aurora_borealis') { let numBars = 50; let spacing = visW/numBars; ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let ctrlY = cy - h - Math.sin(time + i*0.1)*30; ctx.quadraticCurveTo(i*spacing, ctrlY, (i+1)*spacing, cy); } let grad = ctx.createLinearGradient(0, cy - config.visHeight, 0, cy); grad.addColorStop(0, 'rgba(0, 255, 200, 0.8)'); grad.addColorStop(1, 'rgba(100, 0, 255, 0.1)'); ctx.fillStyle = grad; ctx.fill(); }
-        else if (style === 'block_tower') { let numBars = 30; let spacing = visW/numBars; let barW = spacing*0.6; for(let i=0; i<numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let x = i*spacing; ctx.fillStyle = '#00bcd4'; ctx.fillRect(x, cy-h, barW, h); ctx.fillStyle = '#0097a7'; ctx.beginPath(); ctx.moveTo(x+barW, cy); ctx.lineTo(x+barW+5, cy-5); ctx.lineTo(x+barW+5, cy-h-5); ctx.lineTo(x+barW, cy-h); ctx.fill(); ctx.fillStyle = '#b2ebf2'; ctx.beginPath(); ctx.moveTo(x, cy-h); ctx.lineTo(x+5, cy-h-5); ctx.lineTo(x+barW+5, cy-h-5); ctx.lineTo(x+barW, cy-h); ctx.fill(); } }
-        else if (style === 'equalizer_3d') { let numBars = 32; let spacing = visW/numBars; let barW = spacing*0.7; for(let i=0; i<numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let grad = ctx.createLinearGradient(i*spacing, 0, i*spacing+barW, 0); grad.addColorStop(0, '#555'); grad.addColorStop(0.5, '#fff'); grad.addColorStop(1, '#555'); ctx.fillStyle = grad; ctx.fillRect(i*spacing, cy-h, barW, h); ctx.fillStyle = '#ddd'; ctx.beginPath(); ctx.ellipse(i*spacing+barW/2, cy-h, barW/2, 4, 0, 0, Math.PI*2); ctx.fill(); ctx.fillStyle = '#333'; ctx.beginPath(); ctx.ellipse(i*spacing+barW/2, cy, barW/2, 4, 0, 0, Math.PI*2); ctx.fill(); } }
-        else if (style === 'floating_blocks') { let numBars = 32; let spacing = visW / numBars; let barW = spacing * 0.7; for (let i = 0; i < numBars; i++) { let val = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.fillRect(i * spacing, cy - val, barW, 8); if(val > 10) { ctx.fillStyle = 'rgba(255, 255, 255, 0.35)'; ctx.fillRect(i * spacing, cy - val + 12, barW, val - 12); } } }
-        else if (style === 'classic_studio') { let numBars = 36; let spacing = visW / numBars; let barW = spacing * 0.75; let segH = 6; for (let i = 0; i < numBars; i++) { let h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let segs = Math.floor(h / (segH + 2)); for (let j = 0; j < segs; j++) { ctx.fillStyle = j > 12 ? '#f44336' : (j > 8 ? '#ffeb3b' : '#00e676'); ctx.fillRect(i * spacing, -(j * (segH + 2)) - segH, barW, segH); } } }
         
         else if (style === 'classic_spectrum') { let numBars = 64; let spacing = visW / numBars; let barW = spacing * 0.8; for(let i=0; i<numBars; i++) { let h = Math.max(2, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let grad = ctx.createLinearGradient(0, 0, 0, -config.visHeight); grad.addColorStop(0, '#00ff00'); grad.addColorStop(0.6, '#ffff00'); grad.addColorStop(1, '#ff0000'); ctx.fillStyle = grad; ctx.fillRect(i * spacing, -h, barW, h); } }
         else if (style === 'cassette_tape') { let scaleX = visW / 300; let scaleY = config.visHeight / 200; let s = Math.min(scaleX, scaleY); ctx.save(); ctx.translate(visW/2, cy - config.visHeight/2); ctx.scale(s, s); ctx.fillStyle = '#222'; if(ctx.roundRect) ctx.roundRect(-150, -100, 300, 200, 10); else ctx.rect(-150, -100, 300, 200); ctx.fill(); ctx.fillStyle = '#eee'; ctx.fillRect(-130, -80, 260, 110); let rot = time * 2; ctx.save(); ctx.translate(-60, -25); ctx.rotate(rot); ctx.beginPath(); ctx.arc(0,0, 30, 0, Math.PI*2); ctx.fillStyle = '#111'; ctx.fill(); ctx.beginPath(); ctx.arc(0,0, 10, 0, Math.PI*2); ctx.fillStyle = '#eee'; ctx.fill(); for(let i=0; i<6; i++){ ctx.rotate(Math.PI/3); ctx.fillRect(10, -2, 20, 4); } ctx.restore(); ctx.save(); ctx.translate(60, -25); ctx.rotate(rot); ctx.beginPath(); ctx.arc(0,0, 30, 0, Math.PI*2); ctx.fillStyle = '#111'; ctx.fill(); ctx.beginPath(); ctx.arc(0,0, 10, 0, Math.PI*2); ctx.fillStyle = '#eee'; ctx.fill(); for(let i=0; i<6; i++){ ctx.rotate(Math.PI/3); ctx.fillRect(10, -2, 20, 4); } ctx.restore(); ctx.fillStyle = '#000'; ctx.fillRect(-80, -50, 160, 50); ctx.strokeStyle = '#333'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(-60,-25); ctx.lineTo(60,-25); ctx.stroke(); ctx.fillStyle = '#333'; ctx.beginPath(); ctx.moveTo(-100, 40); ctx.lineTo(100, 40); ctx.lineTo(120, 100); ctx.lineTo(-120, 100); ctx.fill(); ctx.restore(); }
