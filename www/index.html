@@ -3,14 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mirror 720p (Dual Perspective Engine)</title>
+  <title>Mirror 720p (Compact 2-Column UI)</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body { margin: 0; background-color: #111; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; }
     #canvas-wrapper { position: relative; width: 100%; max-width: 800px; aspect-ratio: 16/9; margin-top: 20px; border: 1px solid rgba(255, 255, 255, 0.2); background: #000; box-shadow: 0 15px 50px rgba(0, 0, 0, 0.9); cursor: grab; overflow: hidden; }
     #canvas-wrapper:active { cursor: grabbing; }
     canvas { width: 100%; height: 100%; display: block; }
-    #controls { width: 90%; max-width: 600px; background: #1a1a1a; padding: 20px; border-radius: 12px; margin-top: 20px; border: 1px solid #333; display: flex; flex-direction: column; gap: 15px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); box-sizing: border-box; }
+    
+    #controls { width: 95%; max-width: 800px; background: #1a1a1a; padding: 15px; border-radius: 12px; margin-top: 20px; border: 1px solid #333; display: flex; flex-direction: column; gap: 15px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); box-sizing: border-box; }
+    
     .btn-group, .play-group { display: flex; gap: 8px; width: 100%; }
     .file-label { flex: 1; background: #2b2b2b; color: #ccc; padding: 12px 5px; text-align: center; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; border: 1px solid #444; transition: 0.2s; white-space: nowrap; }
     .file-label:hover { background: #3b3b3b; color: white; }
@@ -18,23 +20,29 @@
     #playBtn.ready { background: linear-gradient(135deg, #d4af37, #00e5ff); color: #111; border: none; }
     #nextBtn { flex: 1; padding: 15px; background: #444; color: #aaa; border: 1px solid #333; border-radius: 8px; font-weight: bold; cursor: not-allowed; transition: 0.3s; }
     #nextBtn.ready { background: #2a2a2a; color: white; border: 1px solid #555; cursor: pointer; }
+    
     .progress-container { display: flex; align-items: center; gap: 10px; background: #222; padding: 10px; border-radius: 8px; border: 1px solid #333; }
     .time-text { font-size: 11px; font-family: monospace; color: #d4af37; min-width: 40px; text-align: center; }
     #progressBar { flex: 1; height: 6px; -webkit-appearance: none; background: #444; border-radius: 5px; cursor: pointer; }
     #progressBar::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; background: #00e5ff; border-radius: 50%; cursor: pointer; }
     .btn-record { width: 100%; padding: 15px; background: linear-gradient(135deg, #ff4444, #d32f2f); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; }
+    
     #stopOverlay { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(220, 20, 60, 0.95); color: white; padding: 15px 30px; border-radius: 50px; z-index: 100; font-weight: bold; border: 3px solid white; cursor: pointer; }
     #countdownOverlay { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 100px; font-weight: bold; color: white; text-shadow: 0 0 20px rgba(0, 0, 0, 0.8); z-index: 100; }
     #statusBox { font-size: 13px; text-align: center; color: #00d2ff; margin-bottom: 5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 5px; background: #111; border-radius: 6px; }
     
-    .layout-grid { display: flex; flex-direction: column; gap: 15px; width: 100%; box-sizing: border-box; }
-    .layout-col { background: #222; padding: 15px; border-radius: 8px; border: 1px solid #3c3c3c; display: flex; flex-direction: column; gap: 12px; width: 100%; box-sizing: border-box; }
-    .layout-col > label { width: 100%; text-align: center; font-size: 13px; margin-bottom: 5px; font-weight: bold; letter-spacing: 1px; }
+    /* CSS GRID 2 KOLOM */
+    .grid-2col { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; width: 100%; box-sizing: border-box; }
+    .full-width { grid-column: span 2; }
     
-    .row { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; box-sizing: border-box; }
-    .row label { font-size: 11px; min-width: 95px; color: #ccc; font-weight: 600; text-transform: uppercase; white-space: nowrap; }
+    .layout-col { background: #222; padding: 12px 10px; border-radius: 8px; border: 1px solid #3c3c3c; display: flex; flex-direction: column; gap: 10px; box-sizing: border-box; }
+    .layout-col > label { width: 100%; text-align: center; font-size: 11px; margin-bottom: 2px; font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase; }
     
-    input[type="range"], select { flex: 1; min-width: 100px; height: 38px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px; font-size: 12px; padding: 0 5px; box-sizing: border-box; cursor: pointer; }
+    .row { display: flex; align-items: center; justify-content: space-between; gap: 5px; width: 100%; box-sizing: border-box; }
+    .row label { font-size: 9px; min-width: 65px; color: #ccc; font-weight: 600; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    
+    input[type="range"], select { flex: 1; min-width: 50px; height: 32px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px; font-size: 11px; padding: 0 5px; box-sizing: border-box; cursor: pointer; }
+    select.full-select { width: 100%; margin-bottom: 5px; }
     input[type="file"] { display: none; }
     optgroup { background: #111; color: #00e5ff; font-weight: bold; }
   </style>
@@ -48,7 +56,7 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Mirror 720p (Dual Perspective Engine).</div>
+    <div id="statusBox">Siap. Mirror 720p (Compact Grid UI).</div>
     
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
@@ -71,93 +79,90 @@
 
     <hr style="border: 0; border-top: 1px solid #333; width: 100%;">
 
-    <div class="layout-grid">
-      <!-- VISUALIZER -->
+    <!-- GRID 1: VISUALIZER & SPEAKER ASLI -->
+    <div class="grid-2col">
       <div class="layout-col">
-        <label style="color:#00d2ff;">VISUALIZER UTAMA</label>
-        <div class="row">
-            <select id="visType" style="width:100%; flex:none;">
-                <optgroup label="=== SOLID BARS ===">
-                    <option value="vintage_bars">📊 1. Vintage Solid Bars</option>
-                    <option value="winamp_classic">📻 2. Winamp Peaks</option>
-                    <option value="classic_eq">🎙️ 3. Classic Green-Red EQ</option>
-                    <option value="step_eq">🧱 4. Step Block EQ</option>
-                    <option value="thin_eq">📏 5. Thin Minimalist EQ</option>
-                    <option value="thick_bars">⬛ 6. Bold Solid Bars</option>
-                    <option value="hollow_bars">🔲 7. Hollow Outline Bars</option>
-                    <option value="rounded_bars">💊 8. Rounded Tip Bars</option>
-                    <option value="split_eq">⏸️ 9. Split Center EQ</option>
-                    <option value="double_mirror">🪞 10. Dual Mirror Bars</option>
-                </optgroup>
-                <optgroup label="=== PEAKS & DOTS ===">
-                    <option value="dotted_eq">⏺️ 11. Dotted Peak EQ</option>
-                    <option value="led_matrix">🚥 12. LED Dot Matrix</option>
-                    <option value="analog_vu">🎛️ 13. Analog VU Meter</option>
-                    <option value="retro_oscilloscope">📺 14. CRT Oscilloscope</option>
-                    <option value="peak_line">〰️ 15. Floating Peak Line</option>
-                    <option value="peak_dots_only">⚪ 16. Floating Dots Peak</option>
-                    <option value="dash_bars">➖ 17. Dashed Segment Bars</option>
-                    <option value="meter_blocks">📶 18. Meter Blocks</option>
-                    <option value="soft_glow_bars">🌟 19. Glowing Ambient Bars</option>
-                    <option value="white_caps">🧢 20. Bars with White Cap</option>
-                </optgroup>
-                <optgroup label="=== MODERN GRADIENT ===">
-                    <option value="liquid_bar">💧 21. Liquid Glowing Cyan</option>
-                    <option value="cyber_pulse">⚡ 22. Neon Pulse Bars</option>
-                    <option value="mirror_bars">🪞 23. Mirrored Glass Bars</option>
-                    <option value="gradient_blocks">🎛️ 24. Cyan-Blue Gradient</option>
-                    <option value="sunset_bars">🌅 25. Warm Sunset Gradient</option>
-                    <option value="emerald_bars">💎 26. Emerald Green Grad</option>
-                    <option value="purple_haze">🟣 27. Purple-Pink Soft</option>
-                    <option value="gold_classic">👑 28. Golden Elegant EQ</option>
-                    <option value="monochrome_fade">🎞️ 29. Grayscale Fading</option>
-                    <option value="dual_tone">🌗 30. Dual Tone Top-Bot</option>
-                </optgroup>
-                <optgroup label="=== WAVES & LINES ===">
-                    <option value="modern_wave">🌊 31. Modern Smooth Wave</option>
-                    <option value="filled_wave">🌊 32. Filled Ambient Wave</option>
-                    <option value="double_wave">〰️ 33. Double Layer Wave</option>
-                    <option value="thin_wave">✒️ 34. Ultra Thin Line</option>
-                    <option value="shadow_wave">🌒 35. Wave with Shadow</option>
-                    <option value="stereo_lines">⏸️ 36. Dual Parallel Lines</option>
-                    <option value="smooth_curve">🔔 37. Bell Curve Wave</option>
-                    <option value="ribbon_wave">🎀 38. Flowing Ribbon Wave</option>
-                    <option value="minimal_line">➖ 39. Minimalist Baseline</option>
-                    <option value="calm_horizon">🌅 40. Calm Horizon Glow</option>
-                </optgroup>
-                <optgroup label="=== MODERN & UNIQUE ===">
-                    <option value="hologram_grid">🧊 41. Hologram 3D Grid</option>
-                    <option value="digital_dna">🧬 42. Digital DNA Wave</option>
-                    <option value="matrix_rain">🌧️ 43. Matrix Digital Rain</option>
-                    <option value="cyber_laser">💥 44. Cyber Laser Beams</option>
-                    <option value="neon_ripple">🔲 45. Neon Square Ripple</option>
-                    <option value="aurora_borealis">🌌 46. Aurora Borealis Glow</option>
-                    <option value="block_tower">🏙️ 47. Clean 3D EQ Blocks</option>
-                    <option value="equalizer_3d">🛠️ 48. Cylinder Studio EQ</option>
-                    <option value="floating_blocks">🧊 49. Floating Blocks</option>
-                    <option value="classic_studio">🎙️ 50. Pro Studio Rack</option>
-                </optgroup>
-                <optgroup label="=== RETRO & CLASSIC ===">
-                    <option value="classic_spectrum">🌈 51. Classic Spectrum Analyzer</option>
-                    <option value="cassette_tape">📼 52. Spinning Cassette Tape</option>
-                    <option value="vintage_vu_meter">🎛️ 53. Box Vintage VU Meter</option>
-                    <option value="classic_vinyl">💿 54. Classic Vinyl Record</option>
-                    <option value="retro_boombox_eq">📻 55. Retro Boombox LED EQ</option>
-                </optgroup>
-            </select>
-        </div>
-        <div class="row"><label>TINGGI VIS.</label><input type="range" id="visHeight" min="30" max="600" value="150"></div>
-        <div class="row"><label>LEBAR VIS.</label><input type="range" id="visWidth" min="100" max="1100" value="400"></div>
+        <label style="color:#00d2ff;">VISUALIZER</label>
+        <select id="visType" class="full-select">
+            <optgroup label="=== SOLID BARS ===">
+                <option value="vintage_bars">📊 1. Vintage Solid Bars</option>
+                <option value="winamp_classic">📻 2. Winamp Peaks</option>
+                <option value="classic_eq">🎙️ 3. Classic Green-Red EQ</option>
+                <option value="step_eq">🧱 4. Step Block EQ</option>
+                <option value="thin_eq">📏 5. Thin Minimalist EQ</option>
+                <option value="thick_bars">⬛ 6. Bold Solid Bars</option>
+                <option value="hollow_bars">🔲 7. Hollow Outline Bars</option>
+                <option value="rounded_bars">💊 8. Rounded Tip Bars</option>
+                <option value="split_eq">⏸️ 9. Split Center EQ</option>
+                <option value="double_mirror">🪞 10. Dual Mirror Bars</option>
+            </optgroup>
+            <optgroup label="=== PEAKS & DOTS ===">
+                <option value="dotted_eq">⏺️ 11. Dotted Peak EQ</option>
+                <option value="led_matrix">🚥 12. LED Dot Matrix</option>
+                <option value="analog_vu">🎛️ 13. Analog VU Meter</option>
+                <option value="retro_oscilloscope">📺 14. CRT Oscilloscope</option>
+                <option value="peak_line">〰️ 15. Floating Peak Line</option>
+                <option value="peak_dots_only">⚪ 16. Floating Dots Peak</option>
+                <option value="dash_bars">➖ 17. Dashed Segment Bars</option>
+                <option value="meter_blocks">📶 18. Meter Blocks</option>
+                <option value="soft_glow_bars">🌟 19. Glowing Ambient Bars</option>
+                <option value="white_caps">🧢 20. Bars with White Cap</option>
+            </optgroup>
+            <optgroup label="=== MODERN GRADIENT ===">
+                <option value="liquid_bar">💧 21. Liquid Glowing Cyan</option>
+                <option value="cyber_pulse">⚡ 22. Neon Pulse Bars</option>
+                <option value="mirror_bars">🪞 23. Mirrored Glass Bars</option>
+                <option value="gradient_blocks">🎛️ 24. Cyan-Blue Gradient</option>
+                <option value="sunset_bars">🌅 25. Warm Sunset Gradient</option>
+                <option value="emerald_bars">💎 26. Emerald Green Grad</option>
+                <option value="purple_haze">🟣 27. Purple-Pink Soft</option>
+                <option value="gold_classic">👑 28. Golden Elegant EQ</option>
+                <option value="monochrome_fade">🎞️ 29. Grayscale Fading</option>
+                <option value="dual_tone">🌗 30. Dual Tone Top-Bot</option>
+            </optgroup>
+            <optgroup label="=== WAVES & LINES ===">
+                <option value="modern_wave">🌊 31. Modern Smooth Wave</option>
+                <option value="filled_wave">🌊 32. Filled Ambient Wave</option>
+                <option value="double_wave">〰️ 33. Double Layer Wave</option>
+                <option value="thin_wave">✒️ 34. Ultra Thin Line</option>
+                <option value="shadow_wave">🌒 35. Wave with Shadow</option>
+                <option value="stereo_lines">⏸️ 36. Dual Parallel Lines</option>
+                <option value="smooth_curve">🔔 37. Bell Curve Wave</option>
+                <option value="ribbon_wave">🎀 38. Flowing Ribbon Wave</option>
+                <option value="minimal_line">➖ 39. Minimalist Baseline</option>
+                <option value="calm_horizon">🌅 40. Calm Horizon Glow</option>
+            </optgroup>
+            <optgroup label="=== MODERN & UNIQUE ===">
+                <option value="hologram_grid">🧊 41. Hologram 3D Grid</option>
+                <option value="digital_dna">🧬 42. Digital DNA Wave</option>
+                <option value="matrix_rain">🌧️ 43. Matrix Digital Rain</option>
+                <option value="cyber_laser">💥 44. Cyber Laser Beams</option>
+                <option value="neon_ripple">🔲 45. Neon Square Ripple</option>
+                <option value="aurora_borealis">🌌 46. Aurora Borealis Glow</option>
+                <option value="block_tower">🏙️ 47. Clean 3D EQ Blocks</option>
+                <option value="equalizer_3d">🛠️ 48. Cylinder Studio EQ</option>
+                <option value="floating_blocks">🧊 49. Floating Blocks</option>
+                <option value="classic_studio">🎙️ 50. Pro Studio Rack</option>
+            </optgroup>
+            <optgroup label="=== RETRO & CLASSIC ===">
+                <option value="classic_spectrum">🌈 51. Classic Spectrum Analyzer</option>
+                <option value="cassette_tape">📼 52. Spinning Cassette Tape</option>
+                <option value="vintage_vu_meter">🎛️ 53. Box Vintage VU Meter</option>
+                <option value="classic_vinyl">💿 54. Classic Vinyl Record</option>
+                <option value="retro_boombox_eq">📻 55. Retro Boombox LED EQ</option>
+            </optgroup>
+        </select>
+        <div class="row"><label>TINGGI</label><input type="range" id="visHeight" min="30" max="600" value="150"></div>
+        <div class="row"><label>LEBAR</label><input type="range" id="visWidth" min="100" max="1100" value="400"></div>
         <div class="row"><label>OPASITAS</label><input type="range" id="visOpacity" min="0.1" max="1.0" step="0.05" value="1.0"></div>
       </div>
 
-      <!-- DAUN SPEAKER -->
       <div class="layout-col">
-        <label style="color:#ffb300;">DAUN SPEAKER ASLI</label>
+        <label style="color:#ffb300;">DAUN SPEAKER</label>
         <div class="row">
-            <select id="speakerStyle" style="width:100%; flex:none;">
-              <option value="active">🟢 Aktifkan Speaker</option>
-              <option value="none">🚫 Matikan Speaker</option>
+            <select id="speakerStyle" class="full-select">
+              <option value="active">🟢 Nyala</option>
+              <option value="none">🚫 Mati</option>
             </select>
         </div>
         <div class="row">
@@ -167,99 +172,104 @@
                 <option value="no">🚫 Mati</option>
             </select>
         </div>
-        <div class="row"><label>UKURAN KIRI</label><input type="range" id="speakerSize1" min="0.2" max="5.0" step="0.1" value="1.5"></div>
-        <div class="row"><label>UKURAN KANAN</label><input type="range" id="speakerSize2" min="0.2" max="5.0" step="0.1" value="1.5"></div>
-        
-        <!-- PERSPEKTIF KIRI -->
-        <hr style="border: 0; border-top: 1px dashed #444; width: 100%; margin: 0;">
-        <label style="color:#00bcd4; font-size:10px;">PERSPEKTIF KIRI (3D FAKE)</label>
-        <div class="row"><label>OVAL X</label><input type="range" id="spkOvalX1" min="0.1" max="2.0" step="0.05" value="1.0"></div>
-        <div class="row"><label>OVAL Y</label><input type="range" id="spkOvalY1" min="0.1" max="2.0" step="0.05" value="1.0"></div>
-        <div class="row"><label>SUDUT</label><input type="range" id="spkRot1" min="-90" max="90" step="1" value="0"></div>
-
-        <!-- PERSPEKTIF KANAN -->
-        <hr style="border: 0; border-top: 1px dashed #444; width: 100%; margin: 0;">
-        <label style="color:#00bcd4; font-size:10px;">PERSPEKTIF KANAN (3D FAKE)</label>
-        <div class="row"><label>OVAL X</label><input type="range" id="spkOvalX2" min="0.1" max="2.0" step="0.05" value="1.0"></div>
-        <div class="row"><label>OVAL Y</label><input type="range" id="spkOvalY2" min="0.1" max="2.0" step="0.05" value="1.0"></div>
-        <div class="row"><label>SUDUT</label><input type="range" id="spkRot2" min="-90" max="90" step="1" value="0"></div>
-        <hr style="border: 0; border-top: 1px dashed #444; width: 100%; margin: 0;">
-
+        <div class="row"><label>UK. KIRI</label><input type="range" id="speakerSize1" min="0.2" max="5.0" step="0.1" value="1.5"></div>
+        <div class="row"><label>UK. KANAN</label><input type="range" id="speakerSize2" min="0.2" max="5.0" step="0.1" value="1.5"></div>
         <div class="row"><label style="color:#ff5252;">GETARAN</label><input type="range" id="speakerShake" min="0" max="30" step="1" value="10"></div>
         <div class="row"><label style="color:#ff5252;">DENTUMAN</label><input type="range" id="speakerPump" min="0" max="2.0" step="0.1" value="0.5"></div>
       </div>
+    </div>
 
-      <!-- SAKLAR PANTULAN KACA -->
+    <!-- GRID 2: PERSPEKTIF -->
+    <div class="grid-2col">
+      <div class="layout-col">
+        <label style="color:#00bcd4;">PERSPEKTIF KIRI</label>
+        <div class="row"><label>OVAL X</label><input type="range" id="spkOvalX1" min="0.1" max="2.0" step="0.05" value="1.0"></div>
+        <div class="row"><label>OVAL Y</label><input type="range" id="spkOvalY1" min="0.1" max="2.0" step="0.05" value="1.0"></div>
+        <div class="row"><label>SUDUT</label><input type="range" id="spkRot1" min="-90" max="90" step="1" value="0"></div>
+      </div>
+      <div class="layout-col">
+        <label style="color:#00bcd4;">PERSPEKTIF KANAN</label>
+        <div class="row"><label>OVAL X</label><input type="range" id="spkOvalX2" min="0.1" max="2.0" step="0.05" value="1.0"></div>
+        <div class="row"><label>OVAL Y</label><input type="range" id="spkOvalY2" min="0.1" max="2.0" step="0.05" value="1.0"></div>
+        <div class="row"><label>SUDUT</label><input type="range" id="spkRot2" min="-90" max="90" step="1" value="0"></div>
+      </div>
+    </div>
+
+    <!-- GRID 3: PANTULAN -->
+    <div class="grid-2col">
       <div class="layout-col" style="border-color: #00bcd4;">
-        <label style="color:#00bcd4;">KONTROL PANTULAN MEJA</label>
-        <div class="row"><label>GARIS KACA</label><select id="showGlassLine"><option value="yes">🟢 Nyala</option><option value="no">🚫 Mati</option></select></div>
-        <div class="row"><label>PANT. VIS.</label><select id="showVisReflect"><option value="yes">🟢 Nyala</option><option value="no">🚫 Mati</option></select></div>
-        <div class="row"><label>PANT. SPK.</label><select id="showSpkReflect"><option value="yes">🟢 Nyala</option><option value="no">🚫 Mati</option></select></div>
-        <div class="row"><label>PANT. LILIN</label><select id="showCandleReflect"><option value="yes">🟢 Nyala</option><option value="no">🚫 Mati</option></select></div>
-        <div class="row"><label style="color:#00e5ff;">POTONG SPK.</label><input type="range" id="spkReflectCrop" min="10" max="100" value="100"></div>
-        <div class="row"><label style="color:#00e5ff;">OPAS. PANTUL</label><input type="range" id="spkReflectOpacity" min="0.1" max="1.0" step="0.05" value="0.45"></div>
-        <div class="row"><label style="color:#00e5ff;">UKURAN PANT.</label><input type="range" id="spkReflectSize" min="0.1" max="2.0" step="0.1" value="1.0"></div>
+        <label style="color:#00bcd4;">SAKLAR PANTULAN</label>
+        <div class="row"><label>GARIS MEJA</label><select id="showGlassLine"><option value="yes">🟢 Nyala</option><option value="no">🚫 Mati</option></select></div>
+        <div class="row"><label>VISUALIZER</label><select id="showVisReflect"><option value="yes">🟢 Nyala</option><option value="no">🚫 Mati</option></select></div>
+        <div class="row"><label>SPEAKER</label><select id="showSpkReflect"><option value="yes">🟢 Nyala</option><option value="no">🚫 Mati</option></select></div>
+        <div class="row"><label>API LILIN</label><select id="showCandleReflect"><option value="yes">🟢 Nyala</option><option value="no">🚫 Mati</option></select></div>
       </div>
-
-      <!-- PROPERTI TAMBAHAN -->
-      <div class="layout-col">
-        <label style="color:#d7ccc8;">ASAP & LILIN</label>
-        <div class="row">
-            <label>ASAP KOPI</label>
-            <select id="coffeeStyle">
-              <option value="none">🚫 Tanpa Asap</option>
-              <option value="soft_steam">☕ 1. Soft Warm Steam</option>
-              <option value="swirl_vapor">🌪️ 2. Swirling Vapor</option>
-              <option value="thin_wisp">🌬️ 3. Thin Elegant Wisp</option>
-              <option value="heavy_steam">☁️ 4. Heavy Morning Steam</option>
-              <option value="wind_steam">🍃 5. Breezy Coffee Steam</option>
-            </select>
-        </div>
-        <div class="row">
-            <label style="color:#ff8a65;">API LILIN</label>
-            <select id="candleStyle">
-              <option value="none">🚫 Tanpa Lilin</option>
-              <option value="calm_flame">🕯️ 1. Calm Warm Flame</option>
-              <option value="flicker_flame">🕯️ 2. Flickering Flame</option>
-              <option value="bright_glow">🌟 3. Bright Glowing</option>
-              <option value="blue_base">🔵 4. Blue-Base Real Flame</option>
-              <option value="wind_flame">🌬️ 5. Wind-blown Flame</option>
-            </select>
-        </div>
-        <div class="row"><label>UKURAN</label><input type="range" id="propSize" min="0.2" max="5.0" step="0.1" value="1.0"></div>
-        <div class="row"><label>KECEPATAN</label><input type="range" id="propSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
+      <div class="layout-col" style="border-color: #00bcd4;">
+        <label style="color:#00e5ff;">SETTING PANTULAN</label>
+        <div class="row"><label>POTONG SPK</label><input type="range" id="spkReflectCrop" min="10" max="100" value="100"></div>
+        <div class="row"><label>OPASITAS</label><input type="range" id="spkReflectOpacity" min="0.1" max="1.0" step="0.05" value="0.45"></div>
+        <div class="row"><label>UKURAN</label><input type="range" id="spkReflectSize" min="0.1" max="2.0" step="0.1" value="1.0"></div>
       </div>
+    </div>
 
+    <!-- GRID 4: ASAP & LILIN -->
+    <div class="grid-2col">
       <div class="layout-col">
-        <label style="color:#00e5ff;">EFEK PARTIKEL LINGKUNGAN</label>
-        <div class="row">
-            <select id="type" style="width:100%; flex:none;">
+        <label style="color:#d7ccc8;">ASAP KOPI</label>
+        <select id="coffeeStyle" class="full-select">
+          <option value="none">🚫 Tanpa Asap</option>
+          <option value="soft_steam">☕ 1. Soft Warm Steam</option>
+          <option value="swirl_vapor">🌪️ 2. Swirling Vapor</option>
+          <option value="thin_wisp">🌬️ 3. Thin Elegant Wisp</option>
+          <option value="heavy_steam">☁️ 4. Heavy Morning Steam</option>
+          <option value="wind_steam">🍃 5. Breezy Coffee Steam</option>
+        </select>
+      </div>
+      <div class="layout-col">
+        <label style="color:#ff8a65;">API LILIN</label>
+        <select id="candleStyle" class="full-select">
+          <option value="none">🚫 Tanpa Lilin</option>
+          <option value="calm_flame">🕯️ 1. Calm Warm Flame</option>
+          <option value="flicker_flame">🕯️ 2. Flickering Flame</option>
+          <option value="bright_glow">🌟 3. Bright Glowing</option>
+          <option value="blue_base">🔵 4. Blue-Base Real Flame</option>
+          <option value="wind_flame">🌬️ 5. Wind-blown Flame</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- PENGATURAN GLOBAL PROP & PARTIKEL -->
+    <div class="layout-col full-width" style="padding: 12px;">
+        <div class="row"><label style="min-width: 80px;">UKURAN PROP</label><input type="range" id="propSize" min="0.2" max="5.0" step="0.1" value="1.0"></div>
+        <div class="row"><label style="min-width: 80px;">KCPTN PROP</label><input type="range" id="propSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
+    </div>
+
+    <div class="layout-col full-width" style="padding: 12px;">
+        <label style="color:#00e5ff; text-align:left; margin-bottom:8px;">EFEK PARTIKEL LINGKUNGAN</label>
+        <div class="grid-2col">
+            <select id="type" class="full-select">
               <option value="none">🚫 Tanpa Partikel</option>
-              <option value="dust_motes">✨ 1. Butiran Debu Emas</option>
-              <option value="magic_sparks">💫 2. Percikan Sihir Biru</option>
-              <option value="floating_embers">🔥 3. Bara Api Terbang</option>
-              <option value="bokeh_orbs">🫧 4. Bokeh Orbs Sinematik</option>
-              <option value="snow_dust">❄️ 5. Debu Salju Halus</option>
-              <option value="fairy_light">🧚 6. Cahaya Peri Berpendar</option>
-              <option value="ash_particles">🌪️ 7. Abu Hitam Melayang</option>
-              <option value="starlight_glint">🌟 8. Kilauan Bintang Halus</option>
-              <option value="deep_sea_motes">🌊 9. Partikel Air Laut</option>
-              <option value="golden_pollen">🌼 10. Serbuk Sari Emas</option>
+              <option value="dust_motes">✨ Butiran Debu Emas</option>
+              <option value="magic_sparks">💫 Percikan Sihir</option>
+              <option value="floating_embers">🔥 Bara Api Terbang</option>
+              <option value="bokeh_orbs">🫧 Bokeh Sinematik</option>
+              <option value="snow_dust">❄️ Debu Salju Halus</option>
+              <option value="fairy_light">🧚 Cahaya Peri</option>
+              <option value="ash_particles">🌪️ Abu Hitam</option>
+              <option value="starlight_glint">🌟 Kilauan Bintang</option>
+              <option value="deep_sea_motes">🌊 Partikel Air</option>
+              <option value="golden_pollen">🌼 Serbuk Sari</option>
+            </select>
+            <select id="fxAngle" class="full-select">
+              <option value="0">Lurus (Normal)</option>
+              <option value="15">Miring Kanan 15°</option>
+              <option value="30">Miring Kanan 30°</option>
+              <option value="-15">Miring Kiri 15°</option>
+              <option value="-30">Miring Kiri 30°</option>
             </select>
         </div>
-        <div class="row">
-          <label>ARAH EFEK</label>
-          <select id="fxAngle">
-            <option value="0">Lurus (Normal)</option>
-            <option value="15">Miring Kanan 15°</option>
-            <option value="30">Miring Kanan 30°</option>
-            <option value="-15">Miring Kiri 15°</option>
-            <option value="-30">Miring Kiri 30°</option>
-          </select>
-        </div>
-        <div class="row"><label>KECEPATAN FX</label><input type="range" id="fxSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
-        <div class="row"><label>JUMLAH FX</label><input type="range" id="count" min="0" max="400" value="100"></div>
-      </div>
+        <div class="row" style="margin-top:5px;"><label style="min-width: 80px;">KECEPATAN FX</label><input type="range" id="fxSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
+        <div class="row"><label style="min-width: 80px;">JUMLAH FX</label><input type="range" id="count" min="0" max="400" value="100"></div>
     </div>
 
     <button class="btn-record" id="recordBtn" onclick="startCountdownAndRecord()" style="margin-top: 15px;">🔴 MULAI REKAM 720p</button>
@@ -434,10 +444,8 @@
             this.opacity = Math.random() * 0.6 + 0.2;
             this.life = Math.random() * 100;
             this.wobbleSpeed = Math.random() * 0.05 + 0.01;
-            
             if(config.type === 'bokeh_orbs') { this.size = Math.random() * 15 + 5; this.opacity = Math.random()*0.3+0.1; }
             if(config.type === 'snow_dust' || config.type === 'ash_particles') { this.speedY = Math.random() * 2 + 1; }
-
             let movesUp = ['dust_motes', 'golden_pollen', 'magic_sparks', 'floating_embers', 'bokeh_orbs', 'fairy_light', 'deep_sea_motes'].includes(config.type);
             if (init) { this.y = Math.random() * height; } else { this.y = movesUp ? height + 50 + Math.random()*50 : -50 - Math.random()*50; }
         }
@@ -446,12 +454,10 @@
             let wind = config.fxAngle * Math.PI / 180;
             let sm = config.fxSpeed;
             this.life += this.wobbleSpeed;
-            
             let movesUp = ['dust_motes', 'golden_pollen', 'magic_sparks', 'floating_embers', 'bokeh_orbs', 'fairy_light', 'deep_sea_motes'].includes(config.type);
             if (movesUp) { this.y -= this.speedY * sm * 0.5; } else { this.y += this.speedY * sm; }
             this.x += Math.sin(this.life) * 1 * sm + Math.sin(wind)*3;
             this.currentOpacity = this.opacity * (0.5 + 0.5*Math.sin(this.life*2));
-            
             if(this.x > width + 50) this.x = -50;
             if(this.x < -50) this.x = width + 50;
             if((movesUp && this.y < -50) || (!movesUp && this.y > height + 50)) { this.reset(); }
@@ -571,12 +577,10 @@
       let shakeX = (Math.random() - 0.5) * finalBass * shakeIntensity; let shakeY = (Math.random() - 0.5) * finalBass * shakeIntensity;
       let pump = 1.0 + (finalBass * pumpIntensity);
 
-      // BACA PERSPEKTIF KIRI
       let spkScaleX1 = parseFloat(document.getElementById('spkOvalX1').value);
       let spkScaleY1 = parseFloat(document.getElementById('spkOvalY1').value);
       let spkRot1 = parseFloat(document.getElementById('spkRot1').value) * Math.PI / 180;
 
-      // BACA PERSPEKTIF KANAN
       let spkScaleX2 = parseFloat(document.getElementById('spkOvalX2').value);
       let spkScaleY2 = parseFloat(document.getElementById('spkOvalY2').value);
       let spkRot2 = parseFloat(document.getElementById('spkRot2').value) * Math.PI / 180;
