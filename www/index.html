@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mirror 720p (Box VU Meter & Scalable Tape)</title>
+  <title>Mirror 720p (Dual Speaker Size)</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body { margin: 0; background-color: #111; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; }
@@ -48,7 +48,7 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Mirror 720p (Custom Box VU Meter & Scale Tape).</div>
+    <div id="statusBox">Siap. Mirror 720p (Dual Speaker Size Engine!).</div>
     
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
@@ -137,7 +137,7 @@
                     <option value="floating_blocks">🧊 49. Floating Blocks</option>
                     <option value="classic_studio">🎙️ 50. Pro Studio Rack</option>
                 </optgroup>
-                <optgroup label="=== RETRO & CLASSIC (NEW) ===">
+                <optgroup label="=== RETRO & CLASSIC ===">
                     <option value="classic_spectrum">🌈 51. Classic Spectrum Analyzer</option>
                     <option value="cassette_tape">📼 52. Spinning Cassette Tape</option>
                     <option value="vintage_vu_meter">🎛️ 53. Box Vintage VU Meter</option>
@@ -167,7 +167,9 @@
                 <option value="no">🚫 Mati</option>
             </select>
         </div>
-        <div class="row"><label>UKURAN DASAR</label><input type="range" id="speakerSize" min="0.2" max="5.0" step="0.1" value="1.5"></div>
+        <!-- FITUR BARU: 2 SLIDER UKURAN INDEPENDEN -->
+        <div class="row"><label>UK. KIRI</label><input type="range" id="speakerSize1" min="0.2" max="5.0" step="0.1" value="1.5"></div>
+        <div class="row"><label>UK. KANAN</label><input type="range" id="speakerSize2" min="0.2" max="5.0" step="0.1" value="1.5"></div>
         
         <hr style="border: 0; border-top: 1px dashed #444; width: 100%; margin: 0;">
         <label style="color:#00bcd4; font-size:10px;">PERSPEKTIF SUDUT (3D FAKE)</label>
@@ -348,19 +350,28 @@
     function getMousePos(e) { const rect = canvas.getBoundingClientRect(); const scaleX = canvas.width / rect.width; const scaleY = canvas.height / rect.height; let clientX = e.clientX; let clientY = e.clientY; if (e.touches && e.touches.length > 0) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; } return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY }; }
 
     function startDrag(e) {
-      const pos = getMousePos(e); const spkScale = parseFloat(document.getElementById('speakerSize').value); const clickRadius = 60 * spkScale;
+      const pos = getMousePos(e); 
+      // BACA SKALA MASING-MASING SPEAKER
+      const spk1Scale = parseFloat(document.getElementById('speakerSize1').value); 
+      const spk2Scale = parseFloat(document.getElementById('speakerSize2').value); 
+      const r1 = 60 * spk1Scale;
+      const r2 = 60 * spk2Scale;
+      
       if (mirrorConfig.showGlassLine === 'yes' && Math.abs(pos.y - mirrorY) <= 30) { isDraggingMirrorLine = true; dragOffsetY = pos.y - mirrorY; if (e.cancelable) e.preventDefault(); return; }
+      
       if (mirrorConfig.showSpkReflect === 'yes' && document.getElementById('speakerStyle').value !== 'none') {
-          if (Math.hypot(pos.x - spk1X, pos.y - spk1RefY) <= clickRadius) { isDraggingSpk1Ref = true; dragOffsetY = pos.y - spk1RefY; if (e.cancelable) e.preventDefault(); return; }
-          if (Math.hypot(pos.x - spk2X, pos.y - spk2RefY) <= clickRadius) { isDraggingSpk2Ref = true; dragOffsetY = pos.y - spk2RefY; if (e.cancelable) e.preventDefault(); return; }
+          if (Math.hypot(pos.x - spk1X, pos.y - spk1RefY) <= r1) { isDraggingSpk1Ref = true; dragOffsetY = pos.y - spk1RefY; if (e.cancelable) e.preventDefault(); return; }
+          if (Math.hypot(pos.x - spk2X, pos.y - spk2RefY) <= r2) { isDraggingSpk2Ref = true; dragOffsetY = pos.y - spk2RefY; if (e.cancelable) e.preventDefault(); return; }
       }
       if (mirrorConfig.showVisReflect === 'yes' && pos.x >= visX && pos.x <= visX + visW && pos.y >= visRefY - 100 && pos.y <= visRefY + 150) { isDraggingVisRef = true; dragOffsetY = pos.y - visRefY; if (e.cancelable) e.preventDefault(); return; }
+      
       if (mirrorConfig.showCandleReflect === 'yes' && document.getElementById('candleStyle').value !== 'none') {
         if (Math.hypot(pos.x - candle1X, pos.y - candle1RefY) <= 40) { isDraggingCandle1Ref = true; dragOffsetY = pos.y - candle1RefY; if (e.cancelable) e.preventDefault(); return; }
         if (Math.hypot(pos.x - candle2X, pos.y - candle2RefY) <= 40) { isDraggingCandle2Ref = true; dragOffsetY = pos.y - candle2RefY; if (e.cancelable) e.preventDefault(); return; }
       }
-      if (Math.hypot(pos.x - spk1X, pos.y - spk1Y) <= Math.max(40, clickRadius) && document.getElementById('speakerStyle').value !== 'none') { isDraggingSpk1 = true; dragOffsetX = pos.x - spk1X; dragOffsetY = pos.y - spk1Y; if (e.cancelable) e.preventDefault(); return; }
-      if (Math.hypot(pos.x - spk2X, pos.y - spk2Y) <= Math.max(40, clickRadius) && document.getElementById('speakerStyle').value !== 'none') { isDraggingSpk2 = true; dragOffsetX = pos.x - spk2X; dragOffsetY = pos.y - spk2Y; if (e.cancelable) e.preventDefault(); return; }
+
+      if (Math.hypot(pos.x - spk1X, pos.y - spk1Y) <= Math.max(40, r1) && document.getElementById('speakerStyle').value !== 'none') { isDraggingSpk1 = true; dragOffsetX = pos.x - spk1X; dragOffsetY = pos.y - spk1Y; if (e.cancelable) e.preventDefault(); return; }
+      if (Math.hypot(pos.x - spk2X, pos.y - spk2Y) <= Math.max(40, r2) && document.getElementById('speakerStyle').value !== 'none') { isDraggingSpk2 = true; dragOffsetX = pos.x - spk2X; dragOffsetY = pos.y - spk2Y; if (e.cancelable) e.preventDefault(); return; }
       if (document.getElementById('coffeeStyle').value !== 'none' && Math.hypot(pos.x - coffeeX, pos.y - coffeeY) <= 50) { isDraggingCoffee = true; dragOffsetX = pos.x - coffeeX; dragOffsetY = pos.y - coffeeY; if (e.cancelable) e.preventDefault(); return; }
       if (document.getElementById('candleStyle').value !== 'none') {
         if (Math.hypot(pos.x - candle1X, pos.y - candle1Y) <= 40) { isDraggingCandle1 = true; dragOffsetX = pos.x - candle1X; dragOffsetY = pos.y - candle1Y; if (e.cancelable) e.preventDefault(); return; }
@@ -373,11 +384,13 @@
       if (!isDraggingVis && !isDraggingSpk1 && !isDraggingSpk2 && !isDraggingCoffee && !isDraggingCandle1 && !isDraggingCandle2 && !isDraggingVisRef && !isDraggingSpk1Ref && !isDraggingSpk2Ref && !isDraggingMirrorLine && !isDraggingCandle1Ref && !isDraggingCandle2Ref) return;
       const pos = getMousePos(e);
       if (isDraggingMirrorLine) { mirrorY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
+      
       if (isDraggingSpk1Ref) { spk1RefY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingSpk2Ref) { spk2RefY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingVisRef)  { visRefY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingCandle1Ref) { candle1RefY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingCandle2Ref) { candle2RefY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
+
       if (isDraggingSpk1) { spk1X = pos.x - dragOffsetX; spk1Y = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingSpk2) { spk2X = pos.x - dragOffsetX; spk2Y = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingCoffee) { coffeeX = pos.x - dragOffsetX; coffeeY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
@@ -505,6 +518,13 @@
         else if (style === 'ribbon_wave') { let points = 80; let spacing = visW / points; for(let layer=0; layer<3; layer++) { ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * (config.visHeight * (1 - layer*0.2)); ctx.lineTo(i*spacing, -h - layer*6); } ctx.strokeStyle = `rgba(255, 255, 255, ${0.9 - layer*0.3})`; ctx.lineWidth = 2; ctx.stroke(); } }
         else if (style === 'minimal_line') { let points = 100; let spacing = visW / points; ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * (config.visHeight * 0.7); ctx.lineTo(i*spacing, -h); } ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)'; ctx.lineWidth = 2; ctx.stroke(); ctx.fillStyle = 'rgba(255, 255, 255, 0.4)'; ctx.fillRect(0, cy, visW, 1); }
         else if (style === 'calm_horizon') { let points = 80; let spacing = visW / points; ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * config.visHeight; ctx.lineTo(i*spacing, -h); } let grad = ctx.createLinearGradient(0, cy - config.visHeight, 0, cy); grad.addColorStop(0, '#fffa65'); grad.addColorStop(1, '#ff7f50'); ctx.strokeStyle = grad; ctx.lineWidth = 3; ctx.stroke(); ctx.fillStyle = 'rgba(255, 127, 80, 0.1)'; ctx.lineTo(visW, cy); ctx.lineTo(0, cy); ctx.fill(); }
+        
+        else if (style === 'elegant_piano') { let numBars = 52; let spacing = visW / numBars; let barW = spacing * 0.85; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; for (let i = 0; i < numBars; i++) { let h = Math.max(10, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillRect(i * spacing, cy, barW, -h); ctx.fillStyle = 'rgba(0,0,0,0.1)'; ctx.fillRect(i * spacing, cy, barW, -h); ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; } }
+        else if (style === 'cinematic_streaks') { let numBars = 40; let spacing = visW / numBars; for (let i = 0; i < numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let grad = ctx.createLinearGradient(0, cy, 0, cy - h); grad.addColorStop(0, 'rgba(255,255,255,0.8)'); grad.addColorStop(1, 'rgba(255,255,255,0)'); ctx.fillStyle = grad; ctx.fillRect(i * spacing + spacing/2 - 1, cy - h, 2, h); } }
+        else if (style === 'ghost_ambient') { let numBars = 20; let spacing = visW / numBars; let barW = spacing * 0.9; for (let i = 0; i < numBars; i++) { let h = Math.max(10, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillStyle = 'rgba(255, 255, 255, 0.15)'; ctx.shadowBlur = 20; ctx.shadowColor = '#fff'; ctx.fillRect(i * spacing, cy - h, barW, h); } ctx.shadowBlur = 0; }
+        else if (style === 'glitch_tech') { let numBars = 36; let spacing = visW / numBars; let barW = spacing * 0.7; ctx.fillStyle = '#fff'; for (let i = 0; i < numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; if(h > 15) { ctx.fillRect(i * spacing, cy - h, barW, h); ctx.clearRect(i * spacing - 1, cy - h + Math.random()*h, barW + 2, Math.random()*5+2); } else { ctx.fillRect(i * spacing, cy - 2, barW, 2); } } }
+        else if (style === 'diamond_eq') { let numBars = 30; let spacing = visW / numBars; ctx.fillStyle = 'rgba(255,255,255,0.8)'; for (let i = 0; i < numBars; i++) { let h = Math.max(5, getSymmetricVal(i, numBars, bufferLen) * (config.visHeight/2)); let cx = i * spacing + spacing/2; ctx.beginPath(); ctx.moveTo(cx, cy - h); ctx.lineTo(cx + spacing*0.4, cy); ctx.lineTo(cx, cy + h); ctx.lineTo(cx - spacing*0.4, cy); ctx.fill(); } }
+        else if (style === 'particle_fountain') { let numBars = 45; let spacing = visW / numBars; for (let i = 0; i < numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; ctx.fillStyle = `rgba(255,255,255,${0.2 + h/config.visHeight})`; ctx.beginPath(); ctx.arc(i * spacing + spacing/2, cy - h, Math.random()*2+1.5, 0, Math.PI*2); ctx.fill(); if(h > 20) { ctx.beginPath(); ctx.arc(i * spacing + spacing/2, cy - h + 15, Math.random()*1.5, 0, Math.PI*2); ctx.fill(); } } }
         else if (style === 'hologram_grid') { let numBars = 32; let spacing = visW/numBars; ctx.strokeStyle = 'rgba(0, 255, 200, 0.6)'; ctx.lineWidth = 1.5; for(let i=0; i<numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; ctx.beginPath(); ctx.moveTo(i*spacing, cy); ctx.lineTo(i*spacing + 20, cy - h); ctx.stroke(); ctx.beginPath(); ctx.moveTo(i*spacing, cy - h); ctx.lineTo(i*spacing + spacing, cy - h); ctx.stroke(); } }
         else if (style === 'digital_dna') { let numBars = 40; let spacing = visW/numBars; for(let i=0; i<numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight * 0.5; let offset = Math.sin(time*2 + i*0.2) * 20; ctx.fillStyle = '#00e5ff'; ctx.fillRect(i*spacing, cy - h + offset, 4, 4); ctx.fillStyle = '#e040fb'; ctx.fillRect(i*spacing, cy - h - offset, 4, 4); ctx.strokeStyle = 'rgba(255,255,255,0.2)'; ctx.beginPath(); ctx.moveTo(i*spacing+2, cy - h + offset); ctx.lineTo(i*spacing+2, cy - h - offset); ctx.stroke(); } }
         else if (style === 'matrix_rain') { let numBars = 48; let spacing = visW/numBars; for(let i=0; i<numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let drops = Math.floor(h/10); for(let j=0; j<drops; j++) { ctx.fillStyle = j === drops-1 ? '#fff' : '#00ff41'; ctx.fillRect(i*spacing, cy - j*10 - ((time*50 + i*15)%10), spacing*0.6, 6); } } }
@@ -516,7 +536,6 @@
         else if (style === 'floating_blocks') { let numBars = 32; let spacing = visW / numBars; let barW = spacing * 0.7; for (let i = 0; i < numBars; i++) { let val = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.fillRect(i * spacing, cy - val, barW, 8); if(val > 10) { ctx.fillStyle = 'rgba(255, 255, 255, 0.35)'; ctx.fillRect(i * spacing, cy - val + 12, barW, val - 12); } } }
         else if (style === 'classic_studio') { let numBars = 36; let spacing = visW / numBars; let barW = spacing * 0.75; let segH = 6; for (let i = 0; i < numBars; i++) { let h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let segs = Math.floor(h / (segH + 2)); for (let j = 0; j < segs; j++) { ctx.fillStyle = j > 12 ? '#f44336' : (j > 8 ? '#ffeb3b' : '#00e676'); ctx.fillRect(i * spacing, -(j * (segH + 2)) - segH, barW, segH); } } }
         
-        // VISUALIZER RETRO/CLASSIC BARU
         else if (style === 'classic_spectrum') { let numBars = 64; let spacing = visW / numBars; let barW = spacing * 0.8; for(let i=0; i<numBars; i++) { let h = Math.max(2, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let grad = ctx.createLinearGradient(0, 0, 0, -config.visHeight); grad.addColorStop(0, '#00ff00'); grad.addColorStop(0.6, '#ffff00'); grad.addColorStop(1, '#ff0000'); ctx.fillStyle = grad; ctx.fillRect(i * spacing, -h, barW, h); } }
         else if (style === 'cassette_tape') { let scaleX = visW / 300; let scaleY = config.visHeight / 200; let s = Math.min(scaleX, scaleY); ctx.save(); ctx.translate(visW/2, cy - config.visHeight/2); ctx.scale(s, s); ctx.fillStyle = '#222'; if(ctx.roundRect) ctx.roundRect(-150, -100, 300, 200, 10); else ctx.rect(-150, -100, 300, 200); ctx.fill(); ctx.fillStyle = '#eee'; ctx.fillRect(-130, -80, 260, 110); let rot = time * 2; ctx.save(); ctx.translate(-60, -25); ctx.rotate(rot); ctx.beginPath(); ctx.arc(0,0, 30, 0, Math.PI*2); ctx.fillStyle = '#111'; ctx.fill(); ctx.beginPath(); ctx.arc(0,0, 10, 0, Math.PI*2); ctx.fillStyle = '#eee'; ctx.fill(); for(let i=0; i<6; i++){ ctx.rotate(Math.PI/3); ctx.fillRect(10, -2, 20, 4); } ctx.restore(); ctx.save(); ctx.translate(60, -25); ctx.rotate(rot); ctx.beginPath(); ctx.arc(0,0, 30, 0, Math.PI*2); ctx.fillStyle = '#111'; ctx.fill(); ctx.beginPath(); ctx.arc(0,0, 10, 0, Math.PI*2); ctx.fillStyle = '#eee'; ctx.fill(); for(let i=0; i<6; i++){ ctx.rotate(Math.PI/3); ctx.fillRect(10, -2, 20, 4); } ctx.restore(); ctx.fillStyle = '#000'; ctx.fillRect(-80, -50, 160, 50); ctx.strokeStyle = '#333'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(-60,-25); ctx.lineTo(60,-25); ctx.stroke(); ctx.fillStyle = '#333'; ctx.beginPath(); ctx.moveTo(-100, 40); ctx.lineTo(100, 40); ctx.lineTo(120, 100); ctx.lineTo(-120, 100); ctx.fill(); ctx.restore(); }
         else if (style === 'vintage_vu_meter') { let valBass = dataArray ? dataArray[Math.floor(bufferLen * 0.05)] / 255 : 0; let valTreble = dataArray ? dataArray[Math.floor(bufferLen * 0.3)] / 255 : 0; let boxW = (visW / 2) - 10; let boxH = config.visHeight; function drawVU(x, y, w, h, val) { ctx.save(); ctx.translate(x, y); ctx.fillStyle = '#1e1e1e'; ctx.fillRect(0, 0, w, h); let pad = 8; let sw = w - pad*2; let sh = h - pad*2; let grad = ctx.createLinearGradient(0, pad, 0, pad+sh); grad.addColorStop(0, '#f5b041'); grad.addColorStop(1, '#ffb300'); ctx.fillStyle = grad; ctx.fillRect(pad, pad, sw, sh); ctx.strokeStyle = 'rgba(0,0,0,0.6)'; ctx.lineWidth = 3; ctx.strokeRect(pad, pad, sw, sh); ctx.strokeStyle = 'rgba(255,255,255,0.2)'; ctx.lineWidth = 1; ctx.strokeRect(pad+1, pad+1, sw-2, sh-2); let pivotX = w/2; let pivotY = h - pad - 10; let r = Math.min(sw, sh) * 0.8; ctx.beginPath(); ctx.arc(pivotX, pivotY, r, Math.PI*1.15, Math.PI*1.85); ctx.strokeStyle = '#3e2723'; ctx.lineWidth = 1.5; ctx.stroke(); for(let i=0; i<=20; i++) { let a = Math.PI*1.15 + (i/20)*(Math.PI*0.7); let t = (i%5===0) ? 8 : 4; let c = (i > 14) ? '#d32f2f' : '#3e2723'; ctx.beginPath(); ctx.moveTo(pivotX + Math.cos(a)*r, pivotY + Math.sin(a)*r); ctx.lineTo(pivotX + Math.cos(a)*(r-t), pivotY + Math.sin(a)*(r-t)); ctx.strokeStyle = c; ctx.lineWidth = (i%5===0) ? 1.5 : 1; ctx.stroke(); } ctx.fillStyle = '#3e2723'; ctx.font = 'bold ' + (sh*0.15) + 'px sans-serif'; ctx.textAlign = 'center'; ctx.fillText("VU", pivotX, pivotY - r*0.4); let ang = Math.PI*1.15 + (val * 0.7 * Math.PI); ctx.beginPath(); ctx.moveTo(pivotX+2, pivotY+2); ctx.lineTo(pivotX+2 + Math.cos(ang)*(r+5), pivotY+2 + Math.sin(ang)*(r+5)); ctx.strokeStyle = 'rgba(0,0,0,0.3)'; ctx.lineWidth = 2; ctx.stroke(); ctx.beginPath(); ctx.moveTo(pivotX, pivotY); ctx.lineTo(pivotX + Math.cos(ang)*(r+5), pivotY + Math.sin(ang)*(r+5)); ctx.strokeStyle = '#111'; ctx.lineWidth = 1.5; ctx.stroke(); ctx.beginPath(); ctx.arc(pivotX, pivotY, 4, 0, Math.PI*2); ctx.fillStyle = '#111'; ctx.fill(); ctx.restore(); } drawVU(0, cy - boxH, boxW, boxH, valBass); drawVU(visW - boxW, cy - boxH, boxW, boxH, valTreble); }
@@ -529,12 +548,16 @@
 
     function drawSpeakers(bufferLen, isReflection) {
       if (!isBgReady || document.getElementById('speakerStyle').value === 'none') return;
-      let scale = parseFloat(document.getElementById('speakerSize').value);
+      
+      // UKURAN INDEPENDEN MASING-MASING SPEAKER
+      let scale1 = parseFloat(document.getElementById('speakerSize1').value);
+      let scale2 = parseFloat(document.getElementById('speakerSize2').value);
+      
       let bass = 0; if(dataArray) { bass = (dataArray[1] + dataArray[2] + dataArray[3]) / (255 * 3); } if(isNaN(bass)) bass = 0;
       let punchyBass = Math.pow(bass, 2.0);
       if(!isReflection) { if (punchyBass > globalSmoothedBass) { globalSmoothedBass += (punchyBass - globalSmoothedBass) * 0.8; } else { globalSmoothedBass += (punchyBass - globalSmoothedBass) * 0.15; } }
       
-      let finalBass = globalSmoothedBass; let baseR = 50 * scale; 
+      let finalBass = globalSmoothedBass; 
       let shakeIntensity = parseFloat(document.getElementById('speakerShake').value); let pumpIntensity = parseFloat(document.getElementById('speakerPump').value);
       let shakeX = (Math.random() - 0.5) * finalBass * shakeIntensity; let shakeY = (Math.random() - 0.5) * finalBass * shakeIntensity;
       let pump = 1.0 + (finalBass * pumpIntensity);
@@ -543,7 +566,8 @@
       let spkScaleY = parseFloat(document.getElementById('spkOvalY').value);
       let spkRot = parseFloat(document.getElementById('spkRot').value) * Math.PI / 180;
 
-      function drawLiveBackgroundSpeaker(x, y, refY) {
+      function drawLiveBackgroundSpeaker(x, y, refY, currentScale) {
+        let baseR = 50 * currentScale;
         ctx.save(); 
         if(isReflection) { 
             if (mirrorConfig.showSpkReflect === 'no') { ctx.restore(); return; }
@@ -584,7 +608,9 @@
 
         ctx.restore();
       }
-      drawLiveBackgroundSpeaker(spk1X, spk1Y, spk1RefY); drawLiveBackgroundSpeaker(spk2X, spk2Y, spk2RefY);
+      
+      drawLiveBackgroundSpeaker(spk1X, spk1Y, spk1RefY, scale1); 
+      drawLiveBackgroundSpeaker(spk2X, spk2Y, spk2RefY, scale2);
     }
 
     function drawCoffeeSteam(x, y, style, scale, propSpeed) {
@@ -645,7 +671,7 @@
       drawCandle(candle1X, candle1Y, candle1RefY, document.getElementById('candleStyle').value, propScale, propSpeed, true); 
       drawCandle(candle2X, candle2Y, candle2RefY, document.getElementById('candleStyle').value, propScale, propSpeed, true);
 
-      // 3. MEJA KACA GELAP
+      // 3. MEJA KACA GELAP MURNI
       if (mirrorConfig.showGlassLine === 'yes' || mirrorConfig.showVisReflect === 'yes' || mirrorConfig.showSpkReflect === 'yes' || mirrorConfig.showCandleReflect === 'yes') {
           let mirrorGrad = ctx.createLinearGradient(0, mirrorY, 0, height);
           mirrorGrad.addColorStop(0, 'rgba(0,0,0,0.15)'); mirrorGrad.addColorStop(0.5, 'rgba(0,0,0,0.7)'); mirrorGrad.addColorStop(1, 'rgba(0,0,0,0.95)');
