@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <!-- KODE ANTI-CACHE (Biar App Selalu Baca UI Baru) -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   
-  <title>Mirror 720p (Forced Native UI Sync)</title>
+  <title>Mirror 720p V2</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body { margin: 0; background-color: #111; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; overflow-x: hidden; }
@@ -34,9 +33,9 @@
     
     #stopOverlay { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(220, 20, 60, 0.95); color: white; padding: 15px 30px; border-radius: 50px; z-index: 100; font-weight: bold; border: 3px solid white; cursor: pointer; }
     #countdownOverlay { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 100px; font-weight: bold; color: white; text-shadow: 0 0 20px rgba(0, 0, 0, 0.8); z-index: 100; }
-    #statusBox { font-size: 12px; text-align: center; color: #00d2ff; margin-bottom: 2px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 5px; background: #111; border-radius: 6px; }
+    #statusBox { font-size: 12px; text-align: center; color: #00ffaa; margin-bottom: 2px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 5px; background: #111; border-radius: 6px; border: 1px solid #00ffaa; }
     
-    /* GRID 2 KOLOM (ANTI-OVERFLOW) */
+    /* GRID 2 KOLOM YANG BENERAN RESPONSIVE */
     .grid-2col { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 100%; box-sizing: border-box; }
     .full-width { grid-column: span 2; }
     
@@ -46,7 +45,6 @@
     .row { display: flex; align-items: center; justify-content: space-between; gap: 5px; width: 100%; box-sizing: border-box; }
     .row label { font-size: 9px; width: 40%; color: #ccc; font-weight: 600; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
-    /* CSS PAKSA UNTUK SLIDER DAN SELECT BIAR GAK DIBAJAK SISTEM HP */
     input[type="range"] { 
         width: 60%; height: 32px; background: transparent; 
         -webkit-appearance: none; appearance: none;
@@ -62,7 +60,6 @@
     select { 
         width: 60%; height: 32px; background: #2a2a2a; color: white; border: 1px solid #444; 
         border-radius: 6px; font-size: 10px; padding: 0 5px; box-sizing: border-box; cursor: pointer;
-        /* ANTI BAJAK UI NATIVE */
         -webkit-appearance: none; -moz-appearance: none; appearance: none;
         background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="white" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>');
         background-repeat: no-repeat; background-position: right 8px center; padding-right: 20px;
@@ -82,11 +79,11 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Mirror 720p (Native App UI Fixed).</div>
+    <div id="statusBox">Siap. Mirror 720p V2 (Grid UI Sukses!).</div>
     
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
-      <label for="audioInput" class="file-label" style="border-bottom: 3px solid #00bcd4">2. MUSIK (BANYAK)</label>
+      <label for="audioInput" class="file-label" style="border-bottom: 3px solid #00bcd4">2. MUSIK</label>
     </div>
 
     <div class="play-group">
