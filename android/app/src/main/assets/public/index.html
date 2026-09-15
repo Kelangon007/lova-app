@@ -6,7 +6,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>Mirror 720p (Volumetric Realistic Smoke)</title>
+  <title>Mirror 720p (Slow & Thin Realistic Smoke)</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body { margin: 0; background-color: #111; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; overflow-x: hidden; }
@@ -74,7 +74,7 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Mirror 720p V2 (Real Smoke Added).</div>
+    <div id="statusBox">Siap. Mirror 720p V2 (Slow & Thin Real Smoke).</div>
     
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
@@ -282,7 +282,7 @@
         </div>
     </div>
 
-    <button class="btn-record" id="recordBtn" onclick="startCountdownAndRecord()">🔴 MULAI REKAM 720p</button>
+    <button class="btn-record" id="recordBtn" onclick="startCountdownAndRecord()" style="margin-top: 15px;">🔴 MULAI REKAM 720p</button>
   </div>
 
   <audio id="audioPlayer" crossorigin="anonymous"></audio>
@@ -501,19 +501,85 @@
 
     let time = 0; let globalSmoothedBass = 0;
 
-    // --- SETUP SPRITE ASAP (OFFSCREEN CANVAS) ---
+    // --- SETUP SPRITE ASAP (OFFSCREEN CANVAS) DENGAN KETEBALAN DIPANGKAS ---
     const smokeSprite = document.createElement('canvas');
     smokeSprite.width = 64;
     smokeSprite.height = 64;
     const sCtx = smokeSprite.getContext('2d');
     const sGrad = sCtx.createRadialGradient(32, 32, 0, 32, 32, 32);
-    sGrad.addColorStop(0, 'rgba(230, 230, 230, 0.2)');   
-    sGrad.addColorStop(0.5, 'rgba(230, 230, 230, 0.08)'); 
+    // Base opasitas sangat diturunkan agar efek tumpuk (volumetric) tidak memutih
+    sGrad.addColorStop(0, 'rgba(230, 230, 230, 0.15)');   
+    sGrad.addColorStop(0.5, 'rgba(230, 230, 230, 0.05)'); 
     sGrad.addColorStop(1, 'rgba(230, 230, 230, 0)');     
     sCtx.fillStyle = sGrad;
     sCtx.fillRect(0, 0, 64, 64);
 
     let smokeParticles = [];
+
+    // --- MESIN ASAP BARU YG SUDAH DIPERLAMBAT DAN DITIPISKAN ---
+    function drawCoffeeSteam(x, y, style, scale, propSpeed) {
+        if(style === 'none') { smokeParticles = []; return; }
+        
+        let spawnCount = 0;
+        // Kurangi spawn rate biar gak terlalu numpuk tebal
+        if(style === 'soft_steam') spawnCount = 0.5;
+        if(style === 'swirl_vapor') spawnCount = 1;
+        if(style === 'thin_wisp') spawnCount = 0.3;
+        if(style === 'heavy_steam') spawnCount = 1.5;
+        if(style === 'wind_steam') spawnCount = 1;
+
+        let actualSpawns = Math.floor(spawnCount * propSpeed);
+        if (Math.random() < (spawnCount * propSpeed) % 1) actualSpawns++;
+
+        for(let i=0; i<actualSpawns; i++) {
+             smokeParticles.push({
+                x: x + (Math.random() - 0.5) * 10 * scale,
+                y: y - 5 * scale,
+                life: 0,
+                // Umur dipanjangin karena geraknya lebih pelan biar bisa terbang lebih tinggi
+                maxLife: (style === 'thin_wisp' ? 250 : 180) + Math.random() * 60,
+                size: (style === 'heavy_steam' ? 25 : (style === 'thin_wisp' ? 8 : 15)) * scale,
+                grow: (style === 'heavy_steam' ? 0.4 : (style === 'thin_wisp' ? 0.15 : 0.25)) * scale,
+                vx: (style === 'wind_steam' ? (1.0 + Math.random()*0.5) : (Math.random() - 0.5) * 0.3) * scale,
+                // Kecepatan ke atas (Vy) diperlambat drastis (dikurangi ~60%)
+                vy: ((style === 'thin_wisp' ? 0.6 : 0.3) + Math.random() * 0.3) * scale * propSpeed,
+                swirlOffset: Math.random() * Math.PI * 2,
+                swirlSpeed: (Math.random() * 0.015 + 0.01) * (style === 'swirl_vapor' ? 2.5 : 1),
+                // Opacity maksimal per partikel dipangkas agar tembus pandang
+                maxOpacity: (style === 'heavy_steam' ? 0.4 : (style === 'thin_wisp' ? 0.15 : 0.25))
+             });
+        }
+
+        ctx.save();
+        ctx.globalCompositeOperation = 'screen';
+        
+        for (let i = smokeParticles.length - 1; i >= 0; i--) {
+            let p = smokeParticles[i];
+            p.life++;
+            
+            p.y -= p.vy;
+            p.x += p.vx + Math.sin(p.life * p.swirlSpeed + p.swirlOffset) * (style === 'swirl_vapor' ? 0.8 : 0.3) * scale;
+            p.size += p.grow;
+            
+            let halfLife = p.maxLife * 0.4; 
+            let currentOpacity = 0;
+            if (p.life < halfLife) {
+                currentOpacity = (p.life / halfLife) * p.maxOpacity;
+            } else {
+                currentOpacity = (1 - ((p.life - halfLife) / (p.maxLife - halfLife))) * p.maxOpacity;
+            }
+            
+            if (currentOpacity > 0) {
+                ctx.globalAlpha = currentOpacity;
+                ctx.drawImage(smokeSprite, p.x - p.size / 2, p.y - p.size / 2, p.size, p.size);
+            }
+            
+            if (p.life >= p.maxLife) {
+                smokeParticles.splice(i, 1);
+            }
+        }
+        ctx.restore();
+    }
 
     class CinematicParticle {
         constructor() { this.reset(true); }
@@ -669,67 +735,6 @@
       }
       drawLiveBackgroundSpeaker(spk1X, spk1Y, spk1RefY, scale1, spkScaleX1, spkScaleY1, spkRot1); 
       drawLiveBackgroundSpeaker(spk2X, spk2Y, spk2RefY, scale2, spkScaleX2, spkScaleY2, spkRot2);
-    }
-
-    // --- MESIN ASAP BARU: VOLUMETRIC PARTICLE SYSTEM ---
-    function drawCoffeeSteam(x, y, style, scale, propSpeed) {
-        if(style === 'none') { smokeParticles = []; return; }
-        
-        let spawnCount = 0;
-        if(style === 'soft_steam') spawnCount = 1;
-        if(style === 'swirl_vapor') spawnCount = 2;
-        if(style === 'thin_wisp') spawnCount = 1;
-        if(style === 'heavy_steam') spawnCount = 3;
-        if(style === 'wind_steam') spawnCount = 2;
-
-        let actualSpawns = Math.floor(spawnCount * propSpeed);
-        if (Math.random() < (spawnCount * propSpeed) % 1) actualSpawns++;
-
-        for(let i=0; i<actualSpawns; i++) {
-             smokeParticles.push({
-                x: x + (Math.random() - 0.5) * 15 * scale,
-                y: y - 5 * scale,
-                life: 0,
-                maxLife: (style === 'thin_wisp' ? 120 : 80) + Math.random() * 40,
-                size: (style === 'heavy_steam' ? 30 : (style === 'thin_wisp' ? 10 : 20)) * scale,
-                grow: (style === 'heavy_steam' ? 1.0 : (style === 'thin_wisp' ? 0.3 : 0.6)) * scale,
-                vx: (style === 'wind_steam' ? (2.0 + Math.random()) : (Math.random() - 0.5) * 0.8) * scale,
-                vy: ((style === 'thin_wisp' ? 1.5 : 1.0) + Math.random() * 0.5) * scale * propSpeed,
-                swirlOffset: Math.random() * Math.PI * 2,
-                swirlSpeed: (Math.random() * 0.05 + 0.02) * (style === 'swirl_vapor' ? 2.5 : 1),
-                maxOpacity: (style === 'heavy_steam' ? 0.9 : (style === 'thin_wisp' ? 0.4 : 0.7))
-             });
-        }
-
-        ctx.save();
-        ctx.globalCompositeOperation = 'screen';
-        
-        for (let i = smokeParticles.length - 1; i >= 0; i--) {
-            let p = smokeParticles[i];
-            p.life++;
-            
-            p.y -= p.vy;
-            p.x += p.vx + Math.sin(p.life * p.swirlSpeed + p.swirlOffset) * (style === 'swirl_vapor' ? 1.2 : 0.4) * scale;
-            p.size += p.grow;
-            
-            let halfLife = p.maxLife * 0.4; 
-            let currentOpacity = 0;
-            if (p.life < halfLife) {
-                currentOpacity = (p.life / halfLife) * p.maxOpacity;
-            } else {
-                currentOpacity = (1 - ((p.life - halfLife) / (p.maxLife - halfLife))) * p.maxOpacity;
-            }
-            
-            if (currentOpacity > 0) {
-                ctx.globalAlpha = currentOpacity;
-                ctx.drawImage(smokeSprite, p.x - p.size / 2, p.y - p.size / 2, p.size, p.size);
-            }
-            
-            if (p.life >= p.maxLife) {
-                smokeParticles.splice(i, 1);
-            }
-        }
-        ctx.restore();
     }
 
     function drawCandle(x, y, refY, style, scale, propSpeed, isReflection) {
