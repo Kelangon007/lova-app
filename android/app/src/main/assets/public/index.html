@@ -6,76 +6,20 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>Mirror 720p (Precision Canvas Zoom Engine)</title>
+  <title>Mirror 720p (Volumetric Realistic Smoke)</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body { margin: 0; background-color: #111; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; overflow-x: hidden; }
+    #canvas-wrapper { position: relative; width: 100%; max-width: 800px; aspect-ratio: 16/9; margin-top: 15px; border: 1px solid rgba(255, 255, 255, 0.2); background: #000; box-shadow: 0 15px 50px rgba(0, 0, 0, 0.9); overflow: hidden; touch-action: none; }
+    canvas { width: 100%; height: 100%; display: block; transform-origin: 0 0; will-change: transform; }
     
-    /* WORKSPACE KANVAS */
-    #canvas-wrapper { 
-      position: relative; 
-      width: 100%; 
-      max-width: 800px; 
-      aspect-ratio: 16/9; 
-      margin-top: 15px; 
-      border: 1px solid rgba(255, 255, 255, 0.2); 
-      background: #000; 
-      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.9); 
-      overflow: hidden; 
-      touch-action: none;
-    }
-    canvas { 
-      width: 100%; 
-      height: 100%; 
-      display: block; 
-      transform-origin: 0 0;
-      will-change: transform;
-    }
-
-    /* BAR ZOOM KANVAS CEPAT */
-    .zoom-toolbar {
-      width: 96%;
-      max-width: 800px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: #181818;
-      border: 1px solid #333;
-      border-radius: 8px;
-      padding: 6px 12px;
-      margin-top: 8px;
-      box-sizing: border-box;
-      gap: 8px;
-    }
-    .zoom-toolbar label {
-      font-size: 10px;
-      color: #00e5ff;
-      font-weight: bold;
-      white-space: nowrap;
-      text-transform: uppercase;
-    }
-    .zoom-btn-group {
-      display: flex;
-      gap: 4px;
-    }
-    .btn-zoom {
-      background: #2a2a2a;
-      border: 1px solid #444;
-      color: #ddd;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 10px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .btn-zoom.active {
-      background: #00bcd4;
-      color: #000;
-      border-color: #00e5ff;
-    }
+    .zoom-toolbar { width: 96%; max-width: 800px; display: flex; align-items: center; justify-content: space-between; background: #181818; border: 1px solid #333; border-radius: 8px; padding: 6px 12px; margin-top: 8px; box-sizing: border-box; gap: 8px; }
+    .zoom-toolbar label { font-size: 10px; color: #00e5ff; font-weight: bold; white-space: nowrap; text-transform: uppercase; }
+    .zoom-btn-group { display: flex; gap: 4px; }
+    .btn-zoom { background: #2a2a2a; border: 1px solid #444; color: #ddd; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; }
+    .btn-zoom.active { background: #00bcd4; color: #000; border-color: #00e5ff; }
     
     #controls { width: 96%; max-width: 800px; background: #1a1a1a; padding: 12px; border-radius: 12px; margin-top: 10px; border: 1px solid #333; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); box-sizing: border-box; }
-    
     .btn-group, .play-group { display: flex; gap: 8px; width: 100%; }
     .file-label { flex: 1; background: #2b2b2b; color: #ccc; padding: 10px 5px; text-align: center; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; border: 1px solid #444; transition: 0.2s; white-space: nowrap; }
     .file-label:hover { background: #3b3b3b; color: white; }
@@ -96,17 +40,14 @@
     
     .grid-2col { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 100%; box-sizing: border-box; }
     .full-width { grid-column: span 2; }
-    
     .layout-col { background: #222; padding: 10px 8px; border-radius: 8px; border: 1px solid #3c3c3c; display: flex; flex-direction: column; gap: 10px; box-sizing: border-box; overflow: hidden; }
     .layout-col > label { width: 100%; text-align: center; font-size: 11px; margin-bottom: 2px; font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase; }
-    
     .row { display: flex; align-items: center; justify-content: space-between; gap: 5px; width: 100%; box-sizing: border-box; }
     .row label { font-size: 9px; width: 40%; color: #ccc; font-weight: 600; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
     input[type="range"] { width: 60%; height: 32px; background: transparent; -webkit-appearance: none; appearance: none; }
     input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 6px; background: #444; border-radius: 3px; border: 1px solid #222; }
     input[type="range"]::-webkit-slider-thumb { height: 18px; width: 18px; border-radius: 50%; background: #007bff; cursor: pointer; -webkit-appearance: none; margin-top: -6px; box-shadow: 0 0 5px rgba(0,0,0,0.5); }
-    
     select { width: 60%; height: 32px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px; font-size: 10px; padding: 0 5px; box-sizing: border-box; cursor: pointer; -webkit-appearance: none; appearance: none; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="white" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>'); background-repeat: no-repeat; background-position: right 8px center; padding-right: 20px; }
     select.full-select { width: 100%; margin-bottom: 5px; font-size: 11px; }
     input[type="file"] { display: none; }
@@ -122,7 +63,6 @@
     <div id="stopOverlay" onclick="stopRecording()">⏹ STOP & SIMPAN</div>
   </div>
 
-  <!-- TOOLBAR ZOOM PERSPEKTIF KANVAS -->
   <div class="zoom-toolbar">
     <label>🔍 Zoom Kanvas</label>
     <input type="range" id="canvasZoomSlider" min="1.0" max="3.0" step="0.1" value="1.0" style="width: 45%;">
@@ -134,7 +74,7 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Mirror 720p (Precision Zoom Active).</div>
+    <div id="statusBox">Siap. Mirror 720p V2 (Real Smoke Added).</div>
     
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
@@ -157,7 +97,7 @@
 
     <hr class="thin-line">
 
-    <!-- GRID 1: VISUALIZER & SPEAKER ASLI -->
+    <!-- GRID 1 -->
     <div class="grid-2col">
       <div class="layout-col">
         <label style="color:#00d2ff;">VISUALIZER</label>
@@ -234,7 +174,6 @@
         <div class="row"><label>LEBAR</label><input type="range" id="visWidth" min="100" max="1100" value="400"></div>
         <div class="row"><label>OPASITAS</label><input type="range" id="visOpacity" min="0.1" max="1.0" step="0.05" value="1.0"></div>
       </div>
-
       <div class="layout-col">
         <label style="color:#ffb300;">DAUN SPEAKER</label>
         <div class="row">
@@ -355,29 +294,17 @@
     const stopOverlay = document.getElementById('stopOverlay'); const countdownOverlay = document.getElementById('countdownOverlay'); const recordBtn = document.getElementById('recordBtn');
     const progressBar = document.getElementById('progressBar'); const currTimeEl = document.getElementById('currTime'); const durTimeEl = document.getElementById('durTime');
     
-    let isDraggingProgress = false; 
-    const width = 1280; 
-    const height = 720;
-    
+    let isDraggingProgress = false; const width = 1280; const height = 720;
     let audioFiles = []; let currentObjectUrl = null; let currentSongName = ""; let playTimeout = null;
     let isTrackLoaded = false; let shuffledPlaylist = []; let currentPlayIndex = 0; let isCountingDown = false; let countdownTimer = null;
     let bgGlobalScale = 1; let bgGlobalX = 0; let bgGlobalY = 0;
 
-    // SISTEM VIEWPORT ZOOM & PAN KANVAS
-    let canvasZoom = 1.0;
-    let canvasPanX = 0;
-    let canvasPanY = 0;
-    let isPanningCanvas = false;
-    let panStartX = 0;
-    let panStartY = 0;
-    let isPinching = false;
-    let initialPinchDist = 0;
-    let initialPinchZoom = 1.0;
+    let canvasZoom = 1.0; let canvasPanX = 0; let canvasPanY = 0;
+    let isPanningCanvas = false; let panStartX = 0; let panStartY = 0;
+    let isPinching = false; let initialPinchDist = 0; let initialPinchZoom = 1.0;
 
     const zoomSlider = document.getElementById('canvasZoomSlider');
-    zoomSlider.addEventListener('input', (e) => {
-      setCanvasZoom(parseFloat(e.target.value));
-    });
+    zoomSlider.addEventListener('input', (e) => { setCanvasZoom(parseFloat(e.target.value)); });
 
     function setCanvasZoom(val) {
       canvasZoom = Math.min(3.5, Math.max(1.0, val));
@@ -386,28 +313,18 @@
       if (Math.abs(canvasZoom - 1.0) < 0.1) document.getElementById('zoomBtn1').classList.add('active');
       else if (Math.abs(canvasZoom - 1.8) < 0.2) document.getElementById('zoomBtn2').classList.add('active');
       else if (Math.abs(canvasZoom - 2.6) < 0.2) document.getElementById('zoomBtn3').classList.add('active');
-      clampPan();
-      applyCanvasTransform();
+      clampPan(); applyCanvasTransform();
     }
 
     function clampPan() {
-      const w = canvasWrapper.clientWidth;
-      const h = canvasWrapper.clientHeight;
-      if (canvasZoom <= 1.0) {
-        canvasPanX = 0;
-        canvasPanY = 0;
-      } else {
-        const minPanX = w * (1 - canvasZoom);
-        const minPanY = h * (1 - canvasZoom);
+      const w = canvasWrapper.clientWidth; const h = canvasWrapper.clientHeight;
+      if (canvasZoom <= 1.0) { canvasPanX = 0; canvasPanY = 0; } else {
+        const minPanX = w * (1 - canvasZoom); const minPanY = h * (1 - canvasZoom);
         canvasPanX = Math.min(0, Math.max(minPanX, canvasPanX));
         canvasPanY = Math.min(0, Math.max(minPanY, canvasPanY));
       }
     }
-
-    function applyCanvasTransform() {
-      canvas.style.transform = `translate(${canvasPanX}px, ${canvasPanY}px) scale(${canvasZoom})`;
-    }
-
+    function applyCanvasTransform() { canvas.style.transform = `translate(${canvasPanX}px, ${canvasPanY}px) scale(${canvasZoom})`; }
     function shuffle(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array; }
 
     document.getElementById('audioInput').addEventListener('change', function(e) {
@@ -434,7 +351,6 @@
         audioPlayer.play().then(() => { playBtn.innerText = "⏸ PAUSE"; statusBox.innerText = `🎵 Lagu ${currentPlayIndex + 1}/${audioFiles.length}: ${currentSongName}`; currentPlayIndex++; }).catch(err => { playBtn.innerText = "❌ ERROR"; });
       }, delayAmount);
     }
-
     audioPlayer.addEventListener('ended', () => { playRandomSong(false); });
 
     function stopEverything() {
@@ -464,8 +380,7 @@
     document.getElementById('spkReflectOpacity').addEventListener('input', e => mirrorConfig.spkReflectOpacity = parseFloat(e.target.value));
     document.getElementById('spkReflectSize').addEventListener('input', e => mirrorConfig.spkReflectSize = parseFloat(e.target.value));
 
-    let visW = 400; let visX = (width - visW) / 2; let visY = height - 250;
-    let visRefY = height - 100;
+    let visW = 400; let visX = (width - visW) / 2; let visY = height - 250; let visRefY = height - 100;
     let spk1X = 250; let spk1Y = height - 350; let spk2X = width - 250; let spk2Y = height - 350;
     let spk1RefY = height - 150; let spk2RefY = height - 150;
     let coffeeX = 350; let coffeeY = height - 240; 
@@ -473,145 +388,87 @@
     let candle1RefY = height - 100; let candle2RefY = height - 100;
     let mirrorY = 500;
 
-    let isDraggingSpk1 = false; let isDraggingSpk2 = false; let isDraggingVis = false;
-    let isDraggingSpk1Ref = false; let isDraggingSpk2Ref = false; let isDraggingVisRef = false;
-    let isDraggingCoffee = false; let isDraggingCandle1 = false; let isDraggingCandle2 = false; 
-    let isDraggingCandle1Ref = false; let isDraggingCandle2Ref = false;
-    let isDraggingMirrorLine = false; 
-    let dragOffsetX = 0; let dragOffsetY = 0;
+    let isDraggingSpk1 = false, isDraggingSpk2 = false, isDraggingVis = false;
+    let isDraggingSpk1Ref = false, isDraggingSpk2Ref = false, isDraggingVisRef = false;
+    let isDraggingCoffee = false, isDraggingCandle1 = false, isDraggingCandle2 = false; 
+    let isDraggingCandle1Ref = false, isDraggingCandle2Ref = false, isDraggingMirrorLine = false; 
+    let dragOffsetX = 0, dragOffsetY = 0;
 
-    // KALIBRASI SENTUHAN 100% PRESISI SAAT DI-ZOOM
     function getMousePos(e) {
       const rect = canvas.getBoundingClientRect();
       const scaleX = canvas.width / rect.width;
       const scaleY = canvas.height / rect.height;
-      let clientX = e.clientX;
-      let clientY = e.clientY;
-      if (e.touches && e.touches.length > 0) {
-        clientX = e.touches[0].clientX;
-        clientY = e.touches[0].clientY;
-      }
-      return {
-        x: (clientX - rect.left) * scaleX,
-        y: (clientY - rect.top) * scaleY
-      };
+      let clientX = e.clientX; let clientY = e.clientY;
+      if (e.touches && e.touches.length > 0) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; }
+      return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY };
     }
 
     function startDrag(e) {
-      // DUA JARI: AKTIFKAN CUBIT ZOOM
       if (e.touches && e.touches.length === 2) {
         isPinching = true;
-        initialPinchDist = Math.hypot(
-          e.touches[0].clientX - e.touches[1].clientX,
-          e.touches[0].clientY - e.touches[1].clientY
-        );
+        initialPinchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
         initialPinchZoom = canvasZoom;
-        if (e.cancelable) e.preventDefault();
-        return;
+        if (e.cancelable) e.preventDefault(); return;
       }
 
       const pos = getMousePos(e); 
       const spk1Scale = parseFloat(document.getElementById('speakerSize1').value); 
       const spk2Scale = parseFloat(document.getElementById('speakerSize2').value); 
-      const r1 = 60 * spk1Scale;
-      const r2 = 60 * spk2Scale;
+      const r1 = 60 * spk1Scale; const r2 = 60 * spk2Scale;
       
-      // 1. Cek Garis Kaca
-      if (mirrorConfig.showGlassLine === 'yes' && Math.abs(pos.y - mirrorY) <= 30) { 
-        isDraggingMirrorLine = true; dragOffsetY = pos.y - mirrorY; 
-        if (e.cancelable) e.preventDefault(); return; 
-      }
-      
-      // 2. Cek Pantulan Speaker
+      if (mirrorConfig.showGlassLine === 'yes' && Math.abs(pos.y - mirrorY) <= 30) { isDraggingMirrorLine = true; dragOffsetY = pos.y - mirrorY; if (e.cancelable) e.preventDefault(); return; }
       if (mirrorConfig.showSpkReflect === 'yes' && document.getElementById('speakerStyle').value !== 'none') {
           if (Math.hypot(pos.x - spk1X, pos.y - spk1RefY) <= r1) { isDraggingSpk1Ref = true; dragOffsetY = pos.y - spk1RefY; if (e.cancelable) e.preventDefault(); return; }
           if (Math.hypot(pos.x - spk2X, pos.y - spk2RefY) <= r2) { isDraggingSpk2Ref = true; dragOffsetY = pos.y - spk2RefY; if (e.cancelable) e.preventDefault(); return; }
       }
-      // 3. Cek Pantulan Visualizer
-      if (mirrorConfig.showVisReflect === 'yes' && pos.x >= visX && pos.x <= visX + visW && pos.y >= visRefY - 100 && pos.y <= visRefY + 150) { 
-        isDraggingVisRef = true; dragOffsetY = pos.y - visRefY; 
-        if (e.cancelable) e.preventDefault(); return; 
-      }
-      
-      // 4. Cek Pantulan Lilin
+      if (mirrorConfig.showVisReflect === 'yes' && pos.x >= visX && pos.x <= visX + visW && pos.y >= visRefY - 100 && pos.y <= visRefY + 150) { isDraggingVisRef = true; dragOffsetY = pos.y - visRefY; if (e.cancelable) e.preventDefault(); return; }
       if (mirrorConfig.showCandleReflect === 'yes' && document.getElementById('candleStyle').value !== 'none') {
         if (Math.hypot(pos.x - candle1X, pos.y - candle1RefY) <= 40) { isDraggingCandle1Ref = true; dragOffsetY = pos.y - candle1RefY; if (e.cancelable) e.preventDefault(); return; }
         if (Math.hypot(pos.x - candle2X, pos.y - candle2RefY) <= 40) { isDraggingCandle2Ref = true; dragOffsetY = pos.y - candle2RefY; if (e.cancelable) e.preventDefault(); return; }
       }
-
-      // 5. Cek Speaker Asli (Titik Tengah / Area Daun)
-      if (Math.hypot(pos.x - spk1X, pos.y - spk1Y) <= Math.max(40, r1) && document.getElementById('speakerStyle').value !== 'none') { 
-        isDraggingSpk1 = true; dragOffsetX = pos.x - spk1X; dragOffsetY = pos.y - spk1Y; 
-        if (e.cancelable) e.preventDefault(); return; 
-      }
-      if (Math.hypot(pos.x - spk2X, pos.y - spk2Y) <= Math.max(40, r2) && document.getElementById('speakerStyle').value !== 'none') { 
-        isDraggingSpk2 = true; dragOffsetX = pos.x - spk2X; dragOffsetY = pos.y - spk2Y; 
-        if (e.cancelable) e.preventDefault(); return; 
-      }
-      
-      // 6. Cek Kopi & Lilin
-      if (document.getElementById('coffeeStyle').value !== 'none' && Math.hypot(pos.x - coffeeX, pos.y - coffeeY) <= 50) { 
-        isDraggingCoffee = true; dragOffsetX = pos.x - coffeeX; dragOffsetY = pos.y - coffeeY; 
-        if (e.cancelable) e.preventDefault(); return; 
-      }
+      if (Math.hypot(pos.x - spk1X, pos.y - spk1Y) <= Math.max(40, r1) && document.getElementById('speakerStyle').value !== 'none') { isDraggingSpk1 = true; dragOffsetX = pos.x - spk1X; dragOffsetY = pos.y - spk1Y; if (e.cancelable) e.preventDefault(); return; }
+      if (Math.hypot(pos.x - spk2X, pos.y - spk2Y) <= Math.max(40, r2) && document.getElementById('speakerStyle').value !== 'none') { isDraggingSpk2 = true; dragOffsetX = pos.x - spk2X; dragOffsetY = pos.y - spk2Y; if (e.cancelable) e.preventDefault(); return; }
+      if (document.getElementById('coffeeStyle').value !== 'none' && Math.hypot(pos.x - coffeeX, pos.y - coffeeY) <= 50) { isDraggingCoffee = true; dragOffsetX = pos.x - coffeeX; dragOffsetY = pos.y - coffeeY; if (e.cancelable) e.preventDefault(); return; }
       if (document.getElementById('candleStyle').value !== 'none') {
         if (Math.hypot(pos.x - candle1X, pos.y - candle1Y) <= 40) { isDraggingCandle1 = true; dragOffsetX = pos.x - candle1X; dragOffsetY = pos.y - candle1Y; if (e.cancelable) e.preventDefault(); return; }
         if (Math.hypot(pos.x - candle2X, pos.y - candle2Y) <= 40) { isDraggingCandle2 = true; dragOffsetX = pos.x - candle2X; dragOffsetY = pos.y - candle2Y; if (e.cancelable) e.preventDefault(); return; }
       }
-      
-      // 7. Cek Visualizer Asli
-      if (pos.x >= visX && pos.x <= visX + visW && pos.y >= visY - 150 && pos.y <= visY + 150) { 
-        isDraggingVis = true; dragOffsetX = pos.x - visX; dragOffsetY = pos.y - visY; 
-        if (e.cancelable) e.preventDefault(); return;
-      }
+      if (pos.x >= visX && pos.x <= visX + visW && pos.y >= visY - 150 && pos.y <= visY + 150) { isDraggingVis = true; dragOffsetX = pos.x - visX; dragOffsetY = pos.y - visY; if (e.cancelable) e.preventDefault(); return; }
 
-      // 8. JIKA SENTUHAN DI AREA KOSONG SAAT KANVAS SEDANG DI-ZOOM -> GESER KANVAS (PAN)
       if (canvasZoom > 1.0) {
         isPanningCanvas = true;
         const clientX = e.touches ? e.touches[0].clientX : e.clientX;
         const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        panStartX = clientX - canvasPanX;
-        panStartY = clientY - canvasPanY;
+        panStartX = clientX - canvasPanX; panStartY = clientY - canvasPanY;
         if (e.cancelable) e.preventDefault();
       }
     }
 
     function drag(e) {
-      // LOGIKA CUBIT 2 JARI (PINCH TO ZOOM)
       if (isPinching && e.touches && e.touches.length === 2) {
-        const dist = Math.hypot(
-          e.touches[0].clientX - e.touches[1].clientX,
-          e.touches[0].clientY - e.touches[1].clientY
-        );
+        const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
         const factor = dist / initialPinchDist;
         setCanvasZoom(initialPinchZoom * factor);
-        if (e.cancelable) e.preventDefault();
-        return;
+        if (e.cancelable) e.preventDefault(); return;
       }
 
-      // LOGIKA GESER SUDUT PANDANG KANVAS (PANNING)
       if (isPanningCanvas) {
         const clientX = e.touches ? e.touches[0].clientX : e.clientX;
         const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        canvasPanX = clientX - panStartX;
-        canvasPanY = clientY - panStartY;
-        clampPan();
-        applyCanvasTransform();
-        if (e.cancelable) e.preventDefault();
-        return;
+        canvasPanX = clientX - panStartX; canvasPanY = clientY - panStartY;
+        clampPan(); applyCanvasTransform();
+        if (e.cancelable) e.preventDefault(); return;
       }
 
       if (!isDraggingVis && !isDraggingSpk1 && !isDraggingSpk2 && !isDraggingCoffee && !isDraggingCandle1 && !isDraggingCandle2 && !isDraggingVisRef && !isDraggingSpk1Ref && !isDraggingSpk2Ref && !isDraggingMirrorLine && !isDraggingCandle1Ref && !isDraggingCandle2Ref) return;
       
       const pos = getMousePos(e);
       if (isDraggingMirrorLine) { mirrorY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
-      
       if (isDraggingSpk1Ref) { spk1RefY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingSpk2Ref) { spk2RefY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingVisRef)  { visRefY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingCandle1Ref) { candle1RefY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingCandle2Ref) { candle2RefY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
-
       if (isDraggingSpk1) { spk1X = pos.x - dragOffsetX; spk1Y = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingSpk2) { spk2X = pos.x - dragOffsetX; spk2Y = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingCoffee) { coffeeX = pos.x - dragOffsetX; coffeeY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
@@ -621,21 +478,12 @@
     }
 
     function endDrag() { 
-      isPinching = false;
-      isPanningCanvas = false;
-      isDraggingVis = false; isDraggingSpk1 = false; isDraggingSpk2 = false; 
-      isDraggingCoffee = false; isDraggingCandle1 = false; isDraggingCandle2 = false; 
-      isDraggingVisRef = false; isDraggingSpk1Ref = false; isDraggingSpk2Ref = false; 
-      isDraggingMirrorLine = false; isDraggingCandle1Ref = false; isDraggingCandle2Ref = false; 
+      isPinching = false; isPanningCanvas = false;
+      isDraggingVis = false; isDraggingSpk1 = false; isDraggingSpk2 = false; isDraggingCoffee = false; isDraggingCandle1 = false; isDraggingCandle2 = false; 
+      isDraggingVisRef = false; isDraggingSpk1Ref = false; isDraggingSpk2Ref = false; isDraggingMirrorLine = false; isDraggingCandle1Ref = false; isDraggingCandle2Ref = false; 
     }
-
-    canvasWrapper.addEventListener('mousedown', startDrag); 
-    window.addEventListener('mousemove', drag); 
-    window.addEventListener('mouseup', endDrag);
-
-    canvasWrapper.addEventListener('touchstart', startDrag, { passive: false }); 
-    window.addEventListener('touchmove', drag, { passive: false }); 
-    window.addEventListener('touchend', endDrag);
+    canvasWrapper.addEventListener('mousedown', startDrag); window.addEventListener('mousemove', drag); window.addEventListener('mouseup', endDrag);
+    canvasWrapper.addEventListener('touchstart', startDrag, { passive: false }); window.addEventListener('touchmove', drag, { passive: false }); window.addEventListener('touchend', endDrag);
 
     let audioCtx, source, mediaStreamDestination, analyser, dataArray; let isAudioInit = false; let peakHeights = new Array(120).fill(0);
     function formatTime(seconds) { if (isNaN(seconds) || !isFinite(seconds)) return "00:00"; const m = Math.floor(seconds / 60); const s = Math.floor(seconds % 60); return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; }
@@ -653,15 +501,24 @@
 
     let time = 0; let globalSmoothedBass = 0;
 
+    // --- SETUP SPRITE ASAP (OFFSCREEN CANVAS) ---
+    const smokeSprite = document.createElement('canvas');
+    smokeSprite.width = 64;
+    smokeSprite.height = 64;
+    const sCtx = smokeSprite.getContext('2d');
+    const sGrad = sCtx.createRadialGradient(32, 32, 0, 32, 32, 32);
+    sGrad.addColorStop(0, 'rgba(230, 230, 230, 0.2)');   
+    sGrad.addColorStop(0.5, 'rgba(230, 230, 230, 0.08)'); 
+    sGrad.addColorStop(1, 'rgba(230, 230, 230, 0)');     
+    sCtx.fillStyle = sGrad;
+    sCtx.fillRect(0, 0, 64, 64);
+
+    let smokeParticles = [];
+
     class CinematicParticle {
         constructor() { this.reset(true); }
         reset(init = false) {
-            this.x = Math.random() * width;
-            this.size = Math.random() * 3 + 1;
-            this.speedY = Math.random() * 1.5 + 0.5;
-            this.opacity = Math.random() * 0.6 + 0.2;
-            this.life = Math.random() * 100;
-            this.wobbleSpeed = Math.random() * 0.05 + 0.01;
+            this.x = Math.random() * width; this.size = Math.random() * 3 + 1; this.speedY = Math.random() * 1.5 + 0.5; this.opacity = Math.random() * 0.6 + 0.2; this.life = Math.random() * 100; this.wobbleSpeed = Math.random() * 0.05 + 0.01;
             if(config.type === 'bokeh_orbs') { this.size = Math.random() * 15 + 5; this.opacity = Math.random()*0.3+0.1; }
             if(config.type === 'snow_dust' || config.type === 'ash_particles') { this.speedY = Math.random() * 2 + 1; }
             let movesUp = ['dust_motes', 'golden_pollen', 'magic_sparks', 'floating_embers', 'bokeh_orbs', 'fairy_light', 'deep_sea_motes'].includes(config.type);
@@ -669,15 +526,11 @@
         }
         update() {
             if(config.type === 'none') return;
-            let wind = config.fxAngle * Math.PI / 180;
-            let sm = config.fxSpeed;
-            this.life += this.wobbleSpeed;
+            let wind = config.fxAngle * Math.PI / 180; let sm = config.fxSpeed; this.life += this.wobbleSpeed;
             let movesUp = ['dust_motes', 'golden_pollen', 'magic_sparks', 'floating_embers', 'bokeh_orbs', 'fairy_light', 'deep_sea_motes'].includes(config.type);
             if (movesUp) { this.y -= this.speedY * sm * 0.5; } else { this.y += this.speedY * sm; }
-            this.x += Math.sin(this.life) * 1 * sm + Math.sin(wind)*3;
-            this.currentOpacity = this.opacity * (0.5 + 0.5*Math.sin(this.life*2));
-            if(this.x > width + 50) this.x = -50;
-            if(this.x < -50) this.x = width + 50;
+            this.x += Math.sin(this.life) * 1 * sm + Math.sin(wind)*3; this.currentOpacity = this.opacity * (0.5 + 0.5*Math.sin(this.life*2));
+            if(this.x > width + 50) this.x = -50; if(this.x < -50) this.x = width + 50;
             if((movesUp && this.y < -50) || (!movesUp && this.y > height + 50)) { this.reset(); }
         }
         draw() {
@@ -695,7 +548,6 @@
             ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fillStyle = c1; ctx.fill(); ctx.restore();
         }
     }
-
     let cinematicParticles = []; for(let i=0; i<300; i++) cinematicParticles.push(new CinematicParticle());
     function getSymmetricVal(index, totalItems, bufferLen) { try { if (!dataArray) return 0; const center = totalItems / 2; const centerDist = Math.abs(index - center) / center; const dataIdx = Math.floor(centerDist * (bufferLen * 0.6)); return dataArray[dataIdx] / 255; } catch (e) { return 0; } }
 
@@ -703,12 +555,9 @@
       const style = config.visType; ctx.save(); 
       if (isReflection) {
           if (mirrorConfig.showVisReflect === 'no') { ctx.restore(); return; } 
-          ctx.translate(visX, visRefY); 
-          ctx.scale(1, -1); 
-          ctx.globalAlpha = config.visOpacity * 0.45; 
+          ctx.translate(visX, visRefY); ctx.scale(1, -1); ctx.globalAlpha = config.visOpacity * 0.45; 
       } else { 
-          ctx.translate(visX, visY); 
-          ctx.globalAlpha = config.visOpacity; 
+          ctx.translate(visX, visY); ctx.globalAlpha = config.visOpacity; 
       }
       const cy = 0;
       try {
@@ -782,7 +631,6 @@
       let spkScaleX1 = parseFloat(document.getElementById('spkOvalX1').value);
       let spkScaleY1 = parseFloat(document.getElementById('spkOvalY1').value);
       let spkRot1 = parseFloat(document.getElementById('spkRot1').value) * Math.PI / 180;
-
       let spkScaleX2 = parseFloat(document.getElementById('spkOvalX2').value);
       let spkScaleY2 = parseFloat(document.getElementById('spkOvalY2').value);
       let spkRot2 = parseFloat(document.getElementById('spkRot2').value) * Math.PI / 180;
@@ -823,35 +671,65 @@
       drawLiveBackgroundSpeaker(spk2X, spk2Y, spk2RefY, scale2, spkScaleX2, spkScaleY2, spkRot2);
     }
 
+    // --- MESIN ASAP BARU: VOLUMETRIC PARTICLE SYSTEM ---
     function drawCoffeeSteam(x, y, style, scale, propSpeed) {
-        if(style === 'none') return; ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
-        let branches = 3; let hMax = 150; let wMax = 30; let speedMult = 1.5; let waveFreq = 2.0; let opacity = 0.6; 
-        if(style === 'soft_steam') { branches=2; hMax=120; wMax=20; speedMult=1; waveFreq=1.5; opacity=0.5; }
-        if(style === 'swirl_vapor') { branches=4; hMax=180; wMax=40; speedMult=1.8; waveFreq=2.5; opacity=0.65; }
-        if(style === 'thin_wisp') { branches=2; hMax=140; wMax=15; speedMult=1.2; waveFreq=3; opacity=0.4; }
-        if(style === 'heavy_steam') { branches=5; hMax=200; wMax=45; speedMult=2; waveFreq=1.8; opacity=0.8; }
-        if(style === 'wind_steam') { branches=3; hMax=160; wMax=35; speedMult=2.5; waveFreq=2.0; opacity=0.55; ctx.rotate(20 * Math.PI/180); }
-        ctx.globalCompositeOperation = 'screen'; 
-        for(let b=0; b<branches; b++) {
-            let pts = []; let steps = 30; 
-            for(let i=0; i<=steps; i++) { 
-                let prog = i/steps; let speed = time * speedMult * propSpeed; 
-                let w = (5 + Math.sin(prog * Math.PI * 3 + speed) * 5) * Math.sin(prog * Math.PI); 
-                let sway = Math.sin(prog * Math.PI * waveFreq - speed + b * 1.3) * wMax * Math.pow(prog, 0.8); 
-                let secondarySway = Math.sin(prog * Math.PI * waveFreq * 2.1 - speed * 1.4 + b * 2) * (wMax * 0.4) * prog; 
-                let px = sway + secondarySway; let py = -prog * hMax; 
-                pts.push({x: px, y: py, w: w}); 
+        if(style === 'none') { smokeParticles = []; return; }
+        
+        let spawnCount = 0;
+        if(style === 'soft_steam') spawnCount = 1;
+        if(style === 'swirl_vapor') spawnCount = 2;
+        if(style === 'thin_wisp') spawnCount = 1;
+        if(style === 'heavy_steam') spawnCount = 3;
+        if(style === 'wind_steam') spawnCount = 2;
+
+        let actualSpawns = Math.floor(spawnCount * propSpeed);
+        if (Math.random() < (spawnCount * propSpeed) % 1) actualSpawns++;
+
+        for(let i=0; i<actualSpawns; i++) {
+             smokeParticles.push({
+                x: x + (Math.random() - 0.5) * 15 * scale,
+                y: y - 5 * scale,
+                life: 0,
+                maxLife: (style === 'thin_wisp' ? 120 : 80) + Math.random() * 40,
+                size: (style === 'heavy_steam' ? 30 : (style === 'thin_wisp' ? 10 : 20)) * scale,
+                grow: (style === 'heavy_steam' ? 1.0 : (style === 'thin_wisp' ? 0.3 : 0.6)) * scale,
+                vx: (style === 'wind_steam' ? (2.0 + Math.random()) : (Math.random() - 0.5) * 0.8) * scale,
+                vy: ((style === 'thin_wisp' ? 1.5 : 1.0) + Math.random() * 0.5) * scale * propSpeed,
+                swirlOffset: Math.random() * Math.PI * 2,
+                swirlSpeed: (Math.random() * 0.05 + 0.02) * (style === 'swirl_vapor' ? 2.5 : 1),
+                maxOpacity: (style === 'heavy_steam' ? 0.9 : (style === 'thin_wisp' ? 0.4 : 0.7))
+             });
+        }
+
+        ctx.save();
+        ctx.globalCompositeOperation = 'screen';
+        
+        for (let i = smokeParticles.length - 1; i >= 0; i--) {
+            let p = smokeParticles[i];
+            p.life++;
+            
+            p.y -= p.vy;
+            p.x += p.vx + Math.sin(p.life * p.swirlSpeed + p.swirlOffset) * (style === 'swirl_vapor' ? 1.2 : 0.4) * scale;
+            p.size += p.grow;
+            
+            let halfLife = p.maxLife * 0.4; 
+            let currentOpacity = 0;
+            if (p.life < halfLife) {
+                currentOpacity = (p.life / halfLife) * p.maxOpacity;
+            } else {
+                currentOpacity = (1 - ((p.life - halfLife) / (p.maxLife - halfLife))) * p.maxOpacity;
             }
-            ctx.beginPath(); ctx.moveTo(pts[0].x - pts[0].w, pts[0].y); 
-            for(let i=1; i<pts.length; i++) ctx.lineTo(pts[i].x - pts[i].w, pts[i].y); 
-            for(let i=pts.length-1; i>=0; i--) ctx.lineTo(pts[i].x + pts[i].w, pts[i].y); 
-            ctx.closePath();
-            let grad = ctx.createLinearGradient(0,0, 0,-hMax); 
-            grad.addColorStop(0, `rgba(255, 255, 255, 0)`); 
-            grad.addColorStop(0.5, `rgba(255, 255, 255, ${opacity * 0.7})`); 
-            grad.addColorStop(1, `rgba(255, 255, 255, 0)`); 
-            ctx.fillStyle = grad; ctx.fill();
-        } ctx.restore();
+            
+            if (currentOpacity > 0) {
+                ctx.globalAlpha = currentOpacity;
+                ctx.drawImage(smokeSprite, p.x - p.size / 2, p.y - p.size / 2, p.size, p.size);
+            }
+            
+            if (p.life >= p.maxLife) {
+                smokeParticles.splice(i, 1);
+            }
+        }
+        ctx.restore();
     }
 
     function drawCandle(x, y, refY, style, scale, propSpeed, isReflection) {
