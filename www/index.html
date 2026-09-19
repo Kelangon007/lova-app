@@ -6,7 +6,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>Mirror Spectrum V1</title>
+  <title>Mirror Spectrum V2</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body { margin: 0; background-color: #111; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; overflow-x: hidden; }
@@ -74,7 +74,7 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Mirror Spectrum V1 (Visualizer Tilt Active).</div>
+    <div id="statusBox">Siap. Mirror Spectrum V2 (3D Perspective Engine).</div>
     
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
@@ -97,10 +97,10 @@
 
     <hr class="thin-line">
 
-    <!-- GRID 1: VISUALIZER & SPEAKER ASLI -->
+    <!-- GRID 1: VISUALIZER (3D PERSPECTIVE) & SPEAKER ASLI -->
     <div class="grid-2col">
       <div class="layout-col">
-        <label style="color:#00d2ff;">VISUALIZER</label>
+        <label style="color:#00d2ff;">VISUALIZER 3D</label>
         <select id="visType" class="full-select">
             <optgroup label="=== SOLID BARS ===">
                 <option value="vintage_bars">📊 1. Vintage Solid Bars</option>
@@ -127,7 +127,7 @@
                 <option value="white_caps">🧢 20. Bars with White Cap</option>
             </optgroup>
             <optgroup label="=== MODERN GRADIENT ===">
-                <option value="liquid_bar">💧 21. Liquid Glowing Cyan</option>
+                <option value="liquid_bar" selected>💧 21. Liquid Glowing Cyan</option>
                 <option value="cyber_pulse">⚡ 22. Neon Pulse Bars</option>
                 <option value="mirror_bars">🪞 23. Mirrored Glass Bars</option>
                 <option value="gradient_blocks">🎛️ 24. Cyan-Blue Gradient</option>
@@ -172,7 +172,10 @@
         </select>
         <div class="row"><label>TINGGI</label><input type="range" id="visHeight" min="30" max="600" value="150"></div>
         <div class="row"><label>LEBAR</label><input type="range" id="visWidth" min="100" max="1100" value="400"></div>
-        <div class="row"><label>KEMIRINGAN</label><input type="range" id="visRot" min="-90" max="90" step="1" value="0"></div>
+        <div class="row"><label style="color:#00e5ff;">SUDUT (PUTAR)</label><input type="range" id="visRot" min="-90" max="90" step="1" value="0"></div>
+        <div class="row"><label style="color:#00e5ff;">SKEW Y (MIRING)</label><input type="range" id="visSkewY" min="-45" max="45" step="1" value="0"></div>
+        <div class="row"><label style="color:#00e5ff;">SKALA X</label><input type="range" id="visScaleX" min="0.1" max="3.0" step="0.05" value="1.0"></div>
+        <div class="row"><label style="color:#00e5ff;">SKALA Y</label><input type="range" id="visScaleY" min="0.1" max="3.0" step="0.05" value="1.0"></div>
         <div class="row"><label>OPASITAS</label><input type="range" id="visOpacity" min="0.1" max="1.0" step="0.05" value="1.0"></div>
       </div>
       <div class="layout-col">
@@ -362,10 +365,16 @@
       if (mediaRecorder && mediaRecorder.state === 'recording') { setTimeout(() => { stopRecording(); }, 500); }
     }
 
-    const config = { type: 'none', count: 100, visType: 'vintage_vu_meter', visHeight: 150, visOpacity: 1.0, fxAngle: 0, fxSpeed: 1.0, visRot: 0 };
+    const config = { type: 'none', count: 100, visType: 'liquid_bar', visHeight: 150, visOpacity: 1.0, fxAngle: 0, fxSpeed: 1.0, visRot: 0, visSkewY: 0, visScaleX: 1.0, visScaleY: 1.0 };
     document.getElementById('visType').addEventListener('change', (e) => { config.visType = e.target.value; peakHeights.fill(0); });
     document.getElementById('visOpacity').addEventListener('input', (e) => config.visOpacity = parseFloat(e.target.value));
+    
+    // LISTENER VISUALIZER 3D PERSPECTIVE BARU
     document.getElementById('visRot').addEventListener('input', (e) => config.visRot = parseFloat(e.target.value));
+    document.getElementById('visSkewY').addEventListener('input', (e) => config.visSkewY = parseFloat(e.target.value));
+    document.getElementById('visScaleX').addEventListener('input', (e) => config.visScaleX = parseFloat(e.target.value));
+    document.getElementById('visScaleY').addEventListener('input', (e) => config.visScaleY = parseFloat(e.target.value));
+
     document.getElementById('type').addEventListener('change', (e) => config.type = e.target.value);
     document.getElementById('fxAngle').addEventListener('change', (e) => config.fxAngle = parseInt(e.target.value));
     document.getElementById('fxSpeed').addEventListener('input', (e) => config.fxSpeed = parseFloat(e.target.value));
@@ -488,7 +497,7 @@
     canvasWrapper.addEventListener('mousedown', startDrag); window.addEventListener('mousemove', drag); window.addEventListener('mouseup', endDrag);
     canvasWrapper.addEventListener('touchstart', startDrag, { passive: false }); window.addEventListener('touchmove', drag, { passive: false }); window.addEventListener('touchend', endDrag);
 
-    let audioCtx, source, mediaStreamDestination, analyser, dataArray; let isAudioInit = false; let peakHeights = new Array(120).fill(0);
+    let audioCtx, source, mediaStreamDestination, analyser, dataArray; let isAudioInit = false; let peakHeights = new Array(200).fill(0);
     function formatTime(seconds) { if (isNaN(seconds) || !isFinite(seconds)) return "00:00"; const m = Math.floor(seconds / 60); const s = Math.floor(seconds % 60); return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; }
     function initAudioContext() { const AudioContext = window.AudioContext || window.webkitAudioContext; audioCtx = new AudioContext(); analyser = audioCtx.createAnalyser(); analyser.fftSize = 256; analyser.smoothingTimeConstant = 0.8; source = audioCtx.createMediaElementSource(audioPlayer); mediaStreamDestination = audioCtx.createMediaStreamDestination(); source.connect(analyser); analyser.connect(audioCtx.destination); analyser.connect(mediaStreamDestination); dataArray = new Uint8Array(analyser.frequencyBinCount); isAudioInit = true; }
 
@@ -554,9 +563,7 @@
 
     function drawCoffeeSteam(x, y, style, scale, propSpeed) {
         if(style === 'none') { smokeParticles = []; return; }
-        
         let customOpacity = parseFloat(document.getElementById('smokeOpacity')?.value) || 1.0;
-
         let spawnRate = 0.6;
         if(style === 'soft_steam') spawnRate = 0.5;
         if(style === 'swirl_vapor') spawnRate = 1.0;
@@ -588,7 +595,6 @@
         
         for (let i = smokeParticles.length - 1; i >= 0; i--) {
             let p = smokeParticles[i];
-            
             p.life += propSpeed; 
             p.y -= p.vy * propSpeed;
             p.x += (p.vx + Math.sin(p.life * p.swirlSpeed + p.swirlOffset) * (style === 'swirl_vapor' ? 0.8 : 0.3)) * scale * propSpeed;
@@ -615,25 +621,42 @@
         ctx.restore();
     }
 
-    function getSymmetricVal(index, totalItems, bufferLen) { try { if (!dataArray) return 0; const center = totalItems / 2; const centerDist = Math.abs(index - center) / center; const dataIdx = Math.floor(centerDist * (bufferLen * 0.6)); return dataArray[dataIdx] / 255; } catch (e) { return 0; } }
+    // --- PROTEKSI BUG VISUALIZER HILANG ---
+    function getSymmetricVal(index, totalItems, bufferLen) { 
+        try { 
+            if (!dataArray || dataArray.length === 0) return 0; 
+            const center = totalItems / 2; 
+            const centerDist = Math.abs(index - center) / center; 
+            const dataIdx = Math.floor(centerDist * (bufferLen * 0.6)); 
+            let val = dataArray[dataIdx];
+            if (isNaN(val) || val === undefined) return 0;
+            return val / 255; 
+        } catch (e) { return 0; } 
+    }
 
-    // --- LOGIKA ROTASI VISUALIZER ---
+    // --- ENGINE PERSPEKTIF 3D VISUALIZER ---
     function drawVisualizer(bufferLen, isReflection) {
       const style = config.visType; ctx.save(); 
       if (isReflection) {
           if (mirrorConfig.showVisReflect === 'no') { ctx.restore(); return; } 
-          // Pindah ke titik tengah visualizer, rotasi, balikan, lalu gambar
+          // Geser pivot ke tengah-bawah visualizer
           ctx.translate(visX + visW / 2, visRefY); 
+          // Terapkan Transformasi 3D (Scale X/Y, Miring/Skew Y, Sudut/Rot)
           ctx.rotate(config.visRot * Math.PI / 180);
+          ctx.transform(1, Math.tan(config.visSkewY * Math.PI / 180), 0, 1, 0, 0);
+          ctx.scale(config.visScaleX, config.visScaleY);
           ctx.scale(1, -1); 
           ctx.globalAlpha = config.visOpacity * 0.45; 
-          ctx.translate(-visW / 2, 0);
+          ctx.translate(-visW / 2, 0); // Kembalikan sumbu
       } else { 
-          // Pindah ke titik tengah visualizer, rotasi, lalu gambar
+          // Geser pivot ke tengah-bawah visualizer
           ctx.translate(visX + visW / 2, visY); 
+          // Terapkan Transformasi 3D (Scale X/Y, Miring/Skew Y, Sudut/Rot)
           ctx.rotate(config.visRot * Math.PI / 180);
+          ctx.transform(1, Math.tan(config.visSkewY * Math.PI / 180), 0, 1, 0, 0);
+          ctx.scale(config.visScaleX, config.visScaleY);
           ctx.globalAlpha = config.visOpacity; 
-          ctx.translate(-visW / 2, 0);
+          ctx.translate(-visW / 2, 0); // Kembalikan sumbu
       }
       const cy = 0;
       try {

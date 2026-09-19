@@ -1,6 +1,6 @@
 {
-  "appId": "com.mirror.p720",
-  "appName": "Mirror 720p",
+  "appId": "com.mirrorspectrum.v2",
+  "appName": "Mirror Spectrum V2",
   "webDir": "www",
   "bundledWebRuntime": false
 }
