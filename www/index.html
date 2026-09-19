@@ -6,7 +6,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>Mirror 720p V6 (Volumetric Smoke + Opacity)</title>
+  <title>Mirror Spectrum V1</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body { margin: 0; background-color: #111; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; overflow-x: hidden; }
@@ -74,7 +74,7 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Mirror 720p V6 (Volumetric Smoke + Tebal).</div>
+    <div id="statusBox">Siap. Mirror Spectrum V1 (Visualizer Tilt Active).</div>
     
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
@@ -172,6 +172,7 @@
         </select>
         <div class="row"><label>TINGGI</label><input type="range" id="visHeight" min="30" max="600" value="150"></div>
         <div class="row"><label>LEBAR</label><input type="range" id="visWidth" min="100" max="1100" value="400"></div>
+        <div class="row"><label>KEMIRINGAN</label><input type="range" id="visRot" min="-90" max="90" step="1" value="0"></div>
         <div class="row"><label>OPASITAS</label><input type="range" id="visOpacity" min="0.1" max="1.0" step="0.05" value="1.0"></div>
       </div>
       <div class="layout-col">
@@ -361,9 +362,10 @@
       if (mediaRecorder && mediaRecorder.state === 'recording') { setTimeout(() => { stopRecording(); }, 500); }
     }
 
-    const config = { type: 'none', count: 100, visType: 'vintage_vu_meter', visHeight: 150, visOpacity: 1.0, fxAngle: 0, fxSpeed: 1.0 };
+    const config = { type: 'none', count: 100, visType: 'vintage_vu_meter', visHeight: 150, visOpacity: 1.0, fxAngle: 0, fxSpeed: 1.0, visRot: 0 };
     document.getElementById('visType').addEventListener('change', (e) => { config.visType = e.target.value; peakHeights.fill(0); });
     document.getElementById('visOpacity').addEventListener('input', (e) => config.visOpacity = parseFloat(e.target.value));
+    document.getElementById('visRot').addEventListener('input', (e) => config.visRot = parseFloat(e.target.value));
     document.getElementById('type').addEventListener('change', (e) => config.type = e.target.value);
     document.getElementById('fxAngle').addEventListener('change', (e) => config.fxAngle = parseInt(e.target.value));
     document.getElementById('fxSpeed').addEventListener('input', (e) => config.fxSpeed = parseFloat(e.target.value));
@@ -432,7 +434,7 @@
       if (document.getElementById('coffeeStyle').value !== 'none' && Math.hypot(pos.x - coffeeX, pos.y - coffeeY) <= 50) { isDraggingCoffee = true; dragOffsetX = pos.x - coffeeX; dragOffsetY = pos.y - coffeeY; if (e.cancelable) e.preventDefault(); return; }
       if (document.getElementById('candleStyle').value !== 'none') {
         if (Math.hypot(pos.x - candle1X, pos.y - candle1Y) <= 40) { isDraggingCandle1 = true; dragOffsetX = pos.x - candle1X; dragOffsetY = pos.y - candle1Y; if (e.cancelable) e.preventDefault(); return; }
-        if (Math.hypot(pos.x - candle2X, pos.y - candle2RefY) <= 40) { isDraggingCandle2 = true; dragOffsetX = pos.x - candle2X; dragOffsetY = pos.y - candle2Y; if (e.cancelable) e.preventDefault(); return; }
+        if (Math.hypot(pos.x - candle2X, pos.y - candle2Y) <= 40) { isDraggingCandle2 = true; dragOffsetX = pos.x - candle2X; dragOffsetY = pos.y - candle2Y; if (e.cancelable) e.preventDefault(); return; }
       }
       if (pos.x >= visX && pos.x <= visX + visW && pos.y >= visY - 150 && pos.y <= visY + 150) { isDraggingVis = true; dragOffsetX = pos.x - visX; dragOffsetY = pos.y - visY; if (e.cancelable) e.preventDefault(); return; }
 
@@ -502,7 +504,6 @@
 
     let time = 0; let globalSmoothedBass = 0;
 
-    // --- SETUP SPRITE ASAP (OFFSCREEN CANVAS) DENGAN KETEBALAN IDEAL ---
     const smokeSprite = document.createElement('canvas');
     smokeSprite.width = 64;
     smokeSprite.height = 64;
@@ -516,7 +517,6 @@
     sCtx.fillRect(0, 0, 64, 64);
     let smokeParticles = [];
 
-    // --- SETUP PARTIKEL LINGKUNGAN ---
     class CinematicParticle {
         constructor() { this.reset(true); }
         reset(init = false) {
@@ -552,7 +552,6 @@
     }
     let cinematicParticles = []; for(let i=0; i<300; i++) cinematicParticles.push(new CinematicParticle());
 
-    // --- MESIN ASAP VOLUMETRIC ASLI (DENGAN SLIDER TEBAL + SPEED MANDIRI) ---
     function drawCoffeeSteam(x, y, style, scale, propSpeed) {
         if(style === 'none') { smokeParticles = []; return; }
         
@@ -590,9 +589,7 @@
         for (let i = smokeParticles.length - 1; i >= 0; i--) {
             let p = smokeParticles[i];
             
-            // Waktu umur partikel ikut berskala dengan propSpeed (Tinggi asap stabil!)
             p.life += propSpeed; 
-            
             p.y -= p.vy * propSpeed;
             p.x += (p.vx + Math.sin(p.life * p.swirlSpeed + p.swirlOffset) * (style === 'swirl_vapor' ? 0.8 : 0.3)) * scale * propSpeed;
             p.size += p.grow * propSpeed;
@@ -605,7 +602,6 @@
                 currentOpacity = (1 - ((p.life - halfLife) / (p.maxLife - halfLife))) * p.baseMaxOpacity;
             }
             
-            // Terapkan opasitas dari slider TEBAL
             let finalAlpha = currentOpacity * customOpacity;
             if (finalAlpha > 0) {
                 ctx.globalAlpha = Math.min(1.0, finalAlpha);
@@ -621,13 +617,23 @@
 
     function getSymmetricVal(index, totalItems, bufferLen) { try { if (!dataArray) return 0; const center = totalItems / 2; const centerDist = Math.abs(index - center) / center; const dataIdx = Math.floor(centerDist * (bufferLen * 0.6)); return dataArray[dataIdx] / 255; } catch (e) { return 0; } }
 
+    // --- LOGIKA ROTASI VISUALIZER ---
     function drawVisualizer(bufferLen, isReflection) {
       const style = config.visType; ctx.save(); 
       if (isReflection) {
           if (mirrorConfig.showVisReflect === 'no') { ctx.restore(); return; } 
-          ctx.translate(visX, visRefY); ctx.scale(1, -1); ctx.globalAlpha = config.visOpacity * 0.45; 
+          // Pindah ke titik tengah visualizer, rotasi, balikan, lalu gambar
+          ctx.translate(visX + visW / 2, visRefY); 
+          ctx.rotate(config.visRot * Math.PI / 180);
+          ctx.scale(1, -1); 
+          ctx.globalAlpha = config.visOpacity * 0.45; 
+          ctx.translate(-visW / 2, 0);
       } else { 
-          ctx.translate(visX, visY); ctx.globalAlpha = config.visOpacity; 
+          // Pindah ke titik tengah visualizer, rotasi, lalu gambar
+          ctx.translate(visX + visW / 2, visY); 
+          ctx.rotate(config.visRot * Math.PI / 180);
+          ctx.globalAlpha = config.visOpacity; 
+          ctx.translate(-visW / 2, 0);
       }
       const cy = 0;
       try {
@@ -679,9 +685,6 @@
         else if (style === 'aurora_borealis') { let numBars = 50; let spacing = visW/numBars; ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let ctrlY = cy - h - Math.sin(time + i*0.1)*30; ctx.quadraticCurveTo(i*spacing, ctrlY, (i+1)*spacing, cy); } let grad = ctx.createLinearGradient(0, cy - config.visHeight, 0, cy); grad.addColorStop(0, 'rgba(0, 255, 200, 0.8)'); grad.addColorStop(1, 'rgba(100, 0, 255, 0.1)'); ctx.fillStyle = grad; ctx.fill(); }
         else if (style === 'classic_spectrum') { let numBars = 64; let spacing = visW / numBars; let barW = spacing * 0.8; for(let i=0; i<numBars; i++) { let h = Math.max(2, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let grad = ctx.createLinearGradient(0, 0, 0, -config.visHeight); grad.addColorStop(0, '#00ff00'); grad.addColorStop(0.6, '#ffff00'); grad.addColorStop(1, '#ff0000'); ctx.fillStyle = grad; ctx.fillRect(i * spacing, -h, barW, h); } }
         else if (style === 'cassette_tape') { let scaleX = visW / 300; let scaleY = config.visHeight / 200; let s = Math.min(scaleX, scaleY); ctx.save(); ctx.translate(visW/2, cy - config.visHeight/2); ctx.scale(s, s); ctx.fillStyle = '#222'; if(ctx.roundRect) ctx.roundRect(-150, -100, 300, 200, 10); else ctx.rect(-150, -100, 300, 200); ctx.fill(); ctx.fillStyle = '#eee'; ctx.fillRect(-130, -80, 260, 110); let rot = time * 2; ctx.save(); ctx.translate(-60, -25); ctx.rotate(rot); ctx.beginPath(); ctx.arc(0,0, 30, 0, Math.PI*2); ctx.fillStyle = '#111'; ctx.fill(); ctx.beginPath(); ctx.arc(0,0, 10, 0, Math.PI*2); ctx.fillStyle = '#eee'; ctx.fill(); for(let i=0; i<6; i++){ ctx.rotate(Math.PI/3); ctx.fillRect(10, -2, 20, 4); } ctx.restore(); ctx.save(); ctx.translate(60, -25); ctx.rotate(rot); ctx.beginPath(); ctx.arc(0,0, 30, 0, Math.PI*2); ctx.fillStyle = '#111'; ctx.fill(); ctx.beginPath(); ctx.arc(0,0, 10, 0, Math.PI*2); ctx.fillStyle = '#eee'; ctx.fill(); for(let i=0; i<6; i++){ ctx.rotate(Math.PI/3); ctx.fillRect(10, -2, 20, 4); } ctx.restore(); ctx.fillStyle = '#000'; ctx.fillRect(-80, -50, 160, 50); ctx.strokeStyle = '#333'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(-60,-25); ctx.lineTo(60,-25); ctx.stroke(); ctx.fillStyle = '#333'; ctx.beginPath(); ctx.moveTo(-100, 40); ctx.lineTo(100, 40); ctx.lineTo(120, 100); ctx.lineTo(-120, 100); ctx.fill(); ctx.restore(); }
-        else if (style === 'vintage_vu_meter') { let valBass = dataArray ? dataArray[Math.floor(bufferLen * 0.05)] / 255 : 0; let valTreble = dataArray ? dataArray[Math.floor(bufferLen * 0.3)] / 255 : 0; let boxW = (visW / 2) - 10; let boxH = config.visHeight; function drawVU(x, y, w, h, val) { ctx.save(); ctx.translate(x, y); ctx.fillStyle = '#1e1e1e'; ctx.fillRect(0, 0, w, h); let pad = 8; let sw = w - pad*2; let sh = h - pad*2; let grad = ctx.createLinearGradient(0, pad, 0, pad+sh); grad.addColorStop(0, '#f5b041'); grad.addColorStop(1, '#ffb300'); ctx.fillStyle = grad; ctx.fillRect(pad, pad, sw, sh); ctx.strokeStyle = 'rgba(0,0,0,0.6)'; ctx.lineWidth = 3; ctx.strokeRect(pad, pad, sw, sh); ctx.strokeStyle = 'rgba(255,255,255,0.2)'; ctx.lineWidth = 1; ctx.strokeRect(pad+1, pad+1, sw-2, sh-2); let pivotX = w/2; let pivotY = h - pad - 10; let r = Math.min(sw, sh) * 0.8; ctx.beginPath(); ctx.arc(pivotX, pivotY, r, Math.PI*1.15, Math.PI*1.85); ctx.strokeStyle = '#3e2723'; ctx.lineWidth = 1.5; ctx.stroke(); for(let i=0; i<=20; i++) { let a = Math.PI*1.15 + (i/20)*(Math.PI*0.7); let t = (i%5===0) ? 8 : 4; let c = (i > 14) ? '#d32f2f' : '#3e2723'; ctx.beginPath(); ctx.moveTo(pivotX + Math.cos(a)*r, pivotY + Math.sin(a)*r); ctx.lineTo(pivotX + Math.cos(a)*(r-t), pivotY + Math.sin(a)*(r-t)); ctx.strokeStyle = c; ctx.lineWidth = (i%5===0) ? 1.5 : 1; ctx.stroke(); } ctx.fillStyle = '#3e2723'; ctx.font = 'bold ' + (sh*0.15) + 'px sans-serif'; ctx.textAlign = 'center'; ctx.fillText("VU", pivotX, pivotY - r*0.4); let ang = Math.PI*1.15 + (val * 0.7 * Math.PI); ctx.beginPath(); ctx.moveTo(pivotX+2, pivotY+2); ctx.lineTo(pivotX+2 + Math.cos(ang)*(r+5), pivotY+2 + Math.sin(ang)*(r+5)); ctx.strokeStyle = 'rgba(0,0,0,0.3)'; ctx.lineWidth = 2; ctx.stroke(); ctx.beginPath(); ctx.moveTo(pivotX, pivotY); ctx.lineTo(pivotX + Math.cos(ang)*(r+5), pivotY + Math.sin(ang)*(r+5)); ctx.strokeStyle = '#111'; ctx.lineWidth = 1.5; ctx.stroke(); ctx.beginPath(); ctx.arc(pivotX, pivotY, 4, 0, Math.PI*2); ctx.fillStyle = '#111'; ctx.fill(); ctx.restore(); } drawVU(0, cy - boxH, boxW, boxH, valBass); drawVU(visW - boxW, cy - boxH, boxW, boxH, valTreble); }
-        else if (style === 'classic_vinyl') { let cx_c = visW / 2; let cy_c = -config.visHeight / 2; let bass = getSymmetricVal(10, 20, bufferLen); ctx.save(); ctx.translate(cx_c, cy_c); ctx.rotate(time); ctx.beginPath(); ctx.arc(0,0, config.visHeight/2 + bass*10, 0, Math.PI*2); ctx.fillStyle = '#111'; ctx.fill(); ctx.lineWidth = 1.5; for(let i=1; i<=6; i++) { ctx.beginPath(); ctx.arc(0,0, config.visHeight/2 - i*10, 0, Math.PI*2); ctx.strokeStyle = `rgba(255,255,255,${0.05 + bass*0.2})`; ctx.stroke(); } ctx.beginPath(); ctx.arc(0,0, 35, 0, Math.PI*2); ctx.fillStyle = '#ff9800'; ctx.fill(); ctx.beginPath(); ctx.arc(0,0, 5, 0, Math.PI*2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.restore(); }
-        else if (style === 'retro_boombox_eq') { let numBars = 16; let spacing = visW / numBars; let barW = spacing * 0.7; let stepH = 8; for(let i=0; i<numBars; i++) { let h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let blocks = Math.floor(h / stepH); for(let j=0; j<blocks; j++) { ctx.fillStyle = j > 15 ? '#ff0000' : (j > 10 ? '#ffff00' : '#00ff00'); ctx.fillRect(i * spacing, -(j * stepH) - stepH + 1, barW, stepH - 2); } } }
       } catch (e) {}
       ctx.restore();
     }
