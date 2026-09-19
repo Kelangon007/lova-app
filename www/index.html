@@ -74,7 +74,7 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Mirror Spectrum V3 (Advanced 3D Skew Engine).</div>
+    <div id="statusBox">Siap. Mirror Spectrum V3 (50 NEW Spectrums!).</div>
     
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
@@ -102,72 +102,65 @@
       <div class="layout-col">
         <label style="color:#00d2ff;">VISUALIZER 3D</label>
         <select id="visType" class="full-select">
-            <optgroup label="=== SOLID BARS ===">
-                <option value="vintage_bars">📊 1. Vintage Solid Bars</option>
-                <option value="winamp_classic">📻 2. Winamp Peaks</option>
-                <option value="classic_eq">🎙️ 3. Classic Green-Red EQ</option>
-                <option value="step_eq">🧱 4. Step Block EQ</option>
-                <option value="thin_eq">📏 5. Thin Minimalist EQ</option>
-                <option value="thick_bars">⬛ 6. Bold Solid Bars</option>
-                <option value="hollow_bars">🔲 7. Hollow Outline Bars</option>
-                <option value="rounded_bars">💊 8. Rounded Tip Bars</option>
-                <option value="split_eq">⏸️ 9. Split Center EQ</option>
-                <option value="double_mirror">🪞 10. Dual Mirror Bars</option>
+            <optgroup label="=== LO-FI WAVES (1-10) ===">
+                <option value="vis_1" selected>🌊 1. Soft Lo-Fi Wave</option>
+                <option value="vis_2">〰️ 2. Double Dream Wave</option>
+                <option value="vis_3">🎀 3. Chill Ribbon Wave</option>
+                <option value="vis_4">➖ 4. Minimal Horizon Line</option>
+                <option value="vis_5">🌊 5. Ocean Depth Wave</option>
+                <option value="vis_6">📉 6. Smooth Curve Fill</option>
+                <option value="vis_7">🌘 7. Shadow Glow Wave</option>
+                <option value="vis_8">〰️ 8. Triple Layer Silk</option>
+                <option value="vis_9">♒ 9. Flowing River</option>
+                <option value="vis_10">🌅 10. Sunset Horizon Glow</option>
             </optgroup>
-            <optgroup label="=== PEAKS & DOTS ===">
-                <option value="dotted_eq">⏺️ 11. Dotted Peak EQ</option>
-                <option value="led_matrix">🚥 12. LED Dot Matrix</option>
-                <option value="analog_vu">🎛️ 13. Analog VU Meter</option>
-                <option value="retro_oscilloscope">📺 14. CRT Oscilloscope</option>
-                <option value="peak_line">〰️ 15. Floating Peak Line</option>
-                <option value="peak_dots_only">⚪ 16. Floating Dots Peak</option>
-                <option value="dash_bars">➖ 17. Dashed Segment Bars</option>
-                <option value="meter_blocks">📶 18. Meter Blocks</option>
-                <option value="soft_glow_bars">🌟 19. Glowing Ambient Bars</option>
-                <option value="white_caps">🧢 20. Bars with White Cap</option>
+            <optgroup label="=== NOIR BARS (11-20) ===">
+                <option value="vis_11">🥃 11. Vintage Gold Bars</option>
+                <option value="vis_12">🎞️ 12. Monochrome Decay</option>
+                <option value="vis_13">⬛ 13. Bold Tungsten Blocks</option>
+                <option value="vis_14">🔲 14. Hollow Noir Rectangles</option>
+                <option value="vis_15">💊 15. Smooth Tip Bars</option>
+                <option value="vis_16">📏 16. Ultra Thin Ash Bars</option>
+                <option value="vis_17">🧱 17. Sepia Brick EQ</option>
+                <option value="vis_18">📻 18. Classic Winamp Retro</option>
+                <option value="vis_19">🚥 19. Noir Dot Matrix</option>
+                <option value="vis_20">📶 20. Segmented Stack</option>
             </optgroup>
-            <optgroup label="=== MODERN GRADIENT ===">
-                <option value="liquid_bar" selected>💧 21. Liquid Glowing Cyan</option>
-                <option value="cyber_pulse">⚡ 22. Neon Pulse Bars</option>
-                <option value="mirror_bars">🪞 23. Mirrored Glass Bars</option>
-                <option value="gradient_blocks">🎛️ 24. Cyan-Blue Gradient</option>
-                <option value="sunset_bars">🌅 25. Warm Sunset Gradient</option>
-                <option value="emerald_bars">💎 26. Emerald Green Grad</option>
-                <option value="purple_haze">🟣 27. Purple-Pink Soft</option>
-                <option value="gold_classic">👑 28. Golden Elegant EQ</option>
-                <option value="monochrome_fade">🎞️ 29. Grayscale Fading</option>
-                <option value="dual_tone">🌗 30. Dual Tone Top-Bot</option>
+            <optgroup label="=== MINIMALIST DOTS (21-30) ===">
+                <option value="vis_21">⏺️ 21. Floating Peak Dots</option>
+                <option value="vis_22">〰️ 22. Minimal Line & Peak</option>
+                <option value="vis_23">⚪ 23. Glowing Orbs Only</option>
+                <option value="vis_24">➖ 24. Dashed Float Lines</option>
+                <option value="vis_25">🫧 25. Bouncing Bubble Wave</option>
+                <option value="vis_26">🧢 26. White Capped Bars</option>
+                <option value="vis_27">🧊 27. Ghost Glass Blocks</option>
+                <option value="vis_28">⏸️ 28. Thin Split Line</option>
+                <option value="vis_29">☄️ 29. Falling Star Peaks</option>
+                <option value="vis_30">📉 30. Minimalist Polygraph</option>
             </optgroup>
-            <optgroup label="=== WAVES & LINES ===">
-                <option value="modern_wave">🌊 31. Modern Smooth Wave</option>
-                <option value="filled_wave">🌊 32. Filled Ambient Wave</option>
-                <option value="double_wave">〰️ 33. Double Layer Wave</option>
-                <option value="thin_wave">✒️ 34. Ultra Thin Line</option>
-                <option value="shadow_wave">🌒 35. Wave with Shadow</option>
-                <option value="stereo_lines">⏸️ 36. Dual Parallel Lines</option>
-                <option value="smooth_curve">🔔 37. Bell Curve Wave</option>
-                <option value="ribbon_wave">🎀 38. Flowing Ribbon Wave</option>
-                <option value="minimal_line">➖ 39. Minimalist Baseline</option>
-                <option value="calm_horizon">🌅 40. Calm Horizon Glow</option>
+            <optgroup label="=== MIRROR SYMMETRY (31-40) ===">
+                <option value="vis_31">🪞 31. Dual Tone Reflection</option>
+                <option value="vis_32">⏸️ 32. Center Split EQ</option>
+                <option value="vis_33">🌌 33. Liquid Core Mirror</option>
+                <option value="vis_34">⚔️ 34. Sword Edge Symmetric</option>
+                <option value="vis_35">🧊 35. Frozen Glass Mirror</option>
+                <option value="vis_36">💎 36. Diamond Hex Mirror</option>
+                <option value="vis_37">🎛️ 37. Parallel Stereo Lines</option>
+                <option value="vis_38">🔋 38. Energy Core Glow</option>
+                <option value="vis_39">🧬 39. Digital DNA Helix</option>
+                <option value="vis_40">🌀 40. Quantum Split Wave</option>
             </optgroup>
-            <optgroup label="=== MODERN & UNIQUE ===">
-                <option value="hologram_grid">🧊 41. Hologram 3D Grid</option>
-                <option value="digital_dna">🧬 42. Digital DNA Wave</option>
-                <option value="matrix_rain">🌧️ 43. Matrix Digital Rain</option>
-                <option value="cyber_laser">💥 44. Cyber Laser Beams</option>
-                <option value="neon_ripple">🔲 45. Neon Square Ripple</option>
-                <option value="aurora_borealis">🌌 46. Aurora Borealis Glow</option>
-                <option value="block_tower">🏙️ 47. Clean 3D EQ Blocks</option>
-                <option value="equalizer_3d">🛠️ 48. Cylinder Studio EQ</option>
-                <option value="floating_blocks">🧊 49. Floating Blocks</option>
-                <option value="classic_studio">🎙️ 50. Pro Studio Rack</option>
-            </optgroup>
-            <optgroup label="=== RETRO & CLASSIC ===">
-                <option value="classic_spectrum">🌈 51. Classic Spectrum Analyzer</option>
-                <option value="cassette_tape">📼 52. Spinning Cassette Tape</option>
-                <option value="vintage_vu_meter">🎛️ 53. Box Vintage VU Meter</option>
-                <option value="classic_vinyl">💿 54. Classic Vinyl Record</option>
-                <option value="retro_boombox_eq">📻 55. Retro Boombox LED EQ</option>
+            <optgroup label="=== EXPERIMENTAL/ANALOG (41-50) ===">
+                <option value="vis_41">🎛️ 41. Dual Analog VU Meter</option>
+                <option value="vis_42">📺 42. CRT Oscilloscope</option>
+                <option value="vis_43">💿 43. Spinning Vinyl Record</option>
+                <option value="vis_44">📼 44. Retro Cassette Tape</option>
+                <option value="vis_45">🌈 45. Classic Color Spectrum</option>
+                <option value="vis_46">💥 46. Neon Laser Pulse</option>
+                <option value="vis_47">🌧️ 47. Matrix Digital Rain</option>
+                <option value="vis_48">🧊 48. 3D Hologram Grid</option>
+                <option value="vis_49">🛠️ 49. Cylinder Studio Rack</option>
+                <option value="vis_50">📻 50. Boombox LED Display</option>
             </optgroup>
         </select>
         <div class="row"><label>TINGGI</label><input type="range" id="visHeight" min="30" max="600" value="150"></div>
@@ -366,11 +359,10 @@
       if (mediaRecorder && mediaRecorder.state === 'recording') { setTimeout(() => { stopRecording(); }, 500); }
     }
 
-    const config = { type: 'none', count: 100, visType: 'liquid_bar', visHeight: 150, visOpacity: 1.0, fxAngle: 0, fxSpeed: 1.0, visRot: 0, visSkewX: 0, visSkewY: 0, visScaleX: 1.0, visScaleY: 1.0 };
+    const config = { type: 'none', count: 100, visType: 'vis_1', visHeight: 150, visOpacity: 1.0, fxAngle: 0, fxSpeed: 1.0, visRot: 0, visSkewX: 0, visSkewY: 0, visScaleX: 1.0, visScaleY: 1.0 };
     document.getElementById('visType').addEventListener('change', (e) => { config.visType = e.target.value; peakHeights.fill(0); });
     document.getElementById('visOpacity').addEventListener('input', (e) => config.visOpacity = parseFloat(e.target.value));
     
-    // LISTENER VISUALIZER 3D PERSPECTIVE LENGKAP
     document.getElementById('visRot').addEventListener('input', (e) => config.visRot = parseFloat(e.target.value));
     document.getElementById('visSkewX').addEventListener('input', (e) => config.visSkewX = parseFloat(e.target.value));
     document.getElementById('visSkewY').addEventListener('input', (e) => config.visSkewY = parseFloat(e.target.value));
@@ -635,7 +627,7 @@
         } catch (e) { return 0; } 
     }
 
-    // --- ENGINE PERSPEKTIF 3D VISUALIZER (SKEW X + SKEW Y + ROT) ---
+    // --- ENGINE PERSPEKTIF 3D VISUALIZER DENGAN 50 SPEKTRUM BARU ---
     function drawVisualizer(bufferLen, isReflection) {
       const style = config.visType; ctx.save(); 
       if (isReflection) {
@@ -655,56 +647,71 @@
           ctx.globalAlpha = config.visOpacity; 
           ctx.translate(-visW / 2, 0); 
       }
+      
       const cy = 0;
+      let numBars = 48; let spacing = visW / numBars; let barW = spacing * 0.7;
+      
       try {
-        if (style === 'vintage_bars') { let numBars = 48; let spacing = visW / numBars; let barW = spacing * 0.7; ctx.fillStyle = 'rgba(245, 245, 240, 0.9)'; for (let i = 0; i < numBars; i++) { let h = Math.max(5, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillRect(i * spacing, -h, barW, h); } }
-        else if (style === 'winamp_classic') { let numBars = 48; let spacing = visW / numBars; let barW = spacing * 0.7; for (let i = 0; i < numBars; i++) { let h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); if (h >= peakHeights[i]) peakHeights[i] = h; else { peakHeights[i] -= 2.0; if (peakHeights[i] < 0) peakHeights[i] = 0; } ctx.fillStyle = 'rgba(230, 235, 240, 0.7)'; ctx.fillRect(i * spacing, -h, barW, h); ctx.fillStyle = 'rgba(255, 60, 60, 1)'; ctx.fillRect(i * spacing, -peakHeights[i] - 5, barW, 4); } }
-        else if (style === 'classic_eq') { let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.7; for (let i = 0; i < numBars; i++) { let h = Math.max(4, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight); grad.addColorStop(0, '#00e676'); grad.addColorStop(0.6, '#ffeb3b'); grad.addColorStop(1, '#ff3d00'); ctx.fillStyle = grad; ctx.fillRect(i * spacing, -h, barW, h); } }
-        else if (style === 'step_eq') { let numBars = 32; let spacing = visW / numBars; let barW = spacing - 4; let stepH = 12; for (let i = 0; i < numBars; i++) { let h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let blocks = Math.floor(h / stepH); for (let j = 0; j < blocks; j++) { ctx.fillStyle = j > (config.visHeight/stepH)*0.7 ? '#ff5722' : '#ffc107'; ctx.fillRect(i * spacing, -(j * stepH) - stepH, barW, stepH - 2); } } }
-        else if (style === 'thin_eq') { let numBars = 64; let spacing = visW / numBars; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; for (let i = 0; i < numBars; i++) { let h = Math.max(2, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillRect(i * spacing, -h, 2, h); } }
-        else if (style === 'thick_bars') { let numBars = 24; let spacing = visW / numBars; let barW = spacing * 0.85; ctx.fillStyle = 'rgba(255, 255, 255, 0.95)'; for (let i = 0; i < numBars; i++) { let h = Math.max(8, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillRect(i * spacing, -h, barW, h); } }
-        else if (style === 'hollow_bars') { let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.7; ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)'; ctx.lineWidth = 1.5; for (let i = 0; i < numBars; i++) { let h = Math.max(5, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.strokeRect(i * spacing, -h, barW, h); } }
-        else if (style === 'rounded_bars') { let numBars = 36; let spacing = visW / numBars; let barW = spacing * 0.65; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; for (let i = 0; i < numBars; i++) { let h = Math.max(8, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.beginPath(); if(ctx.roundRect) ctx.roundRect(i * spacing, -h, barW, h, [barW/2, barW/2, 0, 0]); else ctx.rect(i * spacing, -h, barW, h); ctx.fill(); } }
-        else if (style === 'split_eq') { let numBars = 48; let spacing = visW / numBars; let barW = spacing * 0.6; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.fillRect(0, -1, visW, 2); for (let i = 0; i < numBars; i++) { let h = Math.max(2, getSymmetricVal(i, numBars, bufferLen) * (config.visHeight / 2)); ctx.fillRect(i * spacing, -h - 4, barW, h); ctx.fillRect(i * spacing, 4, barW, h); } }
-        else if (style === 'double_mirror') { let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.7; ctx.fillStyle = 'rgba(255, 255, 255, 0.85)'; for (let i = 0; i < numBars; i++) { let h = Math.max(3, getSymmetricVal(i, numBars, bufferLen) * (config.visHeight / 2)); ctx.fillRect(i * spacing, -h, barW, h); ctx.fillRect(i * spacing, 0, barW, h); } }
-        else if (style === 'dotted_eq') { let numBars = 48; let spacing = visW / numBars; ctx.fillStyle = 'rgba(200, 200, 200, 0.5)'; ctx.fillRect(0, 0, visW, 2); ctx.fillStyle = '#00bcd4'; for (let i = 0; i < numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let x = i * spacing + (spacing / 2); if (h > 5) { ctx.beginPath(); ctx.arc(x, -h, 4, 0, Math.PI*2); ctx.fill(); } } }
-        else if (style === 'led_matrix') { let cols = 40; let rows = 15; let spaceX = visW / cols; let spaceY = config.visHeight / rows; for(let c=0; c<cols; c++) { let val = getSymmetricVal(c, cols, bufferLen); let activeRows = Math.floor(val * rows); for(let r=0; r<rows; r++) { let x = c * spaceX + spaceX/2; let y = -r * spaceY - spaceY/2; ctx.beginPath(); if(r < activeRows) ctx.fillStyle = (r > rows*0.7) ? '#f44336' : '#8bc34a'; else ctx.fillStyle = 'rgba(255,255,255,0.05)'; ctx.arc(x, y, spaceX*0.35, 0, Math.PI*2); ctx.fill(); } } }
-        else if (style === 'analog_vu') { let valBass = dataArray ? dataArray[Math.floor(bufferLen * 0.05)] / 255 : 0; let valTreble = dataArray ? dataArray[Math.floor(bufferLen * 0.3)] / 255 : 0; let cx = visW/2; function drawNeedle(x, r, val, title) { ctx.save(); ctx.translate(x, 0); ctx.beginPath(); ctx.arc(0, 0, r, Math.PI, Math.PI*2); ctx.fillStyle = 'rgba(20, 20, 20, 0.8)'; ctx.fill(); ctx.strokeStyle = '#ffb300'; ctx.lineWidth = 2; ctx.stroke(); for(let i=0; i<=10; i++) { let a = Math.PI + (i/10)*Math.PI; let r1 = r - 10; let r2 = r - (i%5===0 ? 20 : 15); ctx.beginPath(); ctx.moveTo(Math.cos(a)*r1, Math.sin(a)*r1); ctx.lineTo(Math.cos(a)*r2, Math.sin(a)*r2); ctx.strokeStyle = i>7 ? '#ff4444' : '#ffb300'; ctx.stroke(); } ctx.rotate(Math.PI + (val * 0.8 + 0.1) * Math.PI); ctx.beginPath(); ctx.moveTo(0, 10); ctx.lineTo(0, -r+25); ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.stroke(); ctx.restore(); ctx.fillStyle = '#ffb300'; ctx.font = 'bold 16px monospace'; ctx.textAlign = 'center'; ctx.fillText(title, x, 25); } drawNeedle(cx - visW/4, config.visHeight*0.8, valBass, "L - BASS"); drawNeedle(cx + visW/4, config.visHeight*0.8, valTreble, "R - TREBLE"); }
-        else if (style === 'retro_oscilloscope') { ctx.beginPath(); ctx.moveTo(0, 0); let points = 100; for (let i = 0; i <= points; i++) { let x = (i / points) * visW; let h = getSymmetricVal(i, points, bufferLen) * config.visHeight; ctx.lineTo(x, -h); } ctx.strokeStyle = '#00ff41'; ctx.lineWidth = 3; ctx.shadowBlur = 10; ctx.shadowColor = '#00ff41'; ctx.stroke(); ctx.shadowBlur = 0; }
-        else if (style === 'peak_line') { let numBars = 48; let spacing = visW / numBars; let barW = spacing * 0.8; for (let i = 0; i < numBars; i++) { let h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); if (h >= peakHeights[i]) peakHeights[i] = h; else { peakHeights[i] -= 1.5; if (peakHeights[i] < 0) peakHeights[i] = 0; } ctx.fillStyle = '#fff'; ctx.fillRect(i * spacing, -peakHeights[i] - 3, barW, 3); } }
-        else if (style === 'peak_dots_only') { let numBars = 40; let spacing = visW / numBars; for (let i = 0; i < numBars; i++) { let h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); if (h >= peakHeights[i]) peakHeights[i] = h; else { peakHeights[i] -= 1.5; if (peakHeights[i] < 0) peakHeights[i] = 0; } ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(i * spacing + spacing/2, -peakHeights[i] - 5, 4, 0, Math.PI*2); ctx.fill(); } }
-        else if (style === 'dash_bars') { let numBars = 36; let spacing = visW / numBars; let barW = spacing * 0.7; let dashH = 4; let gapH = 4; for (let i = 0; i < numBars; i++) { let h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let dashes = Math.floor(h / (dashH + gapH)); ctx.fillStyle = 'rgba(255, 255, 255, 0.85)'; for (let j = 0; j < dashes; j++) { ctx.fillRect(i * spacing, -(j * (dashH + gapH)) - dashH, barW, dashH); } } }
-        else if (style === 'meter_blocks') { let numBars = 30; let spacing = visW / numBars; let barW = spacing * 0.75; let segH = 8; for (let i = 0; i < numBars; i++) { let h = Math.max(0, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let segs = Math.floor(h / (segH + 2)); for (let j = 0; j < segs; j++) { ctx.fillStyle = j > 8 ? '#f44336' : (j > 5 ? '#ffeb3b' : '#00e676'); ctx.fillRect(i * spacing, -(j * (segH + 2)) - segH, barW, segH); } } }
-        else if (style === 'soft_glow_bars') { let numBars = 32; let spacing = visW / numBars; let barW = spacing * 0.65; for (let i = 0; i < numBars; i++) { let h = Math.max(8, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillStyle = '#fff'; ctx.shadowBlur = 12; ctx.shadowColor = 'rgba(255, 255, 255, 0.7)'; ctx.fillRect(i * spacing, -h, barW, h); } ctx.shadowBlur = 0; }
-        else if (style === 'white_caps') { let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.7; for (let i = 0; i < numBars; i++) { let h = Math.max(5, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillStyle = 'rgba(200, 200, 200, 0.5)'; ctx.fillRect(i * spacing, -h, barW, h); ctx.fillStyle = '#fff'; ctx.fillRect(i * spacing, -h - 4, barW, 4); } }
-        else if (style === 'liquid_bar') { let numBars = 32; let spacing = visW / numBars; let barW = spacing * 0.6; for (let i = 0; i < numBars; i++) { let h = Math.max(10, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillStyle = '#00e5ff'; ctx.shadowBlur = 15; ctx.shadowColor = '#00e5ff'; ctx.beginPath(); if(ctx.roundRect) ctx.roundRect(i * spacing, cy - h, barW, h, barW/2); else ctx.rect(i * spacing, cy - h, barW, h); ctx.fill(); } ctx.shadowBlur = 0; }
-        else if (style === 'cyber_pulse') { let numBars = 48; let spacing = visW / numBars; let barW = spacing * 0.7; for (let i = 0; i < numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight); grad.addColorStop(0, '#f50057'); grad.addColorStop(1, '#ff4081'); ctx.fillStyle = grad; ctx.shadowBlur = 10; ctx.shadowColor = '#f50057'; ctx.fillRect(i * spacing, cy - h/2 - 2, barW, h/2); ctx.fillRect(i * spacing, cy + 2, barW, h/2); ctx.fillStyle = '#fff'; ctx.fillRect(i * spacing, cy - h/2 - 6, barW, 2); ctx.fillRect(i * spacing, cy + h/2 + 4, barW, 2); } ctx.shadowBlur = 0; }
-        else if (style === 'mirror_bars') { let numBars = 48; let spacing = visW / numBars; for (let i = 0; i < numBars; i++) { let val = Math.max(2, getSymmetricVal(i, numBars, bufferLen) * (config.visHeight/2)); ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.fillRect(i * spacing, cy - val, spacing * 0.6, val); ctx.fillStyle = 'rgba(255, 255, 255, 0.3)'; ctx.fillRect(i * spacing, cy, spacing * 0.6, val * 0.8); } }
-        else if (style === 'gradient_blocks') { let numBars = 40; let spacing = visW / numBars; for (let i = 0; i < numBars; i++) { let val = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight); grad.addColorStop(0, '#00c6ff'); grad.addColorStop(1, '#0072ff'); ctx.fillStyle = grad; ctx.fillRect(i * spacing, cy - val, spacing * 0.8, val); } }
-        else if (style === 'sunset_bars') { let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.75; for (let i = 0; i < numBars; i++) { let h = Math.max(6, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight); grad.addColorStop(0, '#ff3f34'); grad.addColorStop(0.5, '#ff7f50'); grad.addColorStop(1, '#fffa65'); ctx.fillStyle = grad; ctx.fillRect(i * spacing, -h, barW, h); } }
-        else if (style === 'emerald_bars') { let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.75; for (let i = 0; i < numBars; i++) { let h = Math.max(6, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight); grad.addColorStop(0, '#004d40'); grad.addColorStop(1, '#18ffff'); ctx.fillStyle = grad; ctx.fillRect(i * spacing, -h, barW, h); } }
-        else if (style === 'purple_haze') { let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.75; for (let i = 0; i < numBars; i++) { let h = Math.max(6, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight); grad.addColorStop(0, '#4a148c'); grad.addColorStop(1, '#ea80fc'); ctx.fillStyle = grad; ctx.fillRect(i * spacing, -h, barW, h); } }
-        else if (style === 'gold_classic') { let numBars = 40; let spacing = visW / numBars; let barW = spacing * 0.75; for (let i = 0; i < numBars; i++) { let h = Math.max(6, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight); grad.addColorStop(0, '#ff8f00'); grad.addColorStop(1, '#ffe082'); ctx.fillStyle = grad; ctx.fillRect(i * spacing, -h, barW, h); } }
-        else if (style === 'monochrome_fade') { let numBars = 44; let spacing = visW / numBars; let barW = spacing * 0.75; for (let i = 0; i < numBars; i++) { let h = Math.max(6, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let grad = ctx.createLinearGradient(0, cy, 0, cy - config.visHeight); grad.addColorStop(0, 'rgba(255,255,255,0.1)'); grad.addColorStop(1, 'rgba(255,255,255,0.95)'); ctx.fillStyle = grad; ctx.fillRect(i * spacing, -h, barW, h); } }
-        else if (style === 'dual_tone') { let numBars = 36; let spacing = visW / numBars; let barW = spacing * 0.7; for (let i = 0; i < numBars; i++) { let h = Math.max(4, getSymmetricVal(i, numBars, bufferLen) * (config.visHeight / 2)); ctx.fillStyle = '#00e5ff'; ctx.fillRect(i * spacing, -h, barW, h); ctx.fillStyle = '#ff4081'; ctx.fillRect(i * spacing, 0, barW, h); } }
-        else if (style === 'modern_wave') { ctx.beginPath(); ctx.moveTo(0, cy); let numPoints = 100; let spacing = visW / numPoints; for(let i=0; i<=numPoints; i++) { let val = getSymmetricVal(i, numPoints, bufferLen) * config.visHeight; let y = cy - val - (Math.sin(i*0.1 + time*5)*val*0.2); ctx.lineTo(i*spacing, y); } let grad = ctx.createLinearGradient(0, cy, visW, cy); grad.addColorStop(0, '#00d2ff'); grad.addColorStop(1, '#e040fb'); ctx.strokeStyle = grad; ctx.lineWidth = 3; ctx.stroke(); ctx.lineTo(visW, cy); ctx.lineTo(0, cy); ctx.fillStyle = 'rgba(0, 210, 255, 0.15)'; ctx.fill(); }
-        else if (style === 'filled_wave') { ctx.beginPath(); ctx.moveTo(0, cy); let points = 80; let spacing = visW / points; for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * config.visHeight; ctx.lineTo(i*spacing, -h); } ctx.lineTo(visW, cy); ctx.lineTo(0, cy); ctx.closePath(); ctx.fillStyle = 'rgba(255, 255, 255, 0.4)'; ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke(); }
-        else if (style === 'double_wave') { let points = 80; let spacing = visW / points; ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * config.visHeight; ctx.lineTo(i*spacing, -h); } ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)'; ctx.lineWidth = 2.5; ctx.stroke(); ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * (config.visHeight * 0.6); ctx.lineTo(i*spacing, -h); } ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)'; ctx.lineWidth = 2; ctx.stroke(); }
-        else if (style === 'thin_wave') { ctx.beginPath(); ctx.moveTo(0, cy); let points = 100; let spacing = visW / points; for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * config.visHeight; ctx.lineTo(i*spacing, -h); } ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke(); }
-        else if (style === 'shadow_wave') { ctx.beginPath(); ctx.moveTo(0, cy); let points = 80; let spacing = visW / points; for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * config.visHeight; ctx.lineTo(i*spacing, -h); } ctx.strokeStyle = '#fff'; ctx.lineWidth = 2.5; ctx.shadowBlur = 15; ctx.shadowColor = 'rgba(255, 255, 255, 0.8)'; ctx.stroke(); ctx.shadowBlur = 0; }
-        else if (style === 'stereo_lines') { let points = 80; let spacing = visW / points; ctx.beginPath(); ctx.moveTo(0, -10); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * (config.visHeight/2); ctx.lineTo(i*spacing, -10 - h); } ctx.strokeStyle = '#00bcd4'; ctx.lineWidth = 2; ctx.stroke(); ctx.beginPath(); ctx.moveTo(0, 10); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * (config.visHeight/2); ctx.lineTo(i*spacing, 10 + h); } ctx.strokeStyle = '#ff4081'; ctx.lineWidth = 2; ctx.stroke(); }
-        else if (style === 'smooth_curve') { let points = 60; let spacing = visW / points; ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * config.visHeight; let nextH = getSymmetricVal(i+1, points, bufferLen) * config.visHeight; let xc = (i*spacing + (i+1)*spacing)/2; let yc = (-h - nextH)/2; ctx.quadraticCurveTo(i*spacing, -h, xc, yc); } ctx.strokeStyle = '#fff'; ctx.lineWidth = 2.5; ctx.stroke(); }
-        else if (style === 'ribbon_wave') { let points = 80; let spacing = visW / points; for(let layer=0; layer<3; layer++) { ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * (config.visHeight * (1 - layer*0.2)); ctx.lineTo(i*spacing, -h - layer*6); } ctx.strokeStyle = `rgba(255, 255, 255, ${0.9 - layer*0.3})`; ctx.lineWidth = 2; ctx.stroke(); } }
-        else if (style === 'minimal_line') { let points = 100; let spacing = visW / points; ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * (config.visHeight * 0.7); ctx.lineTo(i*spacing, -h); } ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)'; ctx.lineWidth = 2; ctx.stroke(); ctx.fillStyle = 'rgba(255, 255, 255, 0.4)'; ctx.fillRect(0, cy, visW, 1); }
-        else if (style === 'calm_horizon') { let points = 80; let spacing = visW / points; ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=points; i++) { let h = getSymmetricVal(i, points, bufferLen) * config.visHeight; ctx.lineTo(i*spacing, -h); } let grad = ctx.createLinearGradient(0, cy - config.visHeight, 0, cy); grad.addColorStop(0, '#fffa65'); grad.addColorStop(1, '#ff7f50'); ctx.strokeStyle = grad; ctx.lineWidth = 3; ctx.stroke(); ctx.fillStyle = 'rgba(255, 127, 80, 0.1)'; ctx.lineTo(visW, cy); ctx.lineTo(0, cy); ctx.fill(); }
-        else if (style === 'hologram_grid') { let numBars = 32; let spacing = visW/numBars; ctx.strokeStyle = 'rgba(0, 255, 200, 0.6)'; ctx.lineWidth = 1.5; for(let i=0; i<numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; ctx.beginPath(); ctx.moveTo(i*spacing, cy); ctx.lineTo(i*spacing + 20, cy - h); ctx.stroke(); ctx.beginPath(); ctx.moveTo(i*spacing, cy - h); ctx.lineTo(i*spacing + spacing, cy - h); ctx.stroke(); } }
-        else if (style === 'digital_dna') { let numBars = 40; let spacing = visW/numBars; for(let i=0; i<numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight * 0.5; let offset = Math.sin(time*2 + i*0.2) * 20; ctx.fillStyle = '#00e5ff'; ctx.fillRect(i*spacing, cy - h + offset, 4, 4); ctx.fillStyle = '#e040fb'; ctx.fillRect(i*spacing, cy - h - offset, 4, 4); ctx.strokeStyle = 'rgba(255,255,255,0.2)'; ctx.beginPath(); ctx.moveTo(i*spacing+2, cy - h + offset); ctx.lineTo(i*spacing+2, cy - h - offset); ctx.stroke(); } }
-        else if (style === 'matrix_rain') { let numBars = 48; let spacing = visW/numBars; for(let i=0; i<numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let drops = Math.floor(h/10); for(let j=0; j<drops; j++) { ctx.fillStyle = j === drops-1 ? '#fff' : '#00ff41'; ctx.fillRect(i*spacing, cy - j*10 - ((time*50 + i*15)%10), spacing*0.6, 6); } } }
-        else if (style === 'cyber_laser') { let numBars = 20; let spacing = visW/numBars; for(let i=0; i<numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; if(h > 10) { ctx.fillStyle = '#f50057'; ctx.shadowBlur = 10; ctx.shadowColor = '#f50057'; ctx.fillRect(visW/2 - h, cy - i*15, h*2, 3); } } ctx.shadowBlur = 0; }
-        else if (style === 'neon_ripple') { let bass = getSymmetricVal(10, 20, bufferLen) * config.visHeight; ctx.strokeStyle = '#00e5ff'; ctx.lineWidth = 2; for(let i=0; i<4; i++) { let r = bass * (1 - i*0.2) + (time*20)%20; ctx.strokeRect(visW/2 - r, cy - r*0.5, r*2, r); } }
-        else if (style === 'aurora_borealis') { let numBars = 50; let spacing = visW/numBars; ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * config.visHeight; let ctrlY = cy - h - Math.sin(time + i*0.1)*30; ctx.quadraticCurveTo(i*spacing, ctrlY, (i+1)*spacing, cy); } let grad = ctx.createLinearGradient(0, cy - config.visHeight, 0, cy); grad.addColorStop(0, 'rgba(0, 255, 200, 0.8)'); grad.addColorStop(1, 'rgba(100, 0, 255, 0.1)'); ctx.fillStyle = grad; ctx.fill(); }
-        else if (style === 'classic_spectrum') { let numBars = 64; let spacing = visW / numBars; let barW = spacing * 0.8; for(let i=0; i<numBars; i++) { let h = Math.max(2, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); let grad = ctx.createLinearGradient(0, 0, 0, -config.visHeight); grad.addColorStop(0, '#00ff00'); grad.addColorStop(0.6, '#ffff00'); grad.addColorStop(1, '#ff0000'); ctx.fillStyle = grad; ctx.fillRect(i * spacing, -h, barW, h); } }
-        else if (style === 'cassette_tape') { let scaleX = visW / 300; let scaleY = config.visHeight / 200; let s = Math.min(scaleX, scaleY); ctx.save(); ctx.translate(visW/2, cy - config.visHeight/2); ctx.scale(s, s); ctx.fillStyle = '#222'; if(ctx.roundRect) ctx.roundRect(-150, -100, 300, 200, 10); else ctx.rect(-150, -100, 300, 200); ctx.fill(); ctx.fillStyle = '#eee'; ctx.fillRect(-130, -80, 260, 110); let rot = time * 2; ctx.save(); ctx.translate(-60, -25); ctx.rotate(rot); ctx.beginPath(); ctx.arc(0,0, 30, 0, Math.PI*2); ctx.fillStyle = '#111'; ctx.fill(); ctx.beginPath(); ctx.arc(0,0, 10, 0, Math.PI*2); ctx.fillStyle = '#eee'; ctx.fill(); for(let i=0; i<6; i++){ ctx.rotate(Math.PI/3); ctx.fillRect(10, -2, 20, 4); } ctx.restore(); ctx.save(); ctx.translate(60, -25); ctx.rotate(rot); ctx.beginPath(); ctx.arc(0,0, 30, 0, Math.PI*2); ctx.fillStyle = '#111'; ctx.fill(); ctx.beginPath(); ctx.arc(0,0, 10, 0, Math.PI*2); ctx.fillStyle = '#eee'; ctx.fill(); for(let i=0; i<6; i++){ ctx.rotate(Math.PI/3); ctx.fillRect(10, -2, 20, 4); } ctx.restore(); ctx.fillStyle = '#000'; ctx.fillRect(-80, -50, 160, 50); ctx.strokeStyle = '#333'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(-60,-25); ctx.lineTo(60,-25); ctx.stroke(); ctx.fillStyle = '#333'; ctx.beginPath(); ctx.moveTo(-100, 40); ctx.lineTo(100, 40); ctx.lineTo(120, 100); ctx.lineTo(-120, 100); ctx.fill(); ctx.restore(); }
+        // --- LO-FI WAVES (1-10) ---
+        if (style === 'vis_1') { ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=100; i++) { let h = getSymmetricVal(i, 100, bufferLen) * config.visHeight; ctx.lineTo(i*(visW/100), -h); } ctx.strokeStyle = 'rgba(255,255,255,0.9)'; ctx.lineWidth = 2; ctx.stroke(); ctx.lineTo(visW, cy); ctx.lineTo(0, cy); ctx.fillStyle = 'rgba(255,255,255,0.15)'; ctx.fill(); }
+        else if (style === 'vis_2') { ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=80; i++) { let h = getSymmetricVal(i, 80, bufferLen) * config.visHeight; ctx.lineTo(i*(visW/80), -h); } ctx.strokeStyle = '#00e5ff'; ctx.lineWidth = 2; ctx.stroke(); ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=80; i++) { let h = getSymmetricVal(i, 80, bufferLen) * (config.visHeight*0.6); ctx.lineTo(i*(visW/80), -h); } ctx.strokeStyle = '#ff4081'; ctx.lineWidth = 2; ctx.stroke(); }
+        else if (style === 'vis_3') { for(let j=0; j<3; j++) { ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=80; i++) { let h = getSymmetricVal(i, 80, bufferLen) * (config.visHeight * (1 - j*0.2)); ctx.lineTo(i*(visW/80), -h - j*6); } ctx.strokeStyle = `rgba(255, 255, 255, ${0.9 - j*0.3})`; ctx.lineWidth = 2; ctx.stroke(); } }
+        else if (style === 'vis_4') { ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=100; i++) { let h = getSymmetricVal(i, 100, bufferLen) * (config.visHeight * 0.5); ctx.lineTo(i*(visW/100), -h); } ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)'; ctx.lineWidth = 1; ctx.stroke(); ctx.fillStyle = 'rgba(255, 255, 255, 0.4)'; ctx.fillRect(0, cy, visW, 1); }
+        else if (style === 'vis_5') { ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=80; i++) { let h = getSymmetricVal(i, 80, bufferLen) * config.visHeight; ctx.lineTo(i*(visW/80), -h); } let grad = ctx.createLinearGradient(0, cy - config.visHeight, 0, cy); grad.addColorStop(0, '#00bcd4'); grad.addColorStop(1, '#000000'); ctx.strokeStyle = '#00bcd4'; ctx.lineWidth = 2; ctx.stroke(); ctx.fillStyle = grad; ctx.lineTo(visW, cy); ctx.lineTo(0, cy); ctx.fill(); }
+        else if (style === 'vis_6') { ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=60; i++) { let h = getSymmetricVal(i, 60, bufferLen) * config.visHeight; let nH = getSymmetricVal(i+1, 60, bufferLen) * config.visHeight; ctx.quadraticCurveTo(i*(visW/60), -h, (i+0.5)*(visW/60), (-h - nH)/2); } ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke(); ctx.lineTo(visW, cy); ctx.lineTo(0, cy); ctx.fillStyle='rgba(255,255,255,0.2)'; ctx.fill(); }
+        else if (style === 'vis_7') { ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=80; i++) { let h = getSymmetricVal(i, 80, bufferLen) * config.visHeight; ctx.lineTo(i*(visW/80), -h); } ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.shadowBlur = 15; ctx.shadowColor = '#fff'; ctx.stroke(); ctx.shadowBlur = 0; }
+        else if (style === 'vis_8') { for(let j=0; j<3; j++) { ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=60; i++) { let h = getSymmetricVal(i, 60, bufferLen) * config.visHeight; let pY = -h - Math.sin(time*2 + i*0.1)*10*j; ctx.lineTo(i*(visW/60), pY); } ctx.strokeStyle = `rgba(200, 200, 255, ${0.8 - j*0.2})`; ctx.lineWidth = 1.5; ctx.stroke(); } }
+        else if (style === 'vis_9') { ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=100; i++) { let h = getSymmetricVal(i, 100, bufferLen) * config.visHeight; let y = cy - h - Math.sin(time*5 + i*0.1)*(h*0.2); ctx.lineTo(i*(visW/100), y); } let g=ctx.createLinearGradient(0,cy,visW,cy); g.addColorStop(0,'#00d2ff'); g.addColorStop(1,'#e040fb'); ctx.strokeStyle=g; ctx.lineWidth=3; ctx.stroke(); ctx.lineTo(visW, cy); ctx.lineTo(0, cy); ctx.fillStyle='rgba(0,210,255,0.1)'; ctx.fill(); }
+        else if (style === 'vis_10') { ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<=80; i++) { let h = getSymmetricVal(i, 80, bufferLen) * config.visHeight; ctx.lineTo(i*(visW/80), -h); } let g = ctx.createLinearGradient(0, cy-config.visHeight, 0, cy); g.addColorStop(0, '#fffa65'); g.addColorStop(1, '#ff7f50'); ctx.strokeStyle = g; ctx.lineWidth = 3; ctx.stroke(); ctx.lineTo(visW, cy); ctx.lineTo(0, cy); ctx.fillStyle='rgba(255,127,80,0.15)'; ctx.fill(); }
+        
+        // --- NOIR BARS (11-20) ---
+        else if (style === 'vis_11') { ctx.fillStyle = 'rgba(212, 175, 55, 0.85)'; for (let i = 0; i < numBars; i++) { let h = Math.max(5, getSymmetricVal(i, numBars, bufferLen) * config.visHeight); ctx.fillRect(i * spacing, -h, barW, h); } }
+        else if (style === 'vis_12') { let g = ctx.createLinearGradient(0, cy, 0, cy-config.visHeight); g.addColorStop(0, 'rgba(200,200,200,0.2)'); g.addColorStop(1, 'rgba(255,255,255,0.9)'); ctx.fillStyle = g; for(let i=0; i<numBars; i++){ let h = Math.max(2, getSymmetricVal(i, numBars, bufferLen)*config.visHeight); ctx.fillRect(i*spacing, -h, barW, h); } }
+        else if (style === 'vis_13') { numBars=24; spacing=visW/numBars; barW=spacing*0.85; ctx.fillStyle='rgba(255, 230, 200, 0.9)'; for(let i=0; i<numBars; i++){ let h = Math.max(10, getSymmetricVal(i, numBars, bufferLen)*config.visHeight); ctx.fillRect(i*spacing, -h, barW, h); } }
+        else if (style === 'vis_14') { ctx.strokeStyle = 'rgba(200, 200, 200, 0.7)'; ctx.lineWidth = 1.5; for(let i=0; i<numBars; i++){ let h = Math.max(4, getSymmetricVal(i, numBars, bufferLen)*config.visHeight); ctx.strokeRect(i*spacing, -h, barW, h); } }
+        else if (style === 'vis_15') { ctx.fillStyle = 'rgba(220, 220, 220, 0.85)'; for(let i=0; i<numBars; i++){ let h = Math.max(8, getSymmetricVal(i, numBars, bufferLen)*config.visHeight); ctx.beginPath(); if(ctx.roundRect) ctx.roundRect(i*spacing, -h, barW, h, [barW/2, barW/2, 0, 0]); else ctx.rect(i*spacing, -h, barW, h); ctx.fill(); } }
+        else if (style === 'vis_16') { numBars=64; spacing=visW/numBars; ctx.fillStyle='rgba(150, 150, 150, 0.9)'; for(let i=0; i<numBars; i++){ let h = Math.max(2, getSymmetricVal(i, numBars, bufferLen)*config.visHeight); ctx.fillRect(i*spacing, -h, 2, h); } }
+        else if (style === 'vis_17') { let sh=8; for(let i=0; i<numBars; i++){ let h = getSymmetricVal(i, numBars, bufferLen)*config.visHeight; let b = Math.floor(h/sh); for(let j=0; j<b; j++){ ctx.fillStyle = j>10?'#d35400':'#f39c12'; ctx.fillRect(i*spacing, -(j*sh)-sh+1, barW, sh-2); } } }
+        else if (style === 'vis_18') { for(let i=0; i<numBars; i++){ let h = getSymmetricVal(i, numBars, bufferLen)*config.visHeight; if(h>=peakHeights[i]) peakHeights[i]=h; else peakHeights[i] = Math.max(0, peakHeights[i]-2); ctx.fillStyle='rgba(200,200,200,0.6)'; ctx.fillRect(i*spacing, -h, barW, h); ctx.fillStyle='#ff3d00'; ctx.fillRect(i*spacing, -peakHeights[i]-4, barW, 4); } }
+        else if (style === 'vis_19') { let r=12; let sy=config.visHeight/r; for(let c=0; c<numBars; c++){ let v=getSymmetricVal(c,numBars,bufferLen); let aR=Math.floor(v*r); for(let ro=0; ro<r; ro++){ ctx.beginPath(); ctx.fillStyle = ro<aR ? (ro>8?'#f5b041':'#f1c40f') : 'rgba(255,255,255,0.05)'; ctx.arc(c*spacing + spacing/2, -ro*sy - sy/2, spacing*0.35, 0, Math.PI*2); ctx.fill(); } } }
+        else if (style === 'vis_20') { let sh=6; for(let i=0; i<numBars; i++){ let h = getSymmetricVal(i, numBars, bufferLen)*config.visHeight; let b = Math.floor(h/(sh+2)); for(let j=0; j<b; j++){ ctx.fillStyle = '#bdc3c7'; ctx.fillRect(i*spacing, -(j*(sh+2))-sh, barW, sh); } } }
+
+        // --- MINIMALIST DOTS (21-30) ---
+        else if (style === 'vis_21') { for(let i=0; i<numBars; i++){ let h=getSymmetricVal(i,numBars,bufferLen)*config.visHeight; if(h>=peakHeights[i]) peakHeights[i]=h; else peakHeights[i]=Math.max(0,peakHeights[i]-1.5); ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(i*spacing+spacing/2, -peakHeights[i]-5, 4, 0, Math.PI*2); ctx.fill(); } }
+        else if (style === 'vis_22') { for(let i=0; i<numBars; i++){ let h=getSymmetricVal(i,numBars,bufferLen)*config.visHeight; if(h>=peakHeights[i]) peakHeights[i]=h; else peakHeights[i]=Math.max(0,peakHeights[i]-1.5); ctx.fillStyle='#fff'; ctx.fillRect(i*spacing, -peakHeights[i]-3, barW, 3); } }
+        else if (style === 'vis_23') { ctx.shadowBlur=10; ctx.shadowColor='#00e5ff'; ctx.fillStyle='#fff'; for(let i=0; i<numBars; i++){ let h=getSymmetricVal(i,numBars,bufferLen)*config.visHeight; ctx.beginPath(); ctx.arc(i*spacing+spacing/2, -h-5, Math.max(2, h*0.05), 0, Math.PI*2); ctx.fill(); } ctx.shadowBlur=0; }
+        else if (style === 'vis_24') { let sh=4; let gh=4; for(let i=0; i<numBars; i++){ let h=getSymmetricVal(i,numBars,bufferLen)*config.visHeight; let b=Math.floor(h/(sh+gh)); ctx.fillStyle='rgba(255,255,255,0.8)'; for(let j=0; j<b; j++){ ctx.fillRect(i*spacing, -(j*(sh+gh))-sh, barW, sh); } } }
+        else if (style === 'vis_25') { ctx.fillStyle='rgba(255,255,255,0.5)'; ctx.strokeStyle='#fff'; ctx.lineWidth=1; for(let i=0; i<numBars; i++){ let h=getSymmetricVal(i,numBars,bufferLen)*config.visHeight; ctx.beginPath(); ctx.arc(i*spacing+spacing/2, -h, spacing*0.4, 0, Math.PI*2); ctx.fill(); ctx.stroke(); } }
+        else if (style === 'vis_26') { for(let i=0; i<numBars; i++){ let h=Math.max(5, getSymmetricVal(i,numBars,bufferLen)*config.visHeight); ctx.fillStyle='rgba(200,200,200,0.4)'; ctx.fillRect(i*spacing, -h, barW, h); ctx.fillStyle='#fff'; ctx.fillRect(i*spacing, -h-4, barW, 4); } }
+        else if (style === 'vis_27') { ctx.fillStyle='rgba(255,255,255,0.1)'; ctx.strokeStyle='rgba(255,255,255,0.5)'; ctx.lineWidth=1; for(let i=0; i<numBars; i++){ let h=Math.max(10, getSymmetricVal(i,numBars,bufferLen)*config.visHeight); ctx.fillRect(i*spacing, -h, barW, h); ctx.strokeRect(i*spacing, -h, barW, h); } }
+        else if (style === 'vis_28') { ctx.fillStyle='#fff'; ctx.fillRect(0, -1, visW, 2); for(let i=0; i<numBars; i++){ let h=getSymmetricVal(i,numBars,bufferLen)*(config.visHeight/2); ctx.fillRect(i*spacing, -h-3, 2, h); ctx.fillRect(i*spacing, 3, 2, h); } }
+        else if (style === 'vis_29') { for(let i=0; i<numBars; i++){ let h=getSymmetricVal(i,numBars,bufferLen)*config.visHeight; if(h>=peakHeights[i]) peakHeights[i]=h; else peakHeights[i]=Math.max(0,peakHeights[i]-2); ctx.fillStyle='rgba(255,255,255,0.2)'; ctx.fillRect(i*spacing+spacing/2-1, -peakHeights[i], 2, peakHeights[i]); ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(i*spacing+spacing/2, -peakHeights[i]-3, 3, 0, Math.PI*2); ctx.fill(); } }
+        else if (style === 'vis_30') { ctx.beginPath(); ctx.moveTo(0, cy); for(let i=0; i<numBars; i++){ let h=getSymmetricVal(i,numBars,bufferLen)*config.visHeight; ctx.lineTo(i*spacing+spacing/2, -h); } ctx.strokeStyle='rgba(255,255,255,0.6)'; ctx.lineWidth=1; ctx.stroke(); for(let i=0; i<numBars; i++){ let h=getSymmetricVal(i,numBars,bufferLen)*config.visHeight; ctx.fillStyle='#fff'; ctx.fillRect(i*spacing+spacing/2-2, -h-2, 4, 4); } }
+
+        // --- MIRROR SYMMETRY (31-40) ---
+        else if (style === 'vis_31') { for(let i=0; i<numBars; i++){ let h=Math.max(2, getSymmetricVal(i,numBars,bufferLen)*(config.visHeight/2)); ctx.fillStyle='#00e5ff'; ctx.fillRect(i*spacing, -h, barW, h); ctx.fillStyle='#ff4081'; ctx.fillRect(i*spacing, 0, barW, h); } }
+        else if (style === 'vis_32') { ctx.fillStyle='rgba(255,255,255,0.9)'; ctx.fillRect(0, -1, visW, 2); for(let i=0; i<numBars; i++){ let h=Math.max(2, getSymmetricVal(i,numBars,bufferLen)*(config.visHeight/2)); ctx.fillRect(i*spacing, -h-4, barW, h); ctx.fillRect(i*spacing, 4, barW, h); } }
+        else if (style === 'vis_33') { for(let i=0; i<numBars; i++){ let h=Math.max(2, getSymmetricVal(i,numBars,bufferLen)*(config.visHeight/2)); ctx.fillStyle='rgba(255,255,255,0.9)'; ctx.fillRect(i*spacing, -h, barW, h); ctx.fillStyle='rgba(255,255,255,0.3)'; ctx.fillRect(i*spacing, 0, barW, h*0.8); } }
+        else if (style === 'vis_34') { ctx.beginPath(); ctx.moveTo(0,0); for(let i=0; i<=100; i++){ let h=getSymmetricVal(i,100,bufferLen)*(config.visHeight/2); ctx.lineTo(i*(visW/100), -h); } for(let i=100; i>=0; i--){ let h=getSymmetricVal(i,100,bufferLen)*(config.visHeight/2); ctx.lineTo(i*(visW/100), h); } ctx.fillStyle='rgba(0,255,200,0.5)'; ctx.fill(); ctx.strokeStyle='#00ffc8'; ctx.lineWidth=1; ctx.stroke(); }
+        else if (style === 'vis_35') { ctx.fillStyle='rgba(200,200,255,0.6)'; for(let i=0; i<numBars; i++){ let h=Math.max(2, getSymmetricVal(i,numBars,bufferLen)*(config.visHeight/2)); ctx.fillRect(i*spacing, -h, barW, h*2); } }
+        else if (style === 'vis_36') { ctx.fillStyle='rgba(255,255,255,0.8)'; for(let i=0; i<numBars; i++){ let h=Math.max(5, getSymmetricVal(i,numBars,bufferLen)*(config.visHeight/2)); ctx.beginPath(); ctx.moveTo(i*spacing+barW/2, -h); ctx.lineTo(i*spacing+barW, 0); ctx.lineTo(i*spacing+barW/2, h); ctx.lineTo(i*spacing, 0); ctx.fill(); } }
+        else if (style === 'vis_37') { ctx.beginPath(); ctx.moveTo(0,-10); for(let i=0; i<=80; i++){ let h=getSymmetricVal(i,80,bufferLen)*(config.visHeight/2); ctx.lineTo(i*(visW/80), -10-h); } ctx.strokeStyle='#00bcd4'; ctx.lineWidth=2; ctx.stroke(); ctx.beginPath(); ctx.moveTo(0,10); for(let i=0; i<=80; i++){ let h=getSymmetricVal(i,80,bufferLen)*(config.visHeight/2); ctx.lineTo(i*(visW/80), 10+h); } ctx.strokeStyle='#ff4081'; ctx.lineWidth=2; ctx.stroke(); }
+        else if (style === 'vis_38') { let v = getSymmetricVal(24, 48, bufferLen)*config.visHeight; ctx.shadowBlur=20; ctx.shadowColor='#00ffaa'; ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(visW/2, 0, 10+v*0.5, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur=0; ctx.strokeStyle='rgba(0,255,170,0.5)'; ctx.lineWidth=2; for(let i=0; i<numBars; i++){ let h=getSymmetricVal(i,numBars,bufferLen)*(config.visHeight/2); ctx.beginPath(); ctx.moveTo(i*spacing+spacing/2, -20); ctx.lineTo(i*spacing+spacing/2, -20-h); ctx.stroke(); ctx.beginPath(); ctx.moveTo(i*spacing+spacing/2, 20); ctx.lineTo(i*spacing+spacing/2, 20+h); ctx.stroke(); } }
+        else if (style === 'vis_39') { for(let i=0; i<numBars; i++){ let h=getSymmetricVal(i,numBars,bufferLen)*(config.visHeight/2); let off=Math.sin(time*2+i*0.2)*20; ctx.fillStyle='#00e5ff'; ctx.fillRect(i*spacing, -h+off, 4, 4); ctx.fillStyle='#e040fb'; ctx.fillRect(i*spacing, h-off, 4, 4); ctx.strokeStyle='rgba(255,255,255,0.2)'; ctx.beginPath(); ctx.moveTo(i*spacing+2, -h+off); ctx.lineTo(i*spacing+2, h-off); ctx.stroke(); } }
+        else if (style === 'vis_40') { ctx.strokeStyle='rgba(255,255,255,0.8)'; ctx.lineWidth=2; ctx.beginPath(); for(let i=0; i<=50; i++){ let h=getSymmetricVal(i,50,bufferLen)*(config.visHeight/2); ctx.lineTo(i*(visW/50), -h); } ctx.stroke(); ctx.beginPath(); for(let i=0; i<=50; i++){ let h=getSymmetricVal(i,50,bufferLen)*(config.visHeight/2); ctx.lineTo(i*(visW/50), h); } ctx.stroke(); }
+
+        // --- EXPERIMENTAL / ANALOG (41-50) ---
+        else if (style === 'vis_41') { let vb=dataArray?dataArray[Math.floor(bufferLen*0.05)]/255:0; let vt=dataArray?dataArray[Math.floor(bufferLen*0.3)]/255:0; let bw=(visW/2)-10; let bh=config.visHeight; function dVU(x,y,w,h,v){ ctx.save(); ctx.translate(x,y); ctx.fillStyle='#1e1e1e'; ctx.fillRect(0,0,w,h); let g=ctx.createLinearGradient(0,8,0,h-8); g.addColorStop(0,'#f5b041'); g.addColorStop(1,'#ffb300'); ctx.fillStyle=g; ctx.fillRect(8,8,w-16,h-16); let px=w/2; let py=h-18; let r=Math.min(w-16,h-16)*0.8; ctx.beginPath(); ctx.arc(px,py,r,Math.PI*1.15,Math.PI*1.85); ctx.strokeStyle='#3e2723'; ctx.lineWidth=1.5; ctx.stroke(); let a=Math.PI*1.15+(v*0.7*Math.PI); ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(px+Math.cos(a)*(r+5), py+Math.sin(a)*(r+5)); ctx.strokeStyle='#111'; ctx.lineWidth=2; ctx.stroke(); ctx.restore(); } dVU(0, -bh, bw, bh, vb); dVU(visW-bw, -bh, bw, bh, vt); }
+        else if (style === 'vis_42') { ctx.beginPath(); ctx.moveTo(0,0); for(let i=0; i<=100; i++){ let h=getSymmetricVal(i,100,bufferLen)*config.visHeight; ctx.lineTo(i*(visW/100), -h); } ctx.strokeStyle='#00ff41'; ctx.lineWidth=3; ctx.shadowBlur=10; ctx.shadowColor='#00ff41'; ctx.stroke(); ctx.shadowBlur=0; }
+        else if (style === 'vis_43') { let b=getSymmetricVal(24,48,bufferLen); ctx.save(); ctx.translate(visW/2, -config.visHeight/2); ctx.rotate(time); ctx.beginPath(); ctx.arc(0,0, config.visHeight/2+b*10, 0, Math.PI*2); ctx.fillStyle='#111'; ctx.fill(); ctx.lineWidth=1.5; for(let i=1; i<=5; i++){ ctx.beginPath(); ctx.arc(0,0, config.visHeight/2-i*10, 0, Math.PI*2); ctx.strokeStyle=`rgba(255,255,255,${0.05+b*0.2})`; ctx.stroke(); } ctx.beginPath(); ctx.arc(0,0, 30, 0, Math.PI*2); ctx.fillStyle='#ff9800'; ctx.fill(); ctx.beginPath(); ctx.arc(0,0, 5, 0, Math.PI*2); ctx.fillStyle='#fff'; ctx.fill(); ctx.restore(); }
+        else if (style === 'vis_44') { let sx=visW/300; let sy=config.visHeight/200; let sm=Math.min(sx,sy); ctx.save(); ctx.translate(visW/2, -config.visHeight/2); ctx.scale(sm,sm); ctx.fillStyle='#222'; ctx.fillRect(-150,-100,300,200); ctx.fillStyle='#eee'; ctx.fillRect(-130,-80,260,110); let rt=time*2; ctx.save(); ctx.translate(-60,-25); ctx.rotate(rt); ctx.beginPath(); ctx.arc(0,0,30,0,Math.PI*2); ctx.fillStyle='#111'; ctx.fill(); ctx.restore(); ctx.save(); ctx.translate(60,-25); ctx.rotate(rt); ctx.beginPath(); ctx.arc(0,0,30,0,Math.PI*2); ctx.fillStyle='#111'; ctx.fill(); ctx.restore(); ctx.fillStyle='#000'; ctx.fillRect(-80,-50,160,50); ctx.restore(); }
+        else if (style === 'vis_45') { for(let i=0; i<numBars; i++){ let h=Math.max(2, getSymmetricVal(i,numBars,bufferLen)*config.visHeight); let g=ctx.createLinearGradient(0,0,0,-config.visHeight); g.addColorStop(0,'#00ff00'); g.addColorStop(0.6,'#ffff00'); g.addColorStop(1,'#ff0000'); ctx.fillStyle=g; ctx.fillRect(i*spacing, -h, barW, h); } }
+        else if (style === 'vis_46') { numBars=20; spacing=visW/numBars; for(let i=0; i<numBars; i++){ let h=getSymmetricVal(i,numBars,bufferLen)*config.visHeight; if(h>10){ ctx.fillStyle='#f50057'; ctx.shadowBlur=10; ctx.shadowColor='#f50057'; ctx.fillRect(visW/2-h, -i*15, h*2, 3); } } ctx.shadowBlur=0; }
+        else if (style === 'vis_47') { for(let i=0; i<numBars; i++){ let h=getSymmetricVal(i,numBars,bufferLen)*config.visHeight; let d=Math.floor(h/10); for(let j=0; j<d; j++){ ctx.fillStyle=j===d-1?'#fff':'#00ff41'; ctx.fillRect(i*spacing, -j*10-((time*50+i*15)%10), barW, 6); } } }
+        else if (style === 'vis_48') { numBars=32; spacing=visW/numBars; ctx.strokeStyle='rgba(0, 255, 200, 0.6)'; ctx.lineWidth=1.5; for(let i=0; i<numBars; i++){ let h=getSymmetricVal(i,numBars,bufferLen)*config.visHeight; ctx.beginPath(); ctx.moveTo(i*spacing, 0); ctx.lineTo(i*spacing+20, -h); ctx.stroke(); ctx.beginPath(); ctx.moveTo(i*spacing, -h); ctx.lineTo(i*spacing+spacing, -h); ctx.stroke(); } }
+        else if (style === 'vis_49') { for(let i=0; i<numBars; i++){ let h=Math.max(5, getSymmetricVal(i,numBars,bufferLen)*config.visHeight); ctx.fillStyle='#444'; ctx.fillRect(i*spacing, -h, barW, h); ctx.fillStyle='#888'; ctx.fillRect(i*spacing, -h, barW*0.2, h); ctx.fillStyle='#222'; ctx.beginPath(); if(ctx.ellipse) ctx.ellipse(i*spacing+barW/2, -h, barW/2, 4, 0, 0, Math.PI*2); ctx.fill(); } }
+        else if (style === 'vis_50') { let sh=8; numBars=16; spacing=visW/numBars; barW=spacing*0.7; for(let i=0; i<numBars; i++){ let h=Math.max(0, getSymmetricVal(i,numBars,bufferLen)*config.visHeight); let b=Math.floor(h/sh); for(let j=0; j<b; j++){ ctx.fillStyle = j>15?'#ff0000':(j>10?'#ffff00':'#00ff00'); ctx.fillRect(i*spacing, -(j*sh)-sh+1, barW, sh-2); } } }
+
       } catch (e) {}
       ctx.restore();
     }
