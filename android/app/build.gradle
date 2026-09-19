@@ -4,7 +4,7 @@ android {
     namespace = "com.lova.testmp4"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.mirrorspectrum.v2"
+        applicationId "com.mirrorspectrum.v3"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

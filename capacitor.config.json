@@ -1,6 +1,6 @@
 {
-  "appId": "com.mirrorspectrum.v2",
-  "appName": "Mirror Spectrum V2",
+  "appId": "com.mirrorspectrum.v3",
+  "appName": "Mirror Spectrum V3",
   "webDir": "www",
   "bundledWebRuntime": false
 }
