@@ -6,7 +6,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>Mirror Spectrum V5 (Blank Screen Fixed)</title>
+  <title>Mirror Spectrum V5 (Pure Transparent Pop-Out)</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body { margin: 0; background-color: #111; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; overflow-x: hidden; }
@@ -74,7 +74,7 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Mirror Spectrum V5 (Blank Screen Fixed!).</div>
+    <div id="statusBox">Siap. Mirror Spectrum V5 (Pure Transparent Pop-Out).</div>
     
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
@@ -710,6 +710,51 @@
       ctx.restore();
     }
 
+    // --- MURNI TRANSPARAN & POP-OUT SEKALIGUS ---
+    function drawLiveBackgroundSpeaker(x, y, refY, currentScale, scaleX, scaleY, rot, shakeX, shakeY, pump) {
+        let baseR = 50 * currentScale;
+        ctx.save(); 
+        
+        let cx = x + shakeX;
+        let cy = isReflection ? refY + shakeY : y + shakeY;
+        
+        ctx.translate(cx, cy);
+
+        if(isReflection) { 
+            if (mirrorConfig.showSpkReflect === 'no') { ctx.restore(); return; }
+            ctx.scale(1, -1); 
+            let rScale = mirrorConfig.spkReflectSize;
+            ctx.scale(rScale, rScale);
+            ctx.globalAlpha = mirrorConfig.spkReflectOpacity; 
+        }
+
+        // Skala seluruh area batas kliping DAN gambar aslinya sekaligus
+        // Biar daun speakernya murni nendang (pop-out) ke depan, nggak cuman isi gambarnya yang nge-zoom!
+        ctx.scale(pump, pump);
+
+        ctx.beginPath(); 
+        if (ctx.ellipse) { ctx.ellipse(0, 0, baseR * scaleX, baseR * scaleY, rot, 0, Math.PI * 2); } else { ctx.arc(0, 0, baseR, 0, Math.PI * 2); }
+        ctx.clip(); 
+        
+        if (isReflection) {
+            let maxR = baseR * Math.max(scaleX, scaleY);
+            let cropH = (mirrorConfig.spkReflectCrop / 100) * (maxR * 2);
+            ctx.beginPath(); ctx.rect(-maxR*2, maxR - cropH, maxR * 4, cropH); ctx.clip();
+        }
+        
+        // Tarik murni background aslinya tanpa bayangan hitam!
+        ctx.drawImage(bgImageElement, bgGlobalX - cx, bgGlobalY - cy, bgImageElement.width * bgGlobalScale, bgImageElement.height * bgGlobalScale);
+        
+        if (mirrorConfig.showSpkDot === 'yes') {
+            ctx.scale(1/pump, 1/pump);
+            ctx.beginPath(); ctx.arc(0, 0, 4, 0, Math.PI*2);
+            ctx.fillStyle = isReflection ? 'rgba(255, 0, 85, 0.5)' : '#ff0055'; 
+            ctx.fill(); ctx.lineWidth = 1; ctx.strokeStyle = isReflection ? 'rgba(255, 255, 255, 0.5)' : '#ffffff'; 
+            ctx.stroke();
+        }
+        ctx.restore();
+    }
+
     function drawSpeakers(bufferLen, isReflection) {
       if (!isBgReady || document.getElementById('speakerStyle').value === 'none') return;
       let scale1 = parseFloat(document.getElementById('speakerSize1').value);
@@ -731,92 +776,8 @@
       let spkScaleY2 = parseFloat(document.getElementById('spkOvalY2').value);
       let spkRot2 = parseFloat(document.getElementById('spkRot2').value) * Math.PI / 180;
 
-      function drawLiveBackgroundSpeaker(x, y, refY, currentScale, scaleX, scaleY, rot, shakeX, shakeY, pump) {
-        let baseR = 50 * currentScale;
-        ctx.save(); 
-        
-        let cx = x + shakeX;
-        let cy = isReflection ? refY + shakeY : y + shakeY;
-        
-        ctx.translate(cx, cy);
-
-        if(isReflection) { 
-            if (mirrorConfig.showSpkReflect === 'no') { ctx.restore(); return; }
-            ctx.scale(1, -1); 
-            let rScale = mirrorConfig.spkReflectSize;
-            ctx.scale(rScale, rScale);
-            ctx.globalAlpha = mirrorConfig.spkReflectOpacity; 
-        }
-
-        ctx.scale(pump, pump);
-
-        if (!isReflection && pump > 1.0) {
-            ctx.save();
-            ctx.shadowBlur = 15 * (pump - 1.0);
-            ctx.shadowColor = 'rgba(0,0,0,0.85)';
-            ctx.fillStyle = '#000';
-            ctx.beginPath();
-            if (ctx.ellipse) { ctx.ellipse(0, 0, baseR * scaleX, baseR * scaleY, rot, 0, Math.PI * 2); } else { ctx.arc(0, 0, baseR, 0, Math.PI * 2); }
-            ctx.fill();
-            ctx.restore();
-        }
-
-        ctx.beginPath(); 
-        if (ctx.ellipse) { ctx.ellipse(0, 0, baseR * scaleX, baseR * scaleY, rot, 0, Math.PI * 2); } else { ctx.arc(0, 0, baseR, 0, Math.PI * 2); }
-        ctx.clip(); 
-        
-        if (isReflection) {
-            let maxR = baseR * Math.max(scaleX, scaleY);
-            let cropH = (mirrorConfig.spkReflectCrop / 100) * (maxR * 2);
-            ctx.beginPath(); ctx.rect(-maxR*2, maxR - cropH, maxR * 4, cropH); ctx.clip();
-        }
-        
-        ctx.scale(1/pump, 1/pump);
-
-        ctx.drawImage(bgImageElement, bgGlobalX - cx, bgGlobalY - cy, bgImageElement.width * bgGlobalScale, bgImageElement.height * bgGlobalScale);
-        
-        ctx.scale(pump, pump);
-
-        if (!isReflection) {
-            let maxR = baseR * Math.max(scaleX, scaleY);
-            let innerGrad = ctx.createRadialGradient(0, 0, maxR*0.3, 0, 0, maxR);
-            innerGrad.addColorStop(0, 'rgba(0,0,0,0)');
-            innerGrad.addColorStop(1, 'rgba(0,0,0,0.5)');
-            ctx.fillStyle = innerGrad;
-            ctx.fillRect(-maxR*2, -maxR*2, maxR*4, maxR*4);
-        }
-
-        if (mirrorConfig.showSpkDot === 'yes') {
-            ctx.scale(1/pump, 1/pump);
-            ctx.beginPath(); ctx.arc(0, 0, 4, 0, Math.PI*2);
-            ctx.fillStyle = isReflection ? 'rgba(255, 0, 85, 0.5)' : '#ff0055'; 
-            ctx.fill(); ctx.lineWidth = 1; ctx.strokeStyle = isReflection ? 'rgba(255, 255, 255, 0.5)' : '#ffffff'; 
-            ctx.stroke();
-        }
-        ctx.restore();
-      }
-
       drawLiveBackgroundSpeaker(spk1X, spk1Y, spk1RefY, scale1, spkScaleX1, spkScaleY1, spkRot1, sX, sY, pmp); 
       drawLiveBackgroundSpeaker(spk2X, spk2Y, spk2RefY, scale2, spkScaleX2, spkScaleY2, spkRot2, sX, sY, pmp);
-    }
-
-    function drawCandle(x, y, refY, style, scale, propSpeed, isReflection) {
-        if(style === 'none') return; ctx.save(); 
-        if (isReflection) {
-            if (mirrorConfig.showCandleReflect === 'no') { ctx.restore(); return; }
-            ctx.translate(x, refY); ctx.scale(1, -1); ctx.globalAlpha = 0.45;
-        } else {
-            ctx.translate(x, y); 
-        }
-        ctx.scale(scale, scale);
-        let t = time * 2 * propSpeed; let flicker = 0; let sway = 0; let h = 65; let w = 16; let baseColor = 'rgba(255, 140, 0, 0.8)'; let midColor = 'rgba(255, 210, 0, 0.9)'; let coreColor = 'rgba(255, 255, 255, 0.95)';
-        if(style === 'calm_flame') { flicker = Math.sin(t*3)*2; sway = Math.sin(t)*1; } else if(style === 'flicker_flame') { flicker = Math.sin(t*10)*4 + Math.random()*2; sway = Math.sin(t*5)*3; } else if(style === 'bright_glow') { flicker = Math.sin(t*4)*2; h = 75; w = 18; ctx.shadowBlur = 15 + flicker; ctx.shadowColor = '#ff9800'; } else if(style === 'blue_base') { flicker = Math.sin(t*5)*2; baseColor = 'rgba(0, 150, 255, 0.8)'; midColor = 'rgba(100, 200, 255, 0.9)'; } else if(style === 'wind_flame') { flicker = Math.random()*5; sway = 15 + Math.sin(t*8)*5; }
-        ctx.beginPath(); ctx.arc(0, -h*0.5, w*3, 0, Math.PI*2); let gradGlow = ctx.createRadialGradient(0,-h*0.5,0, 0,-h*0.5,w*4); gradGlow.addColorStop(0, 'rgba(255, 120, 0, 0.25)'); gradGlow.addColorStop(1, 'rgba(255, 120, 0, 0)'); ctx.fillStyle = gradGlow; ctx.fill();
-        ctx.beginPath(); ctx.moveTo(0, 5); ctx.lineTo(sway*0.05, -8); ctx.lineWidth = 3; ctx.strokeStyle = '#111'; ctx.stroke(); ctx.beginPath(); ctx.moveTo(sway*0.05, -8); ctx.lineTo(sway*0.1, -12); ctx.lineWidth = 2; ctx.strokeStyle = '#ff5722'; ctx.stroke();
-        function drawFlame(fw, fh, fsway, color) { ctx.beginPath(); ctx.moveTo(0, 2); ctx.bezierCurveTo(fw, 2, fw*0.9, -fh*0.4, fsway, -fh); ctx.bezierCurveTo(-fw*0.9, -fh*0.4, -fw, 2, 0, 2); ctx.fillStyle = color; ctx.fill(); }
-        drawFlame(w, h + flicker, sway, baseColor); drawFlame(w*0.7, (h + flicker)*0.75, sway*0.7, midColor); drawFlame(w*0.35, (h + flicker)*0.45, sway*0.3, coreColor); 
-        if(style !== 'blue_base') { ctx.beginPath(); ctx.moveTo(0, 4); ctx.bezierCurveTo(w*0.5, 4, w*0.4, -5, 0, -5); ctx.bezierCurveTo(-w*0.4, -5, -w*0.5, 4, 0, 4); let bg = ctx.createRadialGradient(0,0,0, 0,0,w*0.5); bg.addColorStop(0,'rgba(0,100,255,0.6)'); bg.addColorStop(1,'rgba(0,50,255,0)'); ctx.fillStyle = bg; ctx.fill(); }
-        ctx.restore();
     }
 
     function animate() {
