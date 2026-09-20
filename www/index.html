@@ -74,7 +74,7 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Mirror Spectrum V5 (Final Stable).</div>
+    <div id="statusBox">Siap. Mirror Spectrum V5 (Blank Screen FIXED - Original Speaker Mode).</div>
     
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
@@ -564,7 +564,8 @@
 
     function drawCoffeeSteam(x, y, style, scale, propSpeed) {
         if(style === 'none') { smokeParticles = []; return; }
-        let customOpacity = parseFloat(document.getElementById('smokeOpacity')?.value) || 1.0;
+        let customOpacity = parseFloat(document.getElementById('smokeOpacity').value);
+        if (isNaN(customOpacity)) customOpacity = 1.0;
         let spawnRate = 0.6;
         if(style === 'soft_steam') spawnRate = 0.5;
         if(style === 'swirl_vapor') spawnRate = 1.0;
@@ -710,6 +711,7 @@
       ctx.restore();
     }
 
+    // --- ENGINE DAUN SPEAKER MURNI TRANSPARAN & POP-OUT SEKALIGUS ---
     function drawSpeakers(bufferLen, isReflection) {
       if (!isBgReady || document.getElementById('speakerStyle').value === 'none') return;
       let scale1 = parseFloat(document.getElementById('speakerSize1').value);
@@ -719,7 +721,8 @@
       if(!isReflection) { if (punchyBass > globalSmoothedBass) { globalSmoothedBass += (punchyBass - globalSmoothedBass) * 0.8; } else { globalSmoothedBass += (punchyBass - globalSmoothedBass) * 0.15; } }
       let finalBass = globalSmoothedBass; 
       let shakeIntensity = parseFloat(document.getElementById('speakerShake').value); let pumpIntensity = parseFloat(document.getElementById('speakerPump').value);
-      let shakeX = (Math.random() - 0.5) * finalBass * shakeIntensity;
+      
+      let shakeX = (Math.random() - 0.5) * finalBass * shakeIntensity; 
       let shakeY = (Math.random() - 0.5) * finalBass * shakeIntensity;
       let pump = 1.0 + (finalBass * pumpIntensity);
 
@@ -730,8 +733,7 @@
       let spkScaleY2 = parseFloat(document.getElementById('spkOvalY2').value);
       let spkRot2 = parseFloat(document.getElementById('spkRot2').value) * Math.PI / 180;
 
-      // FUNGSI INI SEKARANG BERADA DI DALAM drawSpeakers
-      // JADI DIA BISA BACA isReflection TANPA CRASH!
+      // Fungsi ditaruh di dalam biar dapet akses utuh ke shakeX, shakeY, pump, isReflection
       function drawLiveBackgroundSpeaker(x, y, refY, currentScale, scaleX, scaleY, rot) {
         let baseR = 50 * currentScale;
         ctx.save(); 
@@ -749,8 +751,7 @@
             ctx.globalAlpha = mirrorConfig.spkReflectOpacity; 
         }
 
-        // Skala seluruh area batas kliping DAN gambar aslinya sekaligus
-        // Biar daun speakernya murni nendang (pop-out) ke depan!
+        // Zoom/Pompa area batas potongnya 
         ctx.scale(pump, pump);
 
         ctx.beginPath(); 
@@ -763,11 +764,13 @@
             ctx.beginPath(); ctx.rect(-maxR*2, maxR - cropH, maxR * 4, cropH); ctx.clip();
         }
         
-        // Tarik murni background aslinya tanpa bayangan hitam!
+        // PENTING: Unscale lagi biar gambarnya TETAP DI TEMPAT / Nggak ikutan ngezoom aneh
+        ctx.scale(1/pump, 1/pump);
+
+        // Tarik gambar aslinya (Pure Transparent)
         ctx.drawImage(bgImageElement, bgGlobalX - cx, bgGlobalY - cy, bgImageElement.width * bgGlobalScale, bgImageElement.height * bgGlobalScale);
         
         if (mirrorConfig.showSpkDot === 'yes') {
-            ctx.scale(1/pump, 1/pump);
             ctx.beginPath(); ctx.arc(0, 0, 4, 0, Math.PI*2);
             ctx.fillStyle = isReflection ? 'rgba(255, 0, 85, 0.5)' : '#ff0055'; 
             ctx.fill(); ctx.lineWidth = 1; ctx.strokeStyle = isReflection ? 'rgba(255, 255, 255, 0.5)' : '#ffffff'; 
