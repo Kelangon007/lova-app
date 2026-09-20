@@ -6,7 +6,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>Mirror Spectrum V5 (Final Stable)</title>
+  <title>Mirror Spectrum V5 (Final Masterpiece)</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     body { margin: 0; background-color: #111; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; touch-action: pan-y; overflow-x: hidden; }
@@ -43,12 +43,13 @@
     .layout-col { background: #222; padding: 10px 8px; border-radius: 8px; border: 1px solid #3c3c3c; display: flex; flex-direction: column; gap: 10px; box-sizing: border-box; overflow: hidden; }
     .layout-col > label { width: 100%; text-align: center; font-size: 11px; margin-bottom: 2px; font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase; }
     .row { display: flex; align-items: center; justify-content: space-between; gap: 5px; width: 100%; box-sizing: border-box; }
-    .row label { font-size: 9px; width: 40%; color: #ccc; font-weight: 600; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .row label { font-size: 9px; width: 45%; color: #ccc; font-weight: 600; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
-    input[type="range"] { width: 60%; height: 32px; background: transparent; -webkit-appearance: none; appearance: none; }
+    input[type="range"], select { width: 55%; }
+    input[type="range"] { height: 6px; background: transparent; -webkit-appearance: none; appearance: none; }
     input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 6px; background: #444; border-radius: 3px; border: 1px solid #222; }
     input[type="range"]::-webkit-slider-thumb { height: 18px; width: 18px; border-radius: 50%; background: #007bff; cursor: pointer; -webkit-appearance: none; margin-top: -6px; box-shadow: 0 0 5px rgba(0,0,0,0.5); }
-    select { width: 60%; height: 32px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px; font-size: 10px; padding: 0 5px; box-sizing: border-box; cursor: pointer; -webkit-appearance: none; appearance: none; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="white" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>'); background-repeat: no-repeat; background-position: right 8px center; padding-right: 20px; }
+    select { height: 32px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px; font-size: 10px; padding: 0 5px; box-sizing: border-box; cursor: pointer; -webkit-appearance: none; appearance: none; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="white" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>'); background-repeat: no-repeat; background-position: right 8px center; padding-right: 20px; }
     select.full-select { width: 100%; margin-bottom: 5px; font-size: 11px; }
     input[type="file"] { display: none; }
     optgroup { background: #111; color: #00e5ff; font-weight: bold; }
@@ -74,7 +75,7 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap. Mirror Spectrum V5 (Anti-Crash Original Speaker Mode).</div>
+    <div id="statusBox">Siap. Mirror Spectrum V5 (Final Masterpiece).</div>
     
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 3px solid #d4af37">1. FOTO LATAR</label>
@@ -97,106 +98,120 @@
 
     <hr class="thin-line">
 
-    <!-- GRID 1: VISUALIZER (3D PERSPECTIVE) & SPEAKER ASLI -->
-    <div class="grid-2col">
-      <div class="layout-col">
+    <!-- GRID 1: VISUALIZER (3D PERSPECTIVE) FULL WIDTH -->
+    <div class="layout-col full-width" style="margin-bottom: 8px;">
         <label style="color:#00d2ff;">VISUALIZER 3D</label>
-        <select id="visType" class="full-select">
-            <optgroup label="=== SOLID BARS ===">
-                <option value="vintage_bars">📊 1. Vintage Solid Bars</option>
-                <option value="winamp_classic">📻 2. Winamp Peaks</option>
-                <option value="classic_eq">🎙️ 3. Classic Green-Red EQ</option>
-                <option value="step_eq">🧱 4. Step Block EQ</option>
-                <option value="thin_eq">📏 5. Thin Minimalist EQ</option>
-                <option value="thick_bars">⬛ 6. Bold Solid Bars</option>
-                <option value="hollow_bars">🔲 7. Hollow Outline Bars</option>
-                <option value="rounded_bars">💊 8. Rounded Tip Bars</option>
-                <option value="split_eq">⏸️ 9. Split Center EQ</option>
-                <option value="double_mirror">🪞 10. Dual Mirror Bars</option>
-            </optgroup>
-            <optgroup label="=== PEAKS & DOTS ===">
-                <option value="dotted_eq">⏺️ 11. Dotted Peak EQ</option>
-                <option value="led_matrix">🚥 12. LED Dot Matrix</option>
-                <option value="analog_vu">🎛️ 13. Analog VU Meter</option>
-                <option value="retro_oscilloscope">📺 14. CRT Oscilloscope</option>
-                <option value="peak_line">〰️ 15. Floating Peak Line</option>
-                <option value="peak_dots_only">⚪ 16. Floating Dots Peak</option>
-                <option value="dash_bars">➖ 17. Dashed Segment Bars</option>
-                <option value="meter_blocks">📶 18. Meter Blocks</option>
-                <option value="soft_glow_bars">🌟 19. Glowing Ambient Bars</option>
-                <option value="white_caps">🧢 20. Bars with White Cap</option>
-            </optgroup>
-            <optgroup label="=== MODERN GRADIENT ===">
-                <option value="liquid_bar" selected>💧 21. Liquid Glowing Cyan</option>
-                <option value="cyber_pulse">⚡ 22. Neon Pulse Bars</option>
-                <option value="mirror_bars">🪞 23. Mirrored Glass Bars</option>
-                <option value="gradient_blocks">🎛️ 24. Cyan-Blue Gradient</option>
-                <option value="sunset_bars">🌅 25. Warm Sunset Gradient</option>
-                <option value="emerald_bars">💎 26. Emerald Green Grad</option>
-                <option value="purple_haze">🟣 27. Purple-Pink Soft</option>
-                <option value="gold_classic">👑 28. Golden Elegant EQ</option>
-                <option value="monochrome_fade">🎞️ 29. Grayscale Fading</option>
-                <option value="dual_tone">🌗 30. Dual Tone Top-Bot</option>
-            </optgroup>
-            <optgroup label="=== WAVES & LINES ===">
-                <option value="modern_wave">🌊 31. Modern Smooth Wave</option>
-                <option value="filled_wave">🌊 32. Filled Ambient Wave</option>
-                <option value="double_wave">〰️ 33. Double Layer Wave</option>
-                <option value="thin_wave">✒️ 34. Ultra Thin Line</option>
-                <option value="shadow_wave">🌒 35. Wave with Shadow</option>
-                <option value="stereo_lines">⏸️ 36. Dual Parallel Lines</option>
-                <option value="smooth_curve">🔔 37. Bell Curve Wave</option>
-                <option value="ribbon_wave">🎀 38. Flowing Ribbon Wave</option>
-                <option value="minimal_line">➖ 39. Minimalist Baseline</option>
-                <option value="calm_horizon">🌅 40. Calm Horizon Glow</option>
-            </optgroup>
-            <optgroup label="=== MODERN & UNIQUE ===">
-                <option value="hologram_grid">🧊 41. Hologram 3D Grid</option>
-                <option value="digital_dna">🧬 42. Digital DNA Wave</option>
-                <option value="matrix_rain">🌧️ 43. Matrix Digital Rain</option>
-                <option value="cyber_laser">💥 44. Cyber Laser Beams</option>
-                <option value="neon_ripple">🔲 45. Neon Square Ripple</option>
-                <option value="aurora_borealis">🌌 46. Aurora Borealis Glow</option>
-                <option value="block_tower">🏙️ 47. Clean 3D EQ Blocks</option>
-                <option value="equalizer_3d">🛠️ 48. Cylinder Studio EQ</option>
-                <option value="floating_blocks">🧊 49. Floating Blocks</option>
-                <option value="classic_studio">🎙️ 50. Pro Studio Rack</option>
-            </optgroup>
-            <optgroup label="=== RETRO & CLASSIC ===">
-                <option value="classic_spectrum">🌈 51. Classic Spectrum Analyzer</option>
-                <option value="cassette_tape">📼 52. Spinning Cassette Tape</option>
-                <option value="vintage_vu_meter">🎛️ 53. Box Vintage VU Meter</option>
-                <option value="classic_vinyl">💿 54. Classic Vinyl Record</option>
-                <option value="retro_boombox_eq">📻 55. Retro Boombox LED EQ</option>
-            </optgroup>
-        </select>
-        <div class="row"><label>TINGGI</label><input type="range" id="visHeight" min="30" max="600" value="150"></div>
-        <div class="row"><label>LEBAR</label><input type="range" id="visWidth" min="100" max="1100" value="400"></div>
-        <div class="row"><label style="color:#00e5ff;">SUDUT (PUTAR)</label><input type="range" id="visRot" min="-90" max="90" step="1" value="0"></div>
-        <div class="row"><label style="color:#00e5ff;">SKEW X (K-K)</label><input type="range" id="visSkewX" min="-45" max="45" step="1" value="0"></div>
-        <div class="row"><label style="color:#00e5ff;">SKEW Y (A-B)</label><input type="range" id="visSkewY" min="-45" max="45" step="1" value="0"></div>
-        <div class="row"><label style="color:#00e5ff;">SKALA X</label><input type="range" id="visScaleX" min="0.1" max="3.0" step="0.05" value="1.0"></div>
-        <div class="row"><label style="color:#00e5ff;">SKALA Y</label><input type="range" id="visScaleY" min="0.1" max="3.0" step="0.05" value="1.0"></div>
-        <div class="row"><label>OPASITAS</label><input type="range" id="visOpacity" min="0.1" max="1.0" step="0.05" value="1.0"></div>
-      </div>
-      <div class="layout-col">
-        <label style="color:#ffb300;">DAUN SPEAKER</label>
-        <div class="row">
-            <select id="speakerStyle" class="full-select">
-              <option value="active">🟢 Nyala</option>
-              <option value="none">🚫 Mati</option>
+        <div class="grid-2col">
+            <select id="visType" class="full-select full-width">
+                <optgroup label="=== SOLID BARS ===">
+                    <option value="vintage_bars">📊 1. Vintage Solid Bars</option>
+                    <option value="winamp_classic">📻 2. Winamp Peaks</option>
+                    <option value="classic_eq">🎙️ 3. Classic Green-Red EQ</option>
+                    <option value="step_eq">🧱 4. Step Block EQ</option>
+                    <option value="thin_eq">📏 5. Thin Minimalist EQ</option>
+                    <option value="thick_bars">⬛ 6. Bold Solid Bars</option>
+                    <option value="hollow_bars">🔲 7. Hollow Outline Bars</option>
+                    <option value="rounded_bars">💊 8. Rounded Tip Bars</option>
+                    <option value="split_eq">⏸️ 9. Split Center EQ</option>
+                    <option value="double_mirror">🪞 10. Dual Mirror Bars</option>
+                </optgroup>
+                <optgroup label="=== PEAKS & DOTS ===">
+                    <option value="dotted_eq">⏺️ 11. Dotted Peak EQ</option>
+                    <option value="led_matrix">🚥 12. LED Dot Matrix</option>
+                    <option value="analog_vu">🎛️ 13. Analog VU Meter</option>
+                    <option value="retro_oscilloscope">📺 14. CRT Oscilloscope</option>
+                    <option value="peak_line">〰️ 15. Floating Peak Line</option>
+                    <option value="peak_dots_only">⚪ 16. Floating Dots Peak</option>
+                    <option value="dash_bars">➖ 17. Dashed Segment Bars</option>
+                    <option value="meter_blocks">📶 18. Meter Blocks</option>
+                    <option value="soft_glow_bars">🌟 19. Glowing Ambient Bars</option>
+                    <option value="white_caps">🧢 20. Bars with White Cap</option>
+                </optgroup>
+                <optgroup label="=== MODERN GRADIENT ===">
+                    <option value="liquid_bar" selected>💧 21. Liquid Glowing Cyan</option>
+                    <option value="cyber_pulse">⚡ 22. Neon Pulse Bars</option>
+                    <option value="mirror_bars">🪞 23. Mirrored Glass Bars</option>
+                    <option value="gradient_blocks">🎛️ 24. Cyan-Blue Gradient</option>
+                    <option value="sunset_bars">🌅 25. Warm Sunset Gradient</option>
+                    <option value="emerald_bars">💎 26. Emerald Green Grad</option>
+                    <option value="purple_haze">🟣 27. Purple-Pink Soft</option>
+                    <option value="gold_classic">👑 28. Golden Elegant EQ</option>
+                    <option value="monochrome_fade">🎞️ 29. Grayscale Fading</option>
+                    <option value="dual_tone">🌗 30. Dual Tone Top-Bot</option>
+                </optgroup>
+                <optgroup label="=== WAVES & LINES ===">
+                    <option value="modern_wave">🌊 31. Modern Smooth Wave</option>
+                    <option value="filled_wave">🌊 32. Filled Ambient Wave</option>
+                    <option value="double_wave">〰️ 33. Double Layer Wave</option>
+                    <option value="thin_wave">✒️ 34. Ultra Thin Line</option>
+                    <option value="shadow_wave">🌒 35. Wave with Shadow</option>
+                    <option value="stereo_lines">⏸️ 36. Dual Parallel Lines</option>
+                    <option value="smooth_curve">🔔 37. Bell Curve Wave</option>
+                    <option value="ribbon_wave">🎀 38. Flowing Ribbon Wave</option>
+                    <option value="minimal_line">➖ 39. Minimalist Baseline</option>
+                    <option value="calm_horizon">🌅 40. Calm Horizon Glow</option>
+                </optgroup>
+                <optgroup label="=== MODERN & UNIQUE ===">
+                    <option value="hologram_grid">🧊 41. Hologram 3D Grid</option>
+                    <option value="digital_dna">🧬 42. Digital DNA Wave</option>
+                    <option value="matrix_rain">🌧️ 43. Matrix Digital Rain</option>
+                    <option value="cyber_laser">💥 44. Cyber Laser Beams</option>
+                    <option value="neon_ripple">🔲 45. Neon Square Ripple</option>
+                    <option value="aurora_borealis">🌌 46. Aurora Borealis Glow</option>
+                    <option value="block_tower">🏙️ 47. Clean 3D EQ Blocks</option>
+                    <option value="equalizer_3d">🛠️ 48. Cylinder Studio EQ</option>
+                    <option value="floating_blocks">🧊 49. Floating Blocks</option>
+                    <option value="classic_studio">🎙️ 50. Pro Studio Rack</option>
+                </optgroup>
+                <optgroup label="=== RETRO & CLASSIC ===">
+                    <option value="classic_spectrum">🌈 51. Classic Spectrum Analyzer</option>
+                    <option value="cassette_tape">📼 52. Spinning Cassette Tape</option>
+                    <option value="vintage_vu_meter">🎛️ 53. Box Vintage VU Meter</option>
+                    <option value="classic_vinyl">💿 54. Classic Vinyl Record</option>
+                    <option value="retro_boombox_eq">📻 55. Retro Boombox LED EQ</option>
+                </optgroup>
             </select>
+            <div class="row"><label>TINGGI</label><input type="range" id="visHeight" min="30" max="600" value="150"></div>
+            <div class="row"><label>LEBAR</label><input type="range" id="visWidth" min="100" max="1100" value="400"></div>
+            <div class="row"><label style="color:#00e5ff;">SUDUT (PUTAR)</label><input type="range" id="visRot" min="-90" max="90" step="1" value="0"></div>
+            <div class="row"><label>OPASITAS</label><input type="range" id="visOpacity" min="0.1" max="1.0" step="0.05" value="1.0"></div>
+            <div class="row"><label style="color:#00e5ff;">SKEW X (K-K)</label><input type="range" id="visSkewX" min="-45" max="45" step="1" value="0"></div>
+            <div class="row"><label style="color:#00e5ff;">SKEW Y (A-B)</label><input type="range" id="visSkewY" min="-45" max="45" step="1" value="0"></div>
+            <div class="row"><label style="color:#00e5ff;">SKALA X</label><input type="range" id="visScaleX" min="0.1" max="3.0" step="0.05" value="1.0"></div>
+            <div class="row"><label style="color:#00e5ff;">SKALA Y</label><input type="range" id="visScaleY" min="0.1" max="3.0" step="0.05" value="1.0"></div>
         </div>
-        <div class="row"><label>TITIK TGH</label><select id="showSpkDot"><option value="yes">Nyala</option><option value="no">Mati</option></select></div>
-        <div class="row"><label>UK. KIRI</label><input type="range" id="speakerSize1" min="0.2" max="5.0" step="0.1" value="1.5"></div>
-        <div class="row"><label>UK. KANAN</label><input type="range" id="speakerSize2" min="0.2" max="5.0" step="0.1" value="1.5"></div>
-        <div class="row"><label style="color:#ff5252;">GETARAN</label><input type="range" id="speakerShake" min="0" max="30" step="1" value="10"></div>
-        <div class="row"><label style="color:#ff5252;">DENTUMAN</label><input type="range" id="speakerPump" min="0" max="2.0" step="0.1" value="0.5"></div>
-      </div>
     </div>
 
-    <!-- GRID 2: PERSPEKTIF -->
+    <!-- GRID 2: SPEAKER FISIKA -->
     <div class="grid-2col">
+      <div class="layout-col">
+        <label style="color:#ffb300;">DAUN SPEAKER L</label>
+        <div class="row"><label>SAKLAR</label><select id="speakerStyle"><option value="active">🟢 Nyala</option><option value="none">🔴 Mati</option></select></div>
+        <div class="row"><label>UK. LUAR</label><input type="range" id="outSize1" min="20" max="300" value="120"></div>
+        <div class="row"><label>UK. DALAM</label><input type="range" id="inRatio1" min="0.05" max="0.9" step="0.01" value="0.35"></div>
+        <div class="row"><label>GESER X</label><input type="range" id="dustOffX1" min="-150" max="150" step="1" value="0"></div>
+        <div class="row"><label>GESER Y</label><input type="range" id="dustOffY1" min="-150" max="150" step="1" value="0"></div>
+      </div>
+      <div class="layout-col">
+        <label style="color:#ffb300;">DAUN SPEAKER R</label>
+        <div class="row"><label>GARIS BANTU</label><select id="showGuides"><option value="yes">Nyala (Pause)</option><option value="no">Mati</option></select></div>
+        <div class="row"><label>UK. LUAR</label><input type="range" id="outSize2" min="20" max="300" value="120"></div>
+        <div class="row"><label>UK. DALAM</label><input type="range" id="inRatio2" min="0.05" max="0.9" step="0.01" value="0.35"></div>
+        <div class="row"><label>GESER X</label><input type="range" id="dustOffX2" min="-150" max="150" step="1" value="0"></div>
+        <div class="row"><label>GESER Y</label><input type="range" id="dustOffY2" min="-150" max="150" step="1" value="0"></div>
+      </div>
+    </div>
+    
+    <!-- GRID 2.1: TENAGA SPEAKER -->
+    <div class="grid-2col" style="margin-top:8px;">
+        <div class="layout-col full-width" style="flex-direction:row; padding:10px 8px;">
+            <div class="row" style="background:transparent; padding:0;"><label style="color:#ff5252;">GETARAN X/Y</label><input type="range" id="speakerShake" min="0" max="40" value="10"></div>
+            <div class="row" style="background:transparent; padding:0;"><label style="color:#ff5252;">DENTUMAN ZOOM</label><input type="range" id="speakerPump" min="0" max="3.0" step="0.1" value="1.0"></div>
+        </div>
+    </div>
+
+    <!-- GRID 3: PERSPEKTIF OVAL (KIRI KANAN PISAH) -->
+    <div class="grid-2col" style="margin-top:8px;">
       <div class="layout-col">
         <label style="color:#00bcd4;">PERSPEK. KIRI</label>
         <div class="row"><label>OVAL X</label><input type="range" id="spkOvalX1" min="0.1" max="2.0" step="0.05" value="1.0"></div>
@@ -211,8 +226,8 @@
       </div>
     </div>
 
-    <!-- GRID 3: PANTULAN -->
-    <div class="grid-2col">
+    <!-- GRID 4: PANTULAN -->
+    <div class="grid-2col" style="margin-top:8px;">
       <div class="layout-col" style="border-color: #00bcd4;">
         <label style="color:#00bcd4;">SAKLAR KACA</label>
         <div class="row"><label>GRS MEJA</label><select id="showGlassLine"><option value="yes">Nyala</option><option value="no">Mati</option></select></div>
@@ -228,8 +243,8 @@
       </div>
     </div>
 
-    <!-- GRID 4: ASAP VOLUMETRIC & LILIN -->
-    <div class="grid-2col">
+    <!-- GRID 5: ASAP VOLUMETRIC & LILIN -->
+    <div class="grid-2col" style="margin-top:8px;">
       <div class="layout-col">
         <label style="color:#d7ccc8;">ASAP KOPI</label>
         <select id="coffeeStyle" class="full-select">
@@ -258,7 +273,7 @@
     </div>
 
     <!-- EFEK PARTIKEL LINGKUNGAN -->
-    <div class="layout-col full-width" style="padding: 12px;">
+    <div class="layout-col full-width" style="padding: 12px; margin-top:8px;">
         <label style="color:#00e5ff; text-align:left; margin-bottom:8px;">EFEK PARTIKEL LINGKUNGAN</label>
         <div class="grid-2col">
             <select id="type" class="full-select">
@@ -294,20 +309,14 @@
   <audio id="audioPlayer" crossorigin="anonymous"></audio>
 
   <script>
-    // SISTEM PENGAMAN ANTI BLANK HITAM (Membaca HTML dengan kebal error)
+    // FUNGSI PENGAMAN ANTI BLANK HITAM (Membaca HTML dengan kebal error)
     function getNum(id, defVal) {
-      try {
-        let el = document.getElementById(id);
-        if (!el) return defVal;
-        let val = parseFloat(el.value);
-        return isNaN(val) ? defVal : val;
-      } catch (e) { return defVal; }
+      try { let el = document.getElementById(id); if (!el) return defVal; let val = parseFloat(el.value); return isNaN(val) ? defVal : val; } 
+      catch (e) { return defVal; }
     }
     function getStr(id, defVal) {
-      try {
-        let el = document.getElementById(id);
-        return el ? el.value : defVal;
-      } catch (e) { return defVal; }
+      try { let el = document.getElementById(id); return el ? el.value : defVal; } 
+      catch (e) { return defVal; }
     }
 
     const statusBox = document.getElementById('statusBox'); const canvas = document.getElementById('canvas'); const ctx = canvas.getContext('2d');
@@ -407,16 +416,12 @@
 
     function startDrag(e) {
       if (e.touches && e.touches.length === 2) {
-        isPinching = true;
-        initialPinchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-        initialPinchZoom = canvasZoom;
-        if (e.cancelable) e.preventDefault(); return;
+        isPinching = true; initialPinchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+        initialPinchZoom = canvasZoom; if (e.cancelable) e.preventDefault(); return;
       }
-
       const pos = getMousePos(e); 
-      const spk1Scale = getNum('speakerSize1', 1.5); 
-      const spk2Scale = getNum('speakerSize2', 1.5); 
-      const r1 = 60 * spk1Scale; const r2 = 60 * spk2Scale;
+      let r1 = getNum('outSize1', 120); 
+      let r2 = getNum('outSize2', 120); 
       
       if (getStr('showGlassLine', 'yes') === 'yes' && Math.abs(pos.y - mirrorY) <= 30) { isDraggingMirrorLine = true; dragOffsetY = pos.y - mirrorY; if (e.cancelable) e.preventDefault(); return; }
       if (getStr('showSpkReflect', 'yes') === 'yes' && getStr('speakerStyle', 'active') !== 'none') {
@@ -439,9 +444,8 @@
 
       if (canvasZoom > 1.0) {
         isPanningCanvas = true;
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        panStartX = clientX - canvasPanX; panStartY = clientY - canvasPanY;
+        let cx = e.touches ? e.touches[0].clientX : e.clientX; let cy = e.touches ? e.touches[0].clientY : e.clientY;
+        panStartX = cx - canvasPanX; panStartY = cy - canvasPanY;
         if (e.cancelable) e.preventDefault();
       }
     }
@@ -449,19 +453,14 @@
     function drag(e) {
       if (isPinching && e.touches && e.touches.length === 2) {
         const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-        const factor = dist / initialPinchDist;
-        setCanvasZoom(initialPinchZoom * factor);
+        const factor = dist / initialPinchDist; setCanvasZoom(initialPinchZoom * factor);
         if (e.cancelable) e.preventDefault(); return;
       }
-
       if (isPanningCanvas) {
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        canvasPanX = clientX - panStartX; canvasPanY = clientY - panStartY;
-        clampPan(); applyCanvasTransform();
+        let cx = e.touches ? e.touches[0].clientX : e.clientX; let cy = e.touches ? e.touches[0].clientY : e.clientY;
+        canvasPanX = cx - panStartX; canvasPanY = cy - panStartY; clampPan(); applyCanvasTransform();
         if (e.cancelable) e.preventDefault(); return;
       }
-
       if (!isDraggingVis && !isDraggingSpk1 && !isDraggingSpk2 && !isDraggingCoffee && !isDraggingCandle1 && !isDraggingCandle2 && !isDraggingVisRef && !isDraggingSpk1Ref && !isDraggingSpk2Ref && !isDraggingMirrorLine && !isDraggingCandle1Ref && !isDraggingCandle2Ref) return;
       
       const pos = getMousePos(e);
@@ -478,9 +477,7 @@
       if (isDraggingCandle2) { candle2X = pos.x - dragOffsetX; candle2Y = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); return; }
       if (isDraggingVis) { visX = pos.x - dragOffsetX; visY = pos.y - dragOffsetY; if (e.cancelable) e.preventDefault(); }
       
-      // Update config visW saat didrag
-      let vW = getNum('visWidth', 400);
-      visW = vW;
+      visW = getNum('visWidth', 400);
     }
 
     function endDrag() { 
@@ -508,16 +505,12 @@
     let time = 0; let globalSmoothedBass = 0;
 
     const smokeSprite = document.createElement('canvas');
-    smokeSprite.width = 64;
-    smokeSprite.height = 64;
+    smokeSprite.width = 64; smokeSprite.height = 64;
     const sCtx = smokeSprite.getContext('2d');
     const sGrad = sCtx.createRadialGradient(32, 32, 0, 32, 32, 32);
-    sGrad.addColorStop(0, 'rgba(240, 240, 240, 0.25)');   
-    sGrad.addColorStop(0.4, 'rgba(240, 240, 240, 0.1)'); 
-    sGrad.addColorStop(0.8, 'rgba(240, 240, 240, 0.02)'); 
-    sGrad.addColorStop(1, 'rgba(240, 240, 240, 0)');     
-    sCtx.fillStyle = sGrad;
-    sCtx.fillRect(0, 0, 64, 64);
+    sGrad.addColorStop(0, 'rgba(240, 240, 240, 0.25)'); sGrad.addColorStop(0.4, 'rgba(240, 240, 240, 0.1)'); 
+    sGrad.addColorStop(0.8, 'rgba(240, 240, 240, 0.02)'); sGrad.addColorStop(1, 'rgba(240, 240, 240, 0)');     
+    sCtx.fillStyle = sGrad; sCtx.fillRect(0, 0, 64, 64);
     let smokeParticles = [];
 
     class CinematicParticle {
@@ -560,14 +553,10 @@
 
     function drawCoffeeSteam(x, y, style, scale, propSpeed) {
         if(style === 'none') { smokeParticles = []; return; }
-        
         let customOpacity = getNum('smokeOpacity', 1.0);
-        
         let spawnRate = 0.6;
-        if(style === 'soft_steam') spawnRate = 0.5;
-        if(style === 'swirl_vapor') spawnRate = 1.0;
-        if(style === 'thin_wisp') spawnRate = 0.4;
-        if(style === 'heavy_steam') spawnRate = 1.6;
+        if(style === 'soft_steam') spawnRate = 0.5; if(style === 'swirl_vapor') spawnRate = 1.0;
+        if(style === 'thin_wisp') spawnRate = 0.4; if(style === 'heavy_steam') spawnRate = 1.6;
         if(style === 'wind_steam') spawnRate = 1.0;
 
         let actualSpawns = Math.floor(spawnRate * propSpeed);
@@ -575,9 +564,7 @@
 
         for(let i = 0; i < actualSpawns; i++) {
              smokeParticles.push({
-                x: x + (Math.random() - 0.5) * 8 * scale,
-                y: y - 2 * scale,
-                life: 0,
+                x: x + (Math.random() - 0.5) * 8 * scale, y: y - 2 * scale, life: 0,
                 maxLife: (style === 'thin_wisp' ? 260 : 180) + Math.random() * 60,
                 size: (style === 'heavy_steam' ? 22 : (style === 'thin_wisp' ? 8 : 14)) * scale,
                 grow: (style === 'heavy_steam' ? 0.35 : (style === 'thin_wisp' ? 0.1 : 0.2)) * scale,
@@ -588,34 +575,16 @@
                 baseMaxOpacity: (style === 'heavy_steam' ? 0.6 : (style === 'thin_wisp' ? 0.25 : 0.45))
              });
         }
-
-        ctx.save();
-        ctx.globalCompositeOperation = 'screen';
-        
+        ctx.save(); ctx.globalCompositeOperation = 'screen';
         for (let i = smokeParticles.length - 1; i >= 0; i--) {
-            let p = smokeParticles[i];
-            p.life += propSpeed; 
-            p.y -= p.vy * propSpeed;
+            let p = smokeParticles[i]; p.life += propSpeed; p.y -= p.vy * propSpeed;
             p.x += (p.vx + Math.sin(p.life * p.swirlSpeed + p.swirlOffset) * (style === 'swirl_vapor' ? 0.8 : 0.3)) * scale * propSpeed;
             p.size += p.grow * propSpeed;
-            
-            let halfLife = p.maxLife * 0.35; 
-            let currentOpacity = 0;
-            if (p.life < halfLife) {
-                currentOpacity = (p.life / halfLife) * p.baseMaxOpacity;
-            } else {
-                currentOpacity = (1 - ((p.life - halfLife) / (p.maxLife - halfLife))) * p.baseMaxOpacity;
-            }
-            
+            let halfLife = p.maxLife * 0.35; let currentOpacity = 0;
+            if (p.life < halfLife) { currentOpacity = (p.life / halfLife) * p.baseMaxOpacity; } else { currentOpacity = (1 - ((p.life - halfLife) / (p.maxLife - halfLife))) * p.baseMaxOpacity; }
             let finalAlpha = currentOpacity * customOpacity;
-            if (finalAlpha > 0) {
-                ctx.globalAlpha = Math.min(1.0, finalAlpha);
-                ctx.drawImage(smokeSprite, p.x - p.size / 2, p.y - p.size / 2, p.size, p.size);
-            }
-            
-            if (p.life >= p.maxLife) {
-                smokeParticles.splice(i, 1);
-            }
+            if (finalAlpha > 0) { ctx.globalAlpha = Math.min(1.0, finalAlpha); ctx.drawImage(smokeSprite, p.x - p.size / 2, p.y - p.size / 2, p.size, p.size); }
+            if (p.life >= p.maxLife) { smokeParticles.splice(i, 1); }
         }
         ctx.restore();
     }
@@ -623,25 +592,17 @@
     function getSymmetricVal(index, totalItems, bufferLen) { 
         try { 
             if (!dataArray || dataArray.length === 0) return 0; 
-            const center = totalItems / 2; 
-            const centerDist = Math.abs(index - center) / center; 
+            const center = totalItems / 2; const centerDist = Math.abs(index - center) / center; 
             const dataIdx = Math.floor(centerDist * (bufferLen * 0.6)); 
-            let val = dataArray[dataIdx];
-            if (isNaN(val) || val === undefined) return 0;
+            let val = dataArray[dataIdx]; if (isNaN(val) || val === undefined) return 0;
             return val / 255; 
         } catch (e) { return 0; } 
     }
 
     function drawVisualizer(bufferLen, isReflection) {
-      const style = getStr('visType', 'liquid_bar'); 
-      const visH = getNum('visHeight', 150);
-      const visO = getNum('visOpacity', 1.0);
-      visW = getNum('visWidth', 400); // Sinkronisasi variabel visW global
-      const vRot = getNum('visRot', 0);
-      const vSkewX = getNum('visSkewX', 0);
-      const vSkewY = getNum('visSkewY', 0);
-      const vScaleX = getNum('visScaleX', 1.0);
-      const vScaleY = getNum('visScaleY', 1.0);
+      const style = getStr('visType', 'liquid_bar'); const visH = getNum('visHeight', 150); const visO = getNum('visOpacity', 1.0);
+      visW = getNum('visWidth', 400); const vRot = getNum('visRot', 0); const vSkewX = getNum('visSkewX', 0);
+      const vSkewY = getNum('visSkewY', 0); const vScaleX = getNum('visScaleX', 1.0); const vScaleY = getNum('visScaleY', 1.0);
       
       ctx.save(); 
       if (isReflection) {
@@ -649,21 +610,15 @@
           ctx.translate(visX + visW / 2, visRefY); 
           ctx.rotate(vRot * Math.PI / 180);
           ctx.transform(1, Math.tan(vSkewY * Math.PI / 180), Math.tan(vSkewX * Math.PI / 180), 1, 0, 0);
-          ctx.scale(vScaleX, vScaleY);
-          ctx.scale(1, -1); 
-          ctx.globalAlpha = visO * 0.45; 
-          ctx.translate(-visW / 2, 0); 
+          ctx.scale(vScaleX, vScaleY); ctx.scale(1, -1); ctx.globalAlpha = visO * 0.45; ctx.translate(-visW / 2, 0); 
       } else { 
           ctx.translate(visX + visW / 2, visY); 
           ctx.rotate(vRot * Math.PI / 180);
           ctx.transform(1, Math.tan(vSkewY * Math.PI / 180), Math.tan(vSkewX * Math.PI / 180), 1, 0, 0);
-          ctx.scale(vScaleX, vScaleY);
-          ctx.globalAlpha = visO; 
-          ctx.translate(-visW / 2, 0); 
+          ctx.scale(vScaleX, vScaleY); ctx.globalAlpha = visO; ctx.translate(-visW / 2, 0); 
       }
       
-      const cy = 0;
-      let numBars = 48; let spacing = visW / numBars; let barW = spacing * 0.7;
+      const cy = 0; let numBars = 48; let spacing = visW / numBars; let barW = spacing * 0.7;
       
       try {
         if (style === 'vintage_bars') { ctx.fillStyle = 'rgba(245, 245, 240, 0.9)'; for (let i = 0; i < numBars; i++) { let h = Math.max(5, getSymmetricVal(i, numBars, bufferLen) * visH); ctx.fillRect(i * spacing, -h, barW, h); } }
@@ -718,73 +673,122 @@
       ctx.restore();
     }
 
+    function drawSpeakerMagic(x, y, refY, R_out, R_in, pump, shakeX, shakeY, dOffX, dOffY, sx, sy, rot, isReflection) {
+      if (!isBgReady) return;
+
+      let cx = x + shakeX;
+      let cy = isReflection ? refY + shakeY : y + shakeY;
+      let showGuides = getStr('showGuides', 'yes');
+
+      // LAPISAN 2: DAUN SPEAKER (CONE)
+      ctx.save();
+      ctx.translate(cx, cy);
+      
+      if (isReflection) {
+          if (getStr('showSpkReflect', 'yes') === 'no') { ctx.restore(); return; }
+          ctx.scale(1, -1);
+          let rScale = getNum('spkReflectSize', 1.0);
+          ctx.scale(rScale, rScale);
+          ctx.globalAlpha = getNum('spkReflectOpacity', 0.45);
+      }
+
+      ctx.rotate(rot);
+      ctx.scale(sx, sy);
+      ctx.beginPath();
+      ctx.arc(0, 0, R_out, 0, Math.PI * 2);
+      ctx.clip(); 
+      
+      ctx.scale(1/sx, 1/sy);
+      ctx.rotate(-rot);
+      
+      if (isReflection) {
+          let maxR = R_out * Math.max(sx, sy);
+          let cropH = (getNum('spkReflectCrop', 100) / 100) * (maxR * 2);
+          ctx.beginPath(); ctx.rect(-maxR*2, maxR - cropH, maxR * 4, cropH); ctx.clip();
+      }
+
+      ctx.scale(pump, pump); 
+      ctx.drawImage(bgImageElement, bgGlobalX - cx, bgGlobalY - cy, bgImageElement.width * bgGlobalScale, bgImageElement.height * bgGlobalScale);
+      
+      if ((!isAudioInit || audioPlayer.paused) && showGuides === 'yes' && !isReflection) {
+         ctx.scale(1/pump, 1/pump); 
+         ctx.rotate(rot); ctx.scale(sx, sy);
+         ctx.beginPath(); ctx.arc(0, 0, R_out, 0, Math.PI * 2);
+         ctx.strokeStyle = "rgba(255, 0, 50, 0.8)"; ctx.lineWidth = 2; ctx.stroke();
+      }
+      ctx.restore();
+
+      // LAPISAN 3: DUST CAP (TETAP DIAM)
+      ctx.save();
+      ctx.translate(cx, cy);
+      
+      if (isReflection) {
+          ctx.scale(1, -1);
+          let rScale = getNum('spkReflectSize', 1.0);
+          ctx.scale(rScale, rScale);
+          ctx.globalAlpha = getNum('spkReflectOpacity', 0.45);
+      }
+
+      ctx.rotate(rot);
+      ctx.scale(sx, sy);
+      ctx.translate(dOffX, dOffY);
+      
+      ctx.beginPath();
+      ctx.arc(0, 0, R_in, 0, Math.PI * 2);
+      ctx.clip(); 
+      
+      ctx.translate(-dOffX, -dOffY);
+      ctx.scale(1/sx, 1/sy);
+      ctx.rotate(-rot);
+      
+      if (isReflection) {
+          let maxR = R_out * Math.max(sx, sy);
+          let cropH = (getNum('spkReflectCrop', 100) / 100) * (maxR * 2);
+          ctx.beginPath(); ctx.rect(-maxR*2, maxR - cropH, maxR * 4, cropH); ctx.clip();
+      }
+
+      ctx.drawImage(bgImageElement, bgGlobalX - cx, bgGlobalY - cy, bgImageElement.width * bgGlobalScale, bgImageElement.height * bgGlobalScale);
+      ctx.restore();
+      
+      if ((!isAudioInit || audioPlayer.paused) && showGuides === 'yes' && !isReflection) {
+         ctx.save();
+         ctx.translate(cx, cy); ctx.rotate(rot); ctx.scale(sx, sy); ctx.translate(dOffX, dOffY);
+         ctx.beginPath(); ctx.arc(0, 0, R_in, 0, Math.PI * 2);
+         ctx.strokeStyle = "rgba(0, 255, 255, 0.9)"; ctx.lineWidth = 2; ctx.stroke();
+         ctx.beginPath(); ctx.moveTo(-10, 0); ctx.lineTo(10, 0); ctx.stroke();
+         ctx.beginPath(); ctx.moveTo(0, -10); ctx.lineTo(0, 10); ctx.stroke();
+         ctx.restore();
+      }
+    }
+
     function drawSpeakers(bufferLen, isReflection) {
       if (!isBgReady || getStr('speakerStyle', 'active') === 'none') return;
-      let scale1 = getNum('speakerSize1', 1.5);
-      let scale2 = getNum('speakerSize2', 1.5);
       let bass = 0; if(dataArray && dataArray.length > 3) { bass = (dataArray[1] + dataArray[2] + dataArray[3]) / (255 * 3); } if(isNaN(bass)) bass = 0;
       let punchyBass = Math.pow(bass, 2.0);
       if(!isReflection) { if (punchyBass > globalSmoothedBass) { globalSmoothedBass += (punchyBass - globalSmoothedBass) * 0.8; } else { globalSmoothedBass += (punchyBass - globalSmoothedBass) * 0.15; } }
+      
       let finalBass = globalSmoothedBass; 
-      let shakeIntensity = getNum('speakerShake', 10); let pumpIntensity = getNum('speakerPump', 0.5);
+      let shakeIntensity = getNum('speakerShake', 10); 
+      let pumpIntensity = getNum('speakerPump', 1.0);
       
       let shakeX = (Math.random() - 0.5) * finalBass * shakeIntensity; 
       let shakeY = (Math.random() - 0.5) * finalBass * shakeIntensity;
       let pump = 1.0 + (finalBass * pumpIntensity);
 
-      let spkScaleX1 = getNum('spkOvalX1', 1.0);
-      let spkScaleY1 = getNum('spkOvalY1', 1.0);
-      let spkRot1 = getNum('spkRot1', 0) * Math.PI / 180;
-      let spkScaleX2 = getNum('spkOvalX2', 1.0);
-      let spkScaleY2 = getNum('spkOvalY2', 1.0);
-      let spkRot2 = getNum('spkRot2', 0) * Math.PI / 180;
+      let R_out1 = getNum('outSize1', 120);
+      let R_in1 = R_out1 * getNum('inRatio1', 0.35);
+      let dOffX1 = getNum('dustOffX1', 0); let dOffY1 = getNum('dustOffY1', 0);
+      let sx1 = getNum('spkOvalX1', 1.0); let sy1 = getNum('spkOvalY1', 1.0);
+      let rot1 = getNum('spkRot1', 0) * Math.PI / 180;
 
-      function drawLiveBackgroundSpeaker(x, y, refY, currentScale, scaleX, scaleY, rot) {
-        let baseR = 50 * currentScale;
-        ctx.save(); 
-        
-        let cx = x + shakeX;
-        let cy = isReflection ? refY + shakeY : y + shakeY;
-        
-        ctx.translate(cx, cy);
+      let R_out2 = getNum('outSize2', 120);
+      let R_in2 = R_out2 * getNum('inRatio2', 0.35);
+      let dOffX2 = getNum('dustOffX2', 0); let dOffY2 = getNum('dustOffY2', 0);
+      let sx2 = getNum('spkOvalX2', 1.0); let sy2 = getNum('spkOvalY2', 1.0);
+      let rot2 = getNum('spkRot2', 0) * Math.PI / 180;
 
-        if(isReflection) { 
-            if (getStr('showSpkReflect', 'yes') === 'no') { ctx.restore(); return; }
-            ctx.scale(1, -1); 
-            let rScale = getNum('spkReflectSize', 1.0);
-            ctx.scale(rScale, rScale);
-            ctx.globalAlpha = getNum('spkReflectOpacity', 0.45); 
-        }
-
-        ctx.scale(pump, pump);
-
-        ctx.beginPath(); 
-        if (ctx.ellipse) { ctx.ellipse(0, 0, baseR * scaleX, baseR * scaleY, rot, 0, Math.PI * 2); } else { ctx.arc(0, 0, baseR, 0, Math.PI * 2); }
-        ctx.clip(); 
-        
-        if (isReflection) {
-            let maxR = baseR * Math.max(scaleX, scaleY);
-            let cropH = (getNum('spkReflectCrop', 100) / 100) * (maxR * 2);
-            ctx.beginPath(); ctx.rect(-maxR*2, maxR - cropH, maxR * 4, cropH); ctx.clip();
-        }
-        
-        // PENTING: Skala dikembalikan ke ukuran normal SAAT MEMBACA GAMBAR LATAR
-        // Ini bikin efek lens / kaca pembesar yang asli
-        ctx.scale(1/pump, 1/pump);
-
-        ctx.drawImage(bgImageElement, bgGlobalX - cx, bgGlobalY - cy, bgImageElement.width * bgGlobalScale, bgImageElement.height * bgGlobalScale);
-        
-        if (getStr('showSpkDot', 'yes') === 'yes') {
-            ctx.beginPath(); ctx.arc(0, 0, 4, 0, Math.PI*2);
-            ctx.fillStyle = isReflection ? 'rgba(255, 0, 85, 0.5)' : '#ff0055'; 
-            ctx.fill(); ctx.lineWidth = 1; ctx.strokeStyle = isReflection ? 'rgba(255, 255, 255, 0.5)' : '#ffffff'; 
-            ctx.stroke();
-        }
-        ctx.restore();
-      }
-
-      drawLiveBackgroundSpeaker(spk1X, spk1Y, spk1RefY, scale1, spkScaleX1, spkScaleY1, spkRot1); 
-      drawLiveBackgroundSpeaker(spk2X, spk2Y, spk2RefY, scale2, spkScaleX2, spkScaleY2, spkRot2);
+      drawSpeakerMagic(spk1X, spk1Y, isReflection ? spk1RefY : 0, R_out1, R_in1, pump, shakeX, shakeY, dOffX1, dOffY1, sx1, sy1, rot1, isReflection); 
+      drawSpeakerMagic(spk2X, spk2Y, isReflection ? spk2RefY : 0, R_out2, R_in2, pump, shakeX, shakeY, dOffX2, dOffY2, sx2, sy2, rot2, isReflection);
     }
 
     function animate() {
