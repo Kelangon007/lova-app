@@ -1,6 +1,6 @@
 {
-  "appId": "com.mirrorspectrum.v3",
-  "appName": "mirror final 1",
+  "appId": "com.mirrorstudio.final",
+  "appName": "Mirror Studio Final",
   "webDir": "www",
   "bundledWebRuntime": false
 }
