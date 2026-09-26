@@ -8,13 +8,31 @@
   <style>
     :root { --cyan: #00bcd4; --cyan-glow: #00e5ff; --dark: #121212; --panel: #1a1a1a; --border: #333; }
     body { margin: 0; background-color: var(--dark); font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; overflow-x: hidden; }
-    #canvas-wrapper { position: relative; width: 100%; max-width: 800px; aspect-ratio: 16/9; margin-top: 10px; background: #000; overflow: hidden; touch-action: none; border-bottom: 2px solid var(--border); }
+    
+    /* FITUR BARU: LAYAR TERKUNCI DI ATAS (STICKY HEADER) */
+    #sticky-header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: var(--dark);
+      padding: 10px 0 8px 0;
+      border-bottom: 2px solid #222;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.9);
+    }
+    
+    #canvas-wrapper { position: relative; width: 96%; aspect-ratio: 16/9; background: #000; overflow: hidden; touch-action: none; border: 1px solid #444; border-radius: 4px; box-sizing: border-box; }
     canvas { width: 100%; height: 100%; display: block; transform-origin: 0 0; }
-    .zoom-toolbar { width: 96%; max-width: 800px; display: flex; align-items: center; justify-content: space-between; background: #151515; border: 1px solid var(--border); border-radius: 4px; padding: 6px 12px; margin-top: 8px; box-sizing: border-box; gap: 8px; }
+    .zoom-toolbar { width: 96%; display: flex; align-items: center; justify-content: space-between; background: #151515; border: 1px solid var(--border); border-radius: 4px; padding: 6px 12px; margin-top: 8px; box-sizing: border-box; gap: 8px; }
     .zoom-toolbar label { font-size: 10px; color: var(--cyan); font-weight: bold; text-transform: uppercase; }
     .zoom-btn-group { display: flex; gap: 4px; }
     .btn-zoom { background: #2a2a2a; border: 1px solid #444; color: #ddd; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; }
     .btn-zoom.active { background: var(--cyan); color: #000; border-color: var(--cyan-glow); }
+    
     #controls { width: 96%; max-width: 800px; padding: 10px 0; display: flex; flex-direction: column; gap: 10px; box-sizing: border-box; }
     #statusBox { font-size: 11px; text-align: center; color: #00ffaa; font-weight: 600; padding: 6px; background: #0a1f14; border-radius: 4px; border: 1px solid #004d26; }
     .btn-group { display: flex; gap: 8px; width: 100%; }
@@ -52,25 +70,28 @@
   </style>
 </head>
 <body>
-  <div id="canvas-wrapper">
-    <canvas id="canvas" width="1280" height="720"></canvas>
-    <div id="countdownOverlay" style="display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:100px; font-weight:bold; color:white; z-index:100;">3</div>
-    <div id="stopOverlay" style="display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(220,20,60,0.95); color:white; padding:15px 30px; border-radius:50px; z-index:100; font-weight:bold; cursor:pointer;" onclick="stopRecording()">⏹ STOP & SIMPAN</div>
-    <div id="recIndicator">⏺ REC</div>
-  </div>
+  <!-- HEADER STICKY -->
+  <div id="sticky-header">
+    <div id="canvas-wrapper">
+      <canvas id="canvas" width="1280" height="720"></canvas>
+      <div id="countdownOverlay" style="display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:100px; font-weight:bold; color:white; z-index:100;">3</div>
+      <div id="stopOverlay" style="display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(220,20,60,0.95); color:white; padding:15px 30px; border-radius:50px; z-index:100; font-weight:bold; cursor:pointer;" onclick="stopRecording()">⏹ STOP & SIMPAN</div>
+      <div id="recIndicator">⏺ REC</div>
+    </div>
 
-  <div class="zoom-toolbar">
-    <label>🔍 Zoom Kanvas</label>
-    <input type="range" id="canvasZoomSlider" min="1.0" max="3.0" step="0.1" value="1.0" style="width: 45%;">
-    <div class="zoom-btn-group">
-      <button class="btn-zoom active" id="zoomBtn1" onclick="setCanvasZoom(1.0)">1x</button>
-      <button class="btn-zoom" id="zoomBtn2" onclick="setCanvasZoom(1.8)">1.8x</button>
-      <button class="btn-zoom" id="zoomBtn3" onclick="setCanvasZoom(2.6)">2.6x</button>
+    <div class="zoom-toolbar">
+      <label>🔍 Zoom Kanvas</label>
+      <input type="range" id="canvasZoomSlider" min="1.0" max="3.0" step="0.1" value="1.0" style="width: 45%;">
+      <div class="zoom-btn-group">
+        <button class="btn-zoom active" id="zoomBtn1" onclick="setCanvasZoom(1.0)">1x</button>
+        <button class="btn-zoom" id="zoomBtn2" onclick="setCanvasZoom(1.8)">1.8x</button>
+        <button class="btn-zoom" id="zoomBtn3" onclick="setCanvasZoom(2.6)">2.6x</button>
+      </div>
     </div>
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap - Mirror Studio Final 3D</div>
+    <div id="statusBox">Siap - Mirror Studio (Sticky UI & Bug Fix)</div>
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 2px solid #ffb300;">1. FOTO LATAR</label>
       <label for="audioInput" class="file-label" style="border-bottom: 2px solid var(--cyan);">2. MUSIK</label>
@@ -296,6 +317,7 @@
     function getSymmetricVal(index, totalItems, bufferLen) { try { if (!dataArray || dataArray.length === 0) return 0; const center = totalItems / 2; const centerDist = Math.abs(index - center) / center; const dataIdx = Math.floor(centerDist * (bufferLen * 0.6)); let val = dataArray[dataIdx]; if (isNaN(val) || val === undefined) return 0; return val / 255; } catch (e) { return 0; } }
     function drawVisualizer(bufferLen, isReflection) { const style = document.getElementById('visType').value; const visScaleX = parseFloat(document.getElementById('visScaleX').value); const visScaleY = parseFloat(document.getElementById('visScaleY').value); const visSkewY = parseFloat(document.getElementById('visSkewY').value); const visRot = parseFloat(document.getElementById('visRot').value); const visOpacity = parseFloat(document.getElementById('visOpacity').value); const visHeight = parseInt(document.getElementById('visHeight').value); ctx.save(); if (isReflection) { if (mirrorConfig.showVisReflect === 'no') { ctx.restore(); return; } ctx.translate(visX + visW / 2, visRefY); ctx.rotate(visRot * Math.PI / 180); ctx.transform(1, Math.tan(visSkewY * Math.PI / 180), 0, 1, 0, 0); ctx.scale(visScaleX, visScaleY); ctx.scale(1, -1); ctx.globalAlpha = visOpacity * 0.45; ctx.translate(-visW / 2, 0); } else { ctx.translate(visX + visW / 2, visY); ctx.rotate(visRot * Math.PI / 180); ctx.transform(1, Math.tan(visSkewY * Math.PI / 180), 0, 1, 0, 0); ctx.scale(visScaleX, visScaleY); ctx.globalAlpha = visOpacity; ctx.translate(-visW / 2, 0); } const cy = 0; try { if (style === 'liquid_bar') { let numBars = 32; let spacing = visW / numBars; let barW = spacing * 0.6; for (let i = 0; i < numBars; i++) { let h = Math.max(10, getSymmetricVal(i, numBars, bufferLen) * visHeight); ctx.fillStyle = '#00e5ff'; ctx.shadowBlur = 15; ctx.shadowColor = '#00e5ff'; ctx.beginPath(); if(ctx.roundRect) ctx.roundRect(i * spacing, cy - h, barW, h, barW/2); else ctx.rect(i * spacing, cy - h, barW, h); ctx.fill(); } ctx.shadowBlur = 0; } else { let numBars = 32; let spacing = visW / numBars; let barW = spacing * 0.6; for (let i = 0; i < numBars; i++) { let h = Math.max(10, getSymmetricVal(i, numBars, bufferLen) * visHeight); ctx.fillStyle = '#00e5ff'; ctx.fillRect(i * spacing, cy - h, barW, h); } } } catch (e) {} ctx.restore(); }
     
+    // --- PERBAIKAN BUG KACA (MENGHAPUS RESET TRANSFORM) ---
     function drawSpeakers(bufferLen, isReflection) {
       if (!isBgReady || document.getElementById('speakerStyle').value === 'none') return;
       let R_out_L = parseFloat(document.getElementById('spkL_out').value); let R_in_L = parseFloat(document.getElementById('spkL_in').value); let R_out_R = parseFloat(document.getElementById('spkR_out').value); let R_in_R = parseFloat(document.getElementById('spkR_in').value);
@@ -308,23 +330,47 @@
 
       function drawLiveBackgroundSpeaker(x, y, refY, R_out, R_in, offX, offY, scaleX, scaleY, skewX, skewY, rot, maskOffX, maskOffY) {
         let softness = parseFloat(document.getElementById('maskSoftness').value) || 0.5; let actualX = x + shakeX; let actualY = isReflection ? refY + shakeY : y + shakeY;
-        bCtx.clearRect(0, 0, width, height); bCtx.save();
+        
+        bCtx.clearRect(0, 0, width, height); 
+        
+        // 1. Corong Utama
+        bCtx.save();
         if(isReflection) { if (mirrorConfig.showSpkReflect === 'no') { bCtx.restore(); return; } bCtx.translate(actualX, actualY); bCtx.scale(1, -1); let rScale = mirrorConfig.spkReflectSize; bCtx.scale(rScale, rScale); bCtx.globalAlpha = mirrorConfig.spkReflectOpacity; } else { bCtx.translate(actualX, actualY); }
-        bCtx.rotate(rot); bCtx.transform(1, Math.tan(skewY), Math.tan(skewX), 1, 0, 0); bCtx.scale(scaleX, scaleY); bCtx.scale(pump, pump); bCtx.drawImage(bgImageElement, bgGlobalX - x, bgGlobalY - y, bgImageElement.width * bgGlobalScale, bgImageElement.height * bgGlobalScale);
-        let is3D = document.getElementById('effect3D') ? document.getElementById('effect3D').value : 'yes'; if (is3D === 'yes') { let depth = document.getElementById('depth3D') ? parseFloat(document.getElementById('depth3D').value) : 0.8; let shadowAlpha = Math.min(0.95, depth * (0.2 + finalBass * 0.8)); let glowAlpha = Math.min(0.4, (depth * 0.3) * (0.3 + finalBass * 0.7)); let grad3D = bCtx.createRadialGradient(0, 0, R_in, 0, 0, R_out); grad3D.addColorStop(0, `rgba(0, 0, 0, ${shadowAlpha})`); grad3D.addColorStop(0.5, `rgba(255, 255, 255, ${glowAlpha})`); grad3D.addColorStop(1, `rgba(0, 0, 0, ${shadowAlpha * 0.5})`); bCtx.fillStyle = grad3D; bCtx.beginPath(); bCtx.arc(0, 0, R_out * 2, 0, Math.PI * 2); bCtx.fill(); } bCtx.restore();
+        bCtx.rotate(rot); bCtx.transform(1, Math.tan(skewY), Math.tan(skewX), 1, 0, 0); bCtx.scale(scaleX, scaleY); bCtx.scale(pump, pump); 
+        bCtx.drawImage(bgImageElement, bgGlobalX - x, bgGlobalY - y, bgImageElement.width * bgGlobalScale, bgImageElement.height * bgGlobalScale);
+        let is3D = document.getElementById('effect3D') ? document.getElementById('effect3D').value : 'yes'; if (is3D === 'yes') { let depth = document.getElementById('depth3D') ? parseFloat(document.getElementById('depth3D').value) : 0.8; let shadowAlpha = Math.min(0.95, depth * (0.2 + finalBass * 0.8)); let glowAlpha = Math.min(0.4, (depth * 0.3) * (0.3 + finalBass * 0.7)); let grad3D = bCtx.createRadialGradient(0, 0, R_in, 0, 0, R_out); grad3D.addColorStop(0, `rgba(0, 0, 0, ${shadowAlpha})`); grad3D.addColorStop(0.5, `rgba(255, 255, 255, ${glowAlpha})`); grad3D.addColorStop(1, `rgba(0, 0, 0, ${shadowAlpha * 0.5})`); bCtx.fillStyle = grad3D; bCtx.beginPath(); bCtx.arc(0, 0, R_out * 2, 0, Math.PI * 2); bCtx.fill(); } 
+        bCtx.restore();
+
+        // 2. Masking Pinggiran
         bCtx.save(); bCtx.globalCompositeOperation = 'destination-in'; if(isReflection) { bCtx.translate(actualX, actualY); bCtx.scale(1, -1); let rScale = mirrorConfig.spkReflectSize; bCtx.scale(rScale, rScale); } else { bCtx.translate(actualX, actualY); } bCtx.rotate(rot); bCtx.transform(1, Math.tan(skewY), Math.tan(skewX), 1, 0, 0); bCtx.scale(scaleX, scaleY);
         bCtx.translate(maskOffX, maskOffY); let grad = bCtx.createRadialGradient(0, 0, R_out * softness, 0, 0, R_out); grad.addColorStop(0, 'rgba(0,0,0,1)'); grad.addColorStop(1, 'rgba(0,0,0,0)'); bCtx.fillStyle = grad; bCtx.beginPath(); bCtx.fillRect(-R_out*4, -R_out*4, R_out*8, R_out*8); bCtx.fill(); bCtx.restore();
+        
         if (isReflection) { bCtx.save(); bCtx.globalCompositeOperation = 'destination-out'; bCtx.translate(actualX, actualY); let maxR = R_out * Math.max(scaleX, scaleY) * mirrorConfig.spkReflectSize; let cropH = (mirrorConfig.spkReflectCrop / 100) * (maxR * 2); bCtx.fillRect(-maxR*2, maxR - cropH, maxR*4, cropH); bCtx.restore(); }
-        ctx.drawImage(bufferCanvas, 0, 0); ctx.save();
+        ctx.drawImage(bufferCanvas, 0, 0); 
+
+        // 3. Dust Cap (PERBAIKAN BUG DIMENSI)
+        ctx.save();
         if(isReflection) { ctx.translate(actualX, actualY); ctx.scale(1, -1); let rScale = mirrorConfig.spkReflectSize; ctx.scale(rScale, rScale); ctx.globalAlpha = mirrorConfig.spkReflectOpacity; } else { ctx.translate(actualX, actualY); }
         ctx.rotate(rot); ctx.transform(1, Math.tan(skewY), Math.tan(skewX), 1, 0, 0); ctx.scale(scaleX, scaleY); 
-        ctx.save(); ctx.translate(offX, offY); ctx.beginPath(); ctx.arc(0, 0, R_in, 0, Math.PI * 2); ctx.clip(); ctx.restore(); 
-        ctx.drawImage(bgImageElement, bgGlobalX - x, bgGlobalY - y, bgImageElement.width * bgGlobalScale, bgImageElement.height * bgGlobalScale); ctx.restore();
+        
+        ctx.save(); 
+        ctx.translate(offX, offY); 
+        ctx.beginPath(); ctx.arc(0, 0, R_in, 0, Math.PI * 2); ctx.clip(); 
+        
+        // Menggambar latar tanpa me-reset matrix, hanya memindah koordinat gambar
+        ctx.drawImage(bgImageElement, bgGlobalX - x - offX, bgGlobalY - y - offY, bgImageElement.width * bgGlobalScale, bgImageElement.height * bgGlobalScale); 
+        ctx.restore(); 
+        ctx.restore();
+
+        // 4. Garis Bantu UI
         if (document.getElementById('showGuides') && document.getElementById('showGuides').value === 'yes') {
             ctx.save(); if(isReflection) { ctx.translate(actualX, actualY); ctx.scale(1, -1); let rScale = mirrorConfig.spkReflectSize; ctx.scale(rScale, rScale); ctx.globalAlpha = mirrorConfig.spkReflectOpacity; } else { ctx.translate(actualX, actualY); }
             ctx.rotate(rot); ctx.transform(1, Math.tan(skewY), Math.tan(skewX), 1, 0, 0); ctx.scale(scaleX, scaleY);
+            
             ctx.beginPath(); ctx.arc(0, 0, R_out, 0, Math.PI * 2); ctx.strokeStyle = "rgba(255, 0, 50, 0.5)"; ctx.lineWidth = 1; ctx.stroke();
+            
             ctx.save(); ctx.translate(maskOffX, maskOffY); ctx.setLineDash([5,5]); ctx.beginPath(); ctx.arc(0, 0, R_out * softness, 0, Math.PI * 2); ctx.strokeStyle = "rgba(255, 255, 0, 0.5)"; ctx.lineWidth = 1; ctx.stroke(); ctx.beginPath(); ctx.arc(0, 0, R_out, 0, Math.PI * 2); ctx.strokeStyle = "rgba(255, 255, 0, 0.2)"; ctx.stroke(); ctx.setLineDash([]); ctx.beginPath(); ctx.moveTo(-5, 0); ctx.lineTo(5, 0); ctx.stroke(); ctx.beginPath(); ctx.moveTo(0, -5); ctx.lineTo(0, 5); ctx.stroke(); ctx.restore();
+            
             ctx.translate(offX, offY); ctx.beginPath(); ctx.arc(0, 0, R_in, 0, Math.PI * 2); ctx.strokeStyle = "rgba(0, 255, 255, 0.5)"; ctx.lineWidth = 1; ctx.stroke(); ctx.beginPath(); ctx.moveTo(-5, 0); ctx.lineTo(5, 0); ctx.stroke(); ctx.beginPath(); ctx.moveTo(0, -5); ctx.lineTo(0, 5); ctx.stroke(); ctx.restore();
         }
       }
