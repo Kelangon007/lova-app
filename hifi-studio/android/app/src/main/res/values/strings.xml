@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Hi-Fi Studio</string>
+    <string name="title_activity_main">Hi-Fi Studio</string>
+    <string name="package_name">com.bynature.hifistudio</string>
+    <string name="custom_url_scheme">com.bynature.hifistudio</string>
+</resources>
