@@ -278,10 +278,6 @@
                 <div class="btn-lock">🔒 LIPAT</div>
             </div>
             <div class="panel-content">
-                <div class="row"><label>EFEK 3D</label>
-                    <select id="effect3D" style="width:23%;"><option value="yes">Nyala</option><option value="no">Mati</option></select>
-                    <input type="range" id="depth3D" min="0.1" max="1.5" step="0.1" value="0.8" style="width:33%; margin-left:4%;">
-                </div>
                 <div class="row"><label style="color:#00ffaa;">GESER BLUR</label>
                     <input type="range" id="spkR_mask_x" min="-150" max="150" step="1" value="0" style="width:23%;">
                     <input type="range" id="spkR_mask_y" min="-150" max="150" step="1" value="0" style="width:23%; margin-left:4%;">
@@ -408,24 +404,20 @@
   <audio id="audioPlayer" crossorigin="anonymous"></audio>
 
   <script>
-    // FUNGSI ACCORDION
     function togglePanel(header) { const content = header.nextElementSibling; const btn = header.querySelector('.btn-lock'); if (content.classList.contains('hidden')) { content.classList.remove('hidden'); btn.innerText = "🔒 LIPAT"; btn.style.background = "#222"; btn.style.color = "#888"; btn.style.borderColor = "#444"; } else { content.classList.add('hidden'); btn.innerText = "👁️ BUKA"; btn.style.background = "var(--cyan)"; btn.style.color = "#000"; btn.style.borderColor = "var(--cyan-glow)"; } }
     
-    // VARIABEL UTAMA
     const statusBox = document.getElementById('statusBox'); const canvas = document.getElementById('canvas'); const ctx = canvas.getContext('2d');
     const bufferCanvas = document.createElement('canvas'); bufferCanvas.width = 1280; bufferCanvas.height = 720; const bCtx = bufferCanvas.getContext('2d');
     const canvasWrapper = document.getElementById('canvas-wrapper'); const audioPlayer = document.getElementById('audioPlayer'); const playBtn = document.getElementById('playBtn'); const nextBtn = document.getElementById('nextBtn'); const recordBtn = document.getElementById('recordBtn'); const progressBar = document.getElementById('progressBar'); const currTimeEl = document.getElementById('currTime'); const durTimeEl = document.getElementById('durTime');
     
     let isDraggingProgress = false; const width = 1280; const height = 720; let audioFiles = []; let currentObjectUrl = null; let currentSongName = ""; let playTimeout = null; let isTrackLoaded = false; let shuffledPlaylist = []; let currentPlayIndex = 0; let isCountingDown = false; let countdownTimer = null; let bgGlobalScale = 1; let bgGlobalX = 0; let bgGlobalY = 0; let canvasZoom = 1.0; let canvasPanX = 0; let canvasPanY = 0; let isPanningCanvas = false; let panStartX = 0; let panStartY = 0; let isPinching = false; let initialPinchDist = 0; let initialPinchZoom = 1.0;
 
-    // ZOOM KANVAS
     const zoomSlider = document.getElementById('canvasZoomSlider'); zoomSlider.addEventListener('input', (e) => { setCanvasZoom(parseFloat(e.target.value)); });
     function setCanvasZoom(val) { canvasZoom = Math.min(3.5, Math.max(1.0, val)); zoomSlider.value = canvasZoom.toFixed(1); document.querySelectorAll('.btn-zoom').forEach(b => b.classList.remove('active')); if (Math.abs(canvasZoom - 1.0) < 0.1) document.getElementById('zoomBtn1').classList.add('active'); else if (Math.abs(canvasZoom - 1.8) < 0.2) document.getElementById('zoomBtn2').classList.add('active'); else if (Math.abs(canvasZoom - 2.6) < 0.2) document.getElementById('zoomBtn3').classList.add('active'); clampPan(); applyCanvasTransform(); }
     function clampPan() { const w = canvasWrapper.clientWidth; const h = canvasWrapper.clientHeight; if (canvasZoom <= 1.0) { canvasPanX = 0; canvasPanY = 0; } else { const minPanX = w * (1 - canvasZoom); const minPanY = h * (1 - canvasZoom); canvasPanX = Math.min(0, Math.max(minPanX, canvasPanX)); canvasPanY = Math.min(0, Math.max(minPanY, canvasPanY)); } }
     function applyCanvasTransform() { canvas.style.transform = `translate(${canvasPanX}px, ${canvasPanY}px) scale(${canvasZoom})`; }
     function shuffle(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array; }
 
-    // EVENT LISTENER CONFIG (DIKEMBALIKAN PENUH)
     const config = { type: 'none', count: 100, visType: 'liquid_bar', visHeight: 150, visOpacity: 1.0, fxAngle: 0, fxSpeed: 1.0, visRot: 0, visSkewY: 0, visScaleX: 1.0, visScaleY: 1.0 };
     document.getElementById('visType').addEventListener('change', (e) => { config.visType = e.target.value; peakHeights.fill(0); });
     document.getElementById('visOpacity').addEventListener('input', (e) => config.visOpacity = parseFloat(e.target.value));
@@ -440,7 +432,6 @@
     document.getElementById('visHeight').addEventListener('input', (e) => config.visHeight = parseInt(e.target.value));
     document.getElementById('visWidth').addEventListener('input', (e) => { visW = parseInt(e.target.value); visX = (width - visW) / 2; });
 
-    // KOORDINAT DEFAULT
     let visW = 400; let visX = (width - visW) / 2; let visY = height - 250; let visRefY = height - 100;
     let spk1X = 250; let spk1Y = height - 350; let spk2X = width - 250; let spk2Y = height - 350;
     let spk1RefY = height - 150; let spk2RefY = height - 150;
@@ -449,11 +440,9 @@
     let candle1RefY = height - 100; let candle2RefY = height - 100;
     let mirrorY = 500;
     
-    // CONFIG KACA
     const mirrorConfig = { showGlassLine: 'yes', showVisReflect: 'yes', showSpkReflect: 'yes', showCandleReflect: 'yes', spkReflectCrop: 100, spkReflectOpacity: 0.45, spkReflectSize: 1.0 };
     document.getElementById('showGlassLine').addEventListener('change', e => mirrorConfig.showGlassLine = e.target.value); document.getElementById('showVisReflect').addEventListener('change', e => mirrorConfig.showVisReflect = e.target.value); document.getElementById('showSpkReflect').addEventListener('change', e => mirrorConfig.showSpkReflect = e.target.value); document.getElementById('showCandleReflect').addEventListener('change', e => mirrorConfig.showCandleReflect = e.target.value); document.getElementById('spkReflectCrop').addEventListener('input', e => mirrorConfig.spkReflectCrop = parseInt(e.target.value)); document.getElementById('spkReflectOpacity').addEventListener('input', e => mirrorConfig.spkReflectOpacity = parseFloat(e.target.value)); document.getElementById('spkReflectSize').addEventListener('input', e => mirrorConfig.spkReflectSize = parseFloat(e.target.value));
 
-    // LOGIKA AUDIO
     document.getElementById('audioInput').addEventListener('change', function(e) { if (this.files.length > 0) { audioFiles = Array.from(this.files); isTrackLoaded = true; shuffledPlaylist = shuffle(Array.from({ length: audioFiles.length }, (v, k) => k)); currentPlayIndex = 0; playBtn.innerHTML = "▶ PLAY MUSIK"; playBtn.classList.add('ready'); nextBtn.classList.add('ready'); statusBox.innerText = `${audioFiles.length} Lagu dimuat. Siap diputar!`; progressBar.value = 0; currTimeEl.innerText = "00:00"; durTimeEl.innerText = "00:00"; audioPlayer.pause(); if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl); currentObjectUrl = null; currentSongName = "Musik Diunggah"; } });
 
     function playRandomSong(isInstant = false) { if (audioFiles.length === 0) return; if (playTimeout) clearTimeout(playTimeout); if (currentPlayIndex >= shuffledPlaylist.length) { currentPlayIndex = 0; stopEverything(); return; } if (currentObjectUrl && isInstant) { URL.revokeObjectURL(currentObjectUrl); currentObjectUrl = null; } const delayAmount = isInstant ? 0 : 3500; if (!isInstant) { audioPlayer.pause(); playBtn.innerText = "⏳ TUNGGU..."; statusBox.innerText = "⏳ Jeda pergantian lagu..."; progressBar.value = 0; } playTimeout = setTimeout(() => { if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl); const actualFileIndex = shuffledPlaylist[currentPlayIndex]; const selectedFile = audioFiles[actualFileIndex]; currentSongName = selectedFile.name.replace(/\.[^/.]+$/, ""); currentObjectUrl = URL.createObjectURL(selectedFile); audioPlayer.src = currentObjectUrl; audioPlayer.load(); if (!audioCtx) initAudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume(); audioPlayer.play().then(() => { playBtn.innerText = "⏸ PAUSE"; statusBox.innerText = `🎵 Lagu ${currentPlayIndex + 1}/${audioFiles.length}: ${currentSongName}`; currentPlayIndex++; }).catch(err => { playBtn.innerText = "❌ ERROR"; }); }, delayAmount); }
@@ -462,7 +451,6 @@
 
     function togglePlay() { if (!isTrackLoaded) { alert("Pilih Musik Dulu!"); return; } if (!audioCtx) initAudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume(); if (audioPlayer.paused) { if (!currentObjectUrl || audioPlayer.src === "") { playRandomSong(true); } else { audioPlayer.play().then(() => { playBtn.innerText = "⏸ PAUSE"; statusBox.innerText = `🎵 Memutar: ${currentSongName}`; }).catch(err => console.error(err)); } } else { audioPlayer.pause(); playBtn.innerText = "▶ RESUME"; statusBox.innerText = "⏸ Musik Dijeda."; } }
 
-    // LOGIKA DRAG & DROP
     let isDraggingSpk1 = false, isDraggingSpk2 = false, isDraggingVis = false, isDraggingSpk1Ref = false, isDraggingSpk2Ref = false, isDraggingVisRef = false, isDraggingCoffee = false, isDraggingCandle1 = false, isDraggingCandle2 = false, isDraggingCandle1Ref = false, isDraggingCandle2Ref = false, isDraggingMirrorLine = false; let dragOffsetX = 0, dragOffsetY = 0;
     function getMousePos(e) { const rect = canvas.getBoundingClientRect(); const scaleX = canvas.width / rect.width; const scaleY = canvas.height / rect.height; let clientX = e.clientX; let clientY = e.clientY; if (e.touches && e.touches.length > 0) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; } return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY }; }
     function startDrag(e) { if (e.touches && e.touches.length === 2) { isPinching = true; initialPinchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); initialPinchZoom = canvasZoom; if (e.cancelable) e.preventDefault(); return; } const pos = getMousePos(e); const r1 = parseFloat(document.getElementById('spkL_out').value); const r2 = parseFloat(document.getElementById('spkR_out').value); if (mirrorConfig.showGlassLine === 'yes' && Math.abs(pos.y - mirrorY) <= 30) { isDraggingMirrorLine = true; dragOffsetY = pos.y - mirrorY; if (e.cancelable) e.preventDefault(); return; } if (mirrorConfig.showSpkReflect === 'yes' && document.getElementById('speakerStyle').value !== 'none') { if (Math.hypot(pos.x - spk1X, pos.y - spk1RefY) <= r1) { isDraggingSpk1Ref = true; dragOffsetY = pos.y - spk1RefY; if (e.cancelable) e.preventDefault(); return; } if (Math.hypot(pos.x - spk2X, pos.y - spk2RefY) <= r2) { isDraggingSpk2Ref = true; dragOffsetY = pos.y - spk2RefY; if (e.cancelable) e.preventDefault(); return; } } if (mirrorConfig.showVisReflect === 'yes' && pos.x >= visX && pos.x <= visX + visW && pos.y >= visRefY - 100 && pos.y <= visRefY + 150) { isDraggingVisRef = true; dragOffsetY = pos.y - visRefY; if (e.cancelable) e.preventDefault(); return; } if (mirrorConfig.showCandleReflect === 'yes' && document.getElementById('candleStyle').value !== 'none') { if (Math.hypot(pos.x - candle1X, pos.y - candle1RefY) <= 40) { isDraggingCandle1Ref = true; dragOffsetY = pos.y - candle1RefY; if (e.cancelable) e.preventDefault(); return; } if (Math.hypot(pos.x - candle2X, pos.y - candle2RefY) <= 40) { isDraggingCandle2Ref = true; dragOffsetY = pos.y - candle2RefY; if (e.cancelable) e.preventDefault(); return; } } if (Math.hypot(pos.x - spk1X, pos.y - spk1Y) <= Math.max(40, r1) && document.getElementById('speakerStyle').value !== 'none') { isDraggingSpk1 = true; dragOffsetX = pos.x - spk1X; dragOffsetY = pos.y - spk1Y; if (e.cancelable) e.preventDefault(); return; } if (Math.hypot(pos.x - spk2X, pos.y - spk2Y) <= Math.max(40, r2) && document.getElementById('speakerStyle').value !== 'none') { isDraggingSpk2 = true; dragOffsetX = pos.x - spk2X; dragOffsetY = pos.y - spk2Y; if (e.cancelable) e.preventDefault(); return; } if (document.getElementById('coffeeStyle').value !== 'none' && Math.hypot(pos.x - coffeeX, pos.y - coffeeY) <= 50) { isDraggingCoffee = true; dragOffsetX = pos.x - coffeeX; dragOffsetY = pos.y - coffeeY; if (e.cancelable) e.preventDefault(); return; } if (document.getElementById('candleStyle').value !== 'none') { if (Math.hypot(pos.x - candle1X, pos.y - candle1Y) <= 40) { isDraggingCandle1 = true; dragOffsetX = pos.x - candle1X; dragOffsetY = pos.y - candle1Y; if (e.cancelable) e.preventDefault(); return; } if (Math.hypot(pos.x - candle2X, pos.y - candle2Y) <= 40) { isDraggingCandle2 = true; dragOffsetX = pos.x - candle2X; dragOffsetY = pos.y - candle2Y; if (e.cancelable) e.preventDefault(); return; } } if (pos.x >= visX && pos.x <= visX + visW && pos.y >= visY - 150 && pos.y <= visY + 150) { isDraggingVis = true; dragOffsetX = pos.x - visX; dragOffsetY = pos.y - visY; if (e.cancelable) e.preventDefault(); return; } if (canvasZoom > 1.0) { isPanningCanvas = true; const clientX = e.touches ? e.touches[0].clientX : e.clientX; const clientY = e.touches ? e.touches[0].clientY : e.clientY; panStartX = clientX - canvasPanX; panStartY = clientY - canvasPanY; if (e.cancelable) e.preventDefault(); } }
@@ -484,7 +472,6 @@
 
     let time = 0; let globalSmoothedBass = 0;
     
-    // PARTIKEL LINGKUNGAN (DIKEMBALIKAN)
     class CinematicParticle {
         constructor() { this.reset(true); }
         reset(init = false) { this.x = Math.random() * width; this.size = Math.random() * 3 + 1; this.speedY = Math.random() * 1.5 + 0.5; this.opacity = Math.random() * 0.6 + 0.2; this.life = Math.random() * 100; this.wobbleSpeed = Math.random() * 0.05 + 0.01; let typeVal = document.getElementById('type').value; if(typeVal === 'bokeh_orbs') { this.size = Math.random() * 15 + 5; this.opacity = Math.random()*0.3+0.1; } if(typeVal === 'snow_dust' || typeVal === 'ash_particles') { this.speedY = Math.random() * 2 + 1; } let movesUp = ['dust_motes', 'golden_pollen', 'magic_sparks', 'floating_embers', 'bokeh_orbs', 'fairy_light', 'deep_sea_motes'].includes(typeVal); if (init) { this.y = Math.random() * height; } else { this.y = movesUp ? height + 50 + Math.random()*50 : -50 - Math.random()*50; } }
@@ -493,13 +480,11 @@
     }
     let cinematicParticles = []; for(let i=0; i<400; i++) cinematicParticles.push(new CinematicParticle());
 
-    // KOPI STEAM (DIKEMBALIKAN 5 OPSI)
     const smokeSprite = document.createElement('canvas'); smokeSprite.width = 64; smokeSprite.height = 64; const sCtx = smokeSprite.getContext('2d'); const sGrad = sCtx.createRadialGradient(32, 32, 0, 32, 32, 32); sGrad.addColorStop(0, 'rgba(240, 240, 240, 0.25)'); sGrad.addColorStop(0.4, 'rgba(240, 240, 240, 0.1)'); sGrad.addColorStop(0.8, 'rgba(240, 240, 240, 0.02)'); sGrad.addColorStop(1, 'rgba(240, 240, 240, 0)'); sCtx.fillStyle = sGrad; sCtx.fillRect(0, 0, 64, 64); let smokeParticles = [];
     function drawCoffeeSteam(x, y, style, scale, propSpeed) { if(style === 'none') { smokeParticles = []; return; } let customOpacity = parseFloat(document.getElementById('smokeOpacity')?.value) || 1.0; let spawnRate = 0.6; if(style === 'soft_steam') spawnRate = 0.5; if(style === 'swirl_vapor') spawnRate = 1.0; if(style === 'thin_wisp') spawnRate = 0.4; if(style === 'heavy_steam') spawnRate = 1.6; if(style === 'wind_steam') spawnRate = 1.0; let actualSpawns = Math.floor(spawnRate * propSpeed); if (Math.random() < (spawnRate * propSpeed) % 1) actualSpawns++; for(let i = 0; i < actualSpawns; i++) { smokeParticles.push({ x: x + (Math.random() - 0.5) * 8 * scale, y: y - 2 * scale, life: 0, maxLife: (style === 'thin_wisp' ? 260 : 180) + Math.random() * 60, size: (style === 'heavy_steam' ? 22 : (style === 'thin_wisp' ? 8 : 14)) * scale, grow: (style === 'heavy_steam' ? 0.35 : (style === 'thin_wisp' ? 0.1 : 0.2)) * scale, vx: (style === 'wind_steam' ? (1.0 + Math.random() * 0.5) : (Math.random() - 0.5) * 0.3) * scale, vy: ((style === 'thin_wisp' ? 0.5 : 0.35) + Math.random() * 0.25) * scale, swirlOffset: Math.random() * Math.PI * 2, swirlSpeed: (Math.random() * 0.015 + 0.008) * (style === 'swirl_vapor' ? 2.2 : 1), baseMaxOpacity: (style === 'heavy_steam' ? 0.6 : (style === 'thin_wisp' ? 0.25 : 0.45)) }); } ctx.save(); ctx.globalCompositeOperation = 'screen'; for (let i = smokeParticles.length - 1; i >= 0; i--) { let p = smokeParticles[i]; p.life += propSpeed; p.y -= p.vy * propSpeed; p.x += (p.vx + Math.sin(p.life * p.swirlSpeed + p.swirlOffset) * (style === 'swirl_vapor' ? 0.8 : 0.3)) * scale * propSpeed; p.size += p.grow * propSpeed; let halfLife = p.maxLife * 0.35; let currentOpacity = 0; if (p.life < halfLife) { currentOpacity = (p.life / halfLife) * p.baseMaxOpacity; } else { currentOpacity = (1 - ((p.life - halfLife) / (p.maxLife - halfLife))) * p.baseMaxOpacity; } let finalAlpha = currentOpacity * customOpacity; if (finalAlpha > 0) { ctx.globalAlpha = Math.min(1.0, finalAlpha); ctx.drawImage(smokeSprite, p.x - p.size / 2, p.y - p.size / 2, p.size, p.size); } if (p.life >= p.maxLife) { smokeParticles.splice(i, 1); } } ctx.restore(); }
     
     function getSymmetricVal(index, totalItems, bufferLen) { try { if (!dataArray || dataArray.length === 0) return 0; const center = totalItems / 2; const centerDist = Math.abs(index - center) / center; const dataIdx = Math.floor(centerDist * (bufferLen * 0.6)); let val = dataArray[dataIdx]; if (isNaN(val) || val === undefined) return 0; return val / 255; } catch (e) { return 0; } }
     
-    // VISUALIZER 55 OPSI FULLY IMPLEMENTED
     function drawVisualizer(bufferLen, isReflection) {
       const style = document.getElementById('visType').value;
       const visScaleX = parseFloat(document.getElementById('visScaleX').value);
@@ -606,77 +591,150 @@
       let R_out_L = parseFloat(document.getElementById('spkL_out').value); let R_in_L = parseFloat(document.getElementById('spkL_in').value); let R_out_R = parseFloat(document.getElementById('spkR_out').value); let R_in_R = parseFloat(document.getElementById('spkR_in').value);
       let offX_L = parseFloat(document.getElementById('spkL_x').value); let offY_L = parseFloat(document.getElementById('spkL_y').value); let offX_R = parseFloat(document.getElementById('spkR_x').value); let offY_R = parseFloat(document.getElementById('spkR_y').value);
       let maskOffX_L = parseFloat(document.getElementById('spkL_mask_x').value); let maskOffY_L = parseFloat(document.getElementById('spkL_mask_y').value); let maskOffX_R = parseFloat(document.getElementById('spkR_mask_x').value); let maskOffY_R = parseFloat(document.getElementById('spkR_mask_y').value);
-      let bass = 0; if(dataArray) { bass = (dataArray[1] + dataArray[2] + dataArray[3]) / (255 * 3); } if(isNaN(bass)) bass = 0; let punchyBass = Math.pow(bass, 2.0); if(!isReflection) { if (punchyBass > globalSmoothedBass) { globalSmoothedBass += (punchyBass - globalSmoothedBass) * 0.8; } else { globalSmoothedBass += (punchyBass - globalSmoothedBass) * 0.15; } } let finalBass = globalSmoothedBass; 
-      let shakeIntensity = parseFloat(document.getElementById('speakerShake').value); let pumpIntensity = parseFloat(document.getElementById('speakerPump').value); let shakeX = (Math.random() - 0.5) * finalBass * shakeIntensity; let shakeY = (Math.random() - 0.5) * finalBass * shakeIntensity; let pump = 1.0 + (finalBass * pumpIntensity);
+      
+      // JAZZ BASS MATHEMATICS
+      let bass = 0; 
+      if(dataArray && dataArray.length > 6) { 
+          let maxBass = 0;
+          for(let i=1; i<=6; i++){ 
+              if(dataArray[i] > maxBass) maxBass = dataArray[i]; 
+          }
+          let threshold = 50; 
+          if(maxBass > threshold) { 
+              bass = Math.pow((maxBass - threshold) / (255 - threshold), 1.5); 
+          } 
+      } 
+      if(isNaN(bass)) bass = 0; 
+      
+      let punchyBass = bass; 
+      if(!isReflection) { 
+          if (punchyBass > globalSmoothedBass) { 
+              globalSmoothedBass += (punchyBass - globalSmoothedBass) * 0.85; 
+          } else { 
+              globalSmoothedBass += (punchyBass - globalSmoothedBass) * 0.15; 
+          } 
+      } 
+      let finalBass = globalSmoothedBass; 
+      
+      let shakeIntensity = parseFloat(document.getElementById('speakerShake').value); 
+      let pumpIntensity = parseFloat(document.getElementById('speakerPump').value); 
+      
+      let shakeX = (Math.random() - 0.5) * finalBass * shakeIntensity; 
+      let shakeY = (Math.random() - 0.5) * finalBass * shakeIntensity; 
+      
       let spkScaleX1 = parseFloat(document.getElementById('spkOvalX1').value); let spkScaleY1 = parseFloat(document.getElementById('spkOvalY1').value); let spkSkewX1 = parseFloat(document.getElementById('spkSkewX1').value) * Math.PI / 180; let spkSkewY1 = parseFloat(document.getElementById('spkSkewY1').value) * Math.PI / 180; let spkRot1 = parseFloat(document.getElementById('spkRot1').value) * Math.PI / 180;
       let spkScaleX2 = parseFloat(document.getElementById('spkOvalX2').value); let spkScaleY2 = parseFloat(document.getElementById('spkOvalY2').value); let spkSkewX2 = parseFloat(document.getElementById('spkSkewX2').value) * Math.PI / 180; let spkSkewY2 = parseFloat(document.getElementById('spkSkewY2').value) * Math.PI / 180; let spkRot2 = parseFloat(document.getElementById('spkRot2').value) * Math.PI / 180;
 
       function drawLiveBackgroundSpeaker(x, y, refY, R_out, R_in, offX, offY, scaleX, scaleY, skewX, skewY, rot, maskOffX, maskOffY) {
-        let softness = parseFloat(document.getElementById('maskSoftness').value) || 0.5; let actualX = x + shakeX; let actualY = isReflection ? refY + shakeY : y + shakeY;
-        let is3D = document.getElementById('effect3D') ? document.getElementById('effect3D').value : 'yes'; 
-        bCtx.clearRect(0, 0, width, height); 
+        let softness = parseFloat(document.getElementById('maskSoftness').value) || 0.5; 
+        let actualX = x + shakeX; 
+        let actualY = isReflection ? refY + shakeY : y + shakeY;
         
+        ctx.save();
+        
+        // PISAU PEMOTONG KACA (GLOBAL CROP)
+        if (isReflection) {
+            let cropVal = mirrorConfig.spkReflectCrop / 100; // 0.1 to 1.0
+            let cropH = height * cropVal; // potong berdasarkan persentase layar
+            ctx.beginPath();
+            ctx.rect(0, 0, width, height - (height - cropH));
+            ctx.clip();
+        }
+
+        bCtx.clearRect(0, 0, width, height); 
         bCtx.save();
-        if(isReflection) { if (mirrorConfig.showSpkReflect === 'no') { bCtx.restore(); return; } bCtx.translate(actualX, actualY); bCtx.scale(1, -1); let rScale = mirrorConfig.spkReflectSize; bCtx.scale(rScale, rScale); bCtx.globalAlpha = mirrorConfig.spkReflectOpacity; } else { bCtx.translate(actualX, actualY); }
+        if(isReflection) { 
+            if (mirrorConfig.showSpkReflect === 'no') { bCtx.restore(); ctx.restore(); return; } 
+            bCtx.translate(actualX, actualY); 
+            bCtx.scale(1, -1); 
+            let rScale = mirrorConfig.spkReflectSize; 
+            bCtx.scale(rScale, rScale); 
+            bCtx.globalAlpha = mirrorConfig.spkReflectOpacity; 
+        } else { 
+            bCtx.translate(actualX, actualY); 
+        }
         bCtx.rotate(rot); bCtx.transform(1, Math.tan(skewY), Math.tan(skewX), 1, 0, 0); bCtx.scale(scaleX, scaleY); 
         
-        bCtx.save();
-        bCtx.scale(pump, pump); 
         bCtx.drawImage(bgImageElement, bgGlobalX - x, bgGlobalY - y, bgImageElement.width * bgGlobalScale, bgImageElement.height * bgGlobalScale);
-        bCtx.restore();
-
-        if (is3D === 'yes') { 
-            let depth = document.getElementById('depth3D') ? parseFloat(document.getElementById('depth3D').value) : 0.8; 
-            let shadowAlpha = Math.min(0.95, depth * (0.2 + finalBass * 0.8)); let glowAlpha = Math.min(0.4, (depth * 0.3) * (0.3 + finalBass * 0.7)); 
-            let grad3D = bCtx.createRadialGradient(0, 0, R_in, 0, 0, R_out); 
-            grad3D.addColorStop(0, `rgba(0, 0, 0, ${shadowAlpha})`); grad3D.addColorStop(0.5, `rgba(255, 255, 255, ${glowAlpha})`); grad3D.addColorStop(1, `rgba(0, 0, 0, ${shadowAlpha * 0.5})`); 
-            bCtx.fillStyle = grad3D; bCtx.beginPath(); bCtx.arc(0, 0, R_out * 2, 0, Math.PI * 2); bCtx.fill(); 
-        } 
-        bCtx.restore();
-
-        bCtx.save(); bCtx.globalCompositeOperation = 'destination-in'; if(isReflection) { bCtx.translate(actualX, actualY); bCtx.scale(1, -1); let rScale = mirrorConfig.spkReflectSize; bCtx.scale(rScale, rScale); } else { bCtx.translate(actualX, actualY); } bCtx.rotate(rot); bCtx.transform(1, Math.tan(skewY), Math.tan(skewX), 1, 0, 0); bCtx.scale(scaleX, scaleY);
-        bCtx.translate(maskOffX, maskOffY); let grad = bCtx.createRadialGradient(0, 0, R_out * softness, 0, 0, R_out); grad.addColorStop(0, 'rgba(0,0,0,1)'); grad.addColorStop(1, 'rgba(0,0,0,0)'); bCtx.fillStyle = grad; bCtx.beginPath(); bCtx.fillRect(-R_out*4, -R_out*4, R_out*8, R_out*8); bCtx.fill(); bCtx.restore();
         
-        if (isReflection) { bCtx.save(); bCtx.globalCompositeOperation = 'destination-out'; bCtx.translate(actualX, actualY); let maxR = R_out * Math.max(scaleX, scaleY) * mirrorConfig.spkReflectSize; let cropH = (mirrorConfig.spkReflectCrop / 100) * (maxR * 2); bCtx.fillRect(-maxR*2, maxR - cropH, maxR*4, cropH); bCtx.restore(); }
+        bCtx.save(); 
+        bCtx.globalCompositeOperation = 'destination-in'; 
+        bCtx.translate(maskOffX, maskOffY); 
+        let grad = bCtx.createRadialGradient(0, 0, R_out * softness, 0, 0, R_out); 
+        grad.addColorStop(0, 'rgba(0,0,0,1)'); 
+        grad.addColorStop(1, 'rgba(0,0,0,0)'); 
+        bCtx.fillStyle = grad; 
+        bCtx.beginPath(); 
+        bCtx.fillRect(-R_out*4, -R_out*4, R_out*8, R_out*8); 
+        bCtx.fill(); 
+        bCtx.restore();
+        bCtx.restore();
+
         ctx.drawImage(bufferCanvas, 0, 0); 
 
+        // TRANSAKSI PERSPEKTIF UNTUK DAUN DALAM
         ctx.save();
-        if(isReflection) { ctx.translate(actualX, actualY); ctx.scale(1, -1); let rScale = mirrorConfig.spkReflectSize; ctx.scale(rScale, rScale); ctx.globalAlpha = mirrorConfig.spkReflectOpacity; } else { ctx.translate(actualX, actualY); }
-        bCtx.rotate(rot); bCtx.transform(1, Math.tan(skewY), Math.tan(skewX), 1, 0, 0); bCtx.scale(scaleX, scaleY); 
-        
-        ctx.save(); 
-        ctx.translate(offX, offY); 
-        ctx.beginPath(); ctx.arc(0, 0, R_in, 0, Math.PI * 2); ctx.clip(); 
-
-        if (is3D === 'yes') {
-            ctx.save();
-            ctx.shadowColor = `rgba(0, 0, 0, 0.9)`;
-            ctx.shadowBlur = 8 * (1 + finalBass * 2);
-            ctx.shadowOffsetX = 0;
-            ctx.shadowOffsetY = 6 * finalBass;
-            ctx.fillStyle = "rgba(0,0,0,0.5)";
-            ctx.fill();
-            ctx.restore();
+        if(isReflection) { 
+            ctx.translate(actualX, actualY); 
+            ctx.scale(1, -1); 
+            let rScale = mirrorConfig.spkReflectSize; 
+            ctx.scale(rScale, rScale); 
+            ctx.globalAlpha = mirrorConfig.spkReflectOpacity; 
+        } else { 
+            ctx.translate(actualX, actualY); 
         }
+        ctx.rotate(rot); ctx.transform(1, Math.tan(skewY), Math.tan(skewX), 1, 0, 0); ctx.scale(scaleX, scaleY); 
         
+        // KARET SUSPENSI STATIS
         ctx.save();
-        let microZoom = 1.0 + (finalBass * pumpIntensity * 0.08); 
-        ctx.scale(microZoom, microZoom);
-        let offsetY = -finalBass * pumpIntensity * 3.5;
-        ctx.drawImage(bgImageElement, bgGlobalX - x - offX, (bgGlobalY - y - offY) + offsetY, bgImageElement.width * bgGlobalScale, bgImageElement.height * bgGlobalScale);
+        ctx.translate(offX, offY);
+        ctx.beginPath();
+        ctx.arc(0, 0, R_in + 2, 0, Math.PI * 2);
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = 'rgba(10, 10, 10, 0.8)';
+        ctx.stroke();
         ctx.restore();
         
-        if (is3D === 'yes') {
-            let capGlow = ctx.createRadialGradient(0, -R_in * 0.3, 0, 0, 0, R_in);
-            capGlow.addColorStop(0, `rgba(255, 255, 255, ${0.15 + finalBass * 0.3})`);
-            capGlow.addColorStop(0.6, `rgba(255, 255, 255, ${0.02 + finalBass * 0.08})`);
-            capGlow.addColorStop(1, `rgba(0, 0, 0, ${0.4 + finalBass * 0.3})`);
-            ctx.fillStyle = capGlow;
-            ctx.beginPath(); ctx.arc(0, 0, R_in, 0, Math.PI * 2); ctx.fill();
-        }
+        // KALKULASI DORONGAN DAUN (Z-AXIS)
+        let zDirX = Math.sin(skewY || 0.2); 
+        let zDirY = Math.cos(skewX || 0); 
+        let zShiftX = finalBass * pumpIntensity * 12 * zDirX; 
+        let zShiftY = finalBass * pumpIntensity * 12 * zDirY; 
+        let bulge = 1.0 + (finalBass * pumpIntensity * 0.18); 
+        
+        // DROP SHADOW MEKANIS
+        ctx.save();
+        ctx.translate(offX - zShiftX, offY - zShiftY); 
+        ctx.scale(bulge, bulge); 
+        
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.95)';
+        ctx.shadowBlur = 10 + (finalBass * 30 * pumpIntensity);
+        ctx.shadowOffsetY = 5 + (finalBass * 15 * pumpIntensity);
+        ctx.shadowOffsetX = zShiftX;
+        
+        ctx.fillStyle = 'rgba(0,0,0,1)';
+        ctx.beginPath();
+        ctx.arc(0, 0, R_in, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+        
+        // GAMBAR ISI DAUN YANG MENYEMBUL
+        ctx.save();
+        ctx.translate(offX - zShiftX, offY - zShiftY); 
+        ctx.scale(bulge, bulge); 
+        ctx.beginPath();
+        ctx.arc(0, 0, R_in, 0, Math.PI * 2);
+        ctx.clip();
+        
+        let microZoom = 1.0 + (finalBass * pumpIntensity * 0.05); 
+        ctx.scale(microZoom, microZoom);
+        
+        let drawX = bgGlobalX - x - offX + zShiftX;
+        let drawY = bgGlobalY - y - offY + zShiftY;
+        ctx.drawImage(bgImageElement, drawX, drawY, bgImageElement.width * bgGlobalScale, bgImageElement.height * bgGlobalScale);
+        ctx.restore();
 
         ctx.restore(); 
-        ctx.restore();
 
         if (document.getElementById('showGuides') && document.getElementById('showGuides').value === 'yes') {
             ctx.save(); if(isReflection) { ctx.translate(actualX, actualY); ctx.scale(1, -1); let rScale = mirrorConfig.spkReflectSize; ctx.scale(rScale, rScale); ctx.globalAlpha = mirrorConfig.spkReflectOpacity; } else { ctx.translate(actualX, actualY); }
@@ -685,12 +743,13 @@
             ctx.save(); ctx.translate(maskOffX, maskOffY); ctx.setLineDash([5,5]); ctx.beginPath(); ctx.arc(0, 0, R_out * softness, 0, Math.PI * 2); ctx.strokeStyle = "rgba(255, 255, 0, 0.5)"; ctx.lineWidth = 1; ctx.stroke(); ctx.beginPath(); ctx.arc(0, 0, R_out, 0, Math.PI * 2); ctx.strokeStyle = "rgba(255, 255, 0, 0.2)"; ctx.stroke(); ctx.setLineDash([]); ctx.beginPath(); ctx.moveTo(-5, 0); ctx.lineTo(5, 0); ctx.stroke(); ctx.beginPath(); ctx.moveTo(0, -5); ctx.lineTo(0, 5); ctx.stroke(); ctx.restore();
             ctx.translate(offX, offY); ctx.beginPath(); ctx.arc(0, 0, R_in, 0, Math.PI * 2); ctx.strokeStyle = "rgba(0, 255, 255, 0.5)"; ctx.lineWidth = 1; ctx.stroke(); ctx.beginPath(); ctx.moveTo(-5, 0); ctx.lineTo(5, 0); ctx.stroke(); ctx.beginPath(); ctx.moveTo(0, -5); ctx.lineTo(0, 5); ctx.stroke(); ctx.restore();
         }
+
+        ctx.restore(); // Tutup global clip
       }
       drawLiveBackgroundSpeaker(spk1X, spk1Y, spk1RefY, R_out_L, R_in_L, offX_L, offY_L, spkScaleX1, spkScaleY1, spkSkewX1, spkSkewY1, spkRot1, maskOffX_L, maskOffY_L); 
       drawLiveBackgroundSpeaker(spk2X, spk2Y, spk2RefY, R_out_R, R_in_R, offX_R, offY_R, spkScaleX2, spkScaleY2, spkSkewX2, spkSkewY2, spkRot2, maskOffX_R, maskOffY_R);
     }
 
-    // API LILIN
     function drawCandle(x, y, refY, style, scale, propSpeed, isReflection) { if(style === 'none') return; ctx.save(); if (isReflection) { if (mirrorConfig.showCandleReflect === 'no') { ctx.restore(); return; } ctx.translate(x, refY); ctx.scale(1, -1); ctx.globalAlpha = 0.45; } else { ctx.translate(x, y); } ctx.scale(scale, scale); let t = time * 2 * propSpeed; let flicker = 0; let sway = 0; let h = 65; let w = 16; let baseColor = 'rgba(255, 140, 0, 0.8)'; let midColor = 'rgba(255, 210, 0, 0.9)'; let coreColor = 'rgba(255, 255, 255, 0.95)'; if(style === 'calm_flame') { flicker = Math.sin(t*3)*2; sway = Math.sin(t)*1; } else if(style === 'flicker_flame') { flicker = Math.sin(t*10)*4 + Math.random()*2; sway = Math.sin(t*5)*3; } else if(style === 'bright_glow') { flicker = Math.sin(t*4)*2; h = 75; w = 18; ctx.shadowBlur = 15 + flicker; ctx.shadowColor = '#ff9800'; } else if(style === 'blue_base') { flicker = Math.sin(t*5)*2; baseColor = 'rgba(0, 150, 255, 0.8)'; midColor = 'rgba(100, 200, 255, 0.9)'; } else if(style === 'wind_flame') { flicker = Math.random()*5; sway = 15 + Math.sin(t*8)*5; } ctx.beginPath(); ctx.arc(0, -h*0.5, w*3, 0, Math.PI*2); let gradGlow = ctx.createRadialGradient(0,-h*0.5,0, 0,-h*0.5,w*4); gradGlow.addColorStop(0, 'rgba(255, 120, 0, 0.25)'); gradGlow.addColorStop(1, 'rgba(255, 120, 0, 0)'); ctx.fillStyle = gradGlow; ctx.fill(); ctx.beginPath(); ctx.moveTo(0, 5); ctx.lineTo(sway*0.05, -8); ctx.lineWidth = 3; ctx.strokeStyle = '#111'; ctx.stroke(); ctx.beginPath(); ctx.moveTo(sway*0.05, -8); ctx.lineTo(sway*0.1, -12); ctx.lineWidth = 2; ctx.strokeStyle = '#ff5722'; ctx.stroke(); function drawFlame(fw, fh, fsway, color) { ctx.beginPath(); ctx.moveTo(0, 2); ctx.bezierCurveTo(fw, 2, fw*0.9, -fh*0.4, fsway, -fh); ctx.bezierCurveTo(-fw*0.9, -fh*0.4, -fw, 2, 0, 2); ctx.fillStyle = color; ctx.fill(); } drawFlame(w, h + flicker, sway, baseColor); drawFlame(w*0.7, (h + flicker)*0.75, sway*0.7, midColor); drawFlame(w*0.35, (h + flicker)*0.45, sway*0.3, coreColor); if(style !== 'blue_base') { ctx.beginPath(); ctx.moveTo(0, 4); ctx.bezierCurveTo(w*0.5, 4, w*0.4, -5, 0, -5); ctx.bezierCurveTo(-w*0.4, -5, -w*0.5, 4, 0, 4); let bg = ctx.createRadialGradient(0,0,0, 0,0,w*0.5); bg.addColorStop(0,'rgba(0,100,255,0.6)'); bg.addColorStop(1,'rgba(0,50,255,0)'); ctx.fillStyle = bg; ctx.fill(); } ctx.restore(); }
 
     function animate() {

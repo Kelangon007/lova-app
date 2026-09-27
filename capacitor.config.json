@@ -1,6 +1,6 @@
 {
-  "appId": "com.mirrorpro.app",
-  "appName": "Mirror Pro 3D",
+  "appId": "com.mirrorpro.v2",
+  "appName": "Mirror Pro V2",
   "webDir": "www",
   "bundledWebRuntime": false
 }
