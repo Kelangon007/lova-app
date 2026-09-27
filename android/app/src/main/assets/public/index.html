@@ -3,13 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>Mirror Studio Final 3D</title>
   <script src="https://cdn.jsdelivr.net/npm/fix-webm-duration@1.0.5/fix-webm-duration.js"></script>
   <style>
     :root { --cyan: #00bcd4; --cyan-glow: #00e5ff; --dark: #121212; --panel: #1a1a1a; --border: #333; }
     body { margin: 0; background-color: var(--dark); font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 50px; overflow-x: hidden; }
     
-    /* FITUR BARU: LAYAR TERKUNCI DI ATAS (STICKY HEADER) */
     #sticky-header {
       position: sticky;
       top: 0;
@@ -25,38 +27,47 @@
       box-shadow: 0 8px 25px rgba(0,0,0,0.9);
     }
     
-    #canvas-wrapper { position: relative; width: 96%; aspect-ratio: 16/9; background: #000; overflow: hidden; touch-action: none; border: 1px solid #444; border-radius: 4px; box-sizing: border-box; }
+    #canvas-wrapper { position: relative; width: 96%; max-width: 800px; aspect-ratio: 16/9; background: #000; overflow: hidden; touch-action: none; border-bottom: 2px solid var(--border); border-radius: 4px; }
     canvas { width: 100%; height: 100%; display: block; transform-origin: 0 0; }
-    .zoom-toolbar { width: 96%; display: flex; align-items: center; justify-content: space-between; background: #151515; border: 1px solid var(--border); border-radius: 4px; padding: 6px 12px; margin-top: 8px; box-sizing: border-box; gap: 8px; }
+    
+    .zoom-toolbar { width: 96%; max-width: 800px; display: flex; align-items: center; justify-content: space-between; background: #151515; border: 1px solid var(--border); border-radius: 4px; padding: 6px 12px; margin-top: 8px; box-sizing: border-box; gap: 8px; }
     .zoom-toolbar label { font-size: 10px; color: var(--cyan); font-weight: bold; text-transform: uppercase; }
     .zoom-btn-group { display: flex; gap: 4px; }
     .btn-zoom { background: #2a2a2a; border: 1px solid #444; color: #ddd; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; }
     .btn-zoom.active { background: var(--cyan); color: #000; border-color: var(--cyan-glow); }
     
     #controls { width: 96%; max-width: 800px; padding: 10px 0; display: flex; flex-direction: column; gap: 10px; box-sizing: border-box; }
+    
     #statusBox { font-size: 11px; text-align: center; color: #00ffaa; font-weight: 600; padding: 6px; background: #0a1f14; border-radius: 4px; border: 1px solid #004d26; }
+    
     .btn-group { display: flex; gap: 8px; width: 100%; }
     .file-label { flex: 1; background: #1e1e1e; color: #ccc; padding: 10px; text-align: center; border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: bold; border: 1px solid #444; transition: 0.2s; }
     .file-label:hover { background: #2a2a2a; color: white; }
+    
     .play-group { display: flex; gap: 8px; width: 100%; }
     #playBtn { flex: 2; padding: 10px; background: #222; color: #888; border: 1px solid #333; border-radius: 4px; font-weight: bold; cursor: pointer; transition: background 0.3s; }
     #playBtn.ready { background: #1e1e1e; color: var(--cyan-glow); border: 1px solid var(--border); }
     #nextBtn { flex: 1; padding: 10px; background: #222; color: #888; border: 1px solid #333; border-radius: 4px; font-weight: bold; cursor: not-allowed; }
     #nextBtn.ready { background: #1e1e1e; color: white; border: 1px solid var(--border); cursor: pointer; }
+    
     .progress-container { display: flex; align-items: center; gap: 8px; background: #1a1a1a; padding: 6px 10px; border-radius: 4px; border: 1px solid var(--border); }
     .time-text { font-size: 9px; font-family: monospace; color: var(--cyan); min-width: 32px; text-align: center; }
     #progressBar { flex: 1; height: 3px; -webkit-appearance: none; background: #333; border-radius: 3px; cursor: pointer; }
     #progressBar::-webkit-slider-thumb { -webkit-appearance: none; width: 10px; height: 10px; background: var(--cyan-glow); border-radius: 50%; }
+    
     .panel-block { border: 1px solid var(--border); background: var(--panel); border-radius: 6px; padding: 8px 10px; display: flex; flex-direction: column; gap: 8px; }
     .panel-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; border-bottom: 1px solid transparent; padding-bottom: 4px; }
     .panel-header:hover { border-bottom: 1px solid #333; }
     .panel-title { font-size: 9px; color: var(--cyan); font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin: 0; }
     .col-title { font-size: 9px; color: #ffb300; font-weight: bold; text-transform: uppercase; margin: 0; }
+    
     .btn-lock { background: #222; border: 1px solid #444; color: #888; font-size: 8px; padding: 3px 6px; border-radius: 4px; font-weight: bold; transition: 0.2s; pointer-events: none; }
     .panel-content { display: flex; flex-direction: column; gap: 8px; }
     .panel-content.hidden { display: none; }
+    
     .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
     .col-box { display: flex; flex-direction: column; gap: 6px; }
+    
     .row { display: flex; align-items: center; justify-content: space-between; }
     .row label { font-size: 8px; color: #aaa; font-weight: 600; text-transform: uppercase; width: 35%; }
     input[type="range"] { width: 60%; height: 20px; background: transparent; -webkit-appearance: none; appearance: none; }
@@ -64,13 +75,14 @@
     input[type="range"]::-webkit-slider-thumb { height: 12px; width: 12px; border-radius: 50%; background: #007bff; cursor: pointer; -webkit-appearance: none; margin-top: -4.5px; }
     select { width: 60%; height: 22px; background: #222; color: white; border: 1px solid #444; border-radius: 4px; font-size: 9px; padding: 0 4px; outline: none; }
     input[type="file"] { display: none; }
+    
     .rec-btn { width: 100%; padding: 12px; background: #d32f2f; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px; margin-top: 5px; text-transform: uppercase; }
     #recIndicator { display: none; position: absolute; top: 15px; right: 15px; background: red; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 10px; animation: blink 1s infinite; z-index: 10; }
     @keyframes blink { 50% { opacity: 0; } }
   </style>
 </head>
+
 <body>
-  <!-- HEADER STICKY -->
   <div id="sticky-header">
     <div id="canvas-wrapper">
       <canvas id="canvas" width="1280" height="720"></canvas>
@@ -91,47 +103,104 @@
   </div>
 
   <div id="controls">
-    <div id="statusBox">Siap - Mirror Studio (Sticky UI & Bug Fix)</div>
+    <div id="statusBox">Siap - Mirror Pro 3D (Full Modul)</div>
+    
     <div class="btn-group">
       <label for="bgInput" class="file-label" style="border-bottom: 2px solid #ffb300;">1. FOTO LATAR</label>
       <label for="audioInput" class="file-label" style="border-bottom: 2px solid var(--cyan);">2. MUSIK</label>
     </div>
+
     <div class="play-group">
       <button id="playBtn" onclick="togglePlay()">⚠ PUTAR MUSIK</button>
       <button id="nextBtn" onclick="playRandomSong(false)">⏭ NEXT</button>
     </div>
+
     <div class="progress-container">
       <span id="currTime" class="time-text">00:00</span>
       <input type="range" id="progressBar" value="0" min="0" step="0.1">
       <span id="durTime" class="time-text">00:00</span>
     </div>
 
-    <!-- PANEL 1 -->
     <div class="panel-block">
-        <div class="panel-header" onclick="togglePanel(this)"><div class="panel-title">VISUALIZER 3D</div><div class="btn-lock">🔒 LIPAT</div></div>
+        <div class="panel-header" onclick="togglePanel(this)">
+            <div class="panel-title">VISUALIZER 3D</div>
+            <div class="btn-lock">🔒 LIPAT</div>
+        </div>
         <div class="panel-content">
             <select id="visType" style="width:100%; margin-bottom: 6px;">
-                <option value="liquid_bar" selected>💧 21. Liquid Glowing Cyan</option>
-                <option value="cyber_pulse">⚡ 22. Neon Pulse Bars</option>
-                <option value="mirror_bars">🪞 23. Mirrored Glass Bars</option>
-                <option value="vintage_bars">📊 1. Vintage Solid Bars</option>
-                <option value="winamp_classic">📻 2. Winamp Peaks</option>
-                <option value="classic_eq">🎙️ 3. Classic Green-Red EQ</option>
-                <option value="step_eq">🧱 4. Step Block EQ</option>
-                <option value="thin_eq">📏 5. Thin Minimalist EQ</option>
-                <option value="dotted_eq">⏺️ 11. Dotted Peak EQ</option>
-                <option value="led_matrix">🚥 12. LED Dot Matrix</option>
-                <option value="modern_wave">🌊 31. Modern Smooth Wave</option>
-                <option value="double_wave">〰️ 33. Double Layer Wave</option>
-                <option value="hologram_grid">🧊 41. Hologram 3D Grid</option>
-                <option value="aurora_borealis">🌌 46. Aurora Borealis Glow</option>
-                <option value="classic_spectrum">🌈 51. Classic Spectrum Analyzer</option>
+                <optgroup label="=== MODERN GRADIENT ===">
+                    <option value="liquid_bar" selected>💧 21. Liquid Glowing Cyan</option>
+                    <option value="cyber_pulse">⚡ 22. Neon Pulse Bars</option>
+                    <option value="mirror_bars">🪞 23. Mirrored Glass Bars</option>
+                    <option value="gradient_blocks">🎛️ 24. Cyan-Blue Gradient</option>
+                    <option value="sunset_bars">🌅 25. Warm Sunset Gradient</option>
+                    <option value="emerald_bars">💎 26. Emerald Green Grad</option>
+                    <option value="purple_haze">🟣 27. Purple-Pink Soft</option>
+                    <option value="gold_classic">👑 28. Golden Elegant EQ</option>
+                    <option value="monochrome_fade">🎞️ 29. Grayscale Fading</option>
+                    <option value="dual_tone">🌗 30. Dual Tone Top-Bot</option>
+                </optgroup>
+                <optgroup label="=== SOLID BARS ===">
+                    <option value="vintage_bars">📊 1. Vintage Solid Bars</option>
+                    <option value="winamp_classic">📻 2. Winamp Peaks</option>
+                    <option value="classic_eq">🎙️ 3. Classic Green-Red EQ</option>
+                    <option value="step_eq">🧱 4. Step Block EQ</option>
+                    <option value="thin_eq">📏 5. Thin Minimalist EQ</option>
+                    <option value="thick_bars">⬛ 6. Bold Solid Bars</option>
+                    <option value="hollow_bars">🔲 7. Hollow Outline Bars</option>
+                    <option value="rounded_bars">💊 8. Rounded Tip Bars</option>
+                    <option value="split_eq">⏸️ 9. Split Center EQ</option>
+                    <option value="double_mirror">🪞 10. Dual Mirror Bars</option>
+                </optgroup>
+                <optgroup label="=== PEAKS & DOTS ===">
+                    <option value="dotted_eq">⏺️ 11. Dotted Peak EQ</option>
+                    <option value="led_matrix">🚥 12. LED Dot Matrix</option>
+                    <option value="analog_vu">🎛️ 13. Analog VU Meter</option>
+                    <option value="retro_oscilloscope">📺 14. CRT Oscilloscope</option>
+                    <option value="peak_line">〰️ 15. Floating Peak Line</option>
+                    <option value="peak_dots_only">⚪ 16. Floating Dots Peak</option>
+                    <option value="dash_bars">➖ 17. Dashed Segment Bars</option>
+                    <option value="meter_blocks">📶 18. Meter Blocks</option>
+                    <option value="soft_glow_bars">🌟 19. Glowing Ambient Bars</option>
+                    <option value="white_caps">🧢 20. Bars with White Cap</option>
+                </optgroup>
+                <optgroup label="=== WAVES & LINES ===">
+                    <option value="modern_wave">🌊 31. Modern Smooth Wave</option>
+                    <option value="filled_wave">🌊 32. Filled Ambient Wave</option>
+                    <option value="double_wave">〰️ 33. Double Layer Wave</option>
+                    <option value="thin_wave">✒️ 34. Ultra Thin Line</option>
+                    <option value="shadow_wave">🌒 35. Wave with Shadow</option>
+                    <option value="stereo_lines">⏸️ 36. Dual Parallel Lines</option>
+                    <option value="smooth_curve">🔔 37. Bell Curve Wave</option>
+                    <option value="ribbon_wave">🎀 38. Flowing Ribbon Wave</option>
+                    <option value="minimal_line">➖ 39. Minimalist Baseline</option>
+                    <option value="calm_horizon">🌅 40. Calm Horizon Glow</option>
+                </optgroup>
+                <optgroup label="=== MODERN & UNIQUE ===">
+                    <option value="hologram_grid">🧊 41. Hologram 3D Grid</option>
+                    <option value="digital_dna">🧬 42. Digital DNA Wave</option>
+                    <option value="matrix_rain">🌧️ 43. Matrix Digital Rain</option>
+                    <option value="cyber_laser">💥 44. Cyber Laser Beams</option>
+                    <option value="neon_ripple">🔲 45. Neon Square Ripple</option>
+                    <option value="aurora_borealis">🌌 46. Aurora Borealis Glow</option>
+                    <option value="block_tower">🏙️ 47. Clean 3D EQ Blocks</option>
+                    <option value="equalizer_3d">🛠️ 48. Cylinder Studio EQ</option>
+                    <option value="floating_blocks">🧊 49. Floating Blocks</option>
+                    <option value="classic_studio">🎙️ 50. Pro Studio Rack</option>
+                </optgroup>
+                <optgroup label="=== RETRO & CLASSIC ===">
+                    <option value="classic_spectrum">🌈 51. Classic Spectrum Analyzer</option>
+                    <option value="cassette_tape">📼 52. Spinning Cassette Tape</option>
+                    <option value="vintage_vu_meter">🎛️ 53. Box Vintage VU Meter</option>
+                    <option value="classic_vinyl">💿 54. Classic Vinyl Record</option>
+                    <option value="retro_boombox_eq">📻 55. Retro Boombox LED EQ</option>
+                </optgroup>
             </select>
             <div class="grid-2col">
                 <div class="col-box">
                     <div class="row"><label style="color:#00e5ff;">TINGGI</label><input type="range" id="visHeight" min="30" max="600" value="150"></div>
-                    <div class="row"><label style="color:#00e5ff;">SUDUT</label><input type="range" id="visRot" min="-90" max="90" step="1" value="0"></div>
-                    <div class="row"><label style="color:#00e5ff;">SKEW Y</label><input type="range" id="visSkewY" min="-45" max="45" step="1" value="0"></div>
+                    <div class="row"><label style="color:#00e5ff;">SUDUT (PUTAR)</label><input type="range" id="visRot" min="-90" max="90" step="1" value="0"></div>
+                    <div class="row"><label style="color:#00e5ff;">SKEW Y (MIRING)</label><input type="range" id="visSkewY" min="-45" max="45" step="1" value="0"></div>
                     <div class="row"><label style="color:#00e5ff;">SKALA X</label><input type="range" id="visScaleX" min="0.1" max="3.0" step="0.05" value="1.0"></div>
                 </div>
                 <div class="col-box">
@@ -143,10 +212,13 @@
         </div>
     </div>
 
-    <!-- PANEL 2 -->
+    <!-- PANEL 2: DAUN SPEAKER L & R -->
     <div class="grid-2col">
         <div class="panel-block">
-            <div class="panel-header" onclick="togglePanel(this)"><div class="col-title">DAUN SPEAKER L</div><div class="btn-lock">🔒 LIPAT</div></div>
+            <div class="panel-header" onclick="togglePanel(this)">
+                <div class="col-title">DAUN SPEAKER L</div>
+                <div class="btn-lock">🔒 LIPAT</div>
+            </div>
             <div class="panel-content">
                 <div class="row"><label>SAKLAR</label><select id="speakerStyle"><option value="active">🟢 Nyala</option><option value="none">🚫 Mati</option></select></div>
                 <div class="row"><label>UK. LUAR</label><input type="range" id="spkL_out" min="20" max="300" value="120"></div>
@@ -156,7 +228,10 @@
             </div>
         </div>
         <div class="panel-block">
-            <div class="panel-header" onclick="togglePanel(this)"><div class="col-title">DAUN SPEAKER R</div><div class="btn-lock">🔒 LIPAT</div></div>
+            <div class="panel-header" onclick="togglePanel(this)">
+                <div class="col-title">DAUN SPEAKER R</div>
+                <div class="btn-lock">🔒 LIPAT</div>
+            </div>
             <div class="panel-content">
                 <div class="row"><label>GRS BANTU</label><select id="showGuides"><option value="yes">Nyala</option><option value="no">Mati</option></select></div>
                 <div class="row"><label>UK. LUAR</label><input type="range" id="spkR_out" min="20" max="300" value="120"></div>
@@ -166,15 +241,20 @@
             </div>
         </div>
     </div>
+    
+    <!-- GLOBAL SPEAKER CONTROLS -->
     <div class="grid-2col" style="padding: 0 5px;">
         <div class="row"><label style="color:#ff5252;">GETARAN</label><input type="range" id="speakerShake" min="0" max="40" step="1" value="10"></div>
         <div class="row"><label style="color:#ff5252;">DENTUMAN</label><input type="range" id="speakerPump" min="0" max="3.0" step="0.1" value="1.0"></div>
     </div>
 
-    <!-- PANEL 3 -->
+    <!-- PANEL 3: PERSPEKTIF L & R -->
     <div class="grid-2col">
         <div class="panel-block">
-            <div class="panel-header" onclick="togglePanel(this)"><div class="col-title" style="color:#00e5ff;">PERSPEK. KIRI</div><div class="btn-lock">🔒 LIPAT</div></div>
+            <div class="panel-header" onclick="togglePanel(this)">
+                <div class="col-title" style="color:#00e5ff;">PERSPEK. KIRI</div>
+                <div class="btn-lock">🔒 LIPAT</div>
+            </div>
             <div class="panel-content">
                 <div class="row"><label>BLUR (SOFT)</label><input type="range" id="maskSoftness" min="0.1" max="0.95" step="0.05" value="0.5"></div>
                 <div class="row"><label style="color:#00ffaa;">GESER BLUR</label>
@@ -193,7 +273,10 @@
             </div>
         </div>
         <div class="panel-block">
-            <div class="panel-header" onclick="togglePanel(this)"><div class="col-title" style="color:#00e5ff;">PERSPEK. KANAN</div><div class="btn-lock">🔒 LIPAT</div></div>
+            <div class="panel-header" onclick="togglePanel(this)">
+                <div class="col-title" style="color:#00e5ff;">PERSPEK. KANAN</div>
+                <div class="btn-lock">🔒 LIPAT</div>
+            </div>
             <div class="panel-content">
                 <div class="row"><label>EFEK 3D</label>
                     <select id="effect3D" style="width:23%;"><option value="yes">Nyala</option><option value="no">Mati</option></select>
@@ -216,10 +299,13 @@
         </div>
     </div>
 
-    <!-- PANEL 4 -->
+    <!-- PANEL 4: SAKLAR & SETTING KACA -->
     <div class="grid-2col">
         <div class="panel-block" style="border-color:#00bcd4;">
-            <div class="panel-header" onclick="togglePanel(this)"><div class="col-title" style="color:#00bcd4;">SAKLAR KACA</div><div class="btn-lock">🔒 LIPAT</div></div>
+            <div class="panel-header" onclick="togglePanel(this)">
+                <div class="col-title" style="color:#00bcd4;">SAKLAR KACA</div>
+                <div class="btn-lock">🔒 LIPAT</div>
+            </div>
             <div class="panel-content">
                 <div class="row"><label>GRS MEJA</label><select id="showGlassLine"><option value="yes">Nyala</option><option value="no">Mati</option></select></div>
                 <div class="row"><label>PANT. VIS</label><select id="showVisReflect"><option value="yes">Nyala</option><option value="no">Mati</option></select></div>
@@ -228,7 +314,10 @@
             </div>
         </div>
         <div class="panel-block" style="border-color:#00bcd4;">
-            <div class="panel-header" onclick="togglePanel(this)"><div class="col-title" style="color:#00bcd4;">SETTING KACA</div><div class="btn-lock">🔒 LIPAT</div></div>
+            <div class="panel-header" onclick="togglePanel(this)">
+                <div class="col-title" style="color:#00bcd4;">SETTING KACA</div>
+                <div class="btn-lock">🔒 LIPAT</div>
+            </div>
             <div class="panel-content">
                 <div class="row"><label>POTONG SPK</label><input type="range" id="spkReflectCrop" min="10" max="100" value="100"></div>
                 <div class="row"><label>OPASITAS</label><input type="range" id="spkReflectOpacity" min="0.1" max="1.0" step="0.05" value="0.45"></div>
@@ -237,21 +326,77 @@
         </div>
     </div>
 
-    <!-- PANEL 5 -->
+    <!-- PANEL 5: ASAP KOPI & API LILIN -->
     <div class="grid-2col">
         <div class="panel-block">
-            <div class="panel-header" onclick="togglePanel(this)"><div class="col-title" style="color:#d7ccc8;">ASAP KOPI</div><div class="btn-lock">🔒 LIPAT</div></div>
+            <div class="panel-header" onclick="togglePanel(this)">
+                <div class="col-title" style="color:#d7ccc8;">ASAP KOPI</div>
+                <div class="btn-lock">🔒 LIPAT</div>
+            </div>
             <div class="panel-content">
-                <select id="coffeeStyle" style="width:100%; margin-bottom:4px;"><option value="none">🚫 Tanpa Asap</option><option value="soft_steam">☕ 1. Soft Warm Steam</option><option value="swirl_vapor">🌪️ 2. Swirling Vapor</option></select>
+                <select id="coffeeStyle" style="width:100%; margin-bottom:4px;">
+                  <option value="none">🚫 Tanpa Asap</option>
+                  <option value="soft_steam">☕ 1. Soft Warm Steam</option>
+                  <option value="swirl_vapor">🌪️ 2. Swirling Vapor</option>
+                  <option value="thin_wisp">🌬️ 3. Thin Elegant</option>
+                  <option value="heavy_steam">☁️ 4. Heavy Morning</option>
+                  <option value="wind_steam">🍃 5. Breezy Coffee</option>
+                </select>
                 <div class="row"><label>UKURAN</label><input type="range" id="propSize" min="0.2" max="5.0" step="0.1" value="1.0"></div>
                 <div class="row"><label>TEBAL</label><input type="range" id="smokeOpacity" min="0.1" max="4.0" step="0.1" value="1.2"></div>
             </div>
         </div>
         <div class="panel-block">
-            <div class="panel-header" onclick="togglePanel(this)"><div class="col-title" style="color:#ff8a65;">API LILIN</div><div class="btn-lock">🔒 LIPAT</div></div>
+            <div class="panel-header" onclick="togglePanel(this)">
+                <div class="col-title" style="color:#ff8a65;">API LILIN</div>
+                <div class="btn-lock">🔒 LIPAT</div>
+            </div>
             <div class="panel-content">
-                <select id="candleStyle" style="width:100%; margin-bottom:4px;"><option value="none">🚫 Tanpa Lilin</option><option value="calm_flame">🕯️ 1. Calm Warm</option><option value="flicker_flame">🕯️ 2. Flickering</option></select>
+                <select id="candleStyle" style="width:100%; margin-bottom:4px;">
+                  <option value="none">🚫 Tanpa Lilin</option>
+                  <option value="calm_flame">🕯️ 1. Calm Warm</option>
+                  <option value="flicker_flame">🕯️ 2. Flickering</option>
+                  <option value="bright_glow">🌟 3. Bright Glowing</option>
+                  <option value="blue_base">🔵 4. Blue-Base Flame</option>
+                  <option value="wind_flame">🌬️ 5. Wind-blown</option>
+                </select>
                 <div class="row"><label>KCPTN</label><input type="range" id="propSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANEL 6: PARTIKEL LINGKUNGAN -->
+    <div class="panel-block">
+        <div class="panel-header" onclick="togglePanel(this)">
+            <div class="col-title" style="color:#00e5ff;">EFEK PARTIKEL</div>
+            <div class="btn-lock">🔒 LIPAT</div>
+        </div>
+        <div class="panel-content">
+            <div class="grid-2col">
+                <select id="type" style="width:100%;">
+                  <option value="none">🚫 Tanpa Partikel</option>
+                  <option value="dust_motes">✨ Butiran Debu Emas</option>
+                  <option value="magic_sparks">💫 Percikan Sihir</option>
+                  <option value="floating_embers">🔥 Bara Api Terbang</option>
+                  <option value="bokeh_orbs">🫧 Bokeh Sinematik</option>
+                  <option value="snow_dust">❄️ Debu Salju Halus</option>
+                  <option value="fairy_light">🧚 Cahaya Peri</option>
+                  <option value="ash_particles">🌪️ Abu Hitam</option>
+                  <option value="starlight_glint">🌟 Kilauan Bintang</option>
+                  <option value="deep_sea_motes">🌊 Partikel Air</option>
+                  <option value="golden_pollen">🌼 Serbuk Sari</option>
+                </select>
+                <select id="fxAngle" style="width:100%;">
+                  <option value="0">Lurus (Normal)</option>
+                  <option value="15">Miring Kanan 15°</option>
+                  <option value="30">Miring Kanan 30°</option>
+                  <option value="-15">Miring Kiri 15°</option>
+                  <option value="-30">Miring Kiri 30°</option>
+                </select>
+            </div>
+            <div class="grid-2col" style="margin-top:4px;">
+                <div class="row"><label>KECEPATAN</label><input type="range" id="fxSpeed" min="0.1" max="5.0" step="0.1" value="1.0"></div>
+                <div class="row"><label>JUMLAH</label><input type="range" id="count" min="0" max="400" value="100"></div>
             </div>
         </div>
     </div>
@@ -263,18 +408,52 @@
   <audio id="audioPlayer" crossorigin="anonymous"></audio>
 
   <script>
+    // FUNGSI ACCORDION
     function togglePanel(header) { const content = header.nextElementSibling; const btn = header.querySelector('.btn-lock'); if (content.classList.contains('hidden')) { content.classList.remove('hidden'); btn.innerText = "🔒 LIPAT"; btn.style.background = "#222"; btn.style.color = "#888"; btn.style.borderColor = "#444"; } else { content.classList.add('hidden'); btn.innerText = "👁️ BUKA"; btn.style.background = "var(--cyan)"; btn.style.color = "#000"; btn.style.borderColor = "var(--cyan-glow)"; } }
+    
+    // VARIABEL UTAMA
     const statusBox = document.getElementById('statusBox'); const canvas = document.getElementById('canvas'); const ctx = canvas.getContext('2d');
     const bufferCanvas = document.createElement('canvas'); bufferCanvas.width = 1280; bufferCanvas.height = 720; const bCtx = bufferCanvas.getContext('2d');
     const canvasWrapper = document.getElementById('canvas-wrapper'); const audioPlayer = document.getElementById('audioPlayer'); const playBtn = document.getElementById('playBtn'); const nextBtn = document.getElementById('nextBtn'); const recordBtn = document.getElementById('recordBtn'); const progressBar = document.getElementById('progressBar'); const currTimeEl = document.getElementById('currTime'); const durTimeEl = document.getElementById('durTime');
+    
     let isDraggingProgress = false; const width = 1280; const height = 720; let audioFiles = []; let currentObjectUrl = null; let currentSongName = ""; let playTimeout = null; let isTrackLoaded = false; let shuffledPlaylist = []; let currentPlayIndex = 0; let isCountingDown = false; let countdownTimer = null; let bgGlobalScale = 1; let bgGlobalX = 0; let bgGlobalY = 0; let canvasZoom = 1.0; let canvasPanX = 0; let canvasPanY = 0; let isPanningCanvas = false; let panStartX = 0; let panStartY = 0; let isPinching = false; let initialPinchDist = 0; let initialPinchZoom = 1.0;
 
+    // ZOOM KANVAS
     const zoomSlider = document.getElementById('canvasZoomSlider'); zoomSlider.addEventListener('input', (e) => { setCanvasZoom(parseFloat(e.target.value)); });
     function setCanvasZoom(val) { canvasZoom = Math.min(3.5, Math.max(1.0, val)); zoomSlider.value = canvasZoom.toFixed(1); document.querySelectorAll('.btn-zoom').forEach(b => b.classList.remove('active')); if (Math.abs(canvasZoom - 1.0) < 0.1) document.getElementById('zoomBtn1').classList.add('active'); else if (Math.abs(canvasZoom - 1.8) < 0.2) document.getElementById('zoomBtn2').classList.add('active'); else if (Math.abs(canvasZoom - 2.6) < 0.2) document.getElementById('zoomBtn3').classList.add('active'); clampPan(); applyCanvasTransform(); }
     function clampPan() { const w = canvasWrapper.clientWidth; const h = canvasWrapper.clientHeight; if (canvasZoom <= 1.0) { canvasPanX = 0; canvasPanY = 0; } else { const minPanX = w * (1 - canvasZoom); const minPanY = h * (1 - canvasZoom); canvasPanX = Math.min(0, Math.max(minPanX, canvasPanX)); canvasPanY = Math.min(0, Math.max(minPanY, canvasPanY)); } }
     function applyCanvasTransform() { canvas.style.transform = `translate(${canvasPanX}px, ${canvasPanY}px) scale(${canvasZoom})`; }
     function shuffle(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array; }
 
+    // EVENT LISTENER CONFIG (DIKEMBALIKAN PENUH)
+    const config = { type: 'none', count: 100, visType: 'liquid_bar', visHeight: 150, visOpacity: 1.0, fxAngle: 0, fxSpeed: 1.0, visRot: 0, visSkewY: 0, visScaleX: 1.0, visScaleY: 1.0 };
+    document.getElementById('visType').addEventListener('change', (e) => { config.visType = e.target.value; peakHeights.fill(0); });
+    document.getElementById('visOpacity').addEventListener('input', (e) => config.visOpacity = parseFloat(e.target.value));
+    document.getElementById('visRot').addEventListener('input', (e) => config.visRot = parseFloat(e.target.value));
+    document.getElementById('visSkewY').addEventListener('input', (e) => config.visSkewY = parseFloat(e.target.value));
+    document.getElementById('visScaleX').addEventListener('input', (e) => config.visScaleX = parseFloat(e.target.value));
+    document.getElementById('visScaleY').addEventListener('input', (e) => config.visScaleY = parseFloat(e.target.value));
+    document.getElementById('type').addEventListener('change', (e) => config.type = e.target.value);
+    document.getElementById('fxAngle').addEventListener('change', (e) => config.fxAngle = parseInt(e.target.value));
+    document.getElementById('fxSpeed').addEventListener('input', (e) => config.fxSpeed = parseFloat(e.target.value));
+    document.getElementById('count').addEventListener('input', (e) => config.count = parseInt(e.target.value));
+    document.getElementById('visHeight').addEventListener('input', (e) => config.visHeight = parseInt(e.target.value));
+    document.getElementById('visWidth').addEventListener('input', (e) => { visW = parseInt(e.target.value); visX = (width - visW) / 2; });
+
+    // KOORDINAT DEFAULT
+    let visW = 400; let visX = (width - visW) / 2; let visY = height - 250; let visRefY = height - 100;
+    let spk1X = 250; let spk1Y = height - 350; let spk2X = width - 250; let spk2Y = height - 350;
+    let spk1RefY = height - 150; let spk2RefY = height - 150;
+    let coffeeX = 350; let coffeeY = height - 240; 
+    let candle1X = 150; let candle1Y = height - 250; let candle2X = width - 150; let candle2Y = height - 250;
+    let candle1RefY = height - 100; let candle2RefY = height - 100;
+    let mirrorY = 500;
+    
+    // CONFIG KACA
+    const mirrorConfig = { showGlassLine: 'yes', showVisReflect: 'yes', showSpkReflect: 'yes', showCandleReflect: 'yes', spkReflectCrop: 100, spkReflectOpacity: 0.45, spkReflectSize: 1.0 };
+    document.getElementById('showGlassLine').addEventListener('change', e => mirrorConfig.showGlassLine = e.target.value); document.getElementById('showVisReflect').addEventListener('change', e => mirrorConfig.showVisReflect = e.target.value); document.getElementById('showSpkReflect').addEventListener('change', e => mirrorConfig.showSpkReflect = e.target.value); document.getElementById('showCandleReflect').addEventListener('change', e => mirrorConfig.showCandleReflect = e.target.value); document.getElementById('spkReflectCrop').addEventListener('input', e => mirrorConfig.spkReflectCrop = parseInt(e.target.value)); document.getElementById('spkReflectOpacity').addEventListener('input', e => mirrorConfig.spkReflectOpacity = parseFloat(e.target.value)); document.getElementById('spkReflectSize').addEventListener('input', e => mirrorConfig.spkReflectSize = parseFloat(e.target.value));
+
+    // LOGIKA AUDIO
     document.getElementById('audioInput').addEventListener('change', function(e) { if (this.files.length > 0) { audioFiles = Array.from(this.files); isTrackLoaded = true; shuffledPlaylist = shuffle(Array.from({ length: audioFiles.length }, (v, k) => k)); currentPlayIndex = 0; playBtn.innerHTML = "▶ PLAY MUSIK"; playBtn.classList.add('ready'); nextBtn.classList.add('ready'); statusBox.innerText = `${audioFiles.length} Lagu dimuat. Siap diputar!`; progressBar.value = 0; currTimeEl.innerText = "00:00"; durTimeEl.innerText = "00:00"; audioPlayer.pause(); if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl); currentObjectUrl = null; currentSongName = "Musik Diunggah"; } });
 
     function playRandomSong(isInstant = false) { if (audioFiles.length === 0) return; if (playTimeout) clearTimeout(playTimeout); if (currentPlayIndex >= shuffledPlaylist.length) { currentPlayIndex = 0; stopEverything(); return; } if (currentObjectUrl && isInstant) { URL.revokeObjectURL(currentObjectUrl); currentObjectUrl = null; } const delayAmount = isInstant ? 0 : 3500; if (!isInstant) { audioPlayer.pause(); playBtn.innerText = "⏳ TUNGGU..."; statusBox.innerText = "⏳ Jeda pergantian lagu..."; progressBar.value = 0; } playTimeout = setTimeout(() => { if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl); const actualFileIndex = shuffledPlaylist[currentPlayIndex]; const selectedFile = audioFiles[actualFileIndex]; currentSongName = selectedFile.name.replace(/\.[^/.]+$/, ""); currentObjectUrl = URL.createObjectURL(selectedFile); audioPlayer.src = currentObjectUrl; audioPlayer.load(); if (!audioCtx) initAudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume(); audioPlayer.play().then(() => { playBtn.innerText = "⏸ PAUSE"; statusBox.innerText = `🎵 Lagu ${currentPlayIndex + 1}/${audioFiles.length}: ${currentSongName}`; currentPlayIndex++; }).catch(err => { playBtn.innerText = "❌ ERROR"; }); }, delayAmount); }
@@ -283,16 +462,7 @@
 
     function togglePlay() { if (!isTrackLoaded) { alert("Pilih Musik Dulu!"); return; } if (!audioCtx) initAudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume(); if (audioPlayer.paused) { if (!currentObjectUrl || audioPlayer.src === "") { playRandomSong(true); } else { audioPlayer.play().then(() => { playBtn.innerText = "⏸ PAUSE"; statusBox.innerText = `🎵 Memutar: ${currentSongName}`; }).catch(err => console.error(err)); } } else { audioPlayer.pause(); playBtn.innerText = "▶ RESUME"; statusBox.innerText = "⏸ Musik Dijeda."; } }
 
-    let visW = 400; let visX = (width - visW) / 2; let visY = height - 250; let visRefY = height - 100;
-    let spk1X = 250; let spk1Y = height - 350; let spk2X = width - 250; let spk2Y = height - 350;
-    let spk1RefY = height - 150; let spk2RefY = height - 150;
-    let coffeeX = 350; let coffeeY = height - 240; 
-    let candle1X = 150; let candle1Y = height - 250; let candle2X = width - 150; let candle2Y = height - 250;
-    let candle1RefY = height - 100; let candle2RefY = height - 100;
-    let mirrorY = 500;
-    const mirrorConfig = { showGlassLine: 'yes', showVisReflect: 'yes', showSpkReflect: 'yes', showCandleReflect: 'yes', spkReflectCrop: 100, spkReflectOpacity: 0.45, spkReflectSize: 1.0 };
-    document.getElementById('showGlassLine').addEventListener('change', e => mirrorConfig.showGlassLine = e.target.value); document.getElementById('showVisReflect').addEventListener('change', e => mirrorConfig.showVisReflect = e.target.value); document.getElementById('showSpkReflect').addEventListener('change', e => mirrorConfig.showSpkReflect = e.target.value); document.getElementById('showCandleReflect').addEventListener('change', e => mirrorConfig.showCandleReflect = e.target.value); document.getElementById('spkReflectCrop').addEventListener('input', e => mirrorConfig.spkReflectCrop = parseInt(e.target.value)); document.getElementById('spkReflectOpacity').addEventListener('input', e => mirrorConfig.spkReflectOpacity = parseFloat(e.target.value)); document.getElementById('spkReflectSize').addEventListener('input', e => mirrorConfig.spkReflectSize = parseFloat(e.target.value));
-
+    // LOGIKA DRAG & DROP
     let isDraggingSpk1 = false, isDraggingSpk2 = false, isDraggingVis = false, isDraggingSpk1Ref = false, isDraggingSpk2Ref = false, isDraggingVisRef = false, isDraggingCoffee = false, isDraggingCandle1 = false, isDraggingCandle2 = false, isDraggingCandle1Ref = false, isDraggingCandle2Ref = false, isDraggingMirrorLine = false; let dragOffsetX = 0, dragOffsetY = 0;
     function getMousePos(e) { const rect = canvas.getBoundingClientRect(); const scaleX = canvas.width / rect.width; const scaleY = canvas.height / rect.height; let clientX = e.clientX; let clientY = e.clientY; if (e.touches && e.touches.length > 0) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; } return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY }; }
     function startDrag(e) { if (e.touches && e.touches.length === 2) { isPinching = true; initialPinchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); initialPinchZoom = canvasZoom; if (e.cancelable) e.preventDefault(); return; } const pos = getMousePos(e); const r1 = parseFloat(document.getElementById('spkL_out').value); const r2 = parseFloat(document.getElementById('spkR_out').value); if (mirrorConfig.showGlassLine === 'yes' && Math.abs(pos.y - mirrorY) <= 30) { isDraggingMirrorLine = true; dragOffsetY = pos.y - mirrorY; if (e.cancelable) e.preventDefault(); return; } if (mirrorConfig.showSpkReflect === 'yes' && document.getElementById('speakerStyle').value !== 'none') { if (Math.hypot(pos.x - spk1X, pos.y - spk1RefY) <= r1) { isDraggingSpk1Ref = true; dragOffsetY = pos.y - spk1RefY; if (e.cancelable) e.preventDefault(); return; } if (Math.hypot(pos.x - spk2X, pos.y - spk2RefY) <= r2) { isDraggingSpk2Ref = true; dragOffsetY = pos.y - spk2RefY; if (e.cancelable) e.preventDefault(); return; } } if (mirrorConfig.showVisReflect === 'yes' && pos.x >= visX && pos.x <= visX + visW && pos.y >= visRefY - 100 && pos.y <= visRefY + 150) { isDraggingVisRef = true; dragOffsetY = pos.y - visRefY; if (e.cancelable) e.preventDefault(); return; } if (mirrorConfig.showCandleReflect === 'yes' && document.getElementById('candleStyle').value !== 'none') { if (Math.hypot(pos.x - candle1X, pos.y - candle1RefY) <= 40) { isDraggingCandle1Ref = true; dragOffsetY = pos.y - candle1RefY; if (e.cancelable) e.preventDefault(); return; } if (Math.hypot(pos.x - candle2X, pos.y - candle2RefY) <= 40) { isDraggingCandle2Ref = true; dragOffsetY = pos.y - candle2RefY; if (e.cancelable) e.preventDefault(); return; } } if (Math.hypot(pos.x - spk1X, pos.y - spk1Y) <= Math.max(40, r1) && document.getElementById('speakerStyle').value !== 'none') { isDraggingSpk1 = true; dragOffsetX = pos.x - spk1X; dragOffsetY = pos.y - spk1Y; if (e.cancelable) e.preventDefault(); return; } if (Math.hypot(pos.x - spk2X, pos.y - spk2Y) <= Math.max(40, r2) && document.getElementById('speakerStyle').value !== 'none') { isDraggingSpk2 = true; dragOffsetX = pos.x - spk2X; dragOffsetY = pos.y - spk2Y; if (e.cancelable) e.preventDefault(); return; } if (document.getElementById('coffeeStyle').value !== 'none' && Math.hypot(pos.x - coffeeX, pos.y - coffeeY) <= 50) { isDraggingCoffee = true; dragOffsetX = pos.x - coffeeX; dragOffsetY = pos.y - coffeeY; if (e.cancelable) e.preventDefault(); return; } if (document.getElementById('candleStyle').value !== 'none') { if (Math.hypot(pos.x - candle1X, pos.y - candle1Y) <= 40) { isDraggingCandle1 = true; dragOffsetX = pos.x - candle1X; dragOffsetY = pos.y - candle1Y; if (e.cancelable) e.preventDefault(); return; } if (Math.hypot(pos.x - candle2X, pos.y - candle2Y) <= 40) { isDraggingCandle2 = true; dragOffsetX = pos.x - candle2X; dragOffsetY = pos.y - candle2Y; if (e.cancelable) e.preventDefault(); return; } } if (pos.x >= visX && pos.x <= visX + visW && pos.y >= visY - 150 && pos.y <= visY + 150) { isDraggingVis = true; dragOffsetX = pos.x - visX; dragOffsetY = pos.y - visY; if (e.cancelable) e.preventDefault(); return; } if (canvasZoom > 1.0) { isPanningCanvas = true; const clientX = e.touches ? e.touches[0].clientX : e.clientX; const clientY = e.touches ? e.touches[0].clientY : e.clientY; panStartX = clientX - canvasPanX; panStartY = clientY - canvasPanY; if (e.cancelable) e.preventDefault(); } }
@@ -300,6 +470,7 @@
     function endDrag() { isPinching = false; isPanningCanvas = false; isDraggingVis = false; isDraggingSpk1 = false; isDraggingSpk2 = false; isDraggingCoffee = false; isDraggingCandle1 = false; isDraggingCandle2 = false; isDraggingVisRef = false; isDraggingSpk1Ref = false; isDraggingSpk2Ref = false; isDraggingMirrorLine = false; isDraggingCandle1Ref = false; isDraggingCandle2Ref = false; }
     canvasWrapper.addEventListener('mousedown', startDrag); window.addEventListener('mousemove', drag); window.addEventListener('mouseup', endDrag); canvasWrapper.addEventListener('touchstart', startDrag, { passive: false }); window.addEventListener('touchmove', drag, { passive: false }); window.addEventListener('touchend', endDrag);
 
+    // WEB AUDIO API
     let audioCtx, source, mediaStreamDestination, analyser, dataArray; let isAudioInit = false; let peakHeights = new Array(200).fill(0);
     function formatTime(seconds) { if (isNaN(seconds) || !isFinite(seconds)) return "00:00"; const m = Math.floor(seconds / 60); const s = Math.floor(seconds % 60); return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; }
     function initAudioContext() { const AudioContext = window.AudioContext || window.webkitAudioContext; audioCtx = new AudioContext(); analyser = audioCtx.createAnalyser(); analyser.fftSize = 256; analyser.smoothingTimeConstant = 0.8; source = audioCtx.createMediaElementSource(audioPlayer); mediaStreamDestination = audioCtx.createMediaStreamDestination(); source.connect(analyser); analyser.connect(audioCtx.destination); analyser.connect(mediaStreamDestination); dataArray = new Uint8Array(analyser.frequencyBinCount); isAudioInit = true; }
@@ -312,12 +483,124 @@
     const releaseSeek = () => { isDraggingProgress = false; }; progressBar.addEventListener('change', releaseSeek); progressBar.addEventListener('touchend', releaseSeek); progressBar.addEventListener('mouseup', releaseSeek);
 
     let time = 0; let globalSmoothedBass = 0;
-    const smokeSprite = document.createElement('canvas'); smokeSprite.width = 64; smokeSprite.height = 64; const sCtx = smokeSprite.getContext('2d'); const sGrad = sCtx.createRadialGradient(32, 32, 0, 32, 32, 32); sGrad.addColorStop(0, 'rgba(240, 240, 240, 0.25)'); sGrad.addColorStop(0.4, 'rgba(240, 240, 240, 0.1)'); sGrad.addColorStop(0.8, 'rgba(240, 240, 240, 0.02)'); sGrad.addColorStop(1, 'rgba(240, 240, 240, 0)'); sCtx.fillStyle = sGrad; sCtx.fillRect(0, 0, 64, 64); let smokeParticles = [];
-    function drawCoffeeSteam(x, y, style, scale, propSpeed) { if(style === 'none') { smokeParticles = []; return; } let customOpacity = parseFloat(document.getElementById('smokeOpacity')?.value) || 1.0; let spawnRate = 0.6; if(style === 'soft_steam') spawnRate = 0.5; if(style === 'swirl_vapor') spawnRate = 1.0; let actualSpawns = Math.floor(spawnRate * propSpeed); if (Math.random() < (spawnRate * propSpeed) % 1) actualSpawns++; for(let i = 0; i < actualSpawns; i++) { smokeParticles.push({ x: x + (Math.random() - 0.5) * 8 * scale, y: y - 2 * scale, life: 0, maxLife: 180 + Math.random() * 60, size: 14 * scale, grow: 0.2 * scale, vx: (Math.random() - 0.5) * 0.3 * scale, vy: (0.35 + Math.random() * 0.25) * scale, swirlOffset: Math.random() * Math.PI * 2, swirlSpeed: (Math.random() * 0.015 + 0.008) * (style === 'swirl_vapor' ? 2.2 : 1), baseMaxOpacity: 0.45 }); } ctx.save(); ctx.globalCompositeOperation = 'screen'; for (let i = smokeParticles.length - 1; i >= 0; i--) { let p = smokeParticles[i]; p.life += propSpeed; p.y -= p.vy * propSpeed; p.x += (p.vx + Math.sin(p.life * p.swirlSpeed + p.swirlOffset) * (style === 'swirl_vapor' ? 0.8 : 0.3)) * scale * propSpeed; p.size += p.grow * propSpeed; let halfLife = p.maxLife * 0.35; let currentOpacity = 0; if (p.life < halfLife) { currentOpacity = (p.life / halfLife) * p.baseMaxOpacity; } else { currentOpacity = (1 - ((p.life - halfLife) / (p.maxLife - halfLife))) * p.baseMaxOpacity; } let finalAlpha = currentOpacity * customOpacity; if (finalAlpha > 0) { ctx.globalAlpha = Math.min(1.0, finalAlpha); ctx.drawImage(smokeSprite, p.x - p.size / 2, p.y - p.size / 2, p.size, p.size); } if (p.life >= p.maxLife) { smokeParticles.splice(i, 1); } } ctx.restore(); }
-    function getSymmetricVal(index, totalItems, bufferLen) { try { if (!dataArray || dataArray.length === 0) return 0; const center = totalItems / 2; const centerDist = Math.abs(index - center) / center; const dataIdx = Math.floor(centerDist * (bufferLen * 0.6)); let val = dataArray[dataIdx]; if (isNaN(val) || val === undefined) return 0; return val / 255; } catch (e) { return 0; } }
-    function drawVisualizer(bufferLen, isReflection) { const style = document.getElementById('visType').value; const visScaleX = parseFloat(document.getElementById('visScaleX').value); const visScaleY = parseFloat(document.getElementById('visScaleY').value); const visSkewY = parseFloat(document.getElementById('visSkewY').value); const visRot = parseFloat(document.getElementById('visRot').value); const visOpacity = parseFloat(document.getElementById('visOpacity').value); const visHeight = parseInt(document.getElementById('visHeight').value); ctx.save(); if (isReflection) { if (mirrorConfig.showVisReflect === 'no') { ctx.restore(); return; } ctx.translate(visX + visW / 2, visRefY); ctx.rotate(visRot * Math.PI / 180); ctx.transform(1, Math.tan(visSkewY * Math.PI / 180), 0, 1, 0, 0); ctx.scale(visScaleX, visScaleY); ctx.scale(1, -1); ctx.globalAlpha = visOpacity * 0.45; ctx.translate(-visW / 2, 0); } else { ctx.translate(visX + visW / 2, visY); ctx.rotate(visRot * Math.PI / 180); ctx.transform(1, Math.tan(visSkewY * Math.PI / 180), 0, 1, 0, 0); ctx.scale(visScaleX, visScaleY); ctx.globalAlpha = visOpacity; ctx.translate(-visW / 2, 0); } const cy = 0; try { if (style === 'liquid_bar') { let numBars = 32; let spacing = visW / numBars; let barW = spacing * 0.6; for (let i = 0; i < numBars; i++) { let h = Math.max(10, getSymmetricVal(i, numBars, bufferLen) * visHeight); ctx.fillStyle = '#00e5ff'; ctx.shadowBlur = 15; ctx.shadowColor = '#00e5ff'; ctx.beginPath(); if(ctx.roundRect) ctx.roundRect(i * spacing, cy - h, barW, h, barW/2); else ctx.rect(i * spacing, cy - h, barW, h); ctx.fill(); } ctx.shadowBlur = 0; } else { let numBars = 32; let spacing = visW / numBars; let barW = spacing * 0.6; for (let i = 0; i < numBars; i++) { let h = Math.max(10, getSymmetricVal(i, numBars, bufferLen) * visHeight); ctx.fillStyle = '#00e5ff'; ctx.fillRect(i * spacing, cy - h, barW, h); } } } catch (e) {} ctx.restore(); }
     
-    // --- PERBAIKAN BUG KACA (MENGHAPUS RESET TRANSFORM) ---
+    // PARTIKEL LINGKUNGAN (DIKEMBALIKAN)
+    class CinematicParticle {
+        constructor() { this.reset(true); }
+        reset(init = false) { this.x = Math.random() * width; this.size = Math.random() * 3 + 1; this.speedY = Math.random() * 1.5 + 0.5; this.opacity = Math.random() * 0.6 + 0.2; this.life = Math.random() * 100; this.wobbleSpeed = Math.random() * 0.05 + 0.01; let typeVal = document.getElementById('type').value; if(typeVal === 'bokeh_orbs') { this.size = Math.random() * 15 + 5; this.opacity = Math.random()*0.3+0.1; } if(typeVal === 'snow_dust' || typeVal === 'ash_particles') { this.speedY = Math.random() * 2 + 1; } let movesUp = ['dust_motes', 'golden_pollen', 'magic_sparks', 'floating_embers', 'bokeh_orbs', 'fairy_light', 'deep_sea_motes'].includes(typeVal); if (init) { this.y = Math.random() * height; } else { this.y = movesUp ? height + 50 + Math.random()*50 : -50 - Math.random()*50; } }
+        update() { let typeVal = document.getElementById('type').value; if(typeVal === 'none') return; let wind = parseInt(document.getElementById('fxAngle').value) * Math.PI / 180; let sm = parseFloat(document.getElementById('fxSpeed').value); this.life += this.wobbleSpeed; let movesUp = ['dust_motes', 'golden_pollen', 'magic_sparks', 'floating_embers', 'bokeh_orbs', 'fairy_light', 'deep_sea_motes'].includes(typeVal); if (movesUp) { this.y -= this.speedY * sm * 0.5; } else { this.y += this.speedY * sm; } this.x += Math.sin(this.life) * 1 * sm + Math.sin(wind)*3; this.currentOpacity = this.opacity * (0.5 + 0.5*Math.sin(this.life*2)); if(this.x > width + 50) this.x = -50; if(this.x < -50) this.x = width + 50; if((movesUp && this.y < -50) || (!movesUp && this.y > height + 50)) { this.reset(); } }
+        draw() { let typeVal = document.getElementById('type').value; if(typeVal === 'none') return; ctx.save(); ctx.beginPath(); let c1; if(typeVal === 'dust_motes') { c1=`rgba(255,230,150,${this.currentOpacity})`; ctx.shadowBlur=this.size*2; ctx.shadowColor='#ffeb3b'; } else if(typeVal === 'magic_sparks') { c1=`rgba(200,255,255,${this.currentOpacity})`; ctx.shadowBlur=this.size*3; ctx.shadowColor='#00e5ff'; } else if(typeVal === 'floating_embers') { c1=`rgba(255,100,0,${this.currentOpacity})`; ctx.shadowBlur=this.size*3; ctx.shadowColor='#ff3d00'; } else if(typeVal === 'bokeh_orbs') { c1=`rgba(255,255,255,${this.currentOpacity*0.5})`; } else if(typeVal === 'snow_dust') { c1=`rgba(255,255,255,${this.currentOpacity})`; ctx.shadowBlur=this.size; ctx.shadowColor='#fff'; } else if(typeVal === 'fairy_light') { c1=`rgba(255,200,255,${this.currentOpacity})`; ctx.shadowBlur=this.size*4; ctx.shadowColor='#e040fb'; } else if(typeVal === 'ash_particles') { c1=`rgba(50,50,50,${this.currentOpacity+0.4})`; } else if(typeVal === 'starlight_glint') { c1=`rgba(255,255,255,${this.currentOpacity})`; ctx.translate(this.x, this.y); ctx.rotate(this.life); ctx.moveTo(-this.size, 0); ctx.lineTo(this.size, 0); ctx.moveTo(0, -this.size); ctx.lineTo(0, this.size); ctx.strokeStyle=c1; ctx.lineWidth=1; ctx.stroke(); ctx.restore(); return; } else if(typeVal === 'deep_sea_motes') { c1=`rgba(100,200,255,${this.currentOpacity*0.7})`; ctx.shadowBlur=this.size*2; ctx.shadowColor='#00bcd4'; } else if(typeVal === 'golden_pollen') { c1=`rgba(255,215,0,${this.currentOpacity})`; ctx.shadowBlur=this.size*2; ctx.shadowColor='#ffb300'; } ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fillStyle = c1; ctx.fill(); ctx.restore(); }
+    }
+    let cinematicParticles = []; for(let i=0; i<400; i++) cinematicParticles.push(new CinematicParticle());
+
+    // KOPI STEAM (DIKEMBALIKAN 5 OPSI)
+    const smokeSprite = document.createElement('canvas'); smokeSprite.width = 64; smokeSprite.height = 64; const sCtx = smokeSprite.getContext('2d'); const sGrad = sCtx.createRadialGradient(32, 32, 0, 32, 32, 32); sGrad.addColorStop(0, 'rgba(240, 240, 240, 0.25)'); sGrad.addColorStop(0.4, 'rgba(240, 240, 240, 0.1)'); sGrad.addColorStop(0.8, 'rgba(240, 240, 240, 0.02)'); sGrad.addColorStop(1, 'rgba(240, 240, 240, 0)'); sCtx.fillStyle = sGrad; sCtx.fillRect(0, 0, 64, 64); let smokeParticles = [];
+    function drawCoffeeSteam(x, y, style, scale, propSpeed) { if(style === 'none') { smokeParticles = []; return; } let customOpacity = parseFloat(document.getElementById('smokeOpacity')?.value) || 1.0; let spawnRate = 0.6; if(style === 'soft_steam') spawnRate = 0.5; if(style === 'swirl_vapor') spawnRate = 1.0; if(style === 'thin_wisp') spawnRate = 0.4; if(style === 'heavy_steam') spawnRate = 1.6; if(style === 'wind_steam') spawnRate = 1.0; let actualSpawns = Math.floor(spawnRate * propSpeed); if (Math.random() < (spawnRate * propSpeed) % 1) actualSpawns++; for(let i = 0; i < actualSpawns; i++) { smokeParticles.push({ x: x + (Math.random() - 0.5) * 8 * scale, y: y - 2 * scale, life: 0, maxLife: (style === 'thin_wisp' ? 260 : 180) + Math.random() * 60, size: (style === 'heavy_steam' ? 22 : (style === 'thin_wisp' ? 8 : 14)) * scale, grow: (style === 'heavy_steam' ? 0.35 : (style === 'thin_wisp' ? 0.1 : 0.2)) * scale, vx: (style === 'wind_steam' ? (1.0 + Math.random() * 0.5) : (Math.random() - 0.5) * 0.3) * scale, vy: ((style === 'thin_wisp' ? 0.5 : 0.35) + Math.random() * 0.25) * scale, swirlOffset: Math.random() * Math.PI * 2, swirlSpeed: (Math.random() * 0.015 + 0.008) * (style === 'swirl_vapor' ? 2.2 : 1), baseMaxOpacity: (style === 'heavy_steam' ? 0.6 : (style === 'thin_wisp' ? 0.25 : 0.45)) }); } ctx.save(); ctx.globalCompositeOperation = 'screen'; for (let i = smokeParticles.length - 1; i >= 0; i--) { let p = smokeParticles[i]; p.life += propSpeed; p.y -= p.vy * propSpeed; p.x += (p.vx + Math.sin(p.life * p.swirlSpeed + p.swirlOffset) * (style === 'swirl_vapor' ? 0.8 : 0.3)) * scale * propSpeed; p.size += p.grow * propSpeed; let halfLife = p.maxLife * 0.35; let currentOpacity = 0; if (p.life < halfLife) { currentOpacity = (p.life / halfLife) * p.baseMaxOpacity; } else { currentOpacity = (1 - ((p.life - halfLife) / (p.maxLife - halfLife))) * p.baseMaxOpacity; } let finalAlpha = currentOpacity * customOpacity; if (finalAlpha > 0) { ctx.globalAlpha = Math.min(1.0, finalAlpha); ctx.drawImage(smokeSprite, p.x - p.size / 2, p.y - p.size / 2, p.size, p.size); } if (p.life >= p.maxLife) { smokeParticles.splice(i, 1); } } ctx.restore(); }
+    
+    function getSymmetricVal(index, totalItems, bufferLen) { try { if (!dataArray || dataArray.length === 0) return 0; const center = totalItems / 2; const centerDist = Math.abs(index - center) / center; const dataIdx = Math.floor(centerDist * (bufferLen * 0.6)); let val = dataArray[dataIdx]; if (isNaN(val) || val === undefined) return 0; return val / 255; } catch (e) { return 0; } }
+    
+    // VISUALIZER 55 OPSI FULLY IMPLEMENTED
+    function drawVisualizer(bufferLen, isReflection) {
+      const style = document.getElementById('visType').value;
+      const visScaleX = parseFloat(document.getElementById('visScaleX').value);
+      const visScaleY = parseFloat(document.getElementById('visScaleY').value);
+      const visSkewY = parseFloat(document.getElementById('visSkewY').value);
+      const visRot = parseFloat(document.getElementById('visRot').value);
+      const visOpacity = parseFloat(document.getElementById('visOpacity').value);
+      const visHeight = parseInt(document.getElementById('visHeight').value);
+      
+      ctx.save();
+      if (isReflection) {
+          if (mirrorConfig.showVisReflect === 'no') { ctx.restore(); return; }
+          ctx.translate(visX + visW / 2, visRefY);
+          ctx.rotate(visRot * Math.PI / 180); ctx.transform(1, Math.tan(visSkewY * Math.PI / 180), 0, 1, 0, 0); ctx.scale(visScaleX, visScaleY); ctx.scale(1, -1); ctx.globalAlpha = visOpacity * 0.45; ctx.translate(-visW / 2, 0);
+      } else {
+          ctx.translate(visX + visW / 2, visY);
+          ctx.rotate(visRot * Math.PI / 180); ctx.transform(1, Math.tan(visSkewY * Math.PI / 180), 0, 1, 0, 0); ctx.scale(visScaleX, visScaleY); ctx.globalAlpha = visOpacity; ctx.translate(-visW / 2, 0);
+      }
+      
+      const cy = 0;
+      try {
+          let numBars = 48; let spacing = visW / numBars; let barW = spacing * 0.7;
+          let isWave = ['modern_wave','filled_wave','double_wave','thin_wave','shadow_wave','stereo_lines','smooth_curve','ribbon_wave','minimal_line','calm_horizon','digital_dna'].includes(style);
+
+          if (isWave) {
+             ctx.beginPath();
+             for(let i=0; i<=numBars; i++) {
+                 let val = getSymmetricVal(i, numBars, bufferLen);
+                 let h = val * visHeight; let x = (i/numBars)*visW;
+                 if(i===0) ctx.moveTo(x, cy-h); else ctx.lineTo(x, cy-h);
+             }
+             if (style === 'modern_wave' || style === 'smooth_curve') { ctx.strokeStyle='#00e5ff'; ctx.lineWidth=3; ctx.shadowBlur=15; ctx.shadowColor='#00e5ff'; ctx.stroke(); }
+             else if (style === 'filled_wave' || style === 'calm_horizon') { ctx.lineTo(visW, cy); ctx.lineTo(0, cy); let grad = ctx.createLinearGradient(0,cy-visHeight,0,cy); grad.addColorStop(0,'rgba(0,229,255,0.8)'); grad.addColorStop(1,'rgba(0,229,255,0)'); ctx.fillStyle=grad; ctx.fill(); }
+             else if (style === 'double_wave') { ctx.strokeStyle='#ff00ff'; ctx.lineWidth=2; ctx.stroke(); ctx.beginPath(); for(let i=0; i<=numBars; i++) { let h = getSymmetricVal(i, numBars, bufferLen) * visHeight * 0.5; let x = (i/numBars)*visW; if(i===0) ctx.moveTo(x, cy-h); else ctx.lineTo(x, cy-h); } ctx.strokeStyle='#00e5ff'; ctx.stroke(); }
+             else if (style === 'thin_wave' || style === 'minimal_line') { ctx.strokeStyle='#fff'; ctx.lineWidth=1; ctx.stroke(); }
+             else if (style === 'shadow_wave') { ctx.strokeStyle='#ffeb3b'; ctx.lineWidth=3; ctx.shadowBlur=10; ctx.shadowColor='#000'; ctx.shadowOffsetY=5; ctx.stroke(); }
+             else if (style === 'stereo_lines') { ctx.strokeStyle='#00e676'; ctx.lineWidth=2; ctx.stroke(); ctx.translate(0, 10); ctx.strokeStyle='#ff3d00'; ctx.stroke(); ctx.translate(0, -10); }
+             else if (style === 'ribbon_wave') { ctx.lineWidth=5; ctx.strokeStyle='rgba(255,100,200,0.8)'; ctx.stroke(); }
+             else if (style === 'digital_dna') { ctx.strokeStyle='#00e5ff'; ctx.lineWidth=2; ctx.stroke(); ctx.beginPath(); for(let i=0; i<=numBars; i++) { let h = -getSymmetricVal(i, numBars, bufferLen) * visHeight; let x = (i/numBars)*visW; if(i===0) ctx.moveTo(x, cy-h); else ctx.lineTo(x, cy-h); } ctx.strokeStyle='#ff00ff'; ctx.stroke(); }
+          } else {
+             for (let i = 0; i < numBars; i++) {
+                 let val = getSymmetricVal(i, numBars, bufferLen);
+                 let h = Math.max(2, val * visHeight);
+                 let x = i * spacing;
+                 if (!peakHeights[i]) peakHeights[i] = 0;
+                 if (h >= peakHeights[i]) peakHeights[i] = h; else peakHeights[i] = Math.max(0, peakHeights[i] - 1.5);
+                 
+                 ctx.shadowBlur = 0; ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0;
+
+                 if (style === 'liquid_bar') { ctx.fillStyle = '#00e5ff'; ctx.shadowBlur = 15; ctx.shadowColor = '#00e5ff'; if(ctx.roundRect) { ctx.beginPath(); ctx.roundRect(x, cy-h, barW, h, barW/2); ctx.fill(); } else ctx.fillRect(x, cy-h, barW, h); }
+                 else if (style === 'cyber_pulse') { ctx.fillStyle = '#ff00ff'; ctx.shadowBlur = 15; ctx.shadowColor = '#ff00ff'; ctx.fillRect(x, cy-h, barW, h); }
+                 else if (style === 'mirror_bars') { ctx.fillStyle = '#fff'; ctx.fillRect(x, cy-h, barW, h); ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.fillRect(x, cy, barW, h*0.5); }
+                 else if (style === 'gradient_blocks') { let g = ctx.createLinearGradient(0,cy,0,cy-visHeight); g.addColorStop(0,'#00bcd4'); g.addColorStop(1,'#0033ff'); ctx.fillStyle=g; ctx.fillRect(x, cy-h, barW, h); }
+                 else if (style === 'sunset_bars') { let g = ctx.createLinearGradient(0,cy,0,cy-visHeight); g.addColorStop(0,'#ff5722'); g.addColorStop(1,'#ffeb3b'); ctx.fillStyle=g; ctx.fillRect(x, cy-h, barW, h); }
+                 else if (style === 'emerald_bars') { ctx.fillStyle = '#00e676'; ctx.shadowBlur = 10; ctx.shadowColor = '#00e676'; ctx.fillRect(x, cy-h, barW, h); }
+                 else if (style === 'purple_haze') { ctx.fillStyle = 'rgba(156,39,176,0.8)'; ctx.fillRect(x, cy-h, barW, h); }
+                 else if (style === 'gold_classic') { ctx.fillStyle = '#ffb300'; ctx.shadowBlur = 5; ctx.shadowColor = '#ffb300'; ctx.fillRect(x, cy-h, barW, h); }
+                 else if (style === 'monochrome_fade') { ctx.fillStyle = `rgba(255,255,255,${val+0.2})`; ctx.fillRect(x, cy-h, barW, h); }
+                 else if (style === 'dual_tone') { ctx.fillStyle = '#00e5ff'; ctx.fillRect(x, cy-h/2, barW, h/2); ctx.fillStyle = '#ff00ff'; ctx.fillRect(x, cy-h, barW, h/2); }
+                 else if (style === 'vintage_bars') { ctx.fillStyle = 'rgba(245, 245, 240, 0.9)'; ctx.fillRect(x, cy-h, barW, h); }
+                 else if (style === 'winamp_classic') { ctx.fillStyle = 'rgba(230, 235, 240, 0.7)'; ctx.fillRect(x, cy-h, barW, h); ctx.fillStyle = '#ff3d00'; ctx.fillRect(x, cy-peakHeights[i]-4, barW, 3); }
+                 else if (style === 'classic_eq') { let g = ctx.createLinearGradient(0,cy,0,cy-visHeight); g.addColorStop(0,'#00e676'); g.addColorStop(0.6,'#ffeb3b'); g.addColorStop(1,'#ff3d00'); ctx.fillStyle=g; ctx.fillRect(x, cy-h, barW, h); }
+                 else if (style === 'step_eq') { ctx.fillStyle = '#00e5ff'; let steps = Math.floor(h/6); for(let j=0; j<steps; j++) { ctx.fillRect(x, cy-(j*6)-4, barW, 4); } }
+                 else if (style === 'thin_eq') { ctx.fillStyle = '#fff'; ctx.fillRect(x + barW/2 - 1, cy-h, 2, h); }
+                 else if (style === 'thick_bars') { ctx.fillStyle = '#fff'; ctx.fillRect(x, cy-h, barW+2, h); }
+                 else if (style === 'hollow_bars') { ctx.strokeStyle = '#00e5ff'; ctx.lineWidth = 1.5; ctx.strokeRect(x, cy-h, barW, h); }
+                 else if (style === 'rounded_bars') { ctx.fillStyle = '#ffeb3b'; if(ctx.roundRect){ ctx.beginPath(); ctx.roundRect(x, cy-h, barW, h, barW/2); ctx.fill();} else ctx.fillRect(x, cy-h, barW, h); }
+                 else if (style === 'split_eq') { ctx.fillStyle = '#00e5ff'; ctx.fillRect(x, cy-h/2, barW, h); }
+                 else if (style === 'double_mirror') { ctx.fillStyle = '#fff'; ctx.fillRect(x, cy-h/2, barW, h/2); ctx.fillRect(x, cy+2, barW, h/2); }
+                 else if (style === 'dotted_eq') { ctx.fillStyle = '#00e5ff'; let dots = Math.floor(h/8); for(let j=0; j<dots; j++){ ctx.beginPath(); ctx.arc(x+barW/2, cy-(j*8)-4, barW/2.5, 0, Math.PI*2); ctx.fill(); } }
+                 else if (style === 'led_matrix') { ctx.fillStyle = '#00e676'; let leds = Math.floor(h/6); for(let j=0; j<leds; j++){ ctx.fillRect(x, cy-(j*6)-5, barW, 4); } }
+                 else if (style === 'analog_vu') { ctx.fillStyle = (val > 0.8) ? '#ff3d00' : '#ffeb3b'; ctx.fillRect(x, cy-h, barW, h); }
+                 else if (style === 'retro_oscilloscope') { ctx.fillStyle = '#00ff00'; ctx.shadowBlur=5; ctx.shadowColor='#00ff00'; ctx.fillRect(x, cy-h, barW, Math.max(2, h*0.1)); }
+                 else if (style === 'peak_line') { ctx.fillStyle = '#00e5ff'; ctx.fillRect(x, cy-peakHeights[i], barW, 3); }
+                 else if (style === 'peak_dots_only') { ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(x+barW/2, cy-peakHeights[i], barW/2, 0, Math.PI*2); ctx.fill(); }
+                 else if (style === 'dash_bars') { ctx.fillStyle = '#fff'; let dashes = Math.floor(h/10); for(let j=0; j<dashes; j++){ ctx.fillRect(x, cy-(j*10)-6, barW, 2); } }
+                 else if (style === 'meter_blocks') { ctx.fillStyle = `rgb(${val*255}, 100, 255)`; let blocks = Math.floor(h/12); for(let j=0; j<blocks; j++) ctx.fillRect(x, cy-(j*12)-10, barW, 10); }
+                 else if (style === 'soft_glow_bars') { ctx.fillStyle = `rgba(255, 255, 255, ${val})`; ctx.shadowBlur = 10; ctx.shadowColor = '#fff'; ctx.fillRect(x, cy-h, barW, h); }
+                 else if (style === 'white_caps') { ctx.fillStyle = '#00bcd4'; ctx.fillRect(x, cy-h, barW, h); ctx.fillStyle='#fff'; ctx.fillRect(x, cy-h-4, barW, 4); }
+                 else if (style === 'hologram_grid') { ctx.strokeStyle = 'rgba(0, 229, 255, 0.5)'; ctx.strokeRect(x, cy-h, barW, h); ctx.fillStyle='rgba(0, 229, 255, 0.2)'; ctx.fillRect(x, cy-h, barW, h); }
+                 else if (style === 'matrix_rain') { ctx.fillStyle = '#00ff00'; ctx.font = "10px monospace"; ctx.fillText(String.fromCharCode(0x30A0 + Math.floor(Math.random()*96)), x, cy-h); }
+                 else if (style === 'cyber_laser') { ctx.fillStyle = '#ff0055'; ctx.shadowBlur = 15; ctx.shadowColor = '#ff0055'; ctx.fillRect(x + barW/2, cy-h, 1, h); }
+                 else if (style === 'neon_ripple') { ctx.strokeStyle = '#ffeb3b'; ctx.shadowBlur = 10; ctx.shadowColor = '#ffeb3b'; ctx.strokeRect(x, cy-h/2, barW, h/2); }
+                 else if (style === 'aurora_borealis') { ctx.fillStyle = `hsla(${val*120}, 100%, 50%, 0.6)`; ctx.shadowBlur=20; ctx.shadowColor=ctx.fillStyle; ctx.fillRect(x, cy-h, barW, h); }
+                 else if (style === 'block_tower') { ctx.fillStyle = '#ccc'; ctx.fillRect(x, cy-h, barW, h); ctx.fillStyle = '#fff'; ctx.fillRect(x, cy-h, barW, 2); ctx.fillStyle = '#555'; ctx.fillRect(x+barW-2, cy-h, 2, h); }
+                 else if (style === 'equalizer_3d') { let g = ctx.createLinearGradient(x,cy,x+barW,cy); g.addColorStop(0,'#444'); g.addColorStop(0.5,'#aaa'); g.addColorStop(1,'#222'); ctx.fillStyle=g; ctx.fillRect(x, cy-h, barW, h); }
+                 else if (style === 'floating_blocks') { ctx.fillStyle = '#00e5ff'; ctx.fillRect(x, cy-h, barW, 10); ctx.fillStyle = 'rgba(0,229,255,0.3)'; ctx.fillRect(x, cy-h+15, barW, 10); }
+                 else if (style === 'classic_studio') { ctx.fillStyle = '#111'; ctx.fillRect(x, cy-visHeight, barW, visHeight); ctx.fillStyle = (val>0.8)?'#f00':'#0f0'; ctx.fillRect(x+1, cy-h+1, barW-2, h-2); }
+                 else if (style === 'classic_spectrum') { ctx.fillStyle = `hsl(${(i/numBars)*360}, 100%, 50%)`; ctx.fillRect(x, cy-h, barW, h); }
+                 else if (style === 'cassette_tape') { ctx.fillStyle = '#333'; ctx.fillRect(x, cy-h, barW, h); ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(x+barW/2, cy-h+10, barW/3, 0, Math.PI*2); ctx.fill(); }
+                 else if (style === 'vintage_vu_meter') { ctx.fillStyle='#ffe0b2'; ctx.fillRect(x, cy-h, barW, h); ctx.fillStyle='#000'; ctx.fillRect(x+barW/2, cy-h, 1, h); }
+                 else if (style === 'classic_vinyl') { ctx.fillStyle='#111'; ctx.beginPath(); ctx.arc(x+barW/2, cy-h, barW/2, 0, Math.PI*2); ctx.fill(); ctx.fillStyle='#f00'; ctx.beginPath(); ctx.arc(x+barW/2, cy-h, barW/6, 0, Math.PI*2); ctx.fill(); }
+                 else if (style === 'retro_boombox_eq') { ctx.fillStyle = '#ff0000'; let blocks = Math.floor(h/8); for(let j=0; j<blocks; j++) { ctx.fillRect(x, cy-(j*8)-6, barW, 6); } }
+                 else { ctx.fillStyle = '#00e5ff'; ctx.fillRect(x, cy-h, barW, h); }
+             }
+          }
+      } catch(e) {}
+      ctx.restore();
+    }
+    
+    // SPEAKER 3D PARALLAX
     function drawSpeakers(bufferLen, isReflection) {
       if (!isBgReady || document.getElementById('speakerStyle').value === 'none') return;
       let R_out_L = parseFloat(document.getElementById('spkL_out').value); let R_in_L = parseFloat(document.getElementById('spkL_in').value); let R_out_R = parseFloat(document.getElementById('spkR_out').value); let R_in_R = parseFloat(document.getElementById('spkR_in').value);
@@ -330,47 +613,76 @@
 
       function drawLiveBackgroundSpeaker(x, y, refY, R_out, R_in, offX, offY, scaleX, scaleY, skewX, skewY, rot, maskOffX, maskOffY) {
         let softness = parseFloat(document.getElementById('maskSoftness').value) || 0.5; let actualX = x + shakeX; let actualY = isReflection ? refY + shakeY : y + shakeY;
-        
+        let is3D = document.getElementById('effect3D') ? document.getElementById('effect3D').value : 'yes'; 
         bCtx.clearRect(0, 0, width, height); 
         
-        // 1. Corong Utama
         bCtx.save();
         if(isReflection) { if (mirrorConfig.showSpkReflect === 'no') { bCtx.restore(); return; } bCtx.translate(actualX, actualY); bCtx.scale(1, -1); let rScale = mirrorConfig.spkReflectSize; bCtx.scale(rScale, rScale); bCtx.globalAlpha = mirrorConfig.spkReflectOpacity; } else { bCtx.translate(actualX, actualY); }
-        bCtx.rotate(rot); bCtx.transform(1, Math.tan(skewY), Math.tan(skewX), 1, 0, 0); bCtx.scale(scaleX, scaleY); bCtx.scale(pump, pump); 
+        bCtx.rotate(rot); bCtx.transform(1, Math.tan(skewY), Math.tan(skewX), 1, 0, 0); bCtx.scale(scaleX, scaleY); 
+        
+        bCtx.save();
+        bCtx.scale(pump, pump); 
         bCtx.drawImage(bgImageElement, bgGlobalX - x, bgGlobalY - y, bgImageElement.width * bgGlobalScale, bgImageElement.height * bgGlobalScale);
-        let is3D = document.getElementById('effect3D') ? document.getElementById('effect3D').value : 'yes'; if (is3D === 'yes') { let depth = document.getElementById('depth3D') ? parseFloat(document.getElementById('depth3D').value) : 0.8; let shadowAlpha = Math.min(0.95, depth * (0.2 + finalBass * 0.8)); let glowAlpha = Math.min(0.4, (depth * 0.3) * (0.3 + finalBass * 0.7)); let grad3D = bCtx.createRadialGradient(0, 0, R_in, 0, 0, R_out); grad3D.addColorStop(0, `rgba(0, 0, 0, ${shadowAlpha})`); grad3D.addColorStop(0.5, `rgba(255, 255, 255, ${glowAlpha})`); grad3D.addColorStop(1, `rgba(0, 0, 0, ${shadowAlpha * 0.5})`); bCtx.fillStyle = grad3D; bCtx.beginPath(); bCtx.arc(0, 0, R_out * 2, 0, Math.PI * 2); bCtx.fill(); } 
         bCtx.restore();
 
-        // 2. Masking Pinggiran
+        if (is3D === 'yes') { 
+            let depth = document.getElementById('depth3D') ? parseFloat(document.getElementById('depth3D').value) : 0.8; 
+            let shadowAlpha = Math.min(0.95, depth * (0.2 + finalBass * 0.8)); let glowAlpha = Math.min(0.4, (depth * 0.3) * (0.3 + finalBass * 0.7)); 
+            let grad3D = bCtx.createRadialGradient(0, 0, R_in, 0, 0, R_out); 
+            grad3D.addColorStop(0, `rgba(0, 0, 0, ${shadowAlpha})`); grad3D.addColorStop(0.5, `rgba(255, 255, 255, ${glowAlpha})`); grad3D.addColorStop(1, `rgba(0, 0, 0, ${shadowAlpha * 0.5})`); 
+            bCtx.fillStyle = grad3D; bCtx.beginPath(); bCtx.arc(0, 0, R_out * 2, 0, Math.PI * 2); bCtx.fill(); 
+        } 
+        bCtx.restore();
+
         bCtx.save(); bCtx.globalCompositeOperation = 'destination-in'; if(isReflection) { bCtx.translate(actualX, actualY); bCtx.scale(1, -1); let rScale = mirrorConfig.spkReflectSize; bCtx.scale(rScale, rScale); } else { bCtx.translate(actualX, actualY); } bCtx.rotate(rot); bCtx.transform(1, Math.tan(skewY), Math.tan(skewX), 1, 0, 0); bCtx.scale(scaleX, scaleY);
         bCtx.translate(maskOffX, maskOffY); let grad = bCtx.createRadialGradient(0, 0, R_out * softness, 0, 0, R_out); grad.addColorStop(0, 'rgba(0,0,0,1)'); grad.addColorStop(1, 'rgba(0,0,0,0)'); bCtx.fillStyle = grad; bCtx.beginPath(); bCtx.fillRect(-R_out*4, -R_out*4, R_out*8, R_out*8); bCtx.fill(); bCtx.restore();
         
         if (isReflection) { bCtx.save(); bCtx.globalCompositeOperation = 'destination-out'; bCtx.translate(actualX, actualY); let maxR = R_out * Math.max(scaleX, scaleY) * mirrorConfig.spkReflectSize; let cropH = (mirrorConfig.spkReflectCrop / 100) * (maxR * 2); bCtx.fillRect(-maxR*2, maxR - cropH, maxR*4, cropH); bCtx.restore(); }
         ctx.drawImage(bufferCanvas, 0, 0); 
 
-        // 3. Dust Cap (PERBAIKAN BUG DIMENSI)
         ctx.save();
         if(isReflection) { ctx.translate(actualX, actualY); ctx.scale(1, -1); let rScale = mirrorConfig.spkReflectSize; ctx.scale(rScale, rScale); ctx.globalAlpha = mirrorConfig.spkReflectOpacity; } else { ctx.translate(actualX, actualY); }
-        ctx.rotate(rot); ctx.transform(1, Math.tan(skewY), Math.tan(skewX), 1, 0, 0); ctx.scale(scaleX, scaleY); 
+        bCtx.rotate(rot); bCtx.transform(1, Math.tan(skewY), Math.tan(skewX), 1, 0, 0); bCtx.scale(scaleX, scaleY); 
         
         ctx.save(); 
         ctx.translate(offX, offY); 
         ctx.beginPath(); ctx.arc(0, 0, R_in, 0, Math.PI * 2); ctx.clip(); 
+
+        if (is3D === 'yes') {
+            ctx.save();
+            ctx.shadowColor = `rgba(0, 0, 0, 0.9)`;
+            ctx.shadowBlur = 8 * (1 + finalBass * 2);
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 6 * finalBass;
+            ctx.fillStyle = "rgba(0,0,0,0.5)";
+            ctx.fill();
+            ctx.restore();
+        }
         
-        // Menggambar latar tanpa me-reset matrix, hanya memindah koordinat gambar
-        ctx.drawImage(bgImageElement, bgGlobalX - x - offX, bgGlobalY - y - offY, bgImageElement.width * bgGlobalScale, bgImageElement.height * bgGlobalScale); 
+        ctx.save();
+        let microZoom = 1.0 + (finalBass * pumpIntensity * 0.08); 
+        ctx.scale(microZoom, microZoom);
+        let offsetY = -finalBass * pumpIntensity * 3.5;
+        ctx.drawImage(bgImageElement, bgGlobalX - x - offX, (bgGlobalY - y - offY) + offsetY, bgImageElement.width * bgGlobalScale, bgImageElement.height * bgGlobalScale);
+        ctx.restore();
+        
+        if (is3D === 'yes') {
+            let capGlow = ctx.createRadialGradient(0, -R_in * 0.3, 0, 0, 0, R_in);
+            capGlow.addColorStop(0, `rgba(255, 255, 255, ${0.15 + finalBass * 0.3})`);
+            capGlow.addColorStop(0.6, `rgba(255, 255, 255, ${0.02 + finalBass * 0.08})`);
+            capGlow.addColorStop(1, `rgba(0, 0, 0, ${0.4 + finalBass * 0.3})`);
+            ctx.fillStyle = capGlow;
+            ctx.beginPath(); ctx.arc(0, 0, R_in, 0, Math.PI * 2); ctx.fill();
+        }
+
         ctx.restore(); 
         ctx.restore();
 
-        // 4. Garis Bantu UI
         if (document.getElementById('showGuides') && document.getElementById('showGuides').value === 'yes') {
             ctx.save(); if(isReflection) { ctx.translate(actualX, actualY); ctx.scale(1, -1); let rScale = mirrorConfig.spkReflectSize; ctx.scale(rScale, rScale); ctx.globalAlpha = mirrorConfig.spkReflectOpacity; } else { ctx.translate(actualX, actualY); }
             ctx.rotate(rot); ctx.transform(1, Math.tan(skewY), Math.tan(skewX), 1, 0, 0); ctx.scale(scaleX, scaleY);
-            
             ctx.beginPath(); ctx.arc(0, 0, R_out, 0, Math.PI * 2); ctx.strokeStyle = "rgba(255, 0, 50, 0.5)"; ctx.lineWidth = 1; ctx.stroke();
-            
             ctx.save(); ctx.translate(maskOffX, maskOffY); ctx.setLineDash([5,5]); ctx.beginPath(); ctx.arc(0, 0, R_out * softness, 0, Math.PI * 2); ctx.strokeStyle = "rgba(255, 255, 0, 0.5)"; ctx.lineWidth = 1; ctx.stroke(); ctx.beginPath(); ctx.arc(0, 0, R_out, 0, Math.PI * 2); ctx.strokeStyle = "rgba(255, 255, 0, 0.2)"; ctx.stroke(); ctx.setLineDash([]); ctx.beginPath(); ctx.moveTo(-5, 0); ctx.lineTo(5, 0); ctx.stroke(); ctx.beginPath(); ctx.moveTo(0, -5); ctx.lineTo(0, 5); ctx.stroke(); ctx.restore();
-            
             ctx.translate(offX, offY); ctx.beginPath(); ctx.arc(0, 0, R_in, 0, Math.PI * 2); ctx.strokeStyle = "rgba(0, 255, 255, 0.5)"; ctx.lineWidth = 1; ctx.stroke(); ctx.beginPath(); ctx.moveTo(-5, 0); ctx.lineTo(5, 0); ctx.stroke(); ctx.beginPath(); ctx.moveTo(0, -5); ctx.lineTo(0, 5); ctx.stroke(); ctx.restore();
         }
       }
@@ -378,7 +690,8 @@
       drawLiveBackgroundSpeaker(spk2X, spk2Y, spk2RefY, R_out_R, R_in_R, offX_R, offY_R, spkScaleX2, spkScaleY2, spkSkewX2, spkSkewY2, spkRot2, maskOffX_R, maskOffY_R);
     }
 
-    function drawCandle(x, y, refY, style, scale, propSpeed, isReflection) { if(style === 'none') return; ctx.save(); if (isReflection) { if (mirrorConfig.showCandleReflect === 'no') { ctx.restore(); return; } ctx.translate(x, refY); ctx.scale(1, -1); ctx.globalAlpha = 0.45; } else { ctx.translate(x, y); } ctx.scale(scale, scale); let t = time * 2 * propSpeed; let flicker = 0; let sway = 0; let h = 65; let w = 16; let baseColor = 'rgba(255, 140, 0, 0.8)'; let midColor = 'rgba(255, 210, 0, 0.9)'; let coreColor = 'rgba(255, 255, 255, 0.95)'; if(style === 'calm_flame') { flicker = Math.sin(t*3)*2; sway = Math.sin(t)*1; } else if(style === 'flicker_flame') { flicker = Math.sin(t*10)*4 + Math.random()*2; sway = Math.sin(t*5)*3; } ctx.beginPath(); ctx.arc(0, -h*0.5, w*3, 0, Math.PI*2); let gradGlow = ctx.createRadialGradient(0,-h*0.5,0, 0,-h*0.5,w*4); gradGlow.addColorStop(0, 'rgba(255, 120, 0, 0.25)'); gradGlow.addColorStop(1, 'rgba(255, 120, 0, 0)'); ctx.fillStyle = gradGlow; ctx.fill(); ctx.beginPath(); ctx.moveTo(0, 5); ctx.lineTo(sway*0.05, -8); ctx.lineWidth = 3; ctx.strokeStyle = '#111'; ctx.stroke(); ctx.beginPath(); ctx.moveTo(sway*0.05, -8); ctx.lineTo(sway*0.1, -12); ctx.lineWidth = 2; ctx.strokeStyle = '#ff5722'; ctx.stroke(); function drawFlame(fw, fh, fsway, color) { ctx.beginPath(); ctx.moveTo(0, 2); ctx.bezierCurveTo(fw, 2, fw*0.9, -fh*0.4, fsway, -fh); ctx.bezierCurveTo(-fw*0.9, -fh*0.4, -fw, 2, 0, 2); ctx.fillStyle = color; ctx.fill(); } drawFlame(w, h + flicker, sway, baseColor); drawFlame(w*0.7, (h + flicker)*0.75, sway*0.7, midColor); drawFlame(w*0.35, (h + flicker)*0.45, sway*0.3, coreColor); ctx.restore(); }
+    // API LILIN
+    function drawCandle(x, y, refY, style, scale, propSpeed, isReflection) { if(style === 'none') return; ctx.save(); if (isReflection) { if (mirrorConfig.showCandleReflect === 'no') { ctx.restore(); return; } ctx.translate(x, refY); ctx.scale(1, -1); ctx.globalAlpha = 0.45; } else { ctx.translate(x, y); } ctx.scale(scale, scale); let t = time * 2 * propSpeed; let flicker = 0; let sway = 0; let h = 65; let w = 16; let baseColor = 'rgba(255, 140, 0, 0.8)'; let midColor = 'rgba(255, 210, 0, 0.9)'; let coreColor = 'rgba(255, 255, 255, 0.95)'; if(style === 'calm_flame') { flicker = Math.sin(t*3)*2; sway = Math.sin(t)*1; } else if(style === 'flicker_flame') { flicker = Math.sin(t*10)*4 + Math.random()*2; sway = Math.sin(t*5)*3; } else if(style === 'bright_glow') { flicker = Math.sin(t*4)*2; h = 75; w = 18; ctx.shadowBlur = 15 + flicker; ctx.shadowColor = '#ff9800'; } else if(style === 'blue_base') { flicker = Math.sin(t*5)*2; baseColor = 'rgba(0, 150, 255, 0.8)'; midColor = 'rgba(100, 200, 255, 0.9)'; } else if(style === 'wind_flame') { flicker = Math.random()*5; sway = 15 + Math.sin(t*8)*5; } ctx.beginPath(); ctx.arc(0, -h*0.5, w*3, 0, Math.PI*2); let gradGlow = ctx.createRadialGradient(0,-h*0.5,0, 0,-h*0.5,w*4); gradGlow.addColorStop(0, 'rgba(255, 120, 0, 0.25)'); gradGlow.addColorStop(1, 'rgba(255, 120, 0, 0)'); ctx.fillStyle = gradGlow; ctx.fill(); ctx.beginPath(); ctx.moveTo(0, 5); ctx.lineTo(sway*0.05, -8); ctx.lineWidth = 3; ctx.strokeStyle = '#111'; ctx.stroke(); ctx.beginPath(); ctx.moveTo(sway*0.05, -8); ctx.lineTo(sway*0.1, -12); ctx.lineWidth = 2; ctx.strokeStyle = '#ff5722'; ctx.stroke(); function drawFlame(fw, fh, fsway, color) { ctx.beginPath(); ctx.moveTo(0, 2); ctx.bezierCurveTo(fw, 2, fw*0.9, -fh*0.4, fsway, -fh); ctx.bezierCurveTo(-fw*0.9, -fh*0.4, -fw, 2, 0, 2); ctx.fillStyle = color; ctx.fill(); } drawFlame(w, h + flicker, sway, baseColor); drawFlame(w*0.7, (h + flicker)*0.75, sway*0.7, midColor); drawFlame(w*0.35, (h + flicker)*0.45, sway*0.3, coreColor); if(style !== 'blue_base') { ctx.beginPath(); ctx.moveTo(0, 4); ctx.bezierCurveTo(w*0.5, 4, w*0.4, -5, 0, -5); ctx.bezierCurveTo(-w*0.4, -5, -w*0.5, 4, 0, 4); let bg = ctx.createRadialGradient(0,0,0, 0,0,w*0.5); bg.addColorStop(0,'rgba(0,100,255,0.6)'); bg.addColorStop(1,'rgba(0,50,255,0)'); ctx.fillStyle = bg; ctx.fill(); } ctx.restore(); }
 
     function animate() {
       ctx.fillStyle = "#000"; ctx.fillRect(0, 0, width, height); time += 0.05; ctx.save();
@@ -395,6 +708,10 @@
       drawCoffeeSteam(coffeeX, coffeeY, document.getElementById('coffeeStyle')?.value || 'none', propScale, propSpeed);
       drawCandle(candle1X, candle1Y, candle1RefY, document.getElementById('candleStyle')?.value || 'none', propScale, propSpeed, false); 
       drawCandle(candle2X, candle2Y, candle2RefY, document.getElementById('candleStyle')?.value || 'none', propScale, propSpeed, false);
+      
+      let countStr = document.getElementById('count') ? document.getElementById('count').value : "100";
+      for (let i = 0; i < parseInt(countStr); i++) { if (cinematicParticles[i]) { cinematicParticles[i].update(); cinematicParticles[i].draw(); } }
+      
       ctx.restore(); requestAnimationFrame(animate);
     }
     animate();

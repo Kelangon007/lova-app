@@ -1,6 +1,6 @@
 {
-  "appId": "com.mirrorstudio.final",
-  "appName": "Mirror Studio Final",
+  "appId": "com.mirrorpro.app",
+  "appName": "Mirror Pro 3D",
   "webDir": "www",
   "bundledWebRuntime": false
 }
